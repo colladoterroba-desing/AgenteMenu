@@ -5,7 +5,8 @@
   "scripts": {
     "test": "node --import tsx --test test/*.test.ts",
     "start": "node --env-file-if-exists=.env --import tsx src/agente.ts",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "web": "tsx src/web.ts"
   },
   "repository": {
     "type": "git",

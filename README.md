@@ -35,6 +35,12 @@ Ejemplos de uso en el chat:
 
 Los documentos generados (menú, lista de la compra, plan de cocina) se guardan en `salidas/`.
 
+Para ver los resultados en el navegador (personas y raciones, quién come qué cada día y tuppers de oficina):
+
+```bash
+npm run web   # genera salidas/resultados.html
+```
+
 ## Estructura
 
 | Ruta | Contenido |
@@ -47,6 +53,8 @@ Los documentos generados (menú, lista de la compra, plan de cocina) se guardan 
 | `src/almacen.ts` | Lectura y escritura de datos y resumen de hábitos de compra |
 | `src/herramientas.ts` | Herramientas que usa el agente |
 | `src/agente.ts` | Chat de terminal con Claude |
+| `src/web.ts` | Vista web de los resultados |
+| `data/propuesta-tuppers.json` | Rotación de tuppers de oficina |
 
 ## Desarrollo
 

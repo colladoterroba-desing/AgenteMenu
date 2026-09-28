@@ -29,6 +29,8 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Desayunos fijos:** cada persona elige si su desayuno fijo aparece en el menú (por defecto no). Siempre se cuenta en la lista de la compra.
 - **PDF:** el menú se puede sacar en PDF en formato horizontal y la lista de la compra en vertical (`npm run pdf`).
 - **Objetivos de peso (aceptados el 28/09/2026):** RFA, de 73 a 67,8 kg con 1.879 kcal/día (unas 11 semanas). CCT, de 79 a 67,8 kg con 1.623 kcal/día (unas 23 semanas). Consultarlo con su médico.
+- **Legumbres:** mejor con un adulto (RFA o CCT) que supervise cuánto comen; no se ponen en las comidas en las que RFC y AFC están solos.
+- **Comidas de los niños sin los mayores:** los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser pasta o algo más calórico.
 - **Despensa:** apartado para completar el inventario de lo que hay en casa; la lista de la compra lo descuenta y el menú se puede actualizar para aprovecharlo.
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.

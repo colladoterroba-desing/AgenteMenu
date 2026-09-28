@@ -53,10 +53,18 @@
   "preferencias": [
     "Leche siempre semidesnatada",
     "Por las mañanas no se cocina en casa: lo que se lleva fuera se prepara la noche anterior o en el batch",
-    "La tortilla francesa se hace al momento: no se prepara el día antes"
+    "La tortilla francesa se hace al momento: no se prepara el día antes",
+    "Los días que los mayores (RFA y CCT) no comen en casa, la comida de los niños puede ser pasta o algo más calórico"
   ],
   "permisos": { "validarMenu": ["CCT"] },
   "noDeseados": [],
+  "supervision": [
+    {
+      "ingredientes": ["garbanzo", "lenteja", "alubia", "hummus"],
+      "adultos": ["RFA", "CCT"],
+      "motivo": "Las legumbres, mejor con un adulto que supervise cuánto comen"
+    }
+  ],
   "restricciones": [
     {
       "ingredientes": ["salmón", "atún", "anchoa", "sardina"],

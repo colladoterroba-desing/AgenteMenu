@@ -828,6 +828,28 @@
       ]
     },
     {
+      "id": "macarrones-tomate-jamon",
+      "nombre": "Macarrones integrales con tomate, jamón york y queso",
+      "tipo": "comida",
+      "tiempoMin": 25,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Macarrones integrales", "cantidad": 100, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Tomate triturado", "cantidad": 120, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso rallado", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La noche anterior, mientras se hace la cena: pochar la cebolla en el aceite, añadir el tomate y cocer 10 minutos; incorporar el jamón en taquitos.",
+        "Cocer los macarrones 1 minuto menos de lo que marca el paquete, escurrir y mezclar con la salsa.",
+        "Guardar en la nevera en un recipiente apto para microondas; al día siguiente, recalentar con el queso rallado por encima."
+      ],
+      "conservacion": "2 días en nevera. Pensado para las comidas de RFC y AFC los días que los mayores no están."
+    },
+    {
       "id": "alubias-estofadas",
       "nombre": "Alubias blancas estofadas con verduras",
       "tipo": "comida",

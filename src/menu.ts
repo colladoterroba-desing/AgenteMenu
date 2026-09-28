@@ -120,6 +120,15 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
     const comen = new Map<string, string[]>([[p.receta, quienes.filter((q) => !p.variantes?.[q])]]);
     for (const [q, r] of Object.entries(p.variantes ?? {})) comen.set(r, [...(comen.get(r) ?? []), q]);
     for (const [receta, personas] of comen) {
+      const r = porId.get(receta);
+      for (const sup of familia.supervision ?? []) {
+        const ingrediente = r?.ingredientes.find((i) =>
+          sup.ingredientes.some((palabra) => normalizar(i.nombre).includes(normalizar(palabra))),
+        );
+        if (ingrediente && personas.length && !personas.some((q) => sup.adultos.includes(q))) {
+          errores.push(`${donde}: «${r!.nombre}» lleva ${ingrediente.nombre.toLowerCase()} y no come ${sup.adultos.join(" ni ")}: ${sup.motivo}`);
+        }
+      }
       for (const nd of familia.noDeseados ?? []) {
         if (nd.receta !== receta) continue;
         if (nd.por === "familia" || personas.includes(nd.por)) {

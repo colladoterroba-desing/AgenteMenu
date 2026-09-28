@@ -16,13 +16,18 @@
       "por": "usuario",
       "fecha": "2026-09-28",
       "descripcion": "Salmón, atún, anchoas y sardinas solo el jueves a mediodía: el salmón pasa a la comida del jueves; fuera los bocadillos de atún (martes y viernes: jamón serrano; jueves: queso fresco); cena del lunes: albóndigas de pavo (también tupper de CCT del martes); cena del miércoles: merluza; cena del jueves: lentejas."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Legumbres solo con un adulto delante. Comida de RFC y AFC del lunes: macarrones con tomate, jamón york y queso (antes, garbanzos); los garbanzos quedan para el tupper de CCT."
     }
   ],
   "batch": [
     {
       "dia": "D",
       "tareas": [
-        "Garbanzos con espinacas para la comida del lunes (RFC y AFC) y el tupper de CCT, unos 35 min.",
+        "Garbanzos con espinacas para el tupper de CCT del lunes, unos 35 min.",
         "Arroz integral cocido para el lomo del martes, 25 min; enfriar y guardar en la nevera.",
         "Asar pechuga de pollo para la ensalada de pasta del tupper de RFA y el bocadillo de RFC del lunes, 20 min.",
         "Cocer 4 huevos duros para la semana."
@@ -36,8 +41,8 @@
         "prepara": "Domingo por la noche, con el pollo asado del batch"
       },
       "comida": {
-        "receta": "garbanzos-espinacas",
-        "prepara": "Batch del domingo: recalentar en el microondas"
+        "receta": "macarrones-tomate-jamon",
+        "prepara": "Domingo por la noche, con la cena: recalentar"
       },
       "merienda": {
         "receta": "yogur-fruta-frutos-secos"

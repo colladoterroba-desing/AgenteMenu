@@ -273,3 +273,20 @@ test("platos no deseados: no se sirven a quien los marcó (o a nadie si es la fa
   // Marcado por la familia: no vale para nadie, tuppers incluidos.
   assert.ok(validarMenu(marca("familia", "wraps-pavo-hummus"), menu, recetas).some((e) => /tupper RFA/.test(e)));
 });
+
+test("legumbres solo con un adulto delante; pasta para los niños cuando están solos", async () => {
+  const { validarMenu } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const solos = structuredClone(menu);
+  solos.dias.L.comida = { receta: "garbanzos-espinacas" };
+  assert.ok(validarMenu(familia, solos, recetas).some((e) => /garbanzos/.test(e) && /supervise/.test(e)));
+  // Con CCT en casa (jueves) sí valen; y en el tupper de un adulto también.
+  const conCct = structuredClone(menu);
+  conCct.dias.J.comida = { receta: "lentejas-estofadas" };
+  assert.deepEqual(validarMenu(familia, conCct, recetas), []);
+  // El almuerzo de RFC en el colegio tampoco puede llevar legumbres.
+  const almuerzo = structuredClone(menu);
+  almuerzo.dias.M.almuerzo = { receta: "arroz-garbanzos-feta" };
+  assert.ok(validarMenu(familia, almuerzo, recetas).some((e) => /Martes almuerzo/.test(e)));
+});

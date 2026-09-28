@@ -33,6 +33,8 @@ export interface Receta {
   tecnica: Tecnica;
   ingredientes: Ingrediente[];
   pasos: string[];
+  /** Pasos alternativos con Thermomix (tiempo/temperatura/velocidad). */
+  thermomix?: string[];
   conservacion?: string;
   /** Cantidades por persona, sin escalar por ración (desayunos habituales, envasados...). */
   racionFija?: boolean;

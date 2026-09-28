@@ -488,6 +488,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
     ["merienda", "Meriendas"],
     ["cena", "Cenas"],
     ["tupper", "Tuppers"],
+    ["thermomix", "Thermomix"],
     ["no-deseado", "No deseados"],
   ];
   const tarjetas = usadas
@@ -495,7 +496,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
       const u = usos.get(r.id)!;
       const estaSemana = u.filter((x) => x.semana === actual);
       const raciones = estaSemana.reduce((s, x) => s + x.raciones, 0);
-      const categorias = [...new Set(u.map((x) => x.categoria))].join(" ");
+      const categorias = [...new Set(u.map((x) => x.categoria)), ...(r.thermomix?.length ? ["thermomix"] : [])].join(" ");
       const lineasUso = semanas
         .map(({ semana }) => {
           const deEsta = u.filter((x) => x.semana === semana);
@@ -509,7 +510,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
           <h3>${esc(r.nombre)}</h3>
           <p class="meta"><span class="chip info">${esc(TECNICA[r.tecnica] ?? r.tecnica)}</span><span class="mono">${r.tiempoMin} min</span>${
             r.alMomento ? `<span class="chip aviso">Al momento</span>` : ""
-          }</p>
+          }${r.thermomix?.length ? `<span class="chip bien">Thermomix</span>` : ""}</p>
           ${lineasUso}
         </header>
         <table class="ingredientes">
@@ -526,6 +527,11 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
             .join("")}</tbody>
         </table>
         <ol class="pasos">${r.pasos.map((p) => `<li>${esc(p)}</li>`).join("")}</ol>
+        ${
+          r.thermomix?.length
+            ? `<details class="thermomix"><summary>Con Thermomix</summary><ol class="pasos">${r.thermomix.map((p) => `<li>${esc(p)}</li>`).join("")}</ol></details>`
+            : ""
+        }
         ${r.conservacion ? `<p class="nota"><strong>Conservación:</strong> ${esc(r.conservacion)}</p>` : ""}
         ${bloqueNoDeseado(r, familia)}
       </article>`;
@@ -818,6 +824,9 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .estado-menu.validado strong{color:var(--bien)}
 .estado-menu summary{cursor:pointer;font-size:.88rem;font-weight:600}
 .estado-menu ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:grid;gap:4px}
+.thermomix{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bien-soft)}
+.thermomix summary{cursor:pointer;font-weight:600;font-size:.9rem;color:var(--bien)}
+.thermomix .pasos{margin-top:8px}
 .no-deseado{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
 .marcas{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:.86rem}
 .marcas li{background:var(--aviso-soft);border-radius:6px;padding:6px 8px}

@@ -57,6 +57,7 @@
     "Los días que los mayores (RFA y CCT) no comen en casa, la comida de los niños puede ser pasta o algo más calórico",
     "Dar prioridad a los platos habituales de casa y poner huevo varias veces por semana"
   ],
+  "equipamiento": ["Thermomix"],
   "platosHabituales": {
     "cenas": ["huevos-revueltos-jamon-queso", "sandwich-mixto", "tortilla-patata"],
     "comidas": [

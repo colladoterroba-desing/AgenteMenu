@@ -44,6 +44,7 @@ const receta = z.object({
     )
     .min(1),
   pasos: z.array(z.string()).min(1),
+  thermomix: z.array(z.string()).optional().describe("Pasos con Thermomix en formato «tiempo/temperatura/velocidad» (cremas, purés, guisos, salsas)"),
   conservacion: z.string().optional(),
   racionFija: z.boolean().optional().describe("true si las cantidades son por persona y no se escalan (desayunos habituales)"),
   alMomento: z.boolean().optional().describe("true si se prepara justo antes de comer (p. ej. tortilla francesa): no vale para almuerzos ni tuppers"),

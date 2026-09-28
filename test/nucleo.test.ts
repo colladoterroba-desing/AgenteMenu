@@ -360,3 +360,13 @@ test("sin tickets no hay precios: ni estimaciones en los datos ni columna de pre
   const html = htmlCompraPdf({ familia, menu, recetas, precios: vacia, fecha: "28 de septiembre de 2026" });
   assert.doesNotMatch(html, /€/);
 });
+
+test("Thermomix: las cremas y purés del menú tienen pasos con tiempo, temperatura y velocidad", async () => {
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const cremas = recetas.filter((r: { id: string }) => /^(pure|crema)-/.test(r.id));
+  assert.ok(cremas.length >= 6);
+  for (const r of cremas) {
+    assert.ok(r.thermomix?.length, `${r.id} sin pasos de Thermomix`);
+    assert.ok(r.thermomix.some((p: string) => /\d+ (min|s)\/.*vel/.test(p)), `${r.id}: formato tiempo/temperatura/velocidad`);
+  }
+});

@@ -62,6 +62,8 @@ export interface Familia {
    * menús. `por` es un miembro (no se le sirve a él) o "familia" (no se sirve a nadie).
    */
   noDeseados?: { receta: string; por: string; motivo: string; fecha: string }[];
+  /** Electrodomésticos de la cocina que las recetas pueden aprovechar (p. ej. Thermomix). */
+  equipamiento?: string[];
   /** Recetas que la familia hace habitualmente; el agente les da prioridad. */
   platosHabituales?: { cenas: string[]; comidas: string[] };
   /** Ingredientes que solo se sirven si come alguno de esos adultos (p. ej. legumbres). */

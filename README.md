@@ -76,3 +76,13 @@ npm run typecheck # comprobación de tipos
 ```
 
 > ⚠️ Los cálculos nutricionales son orientativos y no sustituyen el consejo de un profesional sanitario.
+
+## Página estática `index.html` (GitHub Pages)
+
+`index.html` es un generador de menús sencillo que funciona sin servidor (independiente del agente y de la web de `npm run web`).
+
+La web está en `index.html` y funciona sin servidor. Para publicarla gratis:
+
+1. En GitHub: **Settings → Pages**.
+2. En *Source* elige **Deploy from a branch**, rama `main` y carpeta `/ (root)`.
+3. En unos minutos estará en `https://colladoterroba-desing.github.io/AgenteMenu/`.

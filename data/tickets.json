@@ -1,3 +1,41 @@
 {
-  "tickets": []
+  "tickets": [
+    {
+      "fecha": "2026-09-28",
+      "tienda": "Mercadona",
+      "total": 80.27,
+      "referencia": "Factura simplificada 4286-016-542883",
+      "lineas": [
+        {"producto": "CAFE MOLIDO FUERTE", "cantidad": 1, "unidad": "ud", "precio": 4.5, "categoria": "desayuno"},
+        {"producto": "COUS COUS", "cantidad": 1, "unidad": "ud", "precio": 1.95, "categoria": "cereales"},
+        {"producto": "ZUMO NARANJA C/PULPA", "cantidad": 2, "unidad": "ud", "precio": 3.7, "categoria": "bebidas"},
+        {"producto": "BURGER M VACUN 1000G", "cantidad": 1, "unidad": "ud", "precio": 10.8, "categoria": "carne"},
+        {"producto": "CONTRAMUSLO SIN PIEL", "cantidad": 1, "unidad": "ud", "precio": 3.26, "categoria": "carne"},
+        {"producto": "CONTRAMUSLO SIN PIEL", "cantidad": 1, "unidad": "ud", "precio": 3.17, "categoria": "carne"},
+        {"producto": "QUESO FRESCO VACA", "cantidad": 1, "unidad": "ud", "precio": 1.6, "categoria": "lácteos"},
+        {"producto": "LENTEJA PARDINA", "cantidad": 1, "unidad": "ud", "precio": 1.85, "categoria": "legumbres"},
+        {"producto": "SOLOMILLO CERDO", "cantidad": 1, "unidad": "ud", "precio": 6.11, "categoria": "carne"},
+        {"producto": "LENTEJA COCIDA", "cantidad": 1, "unidad": "ud", "precio": 0.75, "categoria": "legumbres"},
+        {"producto": "GARBANZO M.COCIDO", "cantidad": 1, "unidad": "ud", "precio": 0.75, "categoria": "legumbres"},
+        {"producto": "HUMMUS CLASICO", "cantidad": 1, "unidad": "ud", "precio": 1.05, "categoria": "legumbres"},
+        {"producto": "SOLOMILLO CERDO", "cantidad": 1, "unidad": "ud", "precio": 4.68, "categoria": "carne"},
+        {"producto": "SOLOMILLO CERDO", "cantidad": 1, "unidad": "ud", "precio": 4.2, "categoria": "carne"},
+        {"producto": "RESERVA LONCHAS", "cantidad": 1, "unidad": "ud", "precio": 5.15, "categoria": "charcutería"},
+        {"producto": "SOLOMILLO CERDO", "cantidad": 1, "unidad": "ud", "precio": 4.31, "categoria": "carne"},
+        {"producto": "T. 100%INTEGRALES", "cantidad": 1, "unidad": "ud", "precio": 1.55, "categoria": "cereales"},
+        {"producto": "PUERRO CORTADO", "cantidad": 1, "unidad": "ud", "precio": 2.95, "categoria": "verdura"},
+        {"producto": "MINI TORTILLAS", "cantidad": 1, "unidad": "ud", "precio": 1.65, "categoria": "cereales"},
+        {"producto": "CHAMPIÑON LIMPIO LAM", "cantidad": 1, "unidad": "ud", "precio": 1.84, "categoria": "verdura"},
+        {"producto": "LECHUGA HOJA ROBLE", "cantidad": 1, "unidad": "ud", "precio": 1.7, "categoria": "verdura"},
+        {"producto": "ZANAHORIA BOLSA", "cantidad": 1, "unidad": "ud", "precio": 1.2, "categoria": "verdura"},
+        {"producto": "BASE PIZZA CEREALES", "cantidad": 1, "unidad": "ud", "precio": 2.5, "categoria": "cereales"},
+        {"producto": "ESPINACA BABY", "cantidad": 1, "unidad": "ud", "precio": 1.15, "categoria": "verdura"},
+        {"producto": "CALABAZA TROZOS", "cantidad": 1, "unidad": "ud", "precio": 2.12, "categoria": "verdura"},
+        {"producto": "BAGUETTE", "cantidad": 2, "unidad": "ud", "precio": 1.14, "categoria": "pan"},
+        {"producto": "PAN 51% INTEGRAL 5UN", "cantidad": 1, "unidad": "ud", "precio": 1.35, "categoria": "pan"},
+        {"producto": "PIMIENTO ROJO", "cantidad": 0.366, "unidad": "kg", "precio": 0.92, "categoria": "verdura"},
+        {"producto": "BROCOLI", "cantidad": 0.876, "unidad": "kg", "precio": 2.37, "categoria": "verdura"}
+      ]
+    }
+  ]
 }

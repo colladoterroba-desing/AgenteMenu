@@ -114,5 +114,7 @@ export interface Ticket {
   fecha: string;
   tienda: string;
   total: number;
+  /** Número de factura o ticket, para no registrarlo dos veces. */
+  referencia?: string;
   lineas: LineaTicket[];
 }

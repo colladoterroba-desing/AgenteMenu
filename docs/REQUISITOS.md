@@ -21,6 +21,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
   - V, S y D: comen en casa los 4.
   - Todas las cenas: los 4.
 - **Roles en la cocina:** CCT es la cocinera; RFA cocina poco y plancha; RFC y AFC solo hacen plancha.
+- **Tuppers de oficina (L, M y X):** RFA, frío; CCT, para recalentar. Propuesta en [propuestas/tuppers-oficina.md](propuestas/tuppers-oficina.md).
 - **Tuppers de oficina (L, M y X):** RFA, frío; CCT, para recalentar.
 
 Los datos están en [`data/familia.json`](../data/familia.json).

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -218,16 +219,45 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
   </div>`;
 }
 
+/** Huella del contenido del menú: si cambia, una aprobación anterior deja de valer. */
+export const huellaMenu = (menu: MenuSemana) =>
+  createHash("sha256").update(JSON.stringify({ dias: menu.dias, tuppers: menu.tuppers, batch: menu.batch })).digest("hex").slice(0, 16);
+
 function estadoMenu(familia: Familia, menu: MenuSemana): string {
   const validadores = familia.permisos?.validarMenu ?? [];
+  const quien = validadores[0] ?? "";
   const validado = menu.estado === "validado" && menu.validacion;
   const cambios = (menu.cambios ?? []).slice().reverse();
-  return `<div class="estado-menu ${validado ? "validado" : "borrador"}" role="status">
-    <p><strong>${validado ? "Menú validado" : "Borrador"}</strong> ${
+  const semana = esc(menu.semana);
+  return `<div class="estado-menu ${validado ? "validado" : "borrador"}" role="status" data-semana="${semana}" data-huella="${huellaMenu(menu)}" data-validado="${validado ? "1" : "0"}">
+    <p class="estado-texto"><strong>${validado ? "Menú validado" : "Borrador"}</strong> <span>${
       validado
         ? `por ${esc(menu.validacion!.por)} el ${esc(menu.validacion!.fecha)}.`
         : `pendiente de que ${esc(validadores.join(" o ") || "alguien con permiso")} lo dé por válido. Hasta entonces no está publicado.`
-    }</p>
+    }</span></p>
+    <p class="estado-web sub" hidden></p>
+    ${
+      quien && !validado
+        ? `<div class="aprobacion" data-quien="${esc(quien)}" hidden>
+            <div class="botones-aprobacion">
+              <button type="button" class="btn-aprobar">Aprobar el menú</button>
+              <button type="button" class="btn-cambios secundario">Pedir cambios</button>
+              <button type="button" class="btn-retirar secundario" hidden>Retirar la aprobación</button>
+            </div>
+            <div class="confirmar-aprobacion" hidden>
+              <p>¿Apruebas como ${esc(quien)} el menú de la semana ${semana}? Quedará como publicado.</p>
+              <button type="button" class="btn-confirmar">Sí, aprobar</button>
+              <button type="button" class="btn-cancelar secundario">Cancelar</button>
+            </div>
+            <form class="form-cambios" hidden>
+              <label for="cambios-${semana}">¿Qué hay que cambiar?</label>
+              <textarea id="cambios-${semana}" name="comentario" rows="3" required placeholder="Por ejemplo: el jueves no hay dorada, mejor merluza"></textarea>
+              <div class="botones-aprobacion"><button type="submit">Enviar</button><button type="button" class="btn-cancelar secundario">Cancelar</button></div>
+            </form>
+            <p class="sub estado-form" role="status"></p>
+          </div>`
+        : ""
+    }
     ${cambios.length ? `<details><summary>Historial de cambios (${cambios.length})</summary><ul>${cambios
       .map((c) => `<li><span class="mono">${esc(c.fecha)}</span> · <span class="comensal">${esc(c.por)}</span> ${esc(c.descripcion)}</li>`)
       .join("")}</ul></details>` : ""}
@@ -366,7 +396,7 @@ function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
   return `<td>
     <a class="plato-menu" href="#r-${esc(principal.receta.id)}">${esc(principal.receta.nombre)}</a>
     ${principal.segundo ? `<a class="plato-menu segundo" href="#r-${esc(principal.segundo.receta.id)}">${esc(principal.segundo.receta.nombre)}</a>` : ""}
-    <div class="comensales">${comensalesChips(principal)}<span class="raciones mono">×${num(principal.raciones, 2)}</span></div>
+    <div class="comensales">${comensalesChips(principal)}<span class="raciones mono" title="Raciones a preparar, contando que 1 ración es la de un adulto de 2.000 kcal">${num(principal.raciones, 2)} rac.</span></div>
     ${variantesHtml}
     ${principal.prepara ? `<p class="prepara">${esc(principal.prepara)}</p>` : ""}
     ${tuppers}
@@ -515,7 +545,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
         </header>
         <table class="ingredientes">
           <thead><tr><th>Ingrediente</th><th class="num">1 ración</th>${
-            raciones ? `<th class="num">Sem. ${esc(actual)} <span class="mono">×${num(raciones, 2)}</span></th>` : ""
+            raciones ? `<th class="num" title="Cantidad total de la semana: 1 ración × las raciones de todos los comensales">Semana ${esc(actual)} <span class="mono">(${num(raciones, 2)} rac.)</span></th>` : ""
           }</tr></thead>
           <tbody>${r.ingredientes
             .map(
@@ -540,7 +570,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
   return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
     .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
     .join("")}</div>
-  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna ya multiplica por las raciones de esta semana. Sal, especias y caldo no se cuentan. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Sal, especias y caldo no se cuentan. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
   <div class="recetas">${tarjetas}</div>`;
 }
 
@@ -822,6 +852,17 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .estado-menu.validado{background:var(--bien-soft);border-color:var(--bien);color:var(--ink)}
 .estado-menu.borrador strong{color:var(--aviso)}
 .estado-menu.validado strong{color:var(--bien)}
+.aprobacion{display:grid;gap:8px;border-top:1px dashed currentColor;padding-top:8px}
+.botones-aprobacion{display:flex;flex-wrap:wrap;gap:8px}
+.aprobacion button{font:600 .9rem var(--f-body);border-radius:999px;padding:7px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--surface)}
+.aprobacion button.secundario{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.aprobacion button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.aprobacion button:disabled{opacity:.5;cursor:not-allowed}
+.confirmar-aprobacion{display:grid;gap:8px;background:var(--surface);border-radius:8px;padding:10px 12px}
+.confirmar-aprobacion p{margin:0}
+.form-cambios{display:grid;gap:6px}
+.form-cambios label{font-size:.85rem;font-weight:600}
+.form-cambios textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
 .estado-menu summary{cursor:pointer;font-size:.88rem;font-weight:600}
 .estado-menu ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:grid;gap:4px}
 .thermomix{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bien-soft)}
@@ -1212,6 +1253,89 @@ const SCRIPT = `
         }
       });
     });
+
+    // ---- Aprobación del menú (solo la dueña de la página) ----
+    const bloquesEstado = [...document.querySelectorAll(".estado-menu[data-semana]")];
+    const textoOriginal = new Map(bloquesEstado.map((b) => [b, b.querySelector(".estado-texto").innerHTML]));
+    let aprobaciones = new Map();
+    const usuario = window.claude && window.claude.use ? await window.claude.use("user") : null;
+    const esDuena = usuario ? await usuario.isOwner() : false;
+    const fechaCorta = (iso) => { try { return new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "long" }); } catch (e) { return iso; } };
+
+    const renderAprobaciones = () => bloquesEstado.forEach((b) => {
+      const doc = aprobaciones.get("semana-" + b.dataset.semana);
+      const vigente = doc && doc.huella === b.dataset.huella;
+      const texto = b.querySelector(".estado-texto");
+      const web = b.querySelector(".estado-web");
+      const apr = b.querySelector(".aprobacion");
+      const aprobado = vigente && doc.estado === "validado";
+      texto.innerHTML = textoOriginal.get(b);
+      web.hidden = true;
+      if (b.dataset.validado !== "1") b.classList.toggle("validado", Boolean(aprobado));
+      if (b.dataset.validado !== "1") b.classList.toggle("borrador", !aprobado);
+      if (aprobado) {
+        texto.replaceChildren();
+        const fuerte = document.createElement("strong"); fuerte.textContent = "Menú aprobado";
+        texto.append(fuerte, " por " + doc.por + " el " + fechaCorta(doc.fecha) + ". Ya está publicado; los PDF lo reflejarán en la próxima actualización.");
+      } else if (vigente && doc.estado === "cambios") {
+        web.hidden = false;
+        web.textContent = "Cambios pedidos por " + doc.por + " el " + fechaCorta(doc.fecha) + ": " + doc.comentario;
+      } else if (doc && !vigente && doc.estado !== "retirado") {
+        web.hidden = false;
+        web.textContent = "Hubo una " + (doc.estado === "validado" ? "aprobación" : "petición de cambios") + " de una versión anterior de este menú; el menú ha cambiado desde entonces.";
+      }
+      if (apr) {
+        apr.querySelector(".btn-aprobar").hidden = Boolean(aprobado);
+        apr.querySelector(".btn-cambios").hidden = Boolean(aprobado);
+        apr.querySelector(".btn-retirar").hidden = !aprobado;
+      }
+    });
+
+    if (esDuena) {
+      db.collection("aprobaciones").onSnapshot((snap) => {
+        aprobaciones = new Map(snap.docs.map((d) => [d.id, d.data()]));
+        renderAprobaciones();
+      }, () => {});
+      bloquesEstado.forEach((b) => {
+        const apr = b.querySelector(".aprobacion");
+        if (!apr) return;
+        apr.hidden = false;
+        const estado = apr.querySelector(".estado-form");
+        const confirmar = apr.querySelector(".confirmar-aprobacion");
+        const form = apr.querySelector(".form-cambios");
+        const guardar = async (datos, mensaje) => {
+          try {
+            await db.doc("aprobaciones/semana-" + b.dataset.semana).set({
+              ...datos, por: apr.dataset.quien, fecha: new Date().toISOString(), huella: b.dataset.huella,
+            });
+            estado.textContent = mensaje;
+          } catch (e) {
+            estado.textContent = "No se ha podido guardar (" + (e && e.code || "error") + "). Inténtalo de nuevo.";
+          }
+        };
+        apr.querySelector(".btn-aprobar").addEventListener("click", () => { confirmar.hidden = false; form.hidden = true; });
+        apr.querySelector(".btn-confirmar").addEventListener("click", async () => {
+          confirmar.hidden = true;
+          await guardar({ estado: "validado" }, "Menú aprobado.");
+        });
+        apr.querySelectorAll(".btn-cancelar").forEach((x) => x.addEventListener("click", () => { confirmar.hidden = true; form.hidden = true; }));
+        apr.querySelector(".btn-cambios").addEventListener("click", () => { form.hidden = false; confirmar.hidden = true; form.querySelector("textarea").focus(); });
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const comentario = String(new FormData(form).get("comentario") || "").trim();
+          if (!comentario) return;
+          await guardar({ estado: "cambios", comentario }, "Petición de cambios enviada. El menú sigue en borrador.");
+          form.reset(); form.hidden = true;
+        });
+        apr.querySelector(".btn-retirar").addEventListener("click", () => guardar({ estado: "retirado" }, "Aprobación retirada: el menú vuelve a borrador."));
+      });
+    } else {
+      // Los demás ven el estado guardado, sin botones.
+      db.collection("aprobaciones").onSnapshot((snap) => {
+        aprobaciones = new Map(snap.docs.map((d) => [d.id, d.data()]));
+        renderAprobaciones();
+      }, () => {});
+    }
   })();
 })();
 `;
@@ -1327,7 +1451,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq">Semana ${esc(menu.semana)} · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y ×N las raciones totales (1 = adulto de 2.000 kcal). En naranja, cuándo se prepara si no se cocina en el momento.</p>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento.</p>
       <dl class="resumen">
         <div><dt>Comidas planificadas</dt><dd>${comidas.length}</dd></div>
         <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>

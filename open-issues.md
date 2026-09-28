@@ -18,9 +18,9 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - **Identidad de la app.** Nombre, icono y colores del manifiesto.
   - **Relación con OI-01 y OI-02.** Si la app permite editar la configuración, dónde se guardan los datos. Y cómo se actualiza cuando el agente genera un menú nuevo.
 
-- [ ] **OI-24 · Identificar a quien valida el menú.** Decidido: por el momento solo CCT puede dar por válido un menú y publicarlo, y puede pedir cambios antes (que lo devuelven a borrador). Falta decidir cómo se comprueba que es CCT: en el chat del agente se confía en que quien escribe dice la verdad, y la web no identifica a nadie. Va ligado a OI-01, OI-03 y OI-23 (cuentas o contraseña). También hay que decidir si la validación caduca (por ejemplo, un menú por semana).
+- [ ] **OI-24 · Identificar a quien valida el menú.** Decidido: solo CCT puede dar por válido un menú y publicarlo, y puede pedir cambios antes (que lo devuelven a borrador). En la web ya hay botones «Aprobar el menú», «Pedir cambios» y «Retirar la aprobación», visibles solo para la dueña de la página en claude.ai, que se toma como CCT. Si el menú cambia después, la aprobación deja de valer. Pendiente: confirmar que la cuenta dueña es la de CCT, y cómo se identifica en el chat del agente, que hoy se fía de quien escribe.
 
-- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa y los platos no deseados que se apuntan en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie a `data/despensa.json` y `data/familia.json` para que el agente los use. Decidir si se automatiza (ligado a OI-01 y OI-02).
+- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa, los platos no deseados y las aprobaciones o peticiones de cambios del menú que se hacen en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
 
 ## Uso diario del menú
 

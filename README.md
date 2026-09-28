@@ -42,7 +42,7 @@ npm run web   # genera salidas/resultados.html
 npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) de esta semana y la siguiente, en salidas/
 ```
 
-La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, Despensa, Tuppers y Configuración. En **Despensa** se apunta lo que hay en casa y la lista de la compra se descuenta al momento; en **Recetas** se puede marcar un plato como no deseado, con el motivo. Esos datos se guardan en la propia página publicada en claude.ai; para llevarlos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa y los no deseados».
+La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, Despensa, Tuppers y Configuración. En **Despensa** se apunta lo que hay en casa y la lista de la compra se descuenta al momento; en **Recetas** se puede marcar un plato como no deseado, con el motivo. En **Menú**, la dueña de la página (CCT) tiene botones para aprobar el menú o pedir cambios. Esos datos se guardan en la propia página publicada en claude.ai; para llevarlos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa, los no deseados y las aprobaciones».
 
 `npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 

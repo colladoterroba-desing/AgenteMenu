@@ -163,7 +163,7 @@ test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entr
     const desayuno = dia.comidas.find((c) => c.tipo === "desayuno")!;
     assert.deepEqual(
       Object.fromEntries(desayuno.platos.map((p) => [p.comensales[0].id, p.receta.id])),
-      { RFA: "desayuno-rfa", CCT: "desayuno-cct", RFC: "cafe-solo", AFC: "desayuno-afc" },
+      { RFA: "desayuno-rfa", CCT: "desayuno-cct-actual", RFC: "cafe-solo", AFC: "desayuno-afc" },
     );
     const almuerzo = dia.comidas.find((c) => c.tipo === "almuerzo");
     assert.equal(Boolean(almuerzo), !["S", "D"].includes(dia.dia));

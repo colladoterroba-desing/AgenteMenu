@@ -67,11 +67,11 @@
     "AFC": { "receta": "desayuno-afc", "nota": "Su desayuno de todos los días.", "mostrarEnMenu": false },
     "RFC": { "receta": "cafe-solo", "nota": "Solo café en casa; come el almuerzo que se lleva al colegio.", "mostrarEnMenu": false },
     "CCT": {
-      "receta": "desayuno-cct",
-      "nota": "Propuesta: pan integral con tomate y queso fresco en lugar de azúcar. Antes: café cortado con tostada de pan, aceite y azúcar.",
+      "receta": "desayuno-cct-actual",
+      "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-07): pan integral con tomate y queso fresco, sin azúcar (receta desayuno-cct).",
       "mostrarEnMenu": false
     },
-    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. En días de running, añadir fruta.", "mostrarEnMenu": false }
+    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-06): añadir fruta en días de running.", "mostrarEnMenu": false }
   },
   "regimen": {
     "comida": {

@@ -539,8 +539,27 @@
       ]
     },
     {
+      "id": "desayuno-cct-actual",
+      "nombre": "Café cortado y tostada con aceite y azúcar",
+      "tipo": "desayuno",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan de barra", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Azúcar", "cantidad": 5, "unidad": "g", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
+        "Tostar el pan, echar el aceite y espolvorear el azúcar."
+      ]
+    },
+    {
       "id": "desayuno-cct",
-      "nombre": "Café cortado y tostada integral con aceite y tomate",
+      "nombre": "Propuesta: café cortado y tostada integral con aceite y tomate",
       "tipo": "desayuno",
       "tiempoMin": 8,
       "tecnica": "sin cocinar",

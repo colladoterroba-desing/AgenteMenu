@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { MenuSemana, Receta } from "./menu.js";
+import { ESTIMADO, type Precio, type TablaPrecios } from "./precios.js";
 import type { Despensa, Familia, Objetivo, Producto, Sobra, Ticket } from "./tipos.js";
 
 /** Persistencia en ficheros JSON dentro de un directorio de datos. */
@@ -20,6 +21,18 @@ export class Almacen {
   despensa = () => this.leer<Despensa>("despensa.json");
   tickets = async () => (await this.leer<{ tickets: Ticket[] }>("tickets.json")).tickets;
   recetas = async () => (await this.leer<{ recetas: Receta[] }>("recetas.json")).recetas;
+  precios = () => this.leer<TablaPrecios>("precios.json");
+
+  /** Añade un precio (se usa siempre el más reciente de cada producto y tienda). */
+  async registrarPrecio(precio: Precio): Promise<number> {
+    const tabla = await this.precios();
+    if (precio.tienda !== ESTIMADO && !tabla.tiendas.some((t) => t.id === precio.tienda)) {
+      tabla.tiendas.push({ id: precio.tienda });
+    }
+    tabla.precios.push(precio);
+    await this.escribir("precios.json", tabla);
+    return tabla.precios.length;
+  }
   /** Menú de esta semana o, con `siguiente`, la propuesta de la semana que viene. */
   menu = (siguiente = false) => this.leer<MenuSemana>(siguiente ? "menu-siguiente.json" : "menu-semana.json");
 

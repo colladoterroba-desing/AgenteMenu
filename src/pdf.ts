@@ -11,6 +11,7 @@ import {
   type MenuSemana,
   type Receta,
 } from "./menu.js";
+import { costeCesta, ESTIMADO, type TablaPrecios } from "./precios.js";
 import type { Despensa, Familia } from "./tipos.js";
 import { cantidad, COMIDAS, esc, num } from "./web.js";
 
@@ -19,6 +20,7 @@ export interface DatosPdf {
   menu: MenuSemana;
   recetas: Receta[];
   despensa?: Despensa;
+  precios?: TablaPrecios;
   fecha: string;
 }
 
@@ -103,27 +105,48 @@ tbody th{width:62pt;background:#eef2ec;font-size:9pt}
 }
 
 /** Lista de la compra para imprimir en A4 vertical. */
-export function htmlCompraPdf({ familia, menu, recetas, despensa, fecha }: DatosPdf): string {
+export function htmlCompraPdf({ familia, menu, recetas, despensa, precios, fecha }: DatosPdf): string {
   const lista = listaCompra(componerMenu(familia, menu, recetas), despensa);
   const total = SECCIONES.reduce((s, x) => s + lista[x].length, 0);
+  // Coste por producto: tienda real más barata o, si no hay, la estimación.
+  const cesta = precios ? costeCesta(lista, precios) : undefined;
+  const costeDe = (nombre: string, unidad: string) => {
+    const l = cesta?.lineas.find((x) => x.nombre === nombre && x.unidad === unidad);
+    const donde = l?.masBarata ?? (l?.porTienda[ESTIMADO] ? ESTIMADO : undefined);
+    return l && donde ? { coste: l.porTienda[donde].coste, donde } : undefined;
+  };
+  const euros = (n: number) => n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
+  const conEstimacion = cesta?.lineas.filter((l) => !l.masBarata).length ?? 0;
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Lista de la compra semana ${esc(menu.semana)}</title><style>
-@page{size:A4 portrait;margin:12mm}
+@page{size:A4 portrait;margin:10mm 12mm}
 ${BASE}
-body{font-size:9.5pt}
+body{font-size:9pt}
 .secciones{columns:2;column-gap:10mm}
-section{break-inside:avoid;margin-bottom:8pt}
+section{break-inside:avoid;margin-bottom:6pt}
 h2{font-size:10.5pt;margin:0 0 3pt;color:#3d6a33;border-bottom:0.75pt solid #c9d2c6;padding-bottom:2pt;display:flex;justify-content:space-between}
 h2 span{color:#58655d;font-weight:400;font-size:8pt}
 ul{list-style:none;margin:0;padding:0}
-li{display:grid;grid-template-columns:10pt 1fr auto;gap:5pt;align-items:baseline;padding:2.2pt 0;border-bottom:0.5pt dotted #c9d2c6}
+li{display:grid;grid-template-columns:10pt 1fr auto${precios ? " 34pt" : ""};gap:5pt;align-items:baseline;padding:1.9pt 0;border-bottom:0.5pt dotted #c9d2c6}
 .caja{width:8pt;height:8pt;border:0.9pt solid #1c2620;border-radius:1.5pt;display:inline-block;transform:translateY(1pt)}
 .cant{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .en-casa{color:#9aa59d;text-decoration:line-through}
+.eur{text-align:right;color:#58655d;font-size:8.5pt;white-space:nowrap;font-variant-numeric:tabular-nums}
+.eur.real{color:#2c7a31;font-weight:700}
+.coste-pdf{margin:0 0 6pt;padding:4pt 8pt;background:#eef2ec;border-radius:3pt;font-size:8.5pt}
 </style></head><body>
 <header class="cab">
   <div><h1>Lista de la compra · semana ${esc(menu.semana)}</h1><p>${esc(familia.nombre)} · ${total} productos · generado el ${esc(fecha)}</p></div>
   ${estado(familia, menu)}
 </header>
+${
+  cesta
+    ? `<p class="coste-pdf"><b>Coste estimado de la cesta: ${euros(cesta.optimizada.total)}</b>${
+        conEstimacion === cesta.productos
+          ? " · todos los precios son estimaciones orientativas (≈), aún no hay precios reales de tienda."
+          : ` · ${conEstimacion} productos con precio estimado (≈); el resto, precio real de la tienda más barata (en verde).`
+      }</p>`
+    : ""
+}
 <div class="secciones">${SECCIONES.filter((s) => lista[s].length)
     .map(
       (s) => `<section><h2>${esc(s)} <span>${lista[s].length}</span></h2><ul>${lista[s]
@@ -131,11 +154,22 @@ li{display:grid;grid-template-columns:10pt 1fr auto;gap:5pt;align-items:baseline
           (l) =>
             `<li${l.comprar === 0 ? ' class="en-casa"' : ""}><span class="caja"></span><span>${esc(l.nombre)}</span><span class="cant">${
               l.comprar === 0 ? "en casa" : cantidad(l.comprar, l.unidad)
-            }</span></li>`,
+            }</span>${
+              precios
+                ? (() => {
+                    const c = costeDe(l.nombre, l.unidad);
+                    if (!c) return `<span class="eur">—</span>`;
+                    return c.donde === ESTIMADO
+                      ? `<span class="eur">≈${euros(c.coste)}</span>`
+                      : `<span class="eur real" title="${esc(c.donde)}">${euros(c.coste)}</span>`;
+                  })()
+                : ""
+            }</li>`,
         )
         .join("")}</ul></section>`,
     )
     .join("")}</div>
+
 <p class="pie">Incluye todo el menú, los tuppers y los desayunos fijos, redondeado hacia arriba${
     despensa?.productos.length ? " y descontando la despensa" : ""
   }. Sal, especias y caldo no se cuentan.</p>
@@ -160,6 +194,7 @@ async function main() {
     menu: await leer<MenuSemana>("menu-semana.json"),
     recetas: (await leer<{ recetas: Receta[] }>("recetas.json")).recetas,
     despensa: await leer<Despensa>("despensa.json"),
+    precios: await leer<TablaPrecios>("precios.json").catch(() => undefined),
     fecha: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }),
   };
   const salida = path.join(raiz, "salidas");

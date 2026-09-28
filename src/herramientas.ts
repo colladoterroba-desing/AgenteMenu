@@ -4,6 +4,7 @@ import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
 import { componerMenu, listaCompra, SECCIONES, validarMenu, validarPublicacion, type MenuSemana } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
+import { costeCesta } from "./precios.js";
 import { DIAS } from "./tipos.js";
 
 interface Herramienta<S extends z.ZodObject> {
@@ -38,6 +39,7 @@ const receta = z.object({
         cantidad: z.number().positive().describe("Para una ración de referencia (adulto de 2000 kcal)"),
         unidad: z.enum(["g", "ml", "ud"]),
         seccion: z.enum(SECCIONES),
+        porPersona: z.boolean().optional().describe("true si se compra uno por persona (una dorada, un filete)"),
       }),
     )
     .min(1),
@@ -270,6 +272,45 @@ export function crearHerramientas(almacen: Almacen) {
           almacen.familia(), almacen.menu(siguiente), almacen.recetas(), almacen.despensa(),
         ]);
         return listaCompra(componerMenu(familia, menu, recetas), despensa);
+      },
+    }),
+    herramienta({
+      nombre: "registrar_precio",
+      descripcion:
+        "Guarda el precio de un ingrediente en una tienda (Mercadona, BM, Elías...). Úsala al registrar un ticket para cada línea que corresponda a un ingrediente de las recetas, con el nombre exacto del ingrediente. `precio` es por envase de `cantidad` `unidad`; granel=true si se paga por peso (fruta, verdura, carne o pescado al corte).",
+      esquema: z.object({
+        producto: z.string().describe("Nombre del ingrediente tal como aparece en las recetas"),
+        tienda: z.string(),
+        precio: z.number().positive(),
+        cantidad: z.number().positive(),
+        unidad: z.enum(["g", "ml", "ud"]),
+        granel: z.boolean().optional(),
+        fecha,
+        fuente: z.enum(["ticket", "web", "manual"]),
+        nota: z.string().optional(),
+      }),
+      ejecutar: async (p) => ({ guardado: true, total: await almacen.registrarPrecio(p) }),
+    }),
+    herramienta({
+      nombre: "coste_cesta",
+      descripcion:
+        "Coste de la lista de la compra en cada tienda (con los precios conocidos), la combinación más barata producto a producto y la estimación orientativa. Indica qué productos no tienen precio real en cada tienda.",
+      esquema: z.object({ siguiente: z.boolean().optional().describe("true para la semana siguiente") }),
+      ejecutar: async ({ siguiente }) => {
+        const [familia, menu, recetas, despensa, tabla] = await Promise.all([
+          almacen.familia(), almacen.menu(siguiente), almacen.recetas(), almacen.despensa(), almacen.precios(),
+        ]);
+        const cesta = costeCesta(listaCompra(componerMenu(familia, menu, recetas), despensa), tabla);
+        return {
+          totales: cesta.totales,
+          optimizada: cesta.optimizada,
+          lineas: cesta.lineas.map((l) => ({
+            producto: l.nombre,
+            comprar: `${l.comprar} ${l.unidad}`,
+            masBarata: l.masBarata ?? null,
+            costes: Object.fromEntries(Object.entries(l.porTienda).map(([t, c]) => [t, c.coste])),
+          })),
+        };
       },
     }),
     herramienta({

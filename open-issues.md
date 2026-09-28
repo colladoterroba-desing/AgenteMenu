@@ -56,11 +56,13 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 ## Lista de la compra y despensa
 
-- [ ] **OI-16 · Cantidades que conviene revisar.** Pan integral: unos 3,5 kg por semana. Doradas: salen 5 porque las raciones suman 4,5, aunque con 4 basta. Definir qué ingredientes van «por persona» (una dorada, un huevo) en lugar de escalarse con la ración.
+- [ ] **OI-16 · Cantidades que conviene revisar.** Pan integral: unos 3,5 kg por semana. Resuelto para las doradas: los ingredientes pueden marcarse «por persona» (una dorada por comensal). Falta revisar si hay más casos (huevos, filetes).
 - [ ] **OI-17 · Formatos de compra.** La lista va en g, ml y unidades. Falta pasarla a paquetes, botes y latas (por ejemplo, cuántas galletas Animadas trae un paquete).
 - [ ] **OI-18 · Básicos que no se cuentan.** Sal, especias y caldo no entran en la lista. Decidir si se controlan desde la despensa.
 - [ ] **OI-19 · Inventario inicial de la despensa.** Ya se puede rellenar en la página Despensa de la web. Falta hacer el primer inventario.
 - [ ] **OI-20 · Tickets de compra.** Aún no hay ninguno registrado. Definir cada cuánto se suben y qué análisis se quiere ver (gasto por categoría, productos que se repiten, ahorro).
+
+- [ ] **OI-30 · Precios reales por tienda.** El comparador de Mercadona, BM y Casa Elías ya calcula el coste de la cesta, pero solo con precios estimados escritos a mano. Faltan precios reales: registrarlos desde los tickets (registrar_ticket + registrar_precio), dictárselos al agente o consultarlos en la web de cada supermercado. Para esto último hay que permitir en el entorno el acceso a tienda.mercadona.es, casa-elias.com y la tienda online de BM (hoy bloqueados). Falta también confirmar los formatos de envase (galletas Animadas y tortitas de maíz por paquete).
 
 ## Agente y proyecto
 

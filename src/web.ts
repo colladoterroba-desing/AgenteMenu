@@ -11,6 +11,7 @@ import {
 } from "./nutricion.js";
 import { componerMenu, listaCompra, menuVisible, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
+import { costeCesta, ESTIMADO, type TablaPrecios } from "./precios.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
 
 interface PlatoTupper {
@@ -800,6 +801,16 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .desayunos-dia a{color:var(--ink);text-decoration:none}
 .desayunos-dia a:hover,.desayunos a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
 .batch ul{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.92rem}
+.coste{display:grid;gap:12px;margin-top:8px}
+.coste-tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.coste-tarjeta{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:4px;align-content:start}
+.coste-tarjeta.destacada{border-color:var(--accent);background:var(--accent-soft)}
+.coste-total{font-size:1.5rem;font-weight:600;margin:0}
+.coste details summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.9rem}
+.tabla-coste{font-size:.88rem;background:var(--surface)}
+.tabla-coste td,.tabla-coste th{padding:5px 8px}
+.tabla-coste .num{text-align:right;white-space:nowrap}
+.tabla-coste td.mejor{font-weight:700;color:var(--bien)}
 .estado-menu{border-radius:10px;padding:12px 16px;display:grid;gap:6px;border:1px solid}
 .estado-menu.borrador{background:var(--aviso-soft);border-color:var(--aviso);color:var(--ink)}
 .estado-menu.validado{background:var(--bien-soft);border-color:var(--bien);color:var(--ink)}
@@ -1204,10 +1215,73 @@ export interface DatosWeb {
   menuSiguiente?: MenuSemana;
   recetas: Receta[];
   despensa?: Despensa;
+  /** Precios por tienda para valorar la cesta. */
+  precios?: TablaPrecios;
   fecha: string;
 }
 
-export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, despensa, fecha }: DatosWeb): string {
+const euros = (n: number) => n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
+
+/** Coste de la cesta por tienda, la combinación más barata y el detalle por producto. */
+function seccionCoste(compra: Record<Seccion, LineaCompra[]>, tabla: TablaPrecios): string {
+  const cesta = costeCesta(compra, tabla);
+  const reales = tabla.tiendas.map((t) => t.id);
+  const tarjetaTienda = (t: string) => {
+    const tot = cesta.totales[t];
+    const habitual = tabla.tiendas.find((x) => x.id === t)?.habitual;
+    return `<div class="coste-tarjeta">
+      <p class="etq">${esc(t)}${habitual ? " · habitual" : ""}</p>
+      ${
+        tot.conPrecio
+          ? `<p class="coste-total mono">${euros(tot.total)}</p><p class="sub">${tot.conPrecio} de ${cesta.productos} productos con precio real${tot.sinPrecio ? "; el resto sin precio" : ""}</p>`
+          : `<p class="coste-total sub">Sin precios</p><p class="sub">Aún no hay precios reales de esta tienda.</p>`
+      }
+    </div>`;
+  };
+  const opt = cesta.optimizada;
+  const reparto = Object.entries(opt.porTienda)
+    .map(([t, v]) => `${esc(t === ESTIMADO ? "estimado" : t)} ${euros(v)}`)
+    .join(" · ");
+  const celda = (l: (typeof cesta.lineas)[number], t: string) => {
+    const c = l.porTienda[t];
+    if (!c) return `<td class="num sub">—</td>`;
+    const mejor = t === l.masBarata;
+    const envase = c.precio.granel ? "granel" : `${c.envases} × ${cantidad(c.precio.cantidad, c.precio.unidad)}`;
+    return `<td class="num mono${mejor ? " mejor" : ""}" title="${esc(envase)}">${euros(c.coste)}</td>`;
+  };
+  return `<section class="coste" aria-labelledby="h-coste">
+    <h2 id="h-coste">Coste de la cesta</h2>
+    <div class="coste-tarjetas">
+      <div class="coste-tarjeta destacada">
+        <p class="etq">Estimación orientativa</p>
+        <p class="coste-total mono">≈ ${euros(cesta.totales[ESTIMADO].total)}</p>
+        <p class="sub">${cesta.totales[ESTIMADO].conPrecio} de ${cesta.productos} productos. Precios de referencia escritos a mano, no consultados en tiendas.</p>
+      </div>
+      ${reales.map(tarjetaTienda).join("")}
+      <div class="coste-tarjeta">
+        <p class="etq">Combinación más barata</p>
+        <p class="coste-total mono">${euros(opt.total)}</p>
+        <p class="sub">${reparto || "—"}${opt.estimados ? `. ${opt.estimados} productos sin precio real (usa la estimación).` : ""}</p>
+      </div>
+    </div>
+    <p class="sub">Se cuentan envases enteros (salvo lo que se vende a granel). Los precios reales se añaden desde los tickets o diciéndoselos al agente; con acceso a internet, también desde la web de cada supermercado. No descuenta lo apuntado hoy en la despensa.</p>
+    <details>
+      <summary>Ver el coste por producto</summary>
+      <div class="scroll"><table class="tabla-coste">
+        <thead><tr><th>Producto</th><th class="num">Comprar</th><th class="num">Estimado</th>${reales.map((t) => `<th class="num">${esc(t)}</th>`).join("")}</tr></thead>
+        <tbody>${cesta.lineas
+          .map(
+            (l) => `<tr><td>${esc(l.nombre)}</td><td class="num mono">${cantidad(l.comprar, l.unidad)}</td>${celda(l, ESTIMADO)}${reales
+              .map((t) => celda(l, t))
+              .join("")}</tr>`,
+          )
+          .join("")}</tbody>
+      </table></div>
+    </details>
+  </section>`;
+}
+
+export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, despensa, precios, fecha }: DatosWeb): string {
   const dias = componerMenu(familia, menu, recetas);
   const diasSiguiente = menuSiguiente ? componerMenu(familia, menuSiguiente, recetas) : undefined;
   const semanas = [{ semana: menu.semana, dias }, ...(menuSiguiente && diasSiguiente ? [{ semana: menuSiguiente.semana, dias: diasSiguiente }] : [])];
@@ -1280,6 +1354,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab"><h1 id="h-compra">Lista de la compra</h1>
     <p class="sub">Suma de los ingredientes de todo el menú y los tuppers, redondeada hacia arriba${despensa?.productos.length ? " y descontando lo que hay en la despensa" : ""}. Marca lo que ya llevas en el carro.</p></header>
     ${seccionCompra(compra)}
+    ${precios ? seccionCoste(compra, precios) : ""}
   </section>
 
   <section class="vista" id="despensa" data-vista aria-labelledby="h-despensa" hidden>
@@ -1317,6 +1392,7 @@ async function main() {
     menuSiguiente: await leer<MenuSemana>("menu-siguiente.json").catch(() => undefined),
     recetas: (await leer<{ recetas: Receta[] }>("recetas.json")).recetas,
     despensa: await leer<Despensa>("despensa.json"),
+    precios: await leer<TablaPrecios>("precios.json").catch(() => undefined),
     fecha: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }),
   });
   const destino = path.join(raiz, "salidas", "resultados.html");

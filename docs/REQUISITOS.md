@@ -35,6 +35,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Despensa:** apartado para completar el inventario de lo que hay en casa; la lista de la compra lo descuenta y el menú se puede actualizar para aprovecharlo.
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.
+- **Coste de la cesta:** la familia compra sobre todo en Mercadona y a veces en BM y Casa Elías (Madrid). Hay que valorar el coste de la lista de la compra en cada tienda y proponer la combinación más barata.
 - **Validación del menú:** por el momento solo CCT puede dar por válido un menú y publicarlo. Puede pedir cambios antes de validarlo; cualquier cambio devuelve el menú a borrador.
 
 Los datos están en [`data/familia.json`](../data/familia.json).

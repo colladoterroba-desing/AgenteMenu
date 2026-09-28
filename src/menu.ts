@@ -19,6 +19,8 @@ export interface Ingrediente {
   cantidad: number;
   unidad: string;
   seccion: Seccion;
+  /** Se compra uno por persona (p. ej. una dorada), sin escalar por el tamaño de la ración. */
+  porPersona?: boolean;
 }
 
 export type Tecnica = "sin cocinar" | "plancha" | "horno" | "guiso" | "frío";
@@ -262,15 +264,18 @@ export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Sec
   const acumulado = new Map<string, LineaCompra & { seccion: Seccion }>();
   const todas = dias
     .flatMap((d) => d.comidas.flatMap((c) => [...c.platos, ...c.tuppers]))
-    .flatMap((r) => [r, ...(r.segundo ? [r.segundo] : [])]);
-  for (const { receta, raciones } of todas) {
+    .flatMap((r) => [
+      { receta: r.receta, raciones: r.raciones, personas: r.comensales.length },
+      ...(r.segundo ? [{ ...r.segundo, personas: r.comensales.length }] : []),
+    ]);
+  for (const { receta, raciones, personas } of todas) {
     for (const ing of receta.ingredientes) {
       const clave = `${ing.nombre.toLowerCase()}|${ing.unidad}`;
       const linea = acumulado.get(clave) ?? {
         nombre: ing.nombre, unidad: ing.unidad, seccion: ing.seccion,
         cantidad: 0, enDespensa: 0, comprar: 0, recetas: [],
       };
-      linea.cantidad += ing.cantidad * raciones;
+      linea.cantidad += ing.cantidad * (ing.porPersona ? personas : raciones);
       if (!linea.recetas.includes(receta.nombre)) linea.recetas.push(receta.nombre);
       acumulado.set(clave, linea);
     }

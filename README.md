@@ -65,6 +65,8 @@ La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, D
 | `src/web.ts` | Vista web de los resultados |
 | `src/pdf.ts` | PDF del menú y de la lista de la compra |
 | `data/propuesta-tuppers.json` | Rotación de tuppers de oficina |
+| `data/precios.json` | Precios por tienda (Mercadona, BM, Elías) y estimación orientativa |
+| `src/precios.ts` | Coste de la cesta por tienda y combinación más barata |
 
 ## Desarrollo
 

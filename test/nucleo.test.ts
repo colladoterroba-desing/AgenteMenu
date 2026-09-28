@@ -307,3 +307,42 @@ test("primero y segundo: el segundo lo comen los mismos y entra en la compra", a
     .filter((c) => c.platos.some((p) => [p.receta, p.segundo?.receta].some((r) => r?.ingredientes.some((i) => i.nombre === "Huevos"))));
   assert.ok(conHuevo.length >= 4, `solo ${conHuevo.length}`);
 });
+
+test("coste de la cesta: envases enteros, granel, tienda más barata y estimación de respaldo", async () => {
+  const { costeCesta } = await import("../src/precios.js");
+  const linea = (nombre: string, unidad: string, comprar: number) =>
+    ({ nombre, unidad, cantidad: comprar, enDespensa: 0, comprar, recetas: [] });
+  const lista = {
+    "Frutería": [linea("Tomate", "g", 1500)], "Carnicería": [], "Pescadería": [], "Charcutería y quesos": [],
+    "Lácteos y huevos": [linea("Leche semidesnatada", "ml", 3500), linea("Huevos", "ud", 20)],
+    "Panadería": [], "Despensa": [], "Congelados": [],
+  };
+  const p = (producto: string, tienda: string, precio: number, cantidad: number, unidad: string, granel = false) =>
+    ({ producto, tienda, precio, cantidad, unidad, granel, fecha: "2026-09-28", fuente: "manual" as const });
+  const tabla = {
+    tiendas: [{ id: "Mercadona" }, { id: "BM" }],
+    precios: [
+      p("Leche semidesnatada", "Mercadona", 0.9, 1000, "ml"), p("Leche semidesnatada", "BM", 1.0, 1000, "ml"),
+      p("Tomate", "Mercadona", 2, 1000, "g", true),
+      p("Huevos", "Estimado", 2.6, 12, "ud"),
+    ],
+  };
+  const c = costeCesta(lista, tabla);
+  const leche = c.lineas.find((l) => l.nombre === "Leche semidesnatada")!;
+  assert.equal(leche.porTienda.Mercadona.envases, 4); // 3,5 l → 4 bricks
+  assert.equal(leche.porTienda.Mercadona.coste, 3.6);
+  assert.equal(leche.masBarata, "Mercadona");
+  assert.equal(c.lineas.find((l) => l.nombre === "Tomate")!.porTienda.Mercadona.coste, 3); // granel: 1,5 kg × 2 €
+  assert.deepEqual(c.totales.BM, { total: 4, conPrecio: 1, sinPrecio: 2 });
+  // Huevos sin precio real: la combinación usa la estimación (2 docenas).
+  assert.equal(c.optimizada.estimados, 1);
+  assert.equal(c.optimizada.total, 3.6 + 3 + 5.2);
+});
+
+test("ingredientes por persona: una dorada por comensal, sin redondear por la ración", async () => {
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dorada = listaCompra(componerMenu(familia, menu, recetas)).Pescadería.find((l) => l.nombre.startsWith("Dorada"))!;
+  assert.equal(dorada.comprar, 4);
+});

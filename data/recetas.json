@@ -256,7 +256,7 @@
       "tiempoMin": 45,
       "tecnica": "horno",
       "ingredientes": [
-        { "nombre": "Dorada limpia (ración)", "cantidad": 1, "unidad": "ud", "seccion": "Pescadería" },
+        { "nombre": "Dorada limpia (ración)", "cantidad": 1, "unidad": "ud", "seccion": "Pescadería", "porPersona": true },
         { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },

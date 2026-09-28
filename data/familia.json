@@ -74,9 +74,9 @@
   },
   "roles": {
     "CCT": "cocinera principal",
-    "RFC": "cocina poco; solo plancha",
-    "AFC": "solo plancha",
-    "RFA": "no cocina"
+    "RFA": "cocina poco; plancha",
+    "RFC": "solo plancha",
+    "AFC": "solo plancha"
   },
   "objetivos": {}
 }

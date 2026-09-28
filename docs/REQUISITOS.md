@@ -20,7 +20,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
   - J: comen en casa RFC, AFC y CCT.
   - V, S y D: comen en casa los 4.
   - Todas las cenas: los 4.
-- **Roles en la cocina:** CCT es la cocinera; RFC cocina poco; RFC y AFC solo hacen plancha.
+- **Roles en la cocina:** CCT es la cocinera; RFA cocina poco y plancha; RFC y AFC solo hacen plancha.
 
 Los datos están en [`data/familia.json`](../data/familia.json).
 

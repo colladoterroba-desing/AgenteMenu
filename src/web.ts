@@ -892,6 +892,7 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .inventario{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.92rem}
 .inventario li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:4px}
 .inventario .producto{flex:1}
+.nota-producto{flex-basis:100%;font-size:.76rem}
 .aviso-db{background:var(--info-soft);padding:8px 12px;border-radius:6px}
 .panel-semana{display:grid;gap:16px;padding-top:12px}
 .barra{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
@@ -1138,6 +1139,7 @@ const SCRIPT = `
       const cant = document.createElement("span"); cant.className = "mono"; cant.textContent = fmtCant(Number(p.cantidad), p.unidad);
       li.append(nombre, cant);
       if (p.caducidad) { const cad = document.createElement("span"); cad.className = "sub caduca"; cad.textContent = "caduca " + p.caducidad; li.append(cad); }
+      if (p.nota) { const nota = document.createElement("span"); nota.className = "sub nota-producto"; nota.textContent = p.nota; li.append(nota); }
       if (db) {
         const quitar = document.createElement("button"); quitar.type = "button"; quitar.className = "enlace"; quitar.textContent = "Quitar";
         quitar.addEventListener("click", () => guardarProducto(p.nombre, p.unidad, 0));

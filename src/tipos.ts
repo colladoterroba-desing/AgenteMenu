@@ -88,6 +88,8 @@ export interface Producto {
   unidad: string;
   categoria?: string;
   caducidad?: string;
+  /** De dónde sale el dato (p. ej. ticket) y si la cantidad está confirmada. */
+  nota?: string;
 }
 
 export interface Sobra {

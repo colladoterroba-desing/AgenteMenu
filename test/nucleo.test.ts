@@ -58,11 +58,14 @@ async function almacenTemporal() {
 
 test("despensa: añadir, consumir y eliminar al llegar a cero", async () => {
   const almacen = await almacenTemporal();
-  await almacen.ajustarProductos([{ nombre: "Lentejas", cantidad: 1000, unidad: "g" }]);
-  let despensa = await almacen.ajustarProductos([{ nombre: "lentejas", cantidad: -400, unidad: "g" }]);
-  assert.equal(despensa.productos[0].cantidad, 600);
-  despensa = await almacen.ajustarProductos([{ nombre: "Lentejas", cantidad: -600, unidad: "g" }]);
-  assert.equal(despensa.productos.length, 0);
+  const antes = (await almacen.despensa()).productos.length;
+  const alubias = (d: { productos: { nombre: string; cantidad: number }[] }) => d.productos.find((p) => p.nombre === "Alubias pintas");
+  await almacen.ajustarProductos([{ nombre: "Alubias pintas", cantidad: 1000, unidad: "g" }]);
+  let despensa = await almacen.ajustarProductos([{ nombre: "alubias pintas", cantidad: -400, unidad: "g" }]);
+  assert.equal(alubias(despensa)!.cantidad, 600);
+  despensa = await almacen.ajustarProductos([{ nombre: "Alubias pintas", cantidad: -600, unidad: "g" }]);
+  assert.equal(alubias(despensa), undefined);
+  assert.equal(despensa.productos.length, antes);
 });
 
 test("herramientas validan la entrada y protegen datos sensibles", async () => {

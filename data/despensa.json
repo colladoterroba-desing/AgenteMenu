@@ -1,4 +1,28 @@
 {
-  "productos": [],
+  "productos": [
+    {"nombre": "Café molido", "cantidad": 250, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Cuscús integral", "cantidad": 500, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar · se compró cuscús normal"},
+    {"nombre": "Zumo de naranja con pulpa", "cantidad": 2000, "unidad": "ml", "nota": "Ticket Mercadona 28/09 · 2 bricks de 1 l, sin confirmar"},
+    {"nombre": "Contramuslos de pollo deshuesados", "cantidad": 1000, "unidad": "g", "nota": "Ticket Mercadona 28/09 · 2 bandejas, peso supuesto"},
+    {"nombre": "Queso fresco", "cantidad": 250, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Lentejas pardinas", "cantidad": 1000, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Solomillo de cerdo", "cantidad": 2400, "unidad": "g", "nota": "Ticket Mercadona 28/09 · 4 bandejas (19,30 €), peso estimado a unos 8 €/kg"},
+    {"nombre": "Lentejas cocidas (bote)", "cantidad": 400, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Garbanzos cocidos (bote)", "cantidad": 400, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Hummus", "cantidad": 240, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Jamón serrano en lonchas", "cantidad": 200, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Tortillas integrales de trigo", "cantidad": 8, "unidad": "ud", "nota": "Ticket Mercadona 28/09 · «T. 100% integrales», sin confirmar qué son"},
+    {"nombre": "Puerro", "cantidad": 500, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Champiñones", "cantidad": 250, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Lechuga", "cantidad": 300, "unidad": "g", "nota": "Ticket Mercadona 28/09 · 1 lechuga hoja de roble, peso supuesto"},
+    {"nombre": "Zanahoria", "cantidad": 1000, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Base de pizza integral", "cantidad": 2, "unidad": "ud", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Espinacas frescas", "cantidad": 150, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Calabaza", "cantidad": 500, "unidad": "g", "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"},
+    {"nombre": "Pan de barra", "cantidad": 500, "unidad": "g", "nota": "Ticket Mercadona 28/09 · 2 baguettes, peso supuesto"},
+    {"nombre": "Pan integral", "cantidad": 400, "unidad": "g", "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"},
+    {"nombre": "Pimiento rojo", "cantidad": 366, "unidad": "g", "nota": "Ticket Mercadona 28/09 · peso del ticket"},
+    {"nombre": "Brócoli", "cantidad": 876, "unidad": "g", "nota": "Ticket Mercadona 28/09 · peso del ticket"}
+  ],
   "sobras": []
 }

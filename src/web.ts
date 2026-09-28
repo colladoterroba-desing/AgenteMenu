@@ -549,7 +549,11 @@ function seccionTuppers(propuesta: PropuestaTuppers, familia: Familia): string {
             </li>`,
             )
             .join("")}</ol>
-          <p class="nota"><strong>Con objetivo de peso:</strong> ${esc(propuesta.ajusteConObjetivo[id] ?? "—")}</p>
+          ${
+            familia.objetivos[id]
+              ? `<p class="nota aviso-borde"><strong>Objetivo de peso aceptado, aplicar:</strong> ${esc(propuesta.ajusteConObjetivo[id] ?? "—")}</p>`
+              : `<p class="nota"><strong>Si acepta el objetivo de peso:</strong> ${esc(propuesta.ajusteConObjetivo[id] ?? "—")}</p>`
+          }
         </section>`;
       })
       .join("");

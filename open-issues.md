@@ -26,7 +26,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 - [ ] **OI-05 · Desayuno de RFC el fin de semana.** Sin almuerzo, solo toma café y le faltan unas 600 kcal del desayuno. ¿Desayuna algo más en casa el sábado y el domingo?
 - [ ] **OI-06 · Desayuno de RFA los días de running (L y M).** Tiene unas 170 kcal frente a unas 470 objetivo. Propuesta: añadir fruta o una tortita más. Pendiente de que RFA lo acepte.
 - [ ] **OI-07 · Desayuno de CCT.** Propuesta: tostada integral con tomate y queso fresco, sin azúcar, y una pieza de fruta. Pendiente de que CCT la acepte.
-- [ ] **OI-08 · Objetivos de peso de RFA y CCT.** Hay propuestas calculadas (67,8 kg: RFA en unas 11 semanas y CCT en unas 23), pero no se aplican hasta acordarlas. Recomendable consultarlas antes con su médico.
+- [x] **OI-08 · Objetivos de peso de RFA y CCT.** Aceptados el 28/09/2026: los dos, a 67,8 kg (IMC 24,9) perdiendo unos 0,5 kg por semana. RFA: 1.879 kcal/día, fecha prevista 14/12/2026. CCT: 1.623 kcal/día, fecha prevista 08/03/2027. Pendiente: consultarlo con su médico y decidir cómo se registra el peso cada 2 semanas.
 - [ ] **OI-09 · Merienda.** Se ha supuesto que meriendan los cuatro de lunes a viernes y nadie el fin de semana. Confirmar.
 - [ ] **OI-10 · Pescado para RFA.** «No come mucho pescado». Con la norma del pescado azul (solo los jueves a mediodía, cuando RFA no come en casa), la semana A tiene merluza el miércoles por la noche (RFA toma tortilla), gambas el sábado y dorada el domingo. Confirmar si RFA come estas dos últimas.
 - [ ] **OI-11 · Energía según el día.** Las raciones usan el gasto medio de la semana. Valorar si se ajustan por día (más en días de entreno o partido).

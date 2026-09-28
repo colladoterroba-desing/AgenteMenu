@@ -123,11 +123,12 @@ test("las variantes sacan al comensal del plato principal y la compra suma todas
     ["tortilla-francesa-brocoli", ["RFA"]],
   ]);
   // Albóndigas: 4 comensales de la cena del lunes + tupper de CCT del martes.
+  const f = (id: string) => calcularNecesidades(miembro(id), familia.objetivos[id]).factorRacion;
   const pavo = listaCompra(dias).Carnicería.find((l) => l.nombre === "Carne picada de pavo")!;
-  assert.ok(Math.abs(pavo.cantidad - 130 * (1.17 + 1.01 + 1.23 + 1.12 + 1.01)) < 1);
+  assert.ok(Math.abs(pavo.cantidad - 130 * (f("RFA") + f("CCT") + f("RFC") + f("AFC") + f("CCT"))) < 1);
   // Salmón: solo la comida del jueves (CCT, RFC y AFC).
   const salmon = listaCompra(dias).Pescadería.find((l) => l.nombre === "Lomo de salmón")!;
-  const esperado = 130 * (1.01 + 1.23 + 1.12);
+  const esperado = 130 * (f("CCT") + f("RFC") + f("AFC"));
   assert.ok(Math.abs(salmon.cantidad - esperado) < 1);
   assert.ok(salmon.comprar >= salmon.cantidad);
 });
@@ -239,4 +240,16 @@ test("los desayunos fijos ocultos no salen en el menú pero sí en la compra; PD
   assert.match(htmlMenuPdf(datos), /size:A4 landscape/);
   assert.match(htmlCompraPdf(datos), /size:A4 portrait/);
   assert.doesNotMatch(htmlMenuPdf(datos), /Nesquik/);
+});
+
+test("objetivos de peso aceptados: las raciones de RFA y CCT usan las kcal del objetivo", () => {
+  for (const id of ["RFA", "CCT"]) {
+    const n = calcularNecesidades(miembro(id), familia.objetivos[id]);
+    assert.equal(n.kcalObjetivo, familia.objetivos[id].kcalDiarias);
+    assert.ok(n.kcalObjetivo < n.gastoDiario);
+    assert.ok(n.kcalObjetivo >= n.tmb);
+    assert.equal(n.propuestaObjetivo, null);
+  }
+  assert.equal(familia.objetivos.RFC, undefined);
+  assert.equal(familia.objetivos.AFC, undefined);
 });

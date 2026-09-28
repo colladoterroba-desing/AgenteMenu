@@ -108,5 +108,20 @@
     "RFC": "solo plancha",
     "AFC": "solo plancha"
   },
-  "objetivos": {}
+  "objetivos": {
+    "RFA": {
+      "pesoObjetivoKg": 67.8,
+      "kcalDiarias": 1879,
+      "semanas": 11,
+      "fechaInicio": "2026-09-28",
+      "notas": "Aceptado el 28/09/2026. De 73 a 67,8 kg (IMC 24,9) a unos 0,5 kg por semana; fecha prevista, 14/12/2026. Revisar el peso cada 2 semanas y consultarlo con su médico."
+    },
+    "CCT": {
+      "pesoObjetivoKg": 67.8,
+      "kcalDiarias": 1623,
+      "semanas": 23,
+      "fechaInicio": "2026-09-28",
+      "notas": "Aceptado el 28/09/2026. De 79 a 67,8 kg (IMC 24,9) a unos 0,5 kg por semana; fecha prevista, 08/03/2027. Revisar el peso cada 2 semanas y consultarlo con su médico."
+    }
+  }
 }

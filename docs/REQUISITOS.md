@@ -28,6 +28,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Cocina por la mañana:** por las mañanas no se cocina en casa. Almuerzos y tuppers se preparan la noche anterior o en el batch. La tortilla francesa se hace al momento: no se prepara el día antes.
 - **Desayunos fijos:** cada persona elige si su desayuno fijo aparece en el menú (por defecto no). Siempre se cuenta en la lista de la compra.
 - **PDF:** el menú se puede sacar en PDF en formato horizontal y la lista de la compra en vertical (`npm run pdf`).
+- **Objetivos de peso (aceptados el 28/09/2026):** RFA, de 73 a 67,8 kg con 1.879 kcal/día (unas 11 semanas). CCT, de 79 a 67,8 kg con 1.623 kcal/día (unas 23 semanas). Consultarlo con su médico.
 - **Validación del menú:** por el momento solo CCT puede dar por válido un menú y publicarlo. Puede pedir cambios antes de validarlo; cualquier cambio devuelve el menú a borrador.
 
 Los datos están en [`data/familia.json`](../data/familia.json).

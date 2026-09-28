@@ -69,6 +69,10 @@
       "S": ["RFA", "CCT", "RFC", "AFC"],
       "D": ["RFA", "CCT", "RFC", "AFC"]
     },
+    "tupper": {
+      "RFA": { "dias": ["L", "M", "X"], "tipo": "frío" },
+      "CCT": { "dias": ["L", "M", "X"], "tipo": "para recalentar" }
+    },
     "desayuno": "todos, todos los días",
     "merienda": "todos, de lunes a viernes"
   },

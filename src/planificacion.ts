@@ -15,6 +15,8 @@ export interface ComidaPlanificada {
   /** Raciones totales en equivalentes de adulto de referencia (2000 kcal). */
   racionesEquivalentes: number;
   comenFuera: string[];
+  /** Comensales de fuera que se llevan tupper preparado en casa. */
+  tuppers: (Comensal & { tipo: "frío" | "para recalentar" })[];
   /** Quién puede cocinar esa comida y con qué limitaciones. */
   cocina: string;
 }
@@ -66,11 +68,22 @@ export function planificarSemana(familia: Familia): DiaPlanificado[] {
         });
         const racionesEquivalentes =
           Math.round(comensales.reduce((s, c) => s + c.factorRacion, 0) * 100) / 100;
+        const comenFuera = todos.filter((id) => !presentes.includes(id));
+        const tuppers =
+          tipo === "comida"
+            ? comenFuera.flatMap((id) => {
+                const tupper = familia.regimen.tupper?.[id];
+                if (!tupper?.dias.includes(dia)) return [];
+                const n = necesidades.get(id)!;
+                return [{ id, kcal: Math.round(n.kcalObjetivo * reparto.comida), factorRacion: n.factorRacion, tipo: tupper.tipo }];
+              })
+            : [];
         return {
           tipo,
           comensales,
           racionesEquivalentes,
-          comenFuera: todos.filter((id) => !presentes.includes(id)),
+          comenFuera,
+          tuppers,
           cocina: quienCocina(familia, presentes),
         };
       });

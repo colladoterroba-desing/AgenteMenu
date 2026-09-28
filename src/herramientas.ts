@@ -47,7 +47,7 @@ export function crearHerramientas(almacen: Almacen) {
     herramienta({
       nombre: "planificar_comensales",
       descripcion:
-        "Rejilla semanal (L-D) con cada comida del día: quién come en casa, kcal por comensal, raciones equivalentes totales, quién come fuera y quién puede cocinar. Úsala como base del menú.",
+        "Rejilla semanal (L-D) con cada comida del día: quién come en casa, kcal por comensal, raciones equivalentes totales, quién come fuera (y si se lleva tupper, frío o para recalentar, con sus kcal) y quién puede cocinar. Úsala como base del menú.",
       esquema: z.object({}),
       ejecutar: async () => planificarSemana(await almacen.familia()),
     }),

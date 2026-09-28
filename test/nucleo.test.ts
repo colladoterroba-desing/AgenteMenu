@@ -92,3 +92,15 @@ test("resumen de hábitos de compra", () => {
   assert.equal(resumen.gastoPorCategoria["lácteos"], 12);
   assert.equal(resumen.productosMasComprados[0].veces, 2);
 });
+
+test("tuppers de oficina: RFA frío y CCT para recalentar de lunes a miércoles", () => {
+  const semana = planificarSemana(familia);
+  for (const dia of semana) {
+    const tuppers = dia.comidas.find((c) => c.tipo === "comida")!.tuppers;
+    if (["L", "M", "X"].includes(dia.dia)) {
+      assert.deepEqual(tuppers.map((t) => [t.id, t.tipo]), [["RFA", "frío"], ["CCT", "para recalentar"]]);
+    } else {
+      assert.equal(tuppers.length, 0);
+    }
+  }
+});

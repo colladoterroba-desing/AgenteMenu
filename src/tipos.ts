@@ -45,6 +45,8 @@ export interface Familia {
   regimen: {
     comida: Record<Dia, string[]>;
     cena: Record<Dia, string[]>;
+    /** Quién se lleva la comida a la oficina, qué días y si se come frío o recalentado. */
+    tupper?: Record<string, { dias: Dia[]; tipo: "frío" | "para recalentar" }>;
     desayuno: string;
     merienda: string;
   };

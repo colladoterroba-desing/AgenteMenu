@@ -1,7 +1,14 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { calcularNecesidades, kcalDeporteDiarias, tasaMetabolicaBasal } from "./nutricion.js";
+import {
+  calcularNecesidades,
+  kcalDeporteDiarias,
+  PARTE_DESAYUNO_PARA_ALMUERZO,
+  REPARTO_FIN_DE_SEMANA,
+  REPARTO_LABORABLE,
+  tasaMetabolicaBasal,
+} from "./nutricion.js";
 import { componerMenu, listaCompra, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
@@ -45,60 +52,6 @@ const COMIDAS: { tipo: TipoComida; nombre: string }[] = [
 const IMC_MIN = 16;
 const IMC_MAX = 34;
 const posImc = (v: number) => ((Math.min(Math.max(v, IMC_MIN), IMC_MAX) - IMC_MIN) / (IMC_MAX - IMC_MIN)) * 100;
-
-function tarjetaMiembro(m: Miembro, familia: Familia): string {
-  const n = calcularNecesidades(m, familia.objetivos[m.id]);
-  const estado =
-    n.clasificacion === "normopeso"
-      ? { clase: "bien", texto: "Normopeso" }
-      : n.clasificacion === "sobrepeso" || n.clasificacion === "obesidad"
-        ? { clase: "aviso", texto: n.clasificacion === "sobrepeso" ? "Sobrepeso" : "Obesidad" }
-        : n.clasificacion === "bajo peso"
-          ? { clase: "aviso", texto: "Bajo peso" }
-          : { clase: "info", texto: "Menor: percentiles" };
-  const deportes = m.actividades
-    .map((a) => `<li>${esc(DEPORTE[a.deporte] ?? a.deporte)} <span class="mono">${a.dias.join(" ")} · ${a.minutos} min</span></li>`)
-    .join("");
-  const objetivo = n.objetivoActivo
-    ? `<p class="nota bien-borde"><strong>Objetivo acordado:</strong> ${num(n.objetivoActivo.pesoObjetivoKg, 1)} kg en ${n.objetivoActivo.semanas} semanas · ${num(n.objetivoActivo.kcalDiarias)} kcal/día</p>`
-    : n.propuestaObjetivo
-      ? `<p class="nota aviso-borde"><strong>Propuesta pendiente de acordar:</strong> ${num(n.propuestaObjetivo.pesoObjetivoKg, 1)} kg en unas ${n.propuestaObjetivo.semanas} semanas, con ${num(n.propuestaObjetivo.kcalDiarias)} kcal/día. Conviene consultarlo con su médico.</p>`
-      : !m.edad || m.edad < 18
-        ? `<p class="nota">Sin restricciones calóricas: prioridad al crecimiento y al deporte. Dudas de peso, con su pediatra.</p>`
-        : "";
-  const imcEscala =
-    m.edad >= 18
-      ? `<div class="imc" aria-label="IMC ${num(n.imc, 1)} en una escala de ${IMC_MIN} a ${IMC_MAX}">
-          <div class="imc-bandas">
-            <span style="width:${posImc(18.5)}%" class="b-bajo"></span>
-            <span style="width:${posImc(25) - posImc(18.5)}%" class="b-normal"></span>
-            <span style="width:${posImc(30) - posImc(25)}%" class="b-sobre"></span>
-            <span style="width:${100 - posImc(30)}%" class="b-obes"></span>
-          </div>
-          <span class="imc-marca" style="left:${posImc(n.imc)}%"></span>
-          <div class="imc-ejes mono"><span style="left:${posImc(18.5)}%">18,5</span><span style="left:${posImc(25)}%">25</span><span style="left:${posImc(30)}%">30</span></div>
-        </div>`
-      : "";
-
-  return `<article class="persona">
-    <header class="persona-cab">
-      <div>
-        <h3>${esc(m.id)}</h3>
-        <p class="sub">${m.edad} años · ${m.sexo === "V" ? "varón" : "mujer"} · ${m.alturaCm} cm · ${m.pesoKg} kg</p>
-      </div>
-      <span class="chip ${estado.clase}">${estado.texto}</span>
-    </header>
-    <dl class="cifras">
-      <div><dt>IMC</dt><dd class="mono">${num(n.imc, 1)}</dd></div>
-      <div><dt>Gasto diario</dt><dd class="mono">${num(n.gastoDiario)}<small> kcal</small></dd></div>
-      <div><dt>Ración</dt><dd class="mono">×${num(n.factorRacion, 2)}</dd></div>
-    </dl>
-    ${imcEscala}
-    <ul class="deportes">${deportes || "<li>Sin deporte registrado</li>"}</ul>
-    <p class="rol"><span class="etq">En la cocina</span> ${esc(familia.roles[m.id] ?? "—")}${m.gustos.length ? ` · <span class="etq">Gustos</span> ${esc(m.gustos.join(", "))}` : ""}</p>
-    ${objetivo}
-  </article>`;
-}
 
 function graficoEnergia(familia: Familia): string {
   const filas = familia.miembros.map((m) => {
@@ -151,6 +104,199 @@ function graficoEnergia(familia: Familia): string {
       </table></div>
     </details>
   </figure>`;
+}
+
+const DIAS_SEMANA: Dia[] = ["L", "M", "X", "J", "V", "S", "D"];
+
+function estadoImc(clasificacion: string) {
+  if (clasificacion === "normopeso") return { clase: "bien", texto: "Normopeso" };
+  if (clasificacion === "sobrepeso") return { clase: "aviso", texto: "Sobrepeso" };
+  if (clasificacion === "obesidad") return { clase: "aviso", texto: "Obesidad" };
+  if (clasificacion === "bajo peso") return { clase: "aviso", texto: "Bajo peso" };
+  return { clase: "info", texto: "Menor: percentiles" };
+}
+
+function escalaImc(imc: number): string {
+  return `<div class="imc" aria-label="IMC ${num(imc, 1)} en una escala de ${IMC_MIN} a ${IMC_MAX}">
+    <div class="imc-bandas">
+      <span style="width:${posImc(18.5)}%" class="b-bajo"></span>
+      <span style="width:${posImc(25) - posImc(18.5)}%" class="b-normal"></span>
+      <span style="width:${posImc(30) - posImc(25)}%" class="b-sobre"></span>
+      <span style="width:${100 - posImc(30)}%" class="b-obes"></span>
+    </div>
+    <span class="imc-marca" style="left:${posImc(imc)}%"></span>
+    <div class="imc-ejes mono"><span style="left:${posImc(18.5)}%">18,5</span><span style="left:${posImc(25)}%">25</span><span style="left:${posImc(30)}%">30</span></div>
+  </div>`;
+}
+
+const categoria = (titulo: string, cuerpo: string, clase = "") =>
+  `<section class="categoria ${clase}"><h4>${titulo}</h4>${cuerpo}</section>`;
+
+const pares = (filas: [string, string][]) =>
+  `<dl class="pares">${filas.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
+
+/** Ficha de configuración de una persona, organizada por categorías. */
+function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>): string {
+  const n = calcularNecesidades(m, familia.objetivos[m.id]);
+  const estado = estadoImc(n.clasificacion);
+  const deportes = m.actividades
+    .map((a) => `<li><span>${esc(DEPORTE[a.deporte] ?? a.deporte)}</span><span class="mono">${a.dias.join(" ")} · ${a.minutos} min</span></li>`)
+    .join("");
+  const objetivo = n.objetivoActivo
+    ? `<p class="nota bien-borde"><strong>Objetivo acordado:</strong> ${num(n.objetivoActivo.pesoObjetivoKg, 1)} kg en ${n.objetivoActivo.semanas} semanas · ${num(n.objetivoActivo.kcalDiarias)} kcal/día</p>`
+    : n.propuestaObjetivo
+      ? `<p class="nota aviso-borde"><strong>Propuesta pendiente de acordar:</strong> ${num(n.propuestaObjetivo.pesoObjetivoKg, 1)} kg en unas ${n.propuestaObjetivo.semanas} semanas, con ${num(n.propuestaObjetivo.kcalDiarias)} kcal/día. Conviene consultarlo con su médico.</p>`
+      : m.edad < 18
+        ? `<p class="nota">Sin restricciones calóricas: prioridad al crecimiento y al deporte. Dudas de peso, con su pediatra.</p>`
+        : `<p class="nota">Sin objetivo de peso: está en normopeso.</p>`;
+
+  const desayuno = familia.desayunos?.[m.id];
+  const recetaDesayuno = desayuno ? recetas.get(desayuno.receta) : undefined;
+  const almuerzo = familia.regimen.almuerzo?.[m.id];
+  const tupper = familia.regimen.tupper?.[m.id];
+  const enCasa = (tipo: "comida" | "cena") =>
+    `<ol class="dias-mini">${DIAS_SEMANA.map((d) => {
+      const si = familia.regimen[tipo][d].includes(m.id);
+      const fuera = !si && tipo === "comida" && tupper?.dias.includes(d);
+      const texto = si ? "en casa" : fuera ? `fuera, tupper ${tupper!.tipo}` : "fuera";
+      return `<li class="${si ? "si" : fuera ? "tupper-dia" : "no"}" title="${esc(`${NOMBRE_DIA[d]}: ${texto}`)}"><span aria-hidden="true">${d}</span><span class="sr">${esc(`${NOMBRE_DIA[d]}: ${texto}`)}</span></li>`;
+    }).join("")}</ol>`;
+
+  return `<div class="ficha">
+    <header class="ficha-cab">
+      <div>
+        <h3>${esc(m.id)}</h3>
+        <p class="sub">${m.edad} años · ${m.sexo === "V" ? "varón" : "mujer"}</p>
+      </div>
+      <span class="chip ${estado.clase}">${estado.texto}</span>
+    </header>
+    <div class="categorias">
+      ${categoria(
+        "Datos físicos",
+        pares([
+          ["Altura", `<span class="mono">${m.alturaCm} cm</span>`],
+          ["Peso", `<span class="mono">${m.pesoKg} kg</span>`],
+          ["IMC", `<span class="mono">${num(n.imc, 1)}</span>`],
+        ]) + (m.edad >= 18 ? escalaImc(n.imc) : `<p class="sub">En menores el IMC se valora con tablas de percentiles.</p>`),
+      )}
+      ${categoria(
+        "Energía y raciones",
+        pares([
+          ["Metabolismo basal", `<span class="mono">${num(n.tmb)} kcal</span>`],
+          ["Gasto diario", `<span class="mono">${num(n.gastoDiario)} kcal</span>`],
+          ["Objetivo diario", `<span class="mono">${num(n.kcalObjetivo)} kcal</span>`],
+          ["Ración", `<span class="mono">×${num(n.factorRacion, 2)}</span>`],
+        ]) + objetivo,
+      )}
+      ${categoria("Actividad física", `<ul class="lista-deporte">${deportes || "<li>Sin deporte registrado</li>"}</ul>`)}
+      ${categoria(
+        "Alimentación",
+        pares([
+          ["Gustos", m.gustos.length ? esc(m.gustos.join(", ")) : `<span class="sub">Sin indicar</span>`],
+          ["Alergias", familia.alergias.length ? esc(familia.alergias.join(", ")) : `<span class="sub">No detectadas</span>`],
+          [
+            "Desayuno",
+            recetaDesayuno
+              ? `<a href="#r-${esc(recetaDesayuno.id)}">${esc(recetaDesayuno.nombre)}</a>${desayuno?.nota ? `<br><span class="sub">${esc(desayuno.nota)}</span>` : ""}`
+              : `<span class="sub">El del menú</span>`,
+          ],
+          ["Almuerzo", almuerzo ? `Se lo lleva al ${esc(almuerzo.lugar)} · <span class="mono">${almuerzo.dias.join(" ")}</span>` : `<span class="sub">No</span>`],
+        ]),
+      )}
+      ${categoria(
+        "Comidas en casa",
+        `<div class="en-casa-fila"><span class="etq">Comida</span>${enCasa("comida")}</div>
+         <div class="en-casa-fila"><span class="etq">Cena</span>${enCasa("cena")}</div>
+         ${tupper ? `<p class="sub">Los días que come fuera se lleva tupper <strong>${esc(tupper.tipo)}</strong> (en color).</p>` : ""}`,
+      )}
+      ${categoria("En la cocina", `<p>${esc(familia.roles[m.id] ?? "—")}</p>`)}
+    </div>
+  </div>`;
+}
+
+function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
+  const porId = new Map(recetas.map((r) => [r.id, r]));
+  const filaRegimen = (nombre: string, quien: (d: Dia) => string[]) =>
+    `<tr><th scope="row">${nombre}</th>${DIAS_SEMANA.map(
+      (d) => `<td>${quien(d).map((id) => `<span class="comensal">${esc(id)}</span>`).join(" ") || `<span class="sub">—</span>`}</td>`,
+    ).join("")}</tr>`;
+  const tuppers = familia.regimen.tupper ?? {};
+  const almuerzos = familia.regimen.almuerzo ?? {};
+  const quienTupper = (d: Dia) => Object.entries(tuppers).filter(([, t]) => t.dias.includes(d)).map(([id]) => id);
+  const quienAlmuerzo = (d: Dia) => Object.entries(almuerzos).filter(([, a]) => a.dias.includes(d)).map(([id]) => id);
+
+  const grupo = `<div class="grupo">
+    <div class="categorias">
+      ${categoria(
+        "Miembros",
+        `<ul class="miembros">${familia.miembros
+          .map((m) => `<li><span class="comensal">${esc(m.id)}</span> ${m.edad} años · ${m.sexo === "V" ? "varón" : "mujer"}</li>`)
+          .join("")}</ul>`,
+      )}
+      ${categoria(
+        "Normas de la casa",
+        pares([
+          ["Preferencias", familia.preferencias?.length ? esc(familia.preferencias.join(" · ")) : `<span class="sub">Ninguna</span>`],
+          ["Alergias", familia.alergias.length ? esc(familia.alergias.join(", ")) : `<span class="sub">No detectadas</span>`],
+          ["Merienda", esc(familia.regimen.merienda)],
+        ]),
+      )}
+      ${categoria(
+        "Quién cocina",
+        `<ul class="miembros">${Object.entries(familia.roles)
+          .map(([id, rol]) => `<li><span class="comensal">${esc(id)}</span> ${esc(rol)}</li>`)
+          .join("")}</ul>`,
+      )}
+      ${categoria(
+        "Reparto de la energía del día",
+        `<table class="reparto"><thead><tr><th>Comida</th><th class="num">L-V</th><th class="num">S-D</th></tr></thead><tbody>
+          ${(["desayuno", "comida", "merienda", "cena"] as const)
+            .map(
+              (t) =>
+                `<tr><td>${t[0].toUpperCase() + t.slice(1)}</td><td class="num mono">${REPARTO_LABORABLE[t] ? `${num(REPARTO_LABORABLE[t] * 100)} %` : "—"}</td><td class="num mono">${REPARTO_FIN_DE_SEMANA[t] ? `${num(REPARTO_FIN_DE_SEMANA[t] * 100)} %` : "—"}</td></tr>`,
+            )
+            .join("")}
+        </tbody></table>
+        <p class="sub">Quien se lleva almuerzo pasa ${num(PARTE_DESAYUNO_PARA_ALMUERZO * 100)} % de su desayuno al almuerzo.</p>`,
+      )}
+      ${categoria(
+        "Criterios del menú",
+        `<ul class="criterios">
+          <li>Legumbres 2-4 veces por semana</li><li>Pescado 3-4 veces</li><li>Verdura en comida y cena</li>
+          <li>Fruta a diario</li><li>Carne roja, 1-2 veces como máximo</li><li>Ultraprocesados, ocasionales</li>
+        </ul>`,
+      )}
+    </div>
+    ${categoria(
+      "Régimen de comidas",
+      `<div class="scroll"><table class="regimen">
+        <thead><tr><th><span class="sr">Comida</span></th>${DIAS_SEMANA.map((d) => `<th>${NOMBRE_DIA[d]}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${filaRegimen("Almuerzo fuera", quienAlmuerzo)}
+          ${filaRegimen("Comida en casa", (d) => familia.regimen.comida[d])}
+          ${filaRegimen("Tupper", quienTupper)}
+          ${filaRegimen("Cena en casa", (d) => familia.regimen.cena[d])}
+        </tbody>
+      </table></div>`,
+      "ancha",
+    )}
+    ${graficoEnergia(familia)}
+  </div>`;
+
+  return `<div class="pestanas" role="tablist" aria-label="Configuración">
+      <button role="tab" id="tab-cfg-grupo" aria-controls="cfg-grupo" aria-selected="true" tabindex="0">Grupo familiar</button>
+      ${familia.miembros
+        .map((m) => `<button role="tab" id="tab-cfg-${esc(m.id)}" aria-controls="cfg-${esc(m.id)}" aria-selected="false" tabindex="-1">${esc(m.id)}</button>`)
+        .join("")}
+    </div>
+    <div role="tabpanel" id="cfg-grupo" aria-labelledby="tab-cfg-grupo" class="panel-config">${grupo}</div>
+    ${familia.miembros
+      .map(
+        (m) =>
+          `<div role="tabpanel" id="cfg-${esc(m.id)}" aria-labelledby="tab-cfg-${esc(m.id)}" class="panel-config" hidden>${fichaPersona(m, familia, porId)}</div>`,
+      )
+      .join("")}
+    <p class="sub">Estos datos salen de <code>data/familia.json</code>. Para cambiarlos, díselo al agente o edita el fichero y vuelve a generar la página.</p>`;
 }
 
 const TECNICA: Record<string, string> = {
@@ -419,7 +565,7 @@ const ESTILOS = `
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);}
-.pagina{max-width:1180px;margin:0 auto;padding-inline:clamp(16px,4vw,40px);padding-block:32px 56px;display:grid;gap:48px}
+.pagina{max-width:1180px;margin:0 auto;padding-inline:clamp(16px,4vw,40px);padding-block:28px 56px;display:grid;gap:40px}
 h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
 h1{font-size:clamp(1.9rem,4.5vw,2.8rem);font-weight:700;letter-spacing:-.02em}
 h2{font-size:1.5rem;font-weight:650}
@@ -519,11 +665,46 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .desayunos-dia a{color:var(--ink);text-decoration:none}
 .desayunos-dia a:hover,.desayunos a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
 .batch ul{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.92rem}
-.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * clamp(16px,4vw,40px));padding:10px clamp(16px,4vw,40px);display:flex;gap:4px 18px;flex-wrap:wrap;font-size:.9rem;font-weight:600}
-.nav a{color:var(--muted);text-decoration:none}
-.nav a:hover,.nav a:focus-visible{color:var(--accent)}
-section[id]{scroll-margin-top:64px}
-.receta[id]{scroll-margin-top:64px}
+.barra{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.barra-dentro{max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px);display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
+.marca{font:700 1.05rem var(--f-display);display:flex;gap:8px;align-items:baseline}
+.marca .etq{color:var(--accent)}
+.nav{display:flex;flex-wrap:wrap;gap:4px}
+.nav a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.93rem;padding:6px 12px;border-radius:999px}
+.nav a:hover{color:var(--ink);background:var(--accent-soft)}
+.nav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nav a[aria-current]{background:var(--accent);color:var(--surface)}
+.vista{display:grid;gap:24px;scroll-margin-top:80px}
+.categorias{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;align-items:start}
+.categoria{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:10px;align-content:start}
+.categoria h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-family:var(--f-body);font-weight:700}
+.categoria.ancha{grid-column:1 / -1}
+.grupo,.panel-config{display:grid;gap:16px}
+.panel-config{padding-top:16px}
+.pares{margin:0;display:grid;gap:8px}
+.pares div{display:grid;grid-template-columns:minmax(110px,40%) 1fr;gap:10px;align-items:baseline}
+.pares dt{color:var(--muted);font-size:.86rem}
+.pares dd{margin:0;font-size:.95rem}
+.pares a,.categoria a{color:var(--ink);font-weight:600;text-decoration-color:var(--accent)}
+.ficha{display:grid;gap:16px}
+.ficha-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ficha-cab h3{font-size:1.8rem}
+.lista-deporte,.miembros,.criterios{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.93rem}
+.lista-deporte li{display:flex;justify-content:space-between;gap:10px}
+.lista-deporte .mono{color:var(--muted);font-size:.82rem}
+.criterios li::before{content:"·";color:var(--accent);font-weight:700;margin-right:6px}
+.en-casa-fila{display:flex;align-items:center;gap:10px}
+.en-casa-fila .etq{width:56px}
+.dias-mini{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+.dias-mini li{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font:600 .78rem var(--f-mono);border:1px solid var(--line);color:var(--muted)}
+.dias-mini li.si{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.dias-mini li.tupper-dia{background:var(--calor-soft);border-color:var(--calor);color:var(--calor)}
+.reparto{font-size:.9rem}
+.reparto th,.reparto td{padding:4px 6px}
+.reparto .num{text-align:right}
+.regimen td{min-width:96px}
+code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);padding:1px 5px;border-radius:4px}
+.receta[id]{scroll-margin-top:72px}
 .filtros{display:flex;flex-wrap:wrap;gap:6px}
 .filtros button,.compra-acciones button{font:600 .88rem var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
 .filtros button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
@@ -578,23 +759,41 @@ section[id]{scroll-margin-top:64px}
 
 const SCRIPT = `
 (() => {
-  const tabs = [...document.querySelectorAll('[role="tab"]')];
-  const activar = (tab) => {
-    tabs.forEach((t) => {
-      const on = t === tab;
-      t.setAttribute("aria-selected", on);
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
-    });
-    tab.focus();
-  };
-  tabs.forEach((t, i) => {
-    t.addEventListener("click", () => activar(t));
-    t.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight") activar(tabs[(i + 1) % tabs.length]);
-      if (e.key === "ArrowLeft") activar(tabs[(i - 1 + tabs.length) % tabs.length]);
+  document.querySelectorAll('[role="tablist"]').forEach((lista) => {
+    const tabs = [...lista.querySelectorAll('[role="tab"]')];
+    const activar = (tab) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute("aria-selected", on);
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      });
+      tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => activar(t));
+      t.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") activar(tabs[(i + 1) % tabs.length]);
+        if (e.key === "ArrowLeft") activar(tabs[(i - 1 + tabs.length) % tabs.length]);
+      });
     });
   });
+
+  // Páginas: una vista visible según el #ancla; #r-<id> abre la receta.
+  const vistas = [...document.querySelectorAll("[data-vista]")];
+  const enlaces = [...document.querySelectorAll("[data-pagina]")];
+  const irA = () => {
+    let destino = location.hash.slice(1) || "menu";
+    let receta = null;
+    if (destino.startsWith("r-")) { receta = destino; destino = "recetas"; }
+    if (!vistas.some((v) => v.id === destino)) destino = "menu";
+    vistas.forEach((v) => (v.hidden = v.id !== destino));
+    enlaces.forEach((a) => a.toggleAttribute("aria-current", a.dataset.pagina === destino));
+    const el = receta && document.getElementById(receta);
+    if (el) el.scrollIntoView({ block: "start" }); else window.scrollTo(0, 0);
+  };
+  addEventListener("hashchange", irA);
+  irA();
 
   const tip = document.createElement("div");
   tip.className = "tip"; tip.hidden = true; document.body.append(tip);
@@ -660,6 +859,13 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
   const tuppersSemana = comidas.reduce((s, c) => s + c.tuppers.length, 0);
   const recetasUsadas = new Set(comidas.flatMap((c) => [...c.platos, ...c.tuppers].map((p) => p.receta.id))).size;
   const productos = SECCIONES.reduce((s, x) => s + compra[x].length, 0);
+  const paginas = [
+    ["menu", "Menú"],
+    ["recetas", "Recetas"],
+    ["compra", "Compra"],
+    ["tuppers", "Tuppers"],
+    ["configuracion", "Configuración"],
+  ];
 
   return `<title>Menú ${esc(familia.nombre)}</title>
 <meta charset="utf-8">
@@ -668,51 +874,51 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap">
 <style>${ESTILOS}</style>
+<header class="barra">
+  <div class="barra-dentro">
+    <p class="marca"><span class="etq">AgenteMenú</span> ${esc(familia.nombre)}</p>
+    <nav class="nav" aria-label="Páginas">
+      ${paginas.map(([id, texto]) => `<a href="#${id}" data-pagina="${id}">${texto}</a>`).join("")}
+    </nav>
+  </div>
+</header>
 <main class="pagina">
-  <header class="cab">
-    <span class="etq">AgenteMenú · semana ${esc(menu.semana)}</span>
-    <h1>${esc(familia.nombre)}</h1>
-    <p class="sub">Menú de la semana con recetas, lista de la compra y raciones calculadas para cada persona. Generado el ${esc(fecha)}.</p>
-    <dl class="resumen">
-      <div><dt>Comidas planificadas</dt><dd>${comidas.length}</dd></div>
-      <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>
-      <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
-      <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
-    </dl>
-  </header>
-
-  <nav class="nav" aria-label="Secciones">
-    <a href="#menu">Menú</a><a href="#recetas">Recetas</a><a href="#compra">Lista de la compra</a><a href="#personas">Personas</a><a href="#tuppers">Rotación de tuppers</a>
-  </nav>
-
-  <section class="seccion" id="menu" aria-labelledby="h-menu">
-    <header><h2 id="h-menu">Menú de la semana</h2>
-    <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y ×N las raciones totales (1 = adulto de 2.000 kcal). En naranja, cuándo se prepara si no se cocina en el momento.</p></header>
+  <section class="vista" id="menu" data-vista aria-labelledby="h-menu">
+    <header class="cab">
+      <span class="etq">Semana ${esc(menu.semana)} · generado el ${esc(fecha)}</span>
+      <h1 id="h-menu">Menú de la semana</h1>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y ×N las raciones totales (1 = adulto de 2.000 kcal). En naranja, cuándo se prepara si no se cocina en el momento.</p>
+      <dl class="resumen">
+        <div><dt>Comidas planificadas</dt><dd>${comidas.length}</dd></div>
+        <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>
+        <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
+        <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
+      </dl>
+    </header>
     ${seccionMenu(familia, dias, menu)}
   </section>
 
-  <section class="seccion" id="recetas" aria-labelledby="h-recetas">
-    <header><h2 id="h-recetas">Recetas</h2></header>
+  <section class="vista" id="recetas" data-vista aria-labelledby="h-recetas" hidden>
+    <header class="cab"><h1 id="h-recetas">Recetas</h1></header>
     ${seccionRecetas(recetas, dias)}
   </section>
 
-  <section class="seccion" id="compra" aria-labelledby="h-compra">
-    <header><h2 id="h-compra">Lista de la compra</h2>
+  <section class="vista" id="compra" data-vista aria-labelledby="h-compra" hidden>
+    <header class="cab"><h1 id="h-compra">Lista de la compra</h1>
     <p class="sub">Suma de los ingredientes de todo el menú y los tuppers, redondeada hacia arriba${despensa?.productos.length ? " y descontando lo que hay en la despensa" : ""}. Marca lo que ya llevas en el carro.</p></header>
     ${seccionCompra(compra)}
   </section>
 
-  <section class="seccion" id="personas" aria-labelledby="h-personas">
-    <header><h2 id="h-personas">Personas y raciones</h2>
-    <p class="sub">La ración compara las kcal de cada persona con un adulto de referencia de 2.000 kcal: ×1,17 es un 17 % más.</p></header>
-    <div class="personas">${familia.miembros.map((m) => tarjetaMiembro(m, familia)).join("")}</div>
-    ${graficoEnergia(familia)}
+  <section class="vista" id="tuppers" data-vista aria-labelledby="h-tuppers" hidden>
+    <header class="cab"><h1 id="h-tuppers">Tuppers de oficina</h1>
+    <p class="sub">Rotación de dos semanas. La semana ${esc(menu.semana)} es la que está en el menú. Los tuppers de CCT salen del batch del domingo o de una ración extra de la cena anterior, y ese mismo plato sirve de comida a RFC y AFC.</p></header>
+    ${seccionTuppers(propuesta, familia)}
   </section>
 
-  <section class="seccion" id="tuppers" aria-labelledby="h-tuppers">
-    <header><h2 id="h-tuppers">Rotación de tuppers de oficina</h2>
-    <p class="sub">Propuesta de dos semanas. La semana A es la que está en el menú de arriba.</p></header>
-    ${seccionTuppers(propuesta, familia)}
+  <section class="vista" id="configuracion" data-vista aria-labelledby="h-config" hidden>
+    <header class="cab"><h1 id="h-config">Configuración</h1>
+    <p class="sub">Lo que el agente tiene en cuenta para planificar: el grupo familiar y cada persona.</p></header>
+    ${seccionConfiguracion(familia, recetas)}
   </section>
 
   <p class="pie">Cálculos orientativos (Mifflin-St Jeor en adultos, Schofield en menores, deporte por MET). No sustituyen el consejo de un profesional sanitario. Los objetivos de peso solo se aplican cuando se acuerdan.</p>

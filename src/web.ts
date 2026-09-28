@@ -11,7 +11,7 @@ import {
 } from "./nutricion.js";
 import { componerMenu, listaCompra, menuVisible, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
-import { costeCesta, ESTIMADO, type TablaPrecios } from "./precios.js";
+import { costeCesta, type TablaPrecios } from "./precios.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
 
 interface PlatoTupper {
@@ -1222,10 +1222,16 @@ export interface DatosWeb {
 
 const euros = (n: number) => n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
 
-/** Coste de la cesta por tienda, la combinación más barata y el detalle por producto. */
+/** Coste de la cesta por tienda, la combinación más barata y el detalle por producto (solo precios reales). */
 function seccionCoste(compra: Record<Seccion, LineaCompra[]>, tabla: TablaPrecios): string {
   const cesta = costeCesta(compra, tabla);
-  const reales = tabla.tiendas.map((t) => t.id);
+  const tiendas = tabla.tiendas.map((t) => t.id);
+  const cabecera = `<h2 id="h-coste">Coste de la cesta</h2>`;
+  if (!cesta.hayPrecios) {
+    return `<section class="coste" aria-labelledby="h-coste">${cabecera}
+      <p class="nota">Todavía no hay precios de ${esc(tiendas.join(", "))}. Se irán añadiendo desde los tickets de compra: cuando subas uno, el agente guarda el precio de cada producto de esa tienda y aquí verás el coste de la cesta en cada supermercado y la combinación más barata.</p>
+    </section>`;
+  }
   const tarjetaTienda = (t: string) => {
     const tot = cesta.totales[t];
     const habitual = tabla.tiendas.find((x) => x.id === t)?.habitual;
@@ -1233,48 +1239,35 @@ function seccionCoste(compra: Record<Seccion, LineaCompra[]>, tabla: TablaPrecio
       <p class="etq">${esc(t)}${habitual ? " · habitual" : ""}</p>
       ${
         tot.conPrecio
-          ? `<p class="coste-total mono">${euros(tot.total)}</p><p class="sub">${tot.conPrecio} de ${cesta.productos} productos con precio real${tot.sinPrecio ? "; el resto sin precio" : ""}</p>`
-          : `<p class="coste-total sub">Sin precios</p><p class="sub">Aún no hay precios reales de esta tienda.</p>`
+          ? `<p class="coste-total mono">${euros(tot.total)}</p><p class="sub">${tot.conPrecio} de ${cesta.productos} productos con precio</p>`
+          : `<p class="coste-total sub">Sin precios</p><p class="sub">Aún no hay tickets de esta tienda.</p>`
       }
     </div>`;
   };
   const opt = cesta.optimizada;
-  const reparto = Object.entries(opt.porTienda)
-    .map(([t, v]) => `${esc(t === ESTIMADO ? "estimado" : t)} ${euros(v)}`)
-    .join(" · ");
+  const reparto = Object.entries(opt.porTienda).map(([t, v]) => `${esc(t)} ${euros(v)}`).join(" · ");
   const celda = (l: (typeof cesta.lineas)[number], t: string) => {
     const c = l.porTienda[t];
     if (!c) return `<td class="num sub">—</td>`;
-    const mejor = t === l.masBarata;
     const envase = c.precio.granel ? "granel" : `${c.envases} × ${cantidad(c.precio.cantidad, c.precio.unidad)}`;
-    return `<td class="num mono${mejor ? " mejor" : ""}" title="${esc(envase)}">${euros(c.coste)}</td>`;
+    return `<td class="num mono${t === l.masBarata ? " mejor" : ""}" title="${esc(`${envase} · ${c.precio.fuente} ${c.precio.fecha}`)}">${euros(c.coste)}</td>`;
   };
-  return `<section class="coste" aria-labelledby="h-coste">
-    <h2 id="h-coste">Coste de la cesta</h2>
+  return `<section class="coste" aria-labelledby="h-coste">${cabecera}
     <div class="coste-tarjetas">
+      ${tiendas.map(tarjetaTienda).join("")}
       <div class="coste-tarjeta destacada">
-        <p class="etq">Estimación orientativa</p>
-        <p class="coste-total mono">≈ ${euros(cesta.totales[ESTIMADO].total)}</p>
-        <p class="sub">${cesta.totales[ESTIMADO].conPrecio} de ${cesta.productos} productos. Precios de referencia escritos a mano, no consultados en tiendas.</p>
-      </div>
-      ${reales.map(tarjetaTienda).join("")}
-      <div class="coste-tarjeta">
         <p class="etq">Combinación más barata</p>
         <p class="coste-total mono">${euros(opt.total)}</p>
-        <p class="sub">${reparto || "—"}${opt.estimados ? `. ${opt.estimados} productos sin precio real (usa la estimación).` : ""}</p>
+        <p class="sub">${reparto}${opt.sinPrecio ? `. Faltan ${opt.sinPrecio} productos sin precio en ninguna tienda.` : ""}</p>
       </div>
     </div>
-    <p class="sub">Se cuentan envases enteros (salvo lo que se vende a granel). Los precios reales se añaden desde los tickets o diciéndoselos al agente; con acceso a internet, también desde la web de cada supermercado. No descuenta lo apuntado hoy en la despensa.</p>
+    <p class="sub">Precios reales de los tickets (o apuntados a mano); se usa el más reciente de cada producto y tienda. Se cuentan envases enteros, salvo lo que se vende a granel. No descuenta lo apuntado hoy en la despensa.</p>
     <details>
       <summary>Ver el coste por producto</summary>
       <div class="scroll"><table class="tabla-coste">
-        <thead><tr><th>Producto</th><th class="num">Comprar</th><th class="num">Estimado</th>${reales.map((t) => `<th class="num">${esc(t)}</th>`).join("")}</tr></thead>
+        <thead><tr><th>Producto</th><th class="num">Comprar</th>${tiendas.map((t) => `<th class="num">${esc(t)}</th>`).join("")}</tr></thead>
         <tbody>${cesta.lineas
-          .map(
-            (l) => `<tr><td>${esc(l.nombre)}</td><td class="num mono">${cantidad(l.comprar, l.unidad)}</td>${celda(l, ESTIMADO)}${reales
-              .map((t) => celda(l, t))
-              .join("")}</tr>`,
-          )
+          .map((l) => `<tr><td>${esc(l.nombre)}</td><td class="num mono">${cantidad(l.comprar, l.unidad)}</td>${tiendas.map((t) => celda(l, t)).join("")}</tr>`)
           .join("")}</tbody>
       </table></div>
     </details>

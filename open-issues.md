@@ -62,7 +62,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 - [ ] **OI-19 · Inventario inicial de la despensa.** Ya se puede rellenar en la página Despensa de la web. Falta hacer el primer inventario.
 - [ ] **OI-20 · Tickets de compra.** Aún no hay ninguno registrado. Definir cada cuánto se suben y qué análisis se quiere ver (gasto por categoría, productos que se repiten, ahorro).
 
-- [ ] **OI-30 · Precios reales por tienda.** El comparador de Mercadona, BM y Casa Elías ya calcula el coste de la cesta, pero solo con precios estimados escritos a mano. Faltan precios reales: registrarlos desde los tickets (registrar_ticket + registrar_precio), dictárselos al agente o consultarlos en la web de cada supermercado. Para esto último hay que permitir en el entorno el acceso a tienda.mercadona.es, casa-elias.com y la tienda online de BM (hoy bloqueados). Falta también confirmar los formatos de envase (galletas Animadas y tortitas de maíz por paquete).
+- [ ] **OI-30 · Precios reales por tienda.** Decidido el 28/09/2026: sin estimaciones; los precios de Mercadona, BM y Casa Elías se irán cargando desde los tickets de compra (registrar_ticket + registrar_precio) o a mano. El comparador y el PDF muestran costes solo cuando hay precios. Pendiente: subir los primeros tickets y confirmar los formatos de envase (galletas Animadas y tortitas de maíz por paquete). Opcional: permitir en el entorno el acceso a tienda.mercadona.es, casa-elias.com y la tienda online de BM.
 
 ## Agente y proyecto
 

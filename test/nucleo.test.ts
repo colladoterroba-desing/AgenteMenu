@@ -308,7 +308,7 @@ test("primero y segundo: el segundo lo comen los mismos y entra en la compra", a
   assert.ok(conHuevo.length >= 4, `solo ${conHuevo.length}`);
 });
 
-test("coste de la cesta: envases enteros, granel, tienda más barata y estimación de respaldo", async () => {
+test("coste de la cesta: envases enteros, granel, tienda más barata y sin precios inventados", async () => {
   const { costeCesta } = await import("../src/precios.js");
   const linea = (nombre: string, unidad: string, comprar: number) =>
     ({ nombre, unidad, cantidad: comprar, enDespensa: 0, comprar, recetas: [] });
@@ -324,7 +324,6 @@ test("coste de la cesta: envases enteros, granel, tienda más barata y estimaci�
     precios: [
       p("Leche semidesnatada", "Mercadona", 0.9, 1000, "ml"), p("Leche semidesnatada", "BM", 1.0, 1000, "ml"),
       p("Tomate", "Mercadona", 2, 1000, "g", true),
-      p("Huevos", "Estimado", 2.6, 12, "ud"),
     ],
   };
   const c = costeCesta(lista, tabla);
@@ -334,9 +333,10 @@ test("coste de la cesta: envases enteros, granel, tienda más barata y estimaci�
   assert.equal(leche.masBarata, "Mercadona");
   assert.equal(c.lineas.find((l) => l.nombre === "Tomate")!.porTienda.Mercadona.coste, 3); // granel: 1,5 kg × 2 €
   assert.deepEqual(c.totales.BM, { total: 4, conPrecio: 1, sinPrecio: 2 });
-  // Huevos sin precio real: la combinación usa la estimación (2 docenas).
-  assert.equal(c.optimizada.estimados, 1);
-  assert.equal(c.optimizada.total, 3.6 + 3 + 5.2);
+  // Huevos sin precio en ninguna tienda: no se inventa, queda fuera del total.
+  assert.equal(c.optimizada.sinPrecio, 1);
+  assert.equal(c.optimizada.total, 3.6 + 3);
+  assert.equal(c.hayPrecios, true);
 });
 
 test("ingredientes por persona: una dorada por comensal, sin redondear por la ración", async () => {
@@ -345,4 +345,18 @@ test("ingredientes por persona: una dorada por comensal, sin redondear por la ra
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dorada = listaCompra(componerMenu(familia, menu, recetas)).Pescadería.find((l) => l.nombre.startsWith("Dorada"))!;
   assert.equal(dorada.comprar, 4);
+});
+
+test("sin tickets no hay precios: ni estimaciones en los datos ni columna de precios en el PDF", async () => {
+  const { costeCesta } = await import("../src/precios.js");
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const { htmlCompraPdf } = await import("../src/pdf.js");
+  const precios = JSON.parse(await readFile("data/precios.json", "utf8"));
+  assert.ok(precios.precios.every((p: { fuente: string }) => p.fuente !== "estimado"));
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const vacia = { ...precios, precios: [] };
+  assert.equal(costeCesta(listaCompra(componerMenu(familia, menu, recetas)), vacia).hayPrecios, false);
+  const html = htmlCompraPdf({ familia, menu, recetas, precios: vacia, fecha: "28 de septiembre de 2026" });
+  assert.doesNotMatch(html, /€/);
 });

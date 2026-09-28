@@ -294,7 +294,7 @@ export function crearHerramientas(almacen: Almacen) {
     herramienta({
       nombre: "coste_cesta",
       descripcion:
-        "Coste de la lista de la compra en cada tienda (con los precios conocidos), la combinación más barata producto a producto y la estimación orientativa. Indica qué productos no tienen precio real en cada tienda.",
+        "Coste de la lista de la compra en cada tienda con los precios reales registrados (tickets o a mano) y la combinación más barata producto a producto. Indica qué productos no tienen precio; no inventes precios para ellos.",
       esquema: z.object({ siguiente: z.boolean().optional().describe("true para la semana siguiente") }),
       ejecutar: async ({ siguiente }) => {
         const [familia, menu, recetas, despensa, tabla] = await Promise.all([

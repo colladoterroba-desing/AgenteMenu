@@ -1,10 +1,10 @@
 import { SECCIONES, type LineaCompra, type Seccion } from "./menu.js";
 
-/** Precio de un producto en una tienda, por envase (o por kg/l/ud si se vende a granel). */
+/** Precio real de un producto en una tienda, por envase (o por kg/l/ud si se vende a granel). */
 export interface Precio {
   /** Nombre del ingrediente tal como aparece en las recetas. */
   producto: string;
-  /** Mercadona, BM, Elías... o «Estimado» para la referencia orientativa. */
+  /** Mercadona, BM, Elías... */
   tienda: string;
   /** Euros por envase de `cantidad` `unidad`. */
   precio: number;
@@ -13,7 +13,7 @@ export interface Precio {
   /** A granel se paga lo que se compra; si no, envases enteros. */
   granel?: boolean;
   fecha: string;
-  fuente: "ticket" | "web" | "manual" | "estimado";
+  fuente: "ticket" | "web" | "manual";
   nota?: string;
 }
 
@@ -29,8 +29,6 @@ export interface TablaPrecios {
   precios: Precio[];
 }
 
-export const ESTIMADO = "Estimado";
-
 export interface CosteEnTienda {
   coste: number;
   envases?: number;
@@ -43,7 +41,7 @@ export interface LineaCoste {
   comprar: number;
   seccion: Seccion;
   porTienda: Record<string, CosteEnTienda>;
-  /** Tienda real más barata con precio conocido (sin contar la estimación). */
+  /** Tienda más barata con precio conocido. */
   masBarata?: string;
 }
 
@@ -51,9 +49,11 @@ export interface CosteCesta {
   lineas: LineaCoste[];
   /** Por tienda: total con los productos que tienen precio y cuántos faltan. */
   totales: Record<string, { total: number; conPrecio: number; sinPrecio: number }>;
-  /** Cada producto en la tienda real más barata; si ninguna tiene precio, la estimación. */
-  optimizada: { total: number; porTienda: Record<string, number>; estimados: number };
+  /** Cada producto en la tienda más barata que tenga precio; `sinPrecio` no tienen en ninguna. */
+  optimizada: { total: number; porTienda: Record<string, number>; sinPrecio: number };
   productos: number;
+  /** Hay al menos un precio para algún producto de la lista. */
+  hayPrecios: boolean;
 }
 
 const normalizar = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -76,8 +76,7 @@ export function costeCompra(comprar: number, p: Precio): CosteEnTienda {
 
 /** Coste de la lista de la compra en cada tienda y en la combinación más barata. */
 export function costeCesta(lista: Record<Seccion, LineaCompra[]>, tabla: TablaPrecios): CosteCesta {
-  const tiendas = [...tabla.tiendas.map((t) => t.id), ESTIMADO];
-  const reales = tabla.tiendas.map((t) => t.id);
+  const tiendas = tabla.tiendas.map((t) => t.id);
   const lineas: LineaCoste[] = [];
   for (const seccion of SECCIONES) {
     for (const l of lista[seccion]) {
@@ -87,8 +86,7 @@ export function costeCesta(lista: Record<Seccion, LineaCompra[]>, tabla: TablaPr
         const p = buscarPrecio(tabla, l.nombre, l.unidad, t);
         if (p) porTienda[t] = costeCompra(l.comprar, p);
       }
-      const conPrecio = reales.filter((t) => porTienda[t]);
-      const masBarata = conPrecio.sort((a, b) => porTienda[a].coste - porTienda[b].coste)[0];
+      const masBarata = Object.keys(porTienda).sort((a, b) => porTienda[a].coste - porTienda[b].coste)[0];
       lineas.push({ nombre: l.nombre, unidad: l.unidad, comprar: l.comprar, seccion, porTienda, masBarata });
     }
   }
@@ -104,13 +102,16 @@ export function costeCesta(lista: Record<Seccion, LineaCompra[]>, tabla: TablaPr
   }
 
   const porTienda: Record<string, number> = {};
-  let estimados = 0;
   for (const l of lineas) {
-    const donde = l.masBarata ?? (l.porTienda[ESTIMADO] ? ESTIMADO : undefined);
-    if (!donde) continue;
-    if (donde === ESTIMADO) estimados++;
-    porTienda[donde] = redondear((porTienda[donde] ?? 0) + l.porTienda[donde].coste);
+    if (l.masBarata) porTienda[l.masBarata] = redondear((porTienda[l.masBarata] ?? 0) + l.porTienda[l.masBarata].coste);
   }
   const total = redondear(Object.values(porTienda).reduce((s, x) => s + x, 0));
-  return { lineas, totales, optimizada: { total, porTienda, estimados }, productos: lineas.length };
+  const sinPrecio = lineas.filter((l) => !l.masBarata).length;
+  return {
+    lineas,
+    totales,
+    optimizada: { total, porTienda, sinPrecio },
+    productos: lineas.length,
+    hayPrecios: sinPrecio < lineas.length,
+  };
 }

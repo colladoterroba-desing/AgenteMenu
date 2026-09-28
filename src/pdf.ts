@@ -11,7 +11,7 @@ import {
   type MenuSemana,
   type Receta,
 } from "./menu.js";
-import { costeCesta, ESTIMADO, type TablaPrecios } from "./precios.js";
+import { costeCesta, type TablaPrecios } from "./precios.js";
 import type { Despensa, Familia } from "./tipos.js";
 import { cantidad, COMIDAS, esc, num } from "./web.js";
 
@@ -108,15 +108,14 @@ tbody th{width:62pt;background:#eef2ec;font-size:9pt}
 export function htmlCompraPdf({ familia, menu, recetas, despensa, precios, fecha }: DatosPdf): string {
   const lista = listaCompra(componerMenu(familia, menu, recetas), despensa);
   const total = SECCIONES.reduce((s, x) => s + lista[x].length, 0);
-  // Coste por producto: tienda real más barata o, si no hay, la estimación.
+  // Coste por producto en la tienda más barata con precio real; sin precios, no hay columna.
   const cesta = precios ? costeCesta(lista, precios) : undefined;
+  const conPrecios = Boolean(cesta?.hayPrecios);
   const costeDe = (nombre: string, unidad: string) => {
     const l = cesta?.lineas.find((x) => x.nombre === nombre && x.unidad === unidad);
-    const donde = l?.masBarata ?? (l?.porTienda[ESTIMADO] ? ESTIMADO : undefined);
-    return l && donde ? { coste: l.porTienda[donde].coste, donde } : undefined;
+    return l?.masBarata ? { coste: l.porTienda[l.masBarata].coste, donde: l.masBarata } : undefined;
   };
   const euros = (n: number) => n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
-  const conEstimacion = cesta?.lineas.filter((l) => !l.masBarata).length ?? 0;
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Lista de la compra semana ${esc(menu.semana)}</title><style>
 @page{size:A4 portrait;margin:10mm 12mm}
 ${BASE}
@@ -126,7 +125,7 @@ section{break-inside:avoid;margin-bottom:6pt}
 h2{font-size:10.5pt;margin:0 0 3pt;color:#3d6a33;border-bottom:0.75pt solid #c9d2c6;padding-bottom:2pt;display:flex;justify-content:space-between}
 h2 span{color:#58655d;font-weight:400;font-size:8pt}
 ul{list-style:none;margin:0;padding:0}
-li{display:grid;grid-template-columns:10pt 1fr auto${precios ? " 34pt" : ""};gap:5pt;align-items:baseline;padding:1.9pt 0;border-bottom:0.5pt dotted #c9d2c6}
+li{display:grid;grid-template-columns:10pt 1fr auto${conPrecios ? " 40pt" : ""};gap:5pt;align-items:baseline;padding:1.9pt 0;border-bottom:0.5pt dotted #c9d2c6}
 .caja{width:8pt;height:8pt;border:0.9pt solid #1c2620;border-radius:1.5pt;display:inline-block;transform:translateY(1pt)}
 .cant{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .en-casa{color:#9aa59d;text-decoration:line-through}
@@ -139,12 +138,10 @@ li{display:grid;grid-template-columns:10pt 1fr auto${precios ? " 34pt" : ""};gap
   ${estado(familia, menu)}
 </header>
 ${
-  cesta
-    ? `<p class="coste-pdf"><b>Coste estimado de la cesta: ${euros(cesta.optimizada.total)}</b>${
-        conEstimacion === cesta.productos
-          ? " · todos los precios son estimaciones orientativas (≈), aún no hay precios reales de tienda."
-          : ` · ${conEstimacion} productos con precio estimado (≈); el resto, precio real de la tienda más barata (en verde).`
-      }</p>`
+  cesta && conPrecios
+    ? `<p class="coste-pdf"><b>Coste con precios de tickets: ${euros(cesta.optimizada.total)}</b> · ${Object.entries(cesta.optimizada.porTienda)
+        .map(([t, v]) => `${esc(t)} ${euros(v)}`)
+        .join(" · ")}${cesta.optimizada.sinPrecio ? ` · ${cesta.optimizada.sinPrecio} productos sin precio (—)` : ""}</p>`
     : ""
 }
 <div class="secciones">${SECCIONES.filter((s) => lista[s].length)
@@ -155,13 +152,12 @@ ${
             `<li${l.comprar === 0 ? ' class="en-casa"' : ""}><span class="caja"></span><span>${esc(l.nombre)}</span><span class="cant">${
               l.comprar === 0 ? "en casa" : cantidad(l.comprar, l.unidad)
             }</span>${
-              precios
+              conPrecios
                 ? (() => {
                     const c = costeDe(l.nombre, l.unidad);
-                    if (!c) return `<span class="eur">—</span>`;
-                    return c.donde === ESTIMADO
-                      ? `<span class="eur">≈${euros(c.coste)}</span>`
-                      : `<span class="eur real" title="${esc(c.donde)}">${euros(c.coste)}</span>`;
+                    return c
+                      ? `<span class="eur real">${euros(c.coste)} <small>${esc(c.donde.slice(0, 3))}</small></span>`
+                      : `<span class="eur">—</span>`;
                   })()
                 : ""
             }</li>`,

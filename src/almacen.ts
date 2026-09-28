@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { MenuSemana, Receta } from "./menu.js";
-import { ESTIMADO, type Precio, type TablaPrecios } from "./precios.js";
+import type { Precio, TablaPrecios } from "./precios.js";
 import type { Despensa, Familia, Objetivo, Producto, Sobra, Ticket } from "./tipos.js";
 
 /** Persistencia en ficheros JSON dentro de un directorio de datos. */
@@ -26,7 +26,7 @@ export class Almacen {
   /** Añade un precio (se usa siempre el más reciente de cada producto y tienda). */
   async registrarPrecio(precio: Precio): Promise<number> {
     const tabla = await this.precios();
-    if (precio.tienda !== ESTIMADO && !tabla.tiendas.some((t) => t.id === precio.tienda)) {
+    if (!tabla.tiendas.some((t) => t.id === precio.tienda)) {
       tabla.tiendas.push({ id: precio.tienda });
     }
     tabla.precios.push(precio);

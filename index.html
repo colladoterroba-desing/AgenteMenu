@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgenteMenu</title>
+<meta name="description" content="Agente para la generación inteligente de menús semanales.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+<style>
+  :root {
+    --bg: #faf8f4; --card: #ffffff; --text: #1f2328; --muted: #6a6f76;
+    --line: #e6e1d8; --accent: #c2410c; --accent-soft: #fdebdd; --chip: #f1ede6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181c; --card: #1f2227; --text: #e8e6e3; --muted: #9aa0a6;
+      --line: #33373d; --accent: #fb923c; --accent-soft: #3a2616; --chip: #2a2e34;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { margin: 0 0 4px; font-size: 2rem; }
+  header p { margin: 0 0 24px; color: var(--muted); }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
+  select, input[type=number] { width: 100%; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+  fieldset { border: 0; padding: 0; margin: 0; grid-column: 1 / -1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips label { display: inline-flex; align-items: center; gap: 6px; margin: 0;
+    padding: 6px 12px; border-radius: 999px; background: var(--chip); color: var(--text); cursor: pointer; }
+  .actions { grid-column: 1 / -1; display: flex; gap: 12px; flex-wrap: wrap; }
+  button { font: inherit; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; cursor: pointer; }
+  button.ghost { background: transparent; color: var(--accent); }
+  #out { margin-top: 24px; display: none; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .day h3 { margin: 0 0 8px; font-size: 1rem; }
+  .meal { padding: 8px 0; border-top: 1px solid var(--line); }
+  .meal small { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: .7rem; }
+  .meal div { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .meal button { padding: 0 6px; border: 0; background: none; color: var(--muted); font-size: .9rem; }
+  .meal button:hover { color: var(--accent); }
+  .tag { font-size: .7rem; background: var(--accent-soft); color: var(--accent); padding: 1px 6px; border-radius: 4px; }
+  h2 { margin: 32px 0 12px; font-size: 1.25rem; }
+  .list { columns: 3 200px; margin: 0; padding-left: 20px; }
+  .list li { break-inside: avoid; }
+  .empty { color: var(--muted); }
+  footer { margin-top: 48px; color: var(--muted); font-size: .85rem; text-align: center; }
+  @media print { form, .actions, .meal button { display: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>🍽️ AgenteMenu</h1>
+    <p>Genera un menú semanal equilibrado según tu dieta y alergias, con lista de la compra.</p>
+  </header>
+
+  <section class="panel">
+    <form id="f">
+      <div>
+        <label for="dias">Días</label>
+        <select id="dias"><option>3</option><option>5</option><option selected>7</option></select>
+      </div>
+      <div>
+        <label for="personas">Personas</label>
+        <input id="personas" type="number" min="1" max="12" value="2">
+      </div>
+      <div>
+        <label for="dieta">Dieta</label>
+        <select id="dieta">
+          <option value="omni">Omnívora</option>
+          <option value="veg">Vegetariana</option>
+          <option value="vegan">Vegana</option>
+        </select>
+      </div>
+      <div>
+        <label for="comidas">Comidas por día</label>
+        <select id="comidas">
+          <option value="2">Comida y cena</option>
+          <option value="3" selected>Desayuno, comida y cena</option>
+        </select>
+      </div>
+      <fieldset>
+        <label>Evitar (alergias / intolerancias)</label>
+        <div class="chips" id="alergias">
+          <label><input type="checkbox" value="gluten"> Gluten</label>
+          <label><input type="checkbox" value="lactosa"> Lactosa</label>
+          <label><input type="checkbox" value="huevo"> Huevo</label>
+          <label><input type="checkbox" value="frutos secos"> Frutos secos</label>
+          <label><input type="checkbox" value="marisco"> Marisco</label>
+          <label><input type="checkbox" value="pescado"> Pescado</label>
+        </div>
+      </fieldset>
+      <div class="actions">
+        <button type="submit">Generar menú</button>
+        <button type="button" class="ghost" id="print">Imprimir</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="out">
+    <div class="grid" id="menu"></div>
+    <h2>🛒 Lista de la compra</h2>
+    <ul class="list" id="compra"></ul>
+  </section>
+
+  <footer>AgenteMenu · funciona 100% en tu navegador</footer>
+</main>
+
+<script>
+// tipo: d = desayuno, p = plato principal (comida/cena)
+// dieta: vegan ⊂ veg ⊂ omni. "a" = alérgenos
+const RECETAS = [
+  { n: "Tostadas con tomate y aceite", t: "d", dieta: "vegan", a: ["gluten"], i: ["pan", "tomate", "aceite de oliva"] },
+  { n: "Avena con plátano y canela", t: "d", dieta: "vegan", a: ["gluten"], i: ["copos de avena", "bebida vegetal", "plátano", "canela"] },
+  { n: "Yogur con fruta y nueces", t: "d", dieta: "veg", a: ["lactosa", "frutos secos"], i: ["yogur natural", "fruta de temporada", "nueces"] },
+  { n: "Tortilla francesa con pan", t: "d", dieta: "veg", a: ["huevo", "gluten"], i: ["huevos", "pan"] },
+  { n: "Batido de frutas", t: "d", dieta: "vegan", a: [], i: ["plátano", "fresas", "bebida vegetal"] },
+  { n: "Macedonia de frutas", t: "d", dieta: "vegan", a: [], i: ["fruta de temporada", "naranja"] },
+  { n: "Tostada de aguacate", t: "d", dieta: "vegan", a: ["gluten"], i: ["pan", "aguacate", "limón"] },
+  { n: "Huevos revueltos con espinacas", t: "d", dieta: "veg", a: ["huevo"], i: ["huevos", "espinacas"] },
+
+  { n: "Lentejas estofadas", t: "p", dieta: "vegan", a: [], i: ["lentejas", "zanahoria", "patata", "cebolla", "pimentón"] },
+  { n: "Garbanzos con espinacas", t: "p", dieta: "vegan", a: [], i: ["garbanzos cocidos", "espinacas", "ajo", "comino"] },
+  { n: "Paella de verduras", t: "p", dieta: "vegan", a: [], i: ["arroz", "pimiento rojo", "judías verdes", "tomate", "azafrán"] },
+  { n: "Crema de calabaza", t: "p", dieta: "vegan", a: [], i: ["calabaza", "cebolla", "patata"] },
+  { n: "Curry de garbanzos y coco", t: "p", dieta: "vegan", a: [], i: ["garbanzos cocidos", "leche de coco", "curry", "arroz"] },
+  { n: "Ensalada de quinoa", t: "p", dieta: "vegan", a: [], i: ["quinoa", "pepino", "tomate", "aguacate"] },
+  { n: "Espaguetis con tomate y albahaca", t: "p", dieta: "vegan", a: ["gluten"], i: ["espaguetis", "tomate triturado", "albahaca", "ajo"] },
+  { n: "Salteado de tofu y verduras", t: "p", dieta: "vegan", a: [], i: ["tofu", "brócoli", "pimiento rojo", "salsa de soja"] },
+  { n: "Gazpacho y patatas asadas", t: "p", dieta: "vegan", a: [], i: ["tomate", "pepino", "pimiento verde", "patata"] },
+  { n: "Tortilla de patatas", t: "p", dieta: "veg", a: ["huevo"], i: ["huevos", "patata", "cebolla"] },
+  { n: "Lasaña de verduras", t: "p", dieta: "veg", a: ["gluten", "lactosa"], i: ["placas de lasaña", "calabacín", "berenjena", "queso rallado", "tomate triturado"] },
+  { n: "Pizza margarita casera", t: "p", dieta: "veg", a: ["gluten", "lactosa"], i: ["masa de pizza", "tomate triturado", "mozzarella", "albahaca"] },
+  { n: "Pasta al pesto", t: "p", dieta: "veg", a: ["gluten", "lactosa", "frutos secos"], i: ["pasta", "albahaca", "piñones", "queso parmesano"] },
+  { n: "Pollo al horno con patatas", t: "p", dieta: "omni", a: [], i: ["muslos de pollo", "patata", "cebolla", "romero"] },
+  { n: "Merluza a la plancha con ensalada", t: "p", dieta: "omni", a: ["pescado"], i: ["merluza", "lechuga", "tomate", "limón"] },
+  { n: "Salmón al horno con verduras", t: "p", dieta: "omni", a: ["pescado"], i: ["salmón", "calabacín", "zanahoria"] },
+  { n: "Albóndigas en salsa", t: "p", dieta: "omni", a: ["huevo", "gluten"], i: ["carne picada", "pan rallado", "huevos", "tomate triturado"] },
+  { n: "Arroz con pollo", t: "p", dieta: "omni", a: [], i: ["arroz", "muslos de pollo", "pimiento rojo", "guisantes"] },
+  { n: "Gambas al ajillo con arroz", t: "p", dieta: "omni", a: ["marisco"], i: ["gambas", "ajo", "guindilla", "arroz"] },
+  { n: "Ternera salteada con verduras", t: "p", dieta: "omni", a: [], i: ["ternera", "pimiento verde", "cebolla", "salsa de soja"] },
+  { n: "Pavo a la plancha con puré", t: "p", dieta: "omni", a: ["lactosa"], i: ["pechuga de pavo", "patata", "leche"] },
+  { n: "Sopa de pescado", t: "p", dieta: "omni", a: ["pescado", "marisco"], i: ["pescado blanco", "mejillones", "tomate", "cebolla"] },
+];
+
+const NIVEL = { vegan: 0, veg: 1, omni: 2 };
+const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const $ = (id) => document.getElementById(id);
+let plan = [], pools = {};
+
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function filtrar(tipo) {
+  const dieta = NIVEL[$("dieta").value];
+  const evitar = [...document.querySelectorAll("#alergias input:checked")].map((c) => c.value);
+  return RECETAS.filter((r) => r.t === tipo && NIVEL[r.dieta] <= dieta && !r.a.some((x) => evitar.includes(x)));
+}
+
+// Reparte recetas intentando no repetir hasta agotar el catálogo
+function crearPool(tipo) {
+  const base = filtrar(tipo);
+  let cola = [];
+  return () => {
+    if (!base.length) return null;
+    if (!cola.length) cola = shuffle(base);
+    return cola.pop();
+  };
+}
+
+function generar() {
+  const dias = +$("dias").value, comidas = +$("comidas").value;
+  pools = { d: crearPool("d"), p: crearPool("p") };
+  plan = [];
+  for (let d = 0; d < dias; d++) {
+    const slots = [];
+    if (comidas === 3) slots.push({ label: "Desayuno", t: "d" });
+    slots.push({ label: "Comida", t: "p" }, { label: "Cena", t: "p" });
+    slots.forEach((s) => (s.r = pools[s.t]()));
+    plan.push({ dia: DIAS[d], slots });
+  }
+  pintar();
+}
+
+function pintar() {
+  $("menu").innerHTML = plan.map((d, di) => `
+    <article class="panel day">
+      <h3>${d.dia}</h3>
+      ${d.slots.map((s, si) => `
+        <div class="meal">
+          <small>${s.label}</small>
+          <div>
+            <span>${s.r ? s.r.n : '<span class="empty">Sin opciones con estos filtros</span>'}
+              ${s.r && s.r.dieta !== "omni" ? `<span class="tag">${s.r.dieta === "vegan" ? "vegano" : "veg"}</span>` : ""}</span>
+            ${s.r ? `<button title="Cambiar plato" data-d="${di}" data-s="${si}">↻</button>` : ""}
+          </div>
+        </div>`).join("")}
+    </article>`).join("");
+
+  const cuenta = {};
+  plan.forEach((d) => d.slots.forEach((s) => s.r && s.r.i.forEach((i) => (cuenta[i] = (cuenta[i] || 0) + 1))));
+  const personas = Math.max(1, +$("personas").value || 1);
+  const items = Object.keys(cuenta).sort((a, b) => a.localeCompare(b, "es"));
+  $("compra").innerHTML = items.length
+    ? items.map((i) => `<li>${i} <span class="empty">· ${cuenta[i]} ${cuenta[i] > 1 ? "recetas" : "receta"} × ${personas} pers.</span></li>`).join("")
+    : '<li class="empty">Nada que comprar.</li>';
+  $("out").style.display = "block";
+}
+
+$("f").addEventListener("submit", (e) => { e.preventDefault(); generar(); });
+$("print").addEventListener("click", () => window.print());
+$("menu").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-d]");
+  if (!b) return;
+  const s = plan[b.dataset.d].slots[b.dataset.s];
+  const opciones = filtrar(s.t).filter((r) => r !== s.r);
+  if (opciones.length) s.r = opciones[Math.floor(Math.random() * opciones.length)];
+  pintar();
+});
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# AgenteMenu
+# Agente Planificador de Menú Familiar
 
 **AgenteMenu** es un agente de menú familiar: un asistente inteligente que ayuda a planificar las comidas de la familia de forma sencilla, variada y equilibrada.
 

@@ -1,0 +1,82 @@
+{
+  "nombre": "Familia RFA-CCT",
+  "miembros": [
+    {
+      "id": "RFA",
+      "edad": 57,
+      "sexo": "V",
+      "alturaCm": 165,
+      "pesoKg": 73,
+      "gustos": ["No come mucho pescado"],
+      "actividades": [
+        { "deporte": "running", "dias": ["L", "M"], "minutos": 90 }
+      ]
+    },
+    {
+      "id": "CCT",
+      "edad": 47,
+      "sexo": "M",
+      "alturaCm": 165,
+      "pesoKg": 79,
+      "gustos": [],
+      "actividades": [
+        { "deporte": "yoga_funcional", "dias": ["X"], "minutos": 60 }
+      ]
+    },
+    {
+      "id": "RFC",
+      "edad": 18,
+      "sexo": "V",
+      "alturaCm": 173,
+      "pesoKg": 68,
+      "gustos": [],
+      "actividades": [
+        { "deporte": "natacion", "dias": ["M", "J"], "minutos": 60 }
+      ]
+    },
+    {
+      "id": "AFC",
+      "edad": 13,
+      "sexo": "M",
+      "alturaCm": 158,
+      "pesoKg": 52,
+      "gustos": [],
+      "actividades": [
+        { "deporte": "futbol_entrenamiento", "dias": ["X", "V"], "minutos": 90 },
+        { "deporte": "futbol_partido", "dias": ["S"], "minutos": 90 },
+        { "deporte": "educacion_fisica", "dias": ["M", "J"], "minutos": 60 },
+        { "deporte": "natacion", "dias": ["V"], "minutos": 30 }
+      ]
+    }
+  ],
+  "alergias": [],
+  "regimen": {
+    "comida": {
+      "L": ["RFC", "AFC"],
+      "M": ["RFC", "AFC"],
+      "X": ["RFC", "AFC"],
+      "J": ["RFC", "AFC", "CCT"],
+      "V": ["RFA", "CCT", "RFC", "AFC"],
+      "S": ["RFA", "CCT", "RFC", "AFC"],
+      "D": ["RFA", "CCT", "RFC", "AFC"]
+    },
+    "cena": {
+      "L": ["RFA", "CCT", "RFC", "AFC"],
+      "M": ["RFA", "CCT", "RFC", "AFC"],
+      "X": ["RFA", "CCT", "RFC", "AFC"],
+      "J": ["RFA", "CCT", "RFC", "AFC"],
+      "V": ["RFA", "CCT", "RFC", "AFC"],
+      "S": ["RFA", "CCT", "RFC", "AFC"],
+      "D": ["RFA", "CCT", "RFC", "AFC"]
+    },
+    "desayuno": "todos, todos los días",
+    "merienda": "todos, de lunes a viernes"
+  },
+  "roles": {
+    "CCT": "cocinera principal",
+    "RFC": "cocina poco; solo plancha",
+    "AFC": "solo plancha",
+    "RFA": "no cocina"
+  },
+  "objetivos": {}
+}

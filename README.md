@@ -1,24 +1,58 @@
 # Agente Planificador de Menú Familiar
 
-**AgenteMenu** es un agente de menú familiar: un asistente inteligente que ayuda a planificar las comidas de la familia de forma sencilla, variada y equilibrada.
+**AgenteMenu** es un agente de menú familiar: un asistente inteligente, basado en Claude, que ayuda a planificar las comidas de la familia de forma sencilla, variada y equilibrada.
 
 ## ¿Qué hace?
 
-- 🍽️ **Genera menús semanales** (comidas y cenas) adaptados a toda la familia.
-- 🥦 **Tiene en cuenta preferencias, alergias e intolerancias** de cada miembro.
-- ⚖️ **Busca un equilibrio nutricional** y variedad entre legumbres, verduras, pescado, carne, etc.
-- 🛒 **Crea la lista de la compra** a partir del menú planificado.
-- ♻️ **Aprovecha lo que ya hay en la despensa** y reduce el desperdicio de comida.
-- ⏱️ **Se ajusta al tiempo disponible** para cocinar cada día.
+- ⚖️ **Calcula las raciones de cada miembro** a partir de su edad, altura, peso y deporte. Si un adulto tiene sobrepeso, propone un objetivo y un plazo que acuerda contigo.
+- 🍽️ **Genera el menú semanal**: desayuno, comida, merienda (L-V) y cena, según quién come en casa cada día.
+- 👩‍🍳 **Planifica recetas y tiempos de cocina** según quién puede cocinar (si solo están los que hacen plancha, lo tiene en cuenta).
+- 🛒 **Crea la lista de la compra** descontando lo que ya hay en la despensa.
+- ♻️ **Reaprovecha las sobras** y da prioridad a lo que caduca antes.
+- 🧾 **Aprende de tus tickets de compra** (foto o PDF) para detectar hábitos y proponer mejoras.
 
-## Objetivo
+Los requisitos completos están en [docs/REQUISITOS.md](docs/REQUISITOS.md).
 
-Quitar la carga mental de decidir cada día "¿qué comemos hoy?", ahorrando tiempo y dinero y fomentando una alimentación saludable en casa.
+## Puesta en marcha
 
-## Estado del proyecto
+Necesitas Node.js 22 o superior y una clave de la API de Anthropic.
 
-🚧 En fase inicial de desarrollo.
+```bash
+npm install
+cp .env.example .env      # y pon tu ANTHROPIC_API_KEY
+npm start
+```
 
-## Licencia
+Ejemplos de uso en el chat:
 
-Por definir.
+```
+> Revisa las necesidades de la familia y prepárame el menú de la semana
+> Hazme la lista de la compra y el plan de cocina del domingo
+> Han sobrado 3 raciones de lentejas
+> /ticket tickets/mercadona-27-09.jpg
+> ¿En qué gastamos más?
+```
+
+Los documentos generados (menú, lista de la compra, plan de cocina) se guardan en `salidas/`.
+
+## Estructura
+
+| Ruta | Contenido |
+|---|---|
+| `data/familia.json` | Perfil de la familia: miembros, deporte, gustos, régimen de comidas, roles y objetivos |
+| `data/despensa.json` | Productos en casa y sobras |
+| `data/tickets.json` | Tickets de compra registrados |
+| `src/nutricion.ts` | IMC, metabolismo basal, gasto diario, objetivos y factor de ración |
+| `src/planificacion.ts` | Rejilla semanal de comensales, kcal por comida y quién cocina |
+| `src/almacen.ts` | Lectura y escritura de datos y resumen de hábitos de compra |
+| `src/herramientas.ts` | Herramientas que usa el agente |
+| `src/agente.ts` | Chat de terminal con Claude |
+
+## Desarrollo
+
+```bash
+npm test          # tests
+npm run typecheck # comprobación de tipos
+```
+
+> ⚠️ Los cálculos nutricionales son orientativos y no sustituyen el consejo de un profesional sanitario.

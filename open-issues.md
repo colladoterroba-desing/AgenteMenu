@@ -20,6 +20,8 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 - [ ] **OI-24 · Identificar a quien valida el menú.** Decidido: por el momento solo CCT puede dar por válido un menú y publicarlo, y puede pedir cambios antes (que lo devuelven a borrador). Falta decidir cómo se comprueba que es CCT: en el chat del agente se confía en que quien escribe dice la verdad, y la web no identifica a nadie. Va ligado a OI-01, OI-03 y OI-23 (cuentas o contraseña). También hay que decidir si la validación caduca (por ejemplo, un menú por semana).
 
+- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa y los platos no deseados que se apuntan en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie a `data/despensa.json` y `data/familia.json` para que el agente los use. Decidir si se automatiza (ligado a OI-01 y OI-02).
+
 ## Personas y hábitos
 
 - [ ] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** En los datos aparecía dos veces RFA. Se ha asignado a **RFC**; falta confirmarlo.
@@ -38,7 +40,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 ## Menú y recetas
 
-- [ ] **OI-14 · Menú de la semana B.** Solo existe la rotación de tuppers de la semana B. Falta el menú completo y decidir cómo rotan las semanas.
+- [ ] **OI-14 · Rotación de semanas.** Ya hay propuesta de la semana B (`data/menu-siguiente.json`), que se ve en la web y sale en PDF. Falta decidir cuándo y cómo la siguiente pasa a ser la actual (por ejemplo, el domingo) y quién genera la nueva siguiente. Ojo: el batch del domingo de la semana B se cocina el domingo de la semana A.
 - [ ] **OI-15 · Valor nutricional de las recetas.** No se calculan las kcal de cada receta, así que no se comprueba que el plato cubra la ración objetivo. Valorar usar una tabla de composición de alimentos (por ejemplo, BEDCA).
 
 ## Lista de la compra y despensa
@@ -46,7 +48,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 - [ ] **OI-16 · Cantidades que conviene revisar.** Pan integral: unos 3,5 kg por semana. Doradas: salen 5 porque las raciones suman 4,5, aunque con 4 basta. Definir qué ingredientes van «por persona» (una dorada, un huevo) en lugar de escalarse con la ración.
 - [ ] **OI-17 · Formatos de compra.** La lista va en g, ml y unidades. Falta pasarla a paquetes, botes y latas (por ejemplo, cuántas galletas Animadas trae un paquete).
 - [ ] **OI-18 · Básicos que no se cuentan.** Sal, especias y caldo no entran en la lista. Decidir si se controlan desde la despensa.
-- [ ] **OI-19 · Inventario inicial de la despensa.** `data/despensa.json` está vacío, así que no se descuenta nada de la compra.
+- [ ] **OI-19 · Inventario inicial de la despensa.** Ya se puede rellenar en la página Despensa de la web. Falta hacer el primer inventario.
 - [ ] **OI-20 · Tickets de compra.** Aún no hay ninguno registrado. Definir cada cuánto se suben y qué análisis se quiere ver (gasto por categoría, productos que se repiten, ahorro).
 
 ## Agente y proyecto

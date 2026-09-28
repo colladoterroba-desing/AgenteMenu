@@ -57,6 +57,11 @@ export interface Familia {
   preferencias?: string[];
   /** Quién puede hacer qué. validarMenu: quién da por válido y publica un menú. */
   permisos?: { validarMenu: string[] };
+  /**
+   * Platos marcados como no deseados, con el motivo, para no repetirlos en futuros
+   * menús. `por` es un miembro (no se le sirve a él) o "familia" (no se sirve a nadie).
+   */
+  noDeseados?: { receta: string; por: string; motivo: string; fecha: string }[];
   /** Ingredientes que solo pueden aparecer en ciertas comidas (p. ej. pescado azul solo el jueves a mediodía). */
   restricciones?: {
     ingredientes: string[];

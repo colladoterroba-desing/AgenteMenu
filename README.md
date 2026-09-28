@@ -39,8 +39,10 @@ Para ver los resultados en el navegador (menú de la semana, recetas, lista de l
 
 ```bash
 npm run web   # genera salidas/resultados.html
-npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) en salidas/
+npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) de esta semana y la siguiente, en salidas/
 ```
+
+La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, Despensa, Tuppers y Configuración. En **Despensa** se apunta lo que hay en casa y la lista de la compra se descuenta al momento; en **Recetas** se puede marcar un plato como no deseado, con el motivo. Esos datos se guardan en la propia página publicada en claude.ai; para llevarlos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa y los no deseados».
 
 `npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 
@@ -53,6 +55,7 @@ npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) en sali
 | `data/tickets.json` | Tickets de compra registrados |
 | `data/recetas.json` | Recetas con ingredientes por ración de referencia y pasos |
 | `data/menu-semana.json` | Menú de la semana: plato de cada comida, variantes, tuppers y batch |
+| `data/menu-siguiente.json` | Propuesta de menú de la semana siguiente |
 | `src/nutricion.ts` | IMC, metabolismo basal, gasto diario, objetivos y factor de ración |
 | `src/planificacion.ts` | Rejilla semanal de comensales, kcal por comida y quién cocina |
 | `src/menu.ts` | Une menú y comensales, escala raciones y calcula la lista de la compra |

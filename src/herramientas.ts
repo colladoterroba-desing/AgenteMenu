@@ -122,6 +122,25 @@ export function crearHerramientas(almacen: Almacen) {
       },
     }),
     herramienta({
+      nombre: "marcar_no_deseado",
+      descripcion:
+        "Marca un plato como no deseado (por un miembro o por «familia») con el motivo, para no volver a ponerlo en futuros menús; quitar=true lo desmarca. guardar_menu rechaza los menús que lo sirvan a quien lo marcó.",
+      esquema: z.object({
+        receta: z.string(),
+        por: z.string().describe("Id del miembro o «familia»"),
+        motivo: z.string(),
+        fecha,
+        quitar: z.boolean().optional(),
+      }),
+      ejecutar: async ({ quitar, ...nd }) => {
+        const [familia, recetas] = await Promise.all([almacen.familia(), almacen.recetas()]);
+        if (!recetas.some((r) => r.id === nd.receta)) throw new Error(`No existe la receta ${nd.receta}`);
+        if (nd.por !== "familia" && !familia.miembros.some((m) => m.id === nd.por)) throw new Error(`No existe el miembro ${nd.por}`);
+        await almacen.marcarNoDeseado(nd, quitar);
+        return { guardado: true, ...nd, quitado: Boolean(quitar) };
+      },
+    }),
+    herramienta({
       nombre: "ver_despensa",
       descripcion: "Productos disponibles en casa (con caducidad si se conoce) y sobras de raciones ya cocinadas.",
       esquema: z.object({}),
@@ -197,10 +216,10 @@ export function crearHerramientas(almacen: Almacen) {
     }),
     herramienta({
       nombre: "ver_menu",
-      descripcion: "Menú de la semana guardado, con los platos, comensales y raciones de cada comida y de cada tupper.",
-      esquema: z.object({}),
-      ejecutar: async () => {
-        const [familia, menu, recetas] = await Promise.all([almacen.familia(), almacen.menu(), almacen.recetas()]);
+      descripcion: "Menú guardado (esta semana o, con siguiente=true, la propuesta de la siguiente), con platos, comensales y raciones de cada comida y tupper.",
+      esquema: z.object({ siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente") }),
+      ejecutar: async ({ siguiente }) => {
+        const [familia, menu, recetas] = await Promise.all([almacen.familia(), almacen.menu(siguiente), almacen.recetas()]);
         return { semana: menu.semana, batch: menu.batch, dias: componerMenu(familia, menu, recetas) };
       },
     }),
@@ -212,19 +231,20 @@ export function crearHerramientas(almacen: Almacen) {
         autor: z.string().describe("Quién pide o hace el cambio (p. ej. CCT o agente)"),
         fecha,
         descripcionCambio: z.string().describe("Qué se ha cambiado respecto al menú anterior"),
+        siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente"),
         semana: z.string(),
         batch: z.array(z.object({ dia: z.enum(DIAS), tareas: z.array(z.string()) })).optional(),
         dias: z.record(z.enum(DIAS), z.partialRecord(z.enum(TIPOS_COMIDA), plato)),
         tuppers: z.partialRecord(z.enum(DIAS), z.record(z.string(), plato)),
       }),
-      ejecutar: async ({ autor, fecha, descripcionCambio, ...datos }) => {
+      ejecutar: async ({ autor, fecha, descripcionCambio, siguiente, ...datos }) => {
         const [familia, recetas, anterior] = await Promise.all([
-          almacen.familia(), almacen.recetas(), almacen.menu().catch(() => undefined),
+          almacen.familia(), almacen.recetas(), almacen.menu(siguiente).catch(() => undefined),
         ]);
         const errores = validarMenu(familia, datos as MenuSemana, recetas);
         if (errores.length) throw new Error(`Menú incompleto:\n${errores.join("\n")}`);
         const cambios = [...(anterior?.cambios ?? []), { por: autor, fecha, descripcion: descripcionCambio }];
-        await almacen.guardarMenu({ ...(datos as MenuSemana), estado: "borrador", cambios });
+        await almacen.guardarMenu({ ...(datos as MenuSemana), estado: "borrador", cambios }, siguiente);
         return { guardado: true, estado: "borrador", pendienteDe: familia.permisos?.validarMenu ?? [] };
       },
     }),
@@ -232,10 +252,10 @@ export function crearHerramientas(almacen: Almacen) {
       nombre: "validar_menu",
       descripcion:
         "Da por válido el menú guardado y lo marca como publicado. Solo puede hacerlo quien figure en familia.permisos.validarMenu (CCT). Úsala únicamente cuando esa persona lo confirme de forma explícita en la conversación.",
-      esquema: z.object({ por: z.string(), fecha }),
-      ejecutar: async ({ por, fecha }) => {
-        const [familia, menu] = await Promise.all([almacen.familia(), almacen.menu()]);
-        await almacen.guardarMenu(validarPublicacion(familia, menu, por, fecha));
+      esquema: z.object({ por: z.string(), fecha, siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente") }),
+      ejecutar: async ({ por, fecha, siguiente }) => {
+        const [familia, menu] = await Promise.all([almacen.familia(), almacen.menu(siguiente)]);
+        await almacen.guardarMenu(validarPublicacion(familia, menu, por, fecha), siguiente);
         return { validado: true, por, fecha };
       },
     }),
@@ -243,10 +263,10 @@ export function crearHerramientas(almacen: Almacen) {
       nombre: "lista_compra",
       descripcion:
         "Lista de la compra del menú guardado: suma los ingredientes según las raciones de cada comida y tupper, descuenta la despensa y agrupa por sección.",
-      esquema: z.object({}),
-      ejecutar: async () => {
+      esquema: z.object({ siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente") }),
+      ejecutar: async ({ siguiente }) => {
         const [familia, menu, recetas, despensa] = await Promise.all([
-          almacen.familia(), almacen.menu(), almacen.recetas(), almacen.despensa(),
+          almacen.familia(), almacen.menu(siguiente), almacen.recetas(), almacen.despensa(),
         ]);
         return listaCompra(componerMenu(familia, menu, recetas), despensa);
       },

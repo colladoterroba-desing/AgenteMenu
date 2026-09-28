@@ -253,3 +253,23 @@ test("objetivos de peso aceptados: las raciones de RFA y CCT usan las kcal del o
   assert.equal(familia.objetivos.RFC, undefined);
   assert.equal(familia.objetivos.AFC, undefined);
 });
+
+test("platos no deseados: no se sirven a quien los marcó (o a nadie si es la familia)", async () => {
+  const { validarMenu } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const siguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  assert.deepEqual(validarMenu(familia, siguiente, recetas), []);
+
+  const marca = (por: string, receta: string) => {
+    const f = structuredClone(familia);
+    f.noDeseados = [{ receta, por, motivo: "no le gusta", fecha: "2026-09-28" }];
+    return f;
+  };
+  // RFA no come la merluza del miércoles (tiene variante): marcarla por RFA no bloquea el menú.
+  assert.deepEqual(validarMenu(marca("RFA", "merluza-plancha-brocoli"), menu, recetas), []);
+  // Pero si la marca RFC, que sí la come, el menú se rechaza.
+  assert.ok(validarMenu(marca("RFC", "merluza-plancha-brocoli"), menu, recetas).some((e) => /no deseado por RFC/.test(e)));
+  // Marcado por la familia: no vale para nadie, tuppers incluidos.
+  assert.ok(validarMenu(marca("familia", "wraps-pavo-hummus"), menu, recetas).some((e) => /tupper RFA/.test(e)));
+});

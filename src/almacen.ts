@@ -20,10 +20,11 @@ export class Almacen {
   despensa = () => this.leer<Despensa>("despensa.json");
   tickets = async () => (await this.leer<{ tickets: Ticket[] }>("tickets.json")).tickets;
   recetas = async () => (await this.leer<{ recetas: Receta[] }>("recetas.json")).recetas;
-  menu = () => this.leer<MenuSemana>("menu-semana.json");
+  /** Menú de esta semana o, con `siguiente`, la propuesta de la semana que viene. */
+  menu = (siguiente = false) => this.leer<MenuSemana>(siguiente ? "menu-siguiente.json" : "menu-semana.json");
 
-  async guardarMenu(menu: MenuSemana): Promise<void> {
-    await this.escribir("menu-semana.json", menu);
+  async guardarMenu(menu: MenuSemana, siguiente = false): Promise<void> {
+    await this.escribir(siguiente ? "menu-siguiente.json" : "menu-semana.json", menu);
   }
 
   /** Añade la receta o sustituye la que tenga el mismo id. */
@@ -51,6 +52,22 @@ export class Almacen {
     if (!actual && !cambios.receta) throw new Error(`${id} no tiene desayuno habitual: indica la receta`);
     familia.desayunos = { ...familia.desayunos, [id]: { ...actual!, ...cambios } };
     await this.escribir("familia.json", familia);
+  }
+
+  /** Marca (o desmarca) un plato como no deseado por un miembro o por la familia. */
+  async marcarNoDeseado(nd: { receta: string; por: string; motivo: string; fecha: string }, quitar = false): Promise<void> {
+    const familia = await this.familia();
+    const resto = (familia.noDeseados ?? []).filter((x) => !(x.receta === nd.receta && x.por === nd.por));
+    familia.noDeseados = quitar ? resto : [...resto, nd];
+    await this.escribir("familia.json", familia);
+  }
+
+  /** Sustituye el inventario de productos (p. ej. al sincronizarlo desde la web). */
+  async guardarProductos(productos: Producto[]): Promise<Despensa> {
+    const despensa = await this.despensa();
+    despensa.productos = productos.filter((p) => p.cantidad > 0);
+    await this.escribir("despensa.json", despensa);
+    return despensa;
   }
 
   /** Suma cantidades (negativas para consumir); elimina productos que llegan a 0. */

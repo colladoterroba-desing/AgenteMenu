@@ -106,7 +106,7 @@ function incumpleNormas(familia: Familia, receta: Receta, dia: Dia, comida: stri
 export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[]): string[] {
   const porId = new Map(recetas.map((r) => [r.id, r]));
   const errores: string[] = [];
-  const comprobar = (donde: string, p: PlatoMenu, dia?: Dia, comida?: string, fuera = false) => {
+  const comprobar = (donde: string, p: PlatoMenu, dia?: Dia, comida?: string, fuera = false, quienes: string[] = []) => {
     const ids = [p.receta, ...Object.values(p.variantes ?? {})];
     for (const id of ids) {
       const receta = porId.get(id);
@@ -114,6 +114,17 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
         errores.push(`${donde}: receta desconocida «${id}»`);
       } else if (dia && comida) {
         for (const aviso of incumpleNormas(familia, receta, dia, comida, fuera)) errores.push(`${donde}: ${aviso}`);
+      }
+    }
+    // Platos no deseados: el principal lo comen quienes no tienen variante; cada variante, su dueño.
+    const comen = new Map<string, string[]>([[p.receta, quienes.filter((q) => !p.variantes?.[q])]]);
+    for (const [q, r] of Object.entries(p.variantes ?? {})) comen.set(r, [...(comen.get(r) ?? []), q]);
+    for (const [receta, personas] of comen) {
+      for (const nd of familia.noDeseados ?? []) {
+        if (nd.receta !== receta) continue;
+        if (nd.por === "familia" || personas.includes(nd.por)) {
+          errores.push(`${donde}: «${porId.get(receta)?.nombre ?? receta}» está marcado como no deseado por ${nd.por} (${nd.motivo})`);
+        }
       }
     }
   };
@@ -129,11 +140,11 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
       }
       const plato = menu.dias[dia.dia]?.[comida.tipo];
       if (!plato) errores.push(`${dia.nombre} ${comida.tipo}: falta el plato`);
-      else comprobar(`${dia.nombre} ${comida.tipo}`, plato, dia.dia, comida.tipo, comida.tipo === "almuerzo");
+      else comprobar(`${dia.nombre} ${comida.tipo}`, plato, dia.dia, comida.tipo, comida.tipo === "almuerzo", comida.comensales.map((c) => c.id));
       for (const t of comida.tuppers) {
         const tupper = menu.tuppers[dia.dia]?.[t.id];
         if (!tupper) errores.push(`${dia.nombre}: falta el tupper de ${t.id}`);
-        else comprobar(`${dia.nombre} tupper ${t.id}`, tupper, dia.dia, "comida", true);
+        else comprobar(`${dia.nombre} tupper ${t.id}`, tupper, dia.dia, "comida", true, [t.id]);
       }
     }
   }

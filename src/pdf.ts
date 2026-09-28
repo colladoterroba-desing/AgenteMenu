@@ -171,6 +171,15 @@ async function main() {
       { html: htmlMenuPdf(datos), fichero: `menu-semana-${semana}.pdf`, landscape: true },
       { html: htmlCompraPdf(datos), fichero: `lista-compra-semana-${semana}.pdf`, landscape: false },
     ];
+    // Propuesta de la semana siguiente, si existe.
+    const siguiente = await leer<MenuSemana>("menu-siguiente.json").catch(() => undefined);
+    if (siguiente) {
+      const datosSiguiente = { ...datos, menu: siguiente };
+      documentos.push(
+        { html: htmlMenuPdf(datosSiguiente), fichero: `menu-semana-${siguiente.semana}.pdf`, landscape: true },
+        { html: htmlCompraPdf(datosSiguiente), fichero: `lista-compra-semana-${siguiente.semana}.pdf`, landscape: false },
+      );
+    }
     for (const { html, fichero, landscape } of documentos) {
       await pagina.setContent(html, { waitUntil: "load" });
       await pagina.pdf({ path: path.join(salida, fichero), format: "A4", landscape, printBackground: true, preferCSSPageSize: true });

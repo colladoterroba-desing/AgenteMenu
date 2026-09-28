@@ -1,0 +1,154 @@
+{
+  "semana": "B",
+  "estado": "borrador",
+  "cambios": [
+    {
+      "por": "agente",
+      "fecha": "2026-09-28",
+      "descripcion": "Propuesta de la semana siguiente (B), con la rotación de tuppers B y las normas de la casa"
+    }
+  ],
+  "batch": [
+    {
+      "dia": "D",
+      "tareas": [
+        "Lentejas estofadas para la comida del lunes (RFC y AFC) y el tupper de CCT, unos 45 min.",
+        "Albóndigas de pavo con cuscús para la comida del miércoles (RFC y AFC) y el tupper de CCT; congelar y sacar el martes por la noche, 40 min.",
+        "Ensalada de arroz integral con garbanzos y feta para el tupper frío de RFA del lunes, 30 min.",
+        "Asar pechuga de pollo para la quinoa de RFA del martes y el bocadillo de RFC del lunes, 20 min."
+      ]
+    }
+  ],
+  "dias": {
+    "L": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-pollo",
+        "prepara": "Domingo por la noche, con el pollo asado del batch"
+      },
+      "comida": {
+        "receta": "lentejas-estofadas",
+        "prepara": "Batch del domingo: recalentar"
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "merluza-salsa-verde-arroz",
+        "prepara": "Hacer 3 raciones extra: tupper de CCT y comida de RFC y AFC del martes",
+        "variantes": {
+          "RFA": "tortilla-francesa-brocoli"
+        }
+      }
+    },
+    "M": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Lunes por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "merluza-salsa-verde-arroz",
+        "prepara": "Ración extra de la cena del lunes: recalentar"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "crema-calabacin-tortilla"
+      }
+    },
+    "X": {
+      "almuerzo": {
+        "receta": "almuerzo-yogur-frutos-secos",
+        "prepara": "Martes por la noche: dejarlo junto en la nevera"
+      },
+      "comida": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Batch del domingo (congeladas): recalentar"
+      },
+      "merienda": {
+        "receta": "tostada-cacahuete-platano"
+      },
+      "cena": {
+        "receta": "pavo-plancha-verduras"
+      }
+    },
+    "J": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Miércoles por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "dorada-horno"
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "revuelto-setas-gambas"
+      }
+    },
+    "V": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Jueves por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "alubias-estofadas"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "pizza-casera-verduras"
+      }
+    },
+    "S": {
+      "comida": {
+        "receta": "pollo-horno-patata"
+      },
+      "cena": {
+        "receta": "tortilla-patata-calabacin"
+      }
+    },
+    "D": {
+      "comida": {
+        "receta": "espaguetis-bolonesa"
+      },
+      "cena": {
+        "receta": "crema-calabaza-sandwich"
+      }
+    }
+  },
+  "tuppers": {
+    "L": {
+      "RFA": {
+        "receta": "arroz-garbanzos-feta",
+        "prepara": "Batch del domingo"
+      },
+      "CCT": {
+        "receta": "lentejas-estofadas",
+        "prepara": "Batch del domingo"
+      }
+    },
+    "M": {
+      "RFA": {
+        "receta": "quinoa-pollo-curry",
+        "prepara": "Lunes por la noche, con el pollo del batch"
+      },
+      "CCT": {
+        "receta": "merluza-salsa-verde-arroz",
+        "prepara": "Ración extra de la cena del lunes"
+      }
+    },
+    "X": {
+      "RFA": {
+        "receta": "tortilla-patata-calabacin",
+        "prepara": "Martes por la noche (se toma fría)"
+      },
+      "CCT": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Batch del domingo (congeladas)"
+      }
+    }
+  }
+}

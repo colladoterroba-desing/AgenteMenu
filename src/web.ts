@@ -423,23 +423,27 @@ interface UsoReceta {
   donde: string;
   categoria: string;
   raciones: number;
+  semana: string;
 }
 
-function usosDeRecetas(dias: DiaDelMenu[]): Map<string, UsoReceta[]> {
+function usosDeRecetas(semanas: { semana: string; dias: DiaDelMenu[] }[]): Map<string, UsoReceta[]> {
   const usos = new Map<string, UsoReceta[]>();
   const anotar = (id: string, uso: UsoReceta) => usos.set(id, [...(usos.get(id) ?? []), uso]);
-  for (const d of dias) {
-    for (const c of d.comidas) {
-      const nombre = COMIDAS.find((x) => x.tipo === c.tipo)!.nombre.toLowerCase();
-      c.platos.forEach((p, i) =>
-        anotar(p.receta.id, {
-          donde: `${d.nombre} ${nombre}${i > 0 ? ` (${p.comensales[0].id})` : ""}`,
-          categoria: c.tipo,
-          raciones: p.raciones,
-        }),
-      );
-      for (const t of c.tuppers) {
-        anotar(t.receta.id, { donde: `${d.nombre}, tupper ${t.para}`, categoria: "tupper", raciones: t.raciones });
+  for (const { semana, dias } of semanas) {
+    for (const d of dias) {
+      for (const c of d.comidas) {
+        const nombre = COMIDAS.find((x) => x.tipo === c.tipo)!.nombre.toLowerCase();
+        c.platos.forEach((p, i) =>
+          anotar(p.receta.id, {
+            donde: `${d.nombre} ${nombre}${i > 0 ? ` (${p.comensales[0].id})` : ""}`,
+            categoria: c.tipo,
+            raciones: p.raciones,
+            semana,
+          }),
+        );
+        for (const t of c.tuppers) {
+          anotar(t.receta.id, { donde: `${d.nombre}, tupper ${t.para}`, categoria: "tupper", raciones: t.raciones, semana });
+        }
       }
     }
   }
@@ -453,8 +457,28 @@ export const cantidad = (n: number, unidad: string) => {
   return `${num(n)} ${unidad}`;
 };
 
-function seccionRecetas(recetas: Receta[], dias: DiaDelMenu[]): string {
-  const usos = usosDeRecetas(dias);
+/** Marcas de «no deseado» de una receta: la lista la rellena el script con los datos guardados. */
+function bloqueNoDeseado(r: Receta, familia: Familia): string {
+  const opciones = [["familia", "Toda la familia"], ...familia.miembros.map((m) => [m.id, m.id])];
+  return `<div class="no-deseado" data-receta="${esc(r.id)}">
+    <ul class="marcas" aria-live="polite"></ul>
+    <details class="marcar" data-solo-editable>
+      <summary>Marcar como no deseado</summary>
+      <form class="form-nd">
+        <label for="nd-quien-${esc(r.id)}">Quién</label>
+        <select id="nd-quien-${esc(r.id)}" name="por">${opciones.map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join("")}</select>
+        <label for="nd-motivo-${esc(r.id)}">Por qué</label>
+        <textarea id="nd-motivo-${esc(r.id)}" name="motivo" rows="2" required placeholder="Por ejemplo: no le gusta la textura"></textarea>
+        <button type="submit">Guardar</button>
+        <span class="sub estado-form" role="status"></span>
+      </form>
+    </details>
+  </div>`;
+}
+
+function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaDelMenu[] }[], familia: Familia): string {
+  const usos = usosDeRecetas(semanas);
+  const actual = semanas[0].semana;
   const usadas = recetas.filter((r) => usos.has(r.id));
   const filtros = [
     ["todas", "Todas"],
@@ -464,38 +488,58 @@ function seccionRecetas(recetas: Receta[], dias: DiaDelMenu[]): string {
     ["merienda", "Meriendas"],
     ["cena", "Cenas"],
     ["tupper", "Tuppers"],
+    ["no-deseado", "No deseados"],
   ];
   const tarjetas = usadas
     .map((r) => {
       const u = usos.get(r.id)!;
-      const raciones = u.reduce((s, x) => s + x.raciones, 0);
+      const estaSemana = u.filter((x) => x.semana === actual);
+      const raciones = estaSemana.reduce((s, x) => s + x.raciones, 0);
       const categorias = [...new Set(u.map((x) => x.categoria))].join(" ");
+      const lineasUso = semanas
+        .map(({ semana }) => {
+          const deEsta = u.filter((x) => x.semana === semana);
+          if (!deEsta.length) return "";
+          const etiqueta = semana === actual ? `Semana ${semana}` : `Semana ${semana} (siguiente)`;
+          return `<p class="usos"><span class="etq">${esc(etiqueta)}</span> ${deEsta.map((x) => esc(x.donde)).join(" · ")}</p>`;
+        })
+        .join("");
       return `<article class="receta" id="r-${esc(r.id)}" data-categorias="${esc(categorias)}">
         <header>
           <h3>${esc(r.nombre)}</h3>
-          <p class="meta"><span class="chip info">${esc(TECNICA[r.tecnica] ?? r.tecnica)}</span><span class="mono">${r.tiempoMin} min</span></p>
-          <p class="usos"><span class="etq">Esta semana</span> ${u.map((x) => esc(x.donde)).join(" · ")}</p>
+          <p class="meta"><span class="chip info">${esc(TECNICA[r.tecnica] ?? r.tecnica)}</span><span class="mono">${r.tiempoMin} min</span>${
+            r.alMomento ? `<span class="chip aviso">Al momento</span>` : ""
+          }</p>
+          ${lineasUso}
         </header>
         <table class="ingredientes">
-          <thead><tr><th>Ingrediente</th><th class="num">1 ración</th><th class="num">Semana <span class="mono">×${num(raciones, 2)}</span></th></tr></thead>
+          <thead><tr><th>Ingrediente</th><th class="num">1 ración</th>${
+            raciones ? `<th class="num">Sem. ${esc(actual)} <span class="mono">×${num(raciones, 2)}</span></th>` : ""
+          }</tr></thead>
           <tbody>${r.ingredientes
             .map(
               (i) =>
-                `<tr><td>${esc(i.nombre)}</td><td class="num mono">${cantidad(i.cantidad, i.unidad)}</td><td class="num mono">${cantidad(Math.round(i.cantidad * raciones * 10) / 10, i.unidad)}</td></tr>`,
+                `<tr><td>${esc(i.nombre)}</td><td class="num mono">${cantidad(i.cantidad, i.unidad)}</td>${
+                  raciones ? `<td class="num mono">${cantidad(Math.round(i.cantidad * raciones * 10) / 10, i.unidad)}</td>` : ""
+                }</tr>`,
             )
             .join("")}</tbody>
         </table>
         <ol class="pasos">${r.pasos.map((p) => `<li>${esc(p)}</li>`).join("")}</ol>
         ${r.conservacion ? `<p class="nota"><strong>Conservación:</strong> ${esc(r.conservacion)}</p>` : ""}
+        ${bloqueNoDeseado(r, familia)}
       </article>`;
     })
     .join("");
   return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
     .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
     .join("")}</div>
-  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal). La columna «Semana» ya multiplica por las raciones de todos los comensales. Sal, especias y caldo no se cuentan.</p>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna ya multiplica por las raciones de esta semana. Sal, especias y caldo no se cuentan. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
   <div class="recetas">${tarjetas}</div>`;
 }
+
+const claveProducto = (nombre: string, unidad: string) =>
+  `${nombre}|${unidad}`.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 function seccionCompra(lista: Record<Seccion, LineaCompra[]>): string {
   const bloques = SECCIONES.filter((s) => lista[s].length)
@@ -506,11 +550,13 @@ function seccionCompra(lista: Record<Seccion, LineaCompra[]>): string {
           .map((l, i) => {
             const id = `c-${s.normalize("NFD").replace(/[^a-zA-Z]/g, "").toLowerCase()}-${i}`;
             const texto = `${l.nombre}: ${cantidad(l.comprar, l.unidad)}`;
-            return `<li${l.comprar === 0 ? ' class="en-casa"' : ""}>
+            return `<li${l.comprar === 0 ? ' class="en-casa"' : ""} data-clave="${esc(claveProducto(l.nombre, l.unidad))}" data-nombre="${esc(l.nombre)}" data-necesita="${l.cantidad}" data-unidad="${esc(l.unidad)}">
               <input type="checkbox" id="${id}" data-texto="${esc(texto)}">
               <label for="${id}"><span class="producto">${esc(l.nombre)}</span>
                 <span class="cant mono">${l.comprar === 0 ? "en casa" : cantidad(l.comprar, l.unidad)}</span>
-                <span class="para">${esc(l.recetas.length > 3 ? `${l.recetas.slice(0, 2).join(" · ")} y ${l.recetas.length - 2} recetas más` : l.recetas.join(" · "))}${l.enDespensa ? ` · en despensa ${cantidad(l.enDespensa, l.unidad)}` : ""}</span>
+                <span class="para">${esc(l.recetas.length > 3 ? `${l.recetas.slice(0, 2).join(" · ")} y ${l.recetas.length - 2} recetas más` : l.recetas.join(" · "))}<span class="en-despensa">${
+                  l.enDespensa ? ` · en despensa ${cantidad(l.enDespensa, l.unidad)}` : ""
+                }</span></span>
               </label>
             </li>`;
           })
@@ -526,6 +572,57 @@ function seccionCompra(lista: Record<Seccion, LineaCompra[]>): string {
     <span id="copiado" class="sub" role="status"></span>
   </div>
   <div class="pasillos">${bloques}</div>`;
+}
+
+/** Inventario de despensa: lo que hay en casa de lo que pide el menú, y otros productos. */
+function seccionDespensa(lista: Record<Seccion, LineaCompra[]>, recetas: Receta[]): string {
+  const filas = SECCIONES.filter((s) => lista[s].length)
+    .map(
+      (s) => `<tbody><tr class="grupo-despensa"><th colspan="3">${esc(s)}</th></tr>${lista[s]
+        .map((l) => {
+          const clave = claveProducto(l.nombre, l.unidad);
+          return `<tr data-clave="${esc(clave)}" data-nombre="${esc(l.nombre)}" data-unidad="${esc(l.unidad)}">
+            <td><label for="d-${esc(clave)}">${esc(l.nombre)}</label></td>
+            <td class="num mono">${cantidad(l.cantidad, l.unidad)}</td>
+            <td class="num"><span class="tengo"><input type="number" inputmode="decimal" min="0" step="any" id="d-${esc(clave)}" value="${l.enDespensa || ""}" placeholder="0" data-solo-editable-input> <span class="mono">${esc(l.unidad)}</span></span></td>
+          </tr>`;
+        })
+        .join("")}</tbody>`,
+    )
+    .join("");
+  const nombres = [...new Set(recetas.flatMap((r) => r.ingredientes.map((i) => i.nombre)))].sort((a, b) => a.localeCompare(b, "es"));
+  return `<p class="sub aviso-db" id="despensa-aviso" role="status">Cargando el inventario guardado…</p>
+  <div class="despensa-rejilla">
+    <section class="categoria ancha">
+      <h4>Lo que pide el menú de esta semana</h4>
+      <p class="sub">Apunta cuánto tienes de cada cosa. La lista de la compra se descuenta al momento.</p>
+      <div class="scroll"><table class="tabla-despensa">
+        <thead><tr><th>Producto</th><th class="num">Hace falta</th><th class="num">Tengo</th></tr></thead>
+        ${filas}
+      </table></div>
+    </section>
+    <section class="categoria">
+      <h4>Añadir otro producto</h4>
+      <form id="form-despensa" class="form-despensa">
+        <label for="p-nombre">Producto</label>
+        <input id="p-nombre" name="nombre" list="lista-ingredientes" required autocomplete="off" data-solo-editable-input>
+        <datalist id="lista-ingredientes">${nombres.map((n) => `<option value="${esc(n)}"></option>`).join("")}</datalist>
+        <div class="fila-form">
+          <div><label for="p-cantidad">Cantidad</label><input id="p-cantidad" name="cantidad" type="number" min="0" step="any" required data-solo-editable-input></div>
+          <div><label for="p-unidad">Unidad</label><select id="p-unidad" name="unidad" data-solo-editable-input><option>g</option><option>ml</option><option>ud</option></select></div>
+        </div>
+        <label for="p-caducidad">Caduca (opcional)</label>
+        <input id="p-caducidad" name="caducidad" type="date" data-solo-editable-input>
+        <button type="submit" data-solo-editable-input>Guardar en la despensa</button>
+        <span class="sub estado-form" role="status"></span>
+      </form>
+    </section>
+    <section class="categoria">
+      <h4>En casa ahora</h4>
+      <ul id="inventario" class="inventario"><li class="sub">Sin productos apuntados.</li></ul>
+    </section>
+  </div>
+  <p class="sub">Para cambiar platos del menú y aprovechar lo que hay, pídeselo a Claude: «actualiza el menú con la despensa».</p>`;
 }
 
 function seccionTuppers(propuesta: PropuestaTuppers, familia: Familia): string {
@@ -710,6 +807,32 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .estado-menu.validado strong{color:var(--bien)}
 .estado-menu summary{cursor:pointer;font-size:.88rem;font-weight:600}
 .estado-menu ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:grid;gap:4px}
+.no-deseado{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+.marcas{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:.86rem}
+.marcas li{background:var(--aviso-soft);border-radius:6px;padding:6px 8px}
+.marcas strong{color:var(--aviso)}
+.marcar summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--muted)}
+.form-nd,.form-despensa{display:grid;gap:6px;margin-top:8px;font-size:.9rem}
+.form-nd label,.form-despensa label{font-size:.8rem;color:var(--muted);font-weight:600}
+.form-nd select,.form-nd textarea,.form-despensa input,.form-despensa select,.tengo input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.form-nd button,.form-despensa button{font:600 .88rem var(--f-body);background:var(--accent);color:var(--surface);border:0;border-radius:999px;padding:7px 14px;cursor:pointer;justify-self:start}
+.form-nd button:disabled,.form-despensa button:disabled{opacity:.5;cursor:not-allowed}
+.fila-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fila-form div{display:grid;gap:6px}
+button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(--f-body);cursor:pointer;padding:0 4px;text-decoration:underline}
+.badge-nd{display:inline-block;margin-top:4px;font-size:.7rem;font-weight:700;color:var(--aviso);background:var(--aviso-soft);border-radius:4px;padding:1px 6px}
+.despensa-rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start}
+.tabla-despensa{font-size:.9rem}
+.tabla-despensa td,.tabla-despensa th{padding:5px 8px}
+.tabla-despensa .num{text-align:right}
+.grupo-despensa th{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);background:var(--bg)}
+.tengo{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.tengo input{width:90px;text-align:right;padding:4px 6px}
+.inventario{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.92rem}
+.inventario li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:4px}
+.inventario .producto{flex:1}
+.aviso-db{background:var(--info-soft);padding:8px 12px;border-radius:6px}
+.panel-semana{display:grid;gap:16px;padding-top:12px}
 .barra{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
 .barra-dentro{max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px);display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
 .marca{font:700 1.05rem var(--f-display);display:flex;gap:8px;align-items:baseline}
@@ -856,7 +979,7 @@ const SCRIPT = `
     filtros.forEach((x) => x.setAttribute("aria-pressed", x === b));
     const f = b.dataset.filtro;
     document.querySelectorAll(".receta").forEach((r) => {
-      r.hidden = f !== "todas" && !r.dataset.categorias.split(" ").includes(f);
+      r.hidden = f === "no-deseado" ? r.dataset.nd !== "1" : f !== "todas" && !r.dataset.categorias.split(" ").includes(f);
     });
   }));
   document.querySelectorAll('a[href^="#r-"]').forEach((a) => a.addEventListener("click", () => {
@@ -885,6 +1008,191 @@ const SCRIPT = `
       () => { aviso.textContent = "No se ha podido copiar; selecciona la lista a mano."; },
     );
   });
+
+  // ---- Datos guardados: despensa y platos no deseados ----
+  const datos = JSON.parse(document.getElementById("datos-pagina").textContent);
+  const fmtNum = (n, d) => n.toLocaleString("es-ES", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+  const fmtCant = (n, u) => {
+    if (u === "g" && n >= 1000) return fmtNum(n / 1000, 2) + " kg";
+    if (u === "ml" && n >= 1000) return fmtNum(n / 1000, 2) + " l";
+    if (u === "ud") return fmtNum(n, n % 1 ? 1 : 0) + " ud";
+    return fmtNum(n) + " " + u;
+  };
+  const redondear = (n, u) => {
+    if (n <= 0) return 0;
+    if (u === "g" || u === "ml") { const paso = n > 500 ? 50 : 10; return Math.ceil(n / paso) * paso; }
+    return Math.ceil(n);
+  };
+  const clave = (nombre, unidad) => (nombre + "|" + unidad).normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const hoy = () => new Date().toISOString().slice(0, 10);
+
+  const despensaBase = new Map(datos.despensa.map((p) => [p.clave, p]));
+  let despensaDb = new Map();
+  const ndBase = new Map(datos.noDeseados.map((n) => [n.receta + "__" + n.por, n]));
+  let ndDb = new Map();
+
+  const despensaActual = () => {
+    const todo = new Map(despensaBase);
+    despensaDb.forEach((v, k) => todo.set(k, v));
+    return todo;
+  };
+  const noDeseadosActuales = () => {
+    const todo = new Map(ndBase);
+    ndDb.forEach((v, k) => (v.quitado ? todo.delete(k) : todo.set(k, v)));
+    return [...todo.values()];
+  };
+
+  const renderCompra = () => {
+    const d = despensaActual();
+    document.querySelectorAll(".pasillo li[data-clave]").forEach((li) => {
+      const tengo = Number(d.get(li.dataset.clave)?.cantidad || 0);
+      const u = li.dataset.unidad;
+      const comprar = redondear(Number(li.dataset.necesita) - tengo, u);
+      li.classList.toggle("en-casa", comprar === 0);
+      li.querySelector(".cant").textContent = comprar === 0 ? "en casa" : fmtCant(comprar, u);
+      li.querySelector(".en-despensa").textContent = tengo ? " · en despensa " + fmtCant(tengo, u) : "";
+      li.querySelector("input").dataset.texto = li.dataset.nombre + ": " + fmtCant(comprar, u);
+    });
+  };
+
+  const inventario = document.getElementById("inventario");
+  const renderDespensa = () => {
+    const d = despensaActual();
+    document.querySelectorAll(".tabla-despensa tr[data-clave] input").forEach((input) => {
+      if (document.activeElement === input) return;
+      const c = d.get(input.closest("tr").dataset.clave);
+      input.value = c && c.cantidad ? c.cantidad : "";
+    });
+    if (!inventario) return;
+    const items = [...d.values()].filter((p) => Number(p.cantidad) > 0)
+      .sort((a, b) => (a.caducidad || "9999").localeCompare(b.caducidad || "9999") || a.nombre.localeCompare(b.nombre, "es"));
+    inventario.replaceChildren();
+    if (!items.length) {
+      const li = document.createElement("li"); li.className = "sub"; li.textContent = "Sin productos apuntados."; inventario.append(li); return;
+    }
+    items.forEach((p) => {
+      const li = document.createElement("li");
+      const nombre = document.createElement("span"); nombre.className = "producto"; nombre.textContent = p.nombre;
+      const cant = document.createElement("span"); cant.className = "mono"; cant.textContent = fmtCant(Number(p.cantidad), p.unidad);
+      li.append(nombre, cant);
+      if (p.caducidad) { const cad = document.createElement("span"); cad.className = "sub caduca"; cad.textContent = "caduca " + p.caducidad; li.append(cad); }
+      if (db) {
+        const quitar = document.createElement("button"); quitar.type = "button"; quitar.className = "enlace"; quitar.textContent = "Quitar";
+        quitar.addEventListener("click", () => guardarProducto(p.nombre, p.unidad, 0));
+        li.append(quitar);
+      }
+      inventario.append(li);
+    });
+  };
+
+  const renderNoDeseados = () => {
+    const lista = noDeseadosActuales();
+    const porReceta = new Map();
+    lista.forEach((n) => porReceta.set(n.receta, [...(porReceta.get(n.receta) || []), n]));
+    document.querySelectorAll(".no-deseado[data-receta]").forEach((bloque) => {
+      const marcas = porReceta.get(bloque.dataset.receta) || [];
+      const ul = bloque.querySelector(".marcas");
+      ul.replaceChildren();
+      marcas.forEach((n) => {
+        const li = document.createElement("li");
+        const quien = document.createElement("strong"); quien.textContent = "No deseado · " + (n.por === "familia" ? "toda la familia" : n.por);
+        const motivo = document.createElement("span"); motivo.textContent = ": " + n.motivo;
+        li.append(quien, motivo);
+        if (db) {
+          const quitar = document.createElement("button"); quitar.type = "button"; quitar.className = "enlace"; quitar.textContent = "Quitar";
+          quitar.addEventListener("click", () => guardarNoDeseado({ ...n, quitado: true }));
+          li.append(" ", quitar);
+        }
+        ul.append(li);
+      });
+      bloque.closest(".receta").dataset.nd = marcas.length ? "1" : "0";
+    });
+    document.querySelectorAll('.semana a[href^="#r-"]').forEach((a) => {
+      const id = a.getAttribute("href").slice(3);
+      const marcas = porReceta.get(id) || [];
+      let badge = a.nextElementSibling && a.nextElementSibling.classList.contains("badge-nd") ? a.nextElementSibling : null;
+      if (!marcas.length) { if (badge) badge.remove(); return; }
+      if (!badge) { badge = document.createElement("span"); badge.className = "badge-nd"; a.after(badge); }
+      badge.textContent = "No deseado: " + marcas.map((n) => n.por === "familia" ? "familia" : n.por).join(", ");
+      badge.title = marcas.map((n) => n.por + ": " + n.motivo).join(" · ");
+    });
+  };
+
+  const renderTodo = () => { renderCompra(); renderDespensa(); renderNoDeseados(); };
+  let db = null;
+  const avisoDb = document.getElementById("despensa-aviso");
+
+  const guardarProducto = async (nombre, unidad, cantidadNueva, caducidad) => {
+    const k = clave(nombre, unidad);
+    const previo = despensaActual().get(k) || {};
+    const doc = { nombre, unidad, cantidad: Number(cantidadNueva) || 0, actualizado: new Date().toISOString() };
+    const cad = caducidad !== undefined ? caducidad : previo.caducidad;
+    if (cad) doc.caducidad = cad;
+    try { await db.doc("despensa/" + k).set(doc); }
+    catch (e) { if (avisoDb) avisoDb.textContent = "No se ha podido guardar (" + (e && e.code || "error") + "). Inténtalo de nuevo."; }
+  };
+  const guardarNoDeseado = async (n) => {
+    const doc = { receta: n.receta, por: n.por, motivo: n.motivo, fecha: n.fecha || hoy() };
+    if (n.quitado) doc.quitado = true;
+    await db.doc("no-deseados/" + n.receta + "__" + n.por).set(doc);
+  };
+
+  const soloLectura = (motivo) => {
+    document.querySelectorAll("[data-solo-editable]").forEach((el) => (el.hidden = true));
+    document.querySelectorAll("[data-solo-editable-input]").forEach((el) => (el.disabled = true));
+    if (avisoDb) avisoDb.textContent = motivo;
+  };
+
+  renderTodo();
+  (async () => {
+    db = window.claude && window.claude.use ? await window.claude.use("db") : null;
+    if (!db) {
+      soloLectura("El inventario y las marcas de «no deseado» solo se pueden editar abriendo esta página en claude.ai. Se muestra lo último sincronizado.");
+      return;
+    }
+    if (avisoDb) avisoDb.textContent = "Los cambios se guardan al momento.";
+    db.collection("despensa").onSnapshot((snap) => {
+      despensaDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
+      renderTodo();
+    }, () => soloLectura("No se puede acceder al inventario guardado ahora mismo."));
+    db.collection("no-deseados").onSnapshot((snap) => {
+      ndDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
+      renderTodo();
+    }, () => {});
+
+    document.querySelectorAll(".tabla-despensa tr[data-clave] input").forEach((input) => {
+      input.addEventListener("change", () => {
+        const tr = input.closest("tr");
+        guardarProducto(tr.dataset.nombre, tr.dataset.unidad, input.value);
+      });
+    });
+    const form = document.getElementById("form-despensa");
+    if (form) form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = new FormData(form);
+      const estado = form.querySelector(".estado-form");
+      await guardarProducto(String(f.get("nombre")).trim(), String(f.get("unidad")), f.get("cantidad"), String(f.get("caducidad") || "") || undefined);
+      estado.textContent = "Guardado";
+      form.reset();
+    });
+    document.querySelectorAll(".form-nd").forEach((formNd) => {
+      formNd.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const f = new FormData(formNd);
+        const estado = formNd.querySelector(".estado-form");
+        const receta = formNd.closest(".no-deseado").dataset.receta;
+        try {
+          await guardarNoDeseado({ receta, por: String(f.get("por")), motivo: String(f.get("motivo")).trim() });
+          estado.textContent = "Guardado. No se volverá a proponer a " + (f.get("por") === "familia" ? "la familia" : f.get("por")) + ".";
+          formNd.reset();
+          formNd.closest("details").open = false;
+        } catch (err) {
+          estado.textContent = "No se ha podido guardar (" + (err && err.code || "error") + ").";
+        }
+      });
+    });
+  })();
 })();
 `;
 
@@ -892,13 +1200,23 @@ export interface DatosWeb {
   familia: Familia;
   propuesta: PropuestaTuppers;
   menu: MenuSemana;
+  /** Propuesta de la semana siguiente, si existe. */
+  menuSiguiente?: MenuSemana;
   recetas: Receta[];
   despensa?: Despensa;
   fecha: string;
 }
 
-export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha }: DatosWeb): string {
+export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, despensa, fecha }: DatosWeb): string {
   const dias = componerMenu(familia, menu, recetas);
+  const diasSiguiente = menuSiguiente ? componerMenu(familia, menuSiguiente, recetas) : undefined;
+  const semanas = [{ semana: menu.semana, dias }, ...(menuSiguiente && diasSiguiente ? [{ semana: menuSiguiente.semana, dias: diasSiguiente }] : [])];
+  const datosCliente = {
+    miembros: familia.miembros.map((m) => m.id),
+    recetas: Object.fromEntries(recetas.map((r) => [r.id, r.nombre])),
+    despensa: (despensa?.productos ?? []).map((p) => ({ clave: claveProducto(p.nombre, p.unidad), ...p })),
+    noDeseados: familia.noDeseados ?? [],
+  };
   const compra = listaCompra(dias, despensa);
   const comidas = dias.flatMap((d) => d.comidas);
   const tuppersSemana = comidas.reduce((s, c) => s + c.tuppers.length, 0);
@@ -908,6 +1226,7 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
     ["menu", "Menú"],
     ["recetas", "Recetas"],
     ["compra", "Compra"],
+    ["despensa", "Despensa"],
     ["tuppers", "Tuppers"],
     ["configuracion", "Configuración"],
   ];
@@ -940,19 +1259,33 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
         <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
       </dl>
     </header>
-    ${estadoMenu(familia, menu)}
-    ${seccionMenu(familia, dias, menu)}
+    ${
+      menuSiguiente && diasSiguiente
+        ? `<div class="pestanas" role="tablist" aria-label="Semana">
+            <button role="tab" id="tab-sem-actual" aria-controls="sem-actual" aria-selected="true" tabindex="0">Esta semana · ${esc(menu.semana)}</button>
+            <button role="tab" id="tab-sem-siguiente" aria-controls="sem-siguiente" aria-selected="false" tabindex="-1">Semana siguiente · ${esc(menuSiguiente.semana)} (propuesta)</button>
+          </div>
+          <div role="tabpanel" id="sem-actual" aria-labelledby="tab-sem-actual" class="panel-semana">${estadoMenu(familia, menu)}${seccionMenu(familia, dias, menu)}</div>
+          <div role="tabpanel" id="sem-siguiente" aria-labelledby="tab-sem-siguiente" class="panel-semana" hidden>${estadoMenu(familia, menuSiguiente)}${seccionMenu(familia, diasSiguiente, menuSiguiente)}</div>`
+        : `${estadoMenu(familia, menu)}${seccionMenu(familia, dias, menu)}`
+    }
   </section>
 
   <section class="vista" id="recetas" data-vista aria-labelledby="h-recetas" hidden>
     <header class="cab"><h1 id="h-recetas">Recetas</h1></header>
-    ${seccionRecetas(recetas, dias)}
+    ${seccionRecetas(recetas, semanas, familia)}
   </section>
 
   <section class="vista" id="compra" data-vista aria-labelledby="h-compra" hidden>
     <header class="cab"><h1 id="h-compra">Lista de la compra</h1>
     <p class="sub">Suma de los ingredientes de todo el menú y los tuppers, redondeada hacia arriba${despensa?.productos.length ? " y descontando lo que hay en la despensa" : ""}. Marca lo que ya llevas en el carro.</p></header>
     ${seccionCompra(compra)}
+  </section>
+
+  <section class="vista" id="despensa" data-vista aria-labelledby="h-despensa" hidden>
+    <header class="cab"><h1 id="h-despensa">Despensa</h1>
+    <p class="sub">Inventario de lo que hay en casa. Se guarda en esta página y lo ve quien tenga acceso a ella.</p></header>
+    ${seccionDespensa(compra, recetas)}
   </section>
 
   <section class="vista" id="tuppers" data-vista aria-labelledby="h-tuppers" hidden>
@@ -969,6 +1302,7 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
 
   <p class="pie">Cálculos orientativos (Mifflin-St Jeor en adultos, Schofield en menores, deporte por MET). No sustituyen el consejo de un profesional sanitario. Los objetivos de peso solo se aplican cuando se acuerdan.</p>
 </main>
+<script type="application/json" id="datos-pagina">${JSON.stringify(datosCliente).replace(/</g, "\\u003c")}</script>
 <script>${SCRIPT}</script>
 `;
 }
@@ -980,6 +1314,7 @@ async function main() {
     familia: await leer<Familia>("familia.json"),
     propuesta: await leer<PropuestaTuppers>("propuesta-tuppers.json"),
     menu: await leer<MenuSemana>("menu-semana.json"),
+    menuSiguiente: await leer<MenuSemana>("menu-siguiente.json").catch(() => undefined),
     recetas: (await leer<{ recetas: Receta[] }>("recetas.json")).recetas,
     despensa: await leer<Despensa>("despensa.json"),
     fecha: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }),

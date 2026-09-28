@@ -716,6 +716,140 @@
         "Añadir el queso fresco en lonchas, envolver y guardar en la nevera.",
         "Llevar una pieza de fruta."
       ]
+    },
+    {
+      "id": "arroz-garbanzos-feta",
+      "nombre": "Ensalada de arroz integral con garbanzos y feta",
+      "tipo": "tupper",
+      "tiempoMin": 30,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Arroz integral", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Garbanzos cocidos (bote)", "cantidad": 130, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Queso feta", "cantidad": 35, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Pepino", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceitunas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Cocer el arroz integral, enfriarlo bajo el grifo y escurrir.",
+        "Mezclar con los garbanzos enjuagados, el pepino y el tomate en dados, las aceitunas y el feta desmenuzado.",
+        "El aceite va aparte en un bote."
+      ],
+      "conservacion": "Batch del domingo; 3 días en nevera. Bolsa isotérmica con placa de hielo."
+    },
+    {
+      "id": "quinoa-pollo-curry",
+      "nombre": "Quinoa con pollo al curry suave, manzana y yogur",
+      "tipo": "tupper",
+      "tiempoMin": 25,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Quinoa", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Pechuga de pollo", "cantidad": 100, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Manzana", "cantidad": 0.5, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Apio", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Yogur griego ligero", "cantidad": 45, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Nueces peladas", "cantidad": 13, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 35, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Lavar y cocer la quinoa 12 minutos; escurrir y enfriar.",
+        "Usar el pollo asado del batch, en dados.",
+        "Mezclar el yogur con una cucharadita de curry suave, sal y limón; unir con la quinoa, el pollo, la manzana y el apio en dados y las nueces."
+      ],
+      "conservacion": "Prepararla el lunes por la noche."
+    },
+    {
+      "id": "tortilla-patata-calabacin",
+      "nombre": "Tortilla de patata y calabacín con ensalada de tomate",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Calabacín", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Tomate", "cantidad": 120, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" }
+      ],
+      "pasos": [
+        "Cortar la patata, el calabacín y la cebolla finos y pocharlos en el aceite a fuego suave 20 minutos. Escurrir el aceite.",
+        "Mezclar con los huevos batidos y sal y cuajar la tortilla por los dos lados.",
+        "Servir con el tomate aliñado."
+      ],
+      "conservacion": "A diferencia de la francesa, la tortilla de patata aguanta de un día para otro en la nevera y se toma fría."
+    },
+    {
+      "id": "merluza-salsa-verde-arroz",
+      "nombre": "Merluza en salsa verde con arroz y guisantes",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Lomos de merluza", "cantidad": 150, "unidad": "g", "seccion": "Pescadería" },
+        { "nombre": "Arroz redondo", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Guisantes congelados", "cantidad": 50, "unidad": "g", "seccion": "Congelados" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Cocer el arroz en agua con sal y escurrir.",
+        "En una cazuela, dorar ajo picado en el aceite, añadir una cucharada de harina y medio vaso de caldo o agua, y el perejil picado.",
+        "Poner la merluza y los guisantes y cocer 6-8 minutos moviendo la cazuela para que ligue la salsa."
+      ],
+      "conservacion": "2 días en nevera; se recalienta bien en el microondas tapada."
+    },
+    {
+      "id": "pavo-plancha-verduras",
+      "nombre": "Pechuga de pavo a la plancha con verduras asadas",
+      "tipo": "cena",
+      "tiempoMin": 35,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Pechuga de pavo en filetes", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Pimiento rojo", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Calabacín", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Berenjena", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Asar las verduras troceadas con la mitad del aceite y sal a 200 °C, 25 minutos.",
+        "Hacer los filetes de pavo a la plancha, 2-3 minutos por lado."
+      ]
+    },
+    {
+      "id": "alubias-estofadas",
+      "nombre": "Alubias blancas estofadas con verduras",
+      "tipo": "comida",
+      "tiempoMin": 35,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Alubias blancas cocidas (bote)", "cantidad": 200, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Zanahoria", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pimiento verde", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate triturado", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Pochar la cebolla, el pimiento y la zanahoria picados en el aceite 10 minutos.",
+        "Añadir el tomate y pimentón y sofreír 5 minutos.",
+        "Incorporar la patata en dados, cubrir de agua y cocer 15 minutos; añadir las alubias enjuagadas y cocer 5 minutos más."
+      ],
+      "conservacion": "4 días en nevera o 3 meses congeladas."
     }
   ]
 }

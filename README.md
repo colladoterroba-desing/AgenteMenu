@@ -39,7 +39,10 @@ Para ver los resultados en el navegador (menú de la semana, recetas, lista de l
 
 ```bash
 npm run web   # genera salidas/resultados.html
+npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) en salidas/
 ```
+
+`npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 
 ## Estructura
 
@@ -57,6 +60,7 @@ npm run web   # genera salidas/resultados.html
 | `src/herramientas.ts` | Herramientas que usa el agente |
 | `src/agente.ts` | Chat de terminal con Claude |
 | `src/web.ts` | Vista web de los resultados |
+| `src/pdf.ts` | PDF del menú y de la lista de la compra |
 | `data/propuesta-tuppers.json` | Rotación de tuppers de oficina |
 
 ## Desarrollo

@@ -220,3 +220,23 @@ test("normas de la casa: pescado azul solo el jueves a mediodía y nada «al mom
   tortillaEnCena.dias.X.cena = { receta: "tortilla-francesa-brocoli" };
   assert.deepEqual(validarMenu(familia, tortillaEnCena, recetas), []);
 });
+
+test("los desayunos fijos ocultos no salen en el menú pero sí en la compra; PDF en su orientación", async () => {
+  const { componerMenu, listaCompra, menuVisible } = await import("../src/menu.js");
+  const { htmlMenuPdf, htmlCompraPdf } = await import("../src/pdf.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dias = componerMenu(familia, menu, recetas);
+  assert.ok(menuVisible(familia, dias).every((d) => !d.comidas.some((c) => c.tipo === "desayuno")));
+  assert.ok(listaCompra(dias).Despensa.some((l) => l.nombre.startsWith("Galletas")));
+
+  const conAfc = structuredClone(familia);
+  conAfc.desayunos!.AFC.mostrarEnMenu = true;
+  const desayuno = menuVisible(conAfc, dias)[0].comidas.find((c) => c.tipo === "desayuno")!;
+  assert.deepEqual(desayuno.platos.flatMap((p) => p.comensales.map((c) => c.id)), ["AFC"]);
+
+  const datos = { familia, menu, recetas, fecha: "28 de septiembre de 2026" };
+  assert.match(htmlMenuPdf(datos), /size:A4 landscape/);
+  assert.match(htmlCompraPdf(datos), /size:A4 portrait/);
+  assert.doesNotMatch(htmlMenuPdf(datos), /Nesquik/);
+});

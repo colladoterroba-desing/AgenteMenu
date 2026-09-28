@@ -269,3 +269,26 @@ export function validarPublicacion(familia: Familia, menu: MenuSemana, por: stri
   }
   return { ...menu, estado: "validado", validacion: { por, fecha } };
 }
+
+/**
+ * Menú tal como se enseña (web y PDF): quita los desayunos fijos de quien no quiere
+ * verlos. La lista de la compra se calcula con el menú completo.
+ */
+export function menuVisible(familia: Familia, dias: DiaDelMenu[]): DiaDelMenu[] {
+  const visible = (id: string) => familia.desayunos?.[id]?.mostrarEnMenu === true || !familia.desayunos?.[id];
+  return dias.map((d) => ({
+    ...d,
+    comidas: d.comidas
+      .map((c) =>
+        c.tipo !== "desayuno"
+          ? c
+          : {
+              ...c,
+              platos: c.platos
+                .map((p) => ({ ...p, comensales: p.comensales.filter((x) => visible(x.id)) }))
+                .filter((p) => p.comensales.length > 0),
+            },
+      )
+      .filter((c) => c.tipo !== "desayuno" || c.platos.length > 0),
+  }));
+}

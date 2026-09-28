@@ -40,6 +40,19 @@ export class Almacen {
     await this.escribir("familia.json", familia);
   }
 
+  /** Cambia el desayuno habitual de un miembro (receta, nota o si se muestra en el menú). */
+  async configurarDesayuno(
+    id: string,
+    cambios: { receta?: string; nota?: string; mostrarEnMenu?: boolean },
+  ): Promise<void> {
+    const familia = await this.familia();
+    if (!familia.miembros.some((m) => m.id === id)) throw new Error(`No existe el miembro ${id}`);
+    const actual = familia.desayunos?.[id];
+    if (!actual && !cambios.receta) throw new Error(`${id} no tiene desayuno habitual: indica la receta`);
+    familia.desayunos = { ...familia.desayunos, [id]: { ...actual!, ...cambios } };
+    await this.escribir("familia.json", familia);
+  }
+
   /** Suma cantidades (negativas para consumir); elimina productos que llegan a 0. */
   async ajustarProductos(cambios: Producto[]): Promise<Despensa> {
     const despensa = await this.despensa();

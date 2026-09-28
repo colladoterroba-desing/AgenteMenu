@@ -9,7 +9,7 @@ import {
   REPARTO_LABORABLE,
   tasaMetabolicaBasal,
 } from "./nutricion.js";
-import { componerMenu, listaCompra, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
+import { componerMenu, listaCompra, menuVisible, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
 
@@ -26,9 +26,9 @@ export interface PropuestaTuppers {
   semanas: Record<string, Record<string, PlatoTupper[]>>;
 }
 
-const esc = (s: string | number) =>
+export const esc = (s: string | number) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-const num = (n: number, decimales = 0) =>
+export const num = (n: number, decimales = 0) =>
   n.toLocaleString("es-ES", { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
 
 const DEPORTE: Record<string, string> = {
@@ -40,7 +40,7 @@ const DEPORTE: Record<string, string> = {
   educacion_fisica: "Educación física",
 };
 
-const COMIDAS: { tipo: TipoComida; nombre: string }[] = [
+export const COMIDAS: { tipo: TipoComida; nombre: string }[] = [
   { tipo: "desayuno", nombre: "Desayuno" },
   { tipo: "almuerzo", nombre: "Almuerzo" },
   { tipo: "comida", nombre: "Comida" },
@@ -200,6 +200,9 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
               ? `<a href="#r-${esc(recetaDesayuno.id)}">${esc(recetaDesayuno.nombre)}</a>${desayuno?.nota ? `<br><span class="sub">${esc(desayuno.nota)}</span>` : ""}`
               : `<span class="sub">El del menú</span>`,
           ],
+          ...(desayuno
+            ? ([["Desayuno en el menú", desayuno.mostrarEnMenu ? "Se muestra" : `<span class="sub">No se muestra (sí cuenta en la compra)</span>`]] as [string, string][])
+            : []),
           ["Almuerzo", almuerzo ? `Se lo lleva al ${esc(almuerzo.lugar)} · <span class="mono">${almuerzo.dias.join(" ")}</span>` : `<span class="sub">No</span>`],
         ]),
       )}
@@ -373,9 +376,15 @@ function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
   const platos = dias[0]?.comidas.find((c) => c.tipo === "desayuno")?.platos ?? [];
   const receta = (id: string) => platos.find((p) => p.comensales.some((c) => c.id === id));
   const almuerzo = familia.regimen.almuerzo ?? {};
+  const enMenu = Object.entries(familia.desayunos).filter(([, d]) => d.mostrarEnMenu);
+  const ocultos = Object.keys(familia.desayunos).filter((id) => !familia.desayunos![id].mostrarEnMenu);
+  const notaOcultos = ocultos.length
+    ? `<p class="sub">Desayunos fijos que no se muestran en el menú: ${ocultos.map((id) => `<a href="#configuracion">${esc(id)}</a>`).join(", ")}. Se cuentan igualmente en la lista de la compra.</p>`
+    : "";
+  if (!enMenu.length) return `<aside class="batch desayunos"><h3>Desayunos</h3>${notaOcultos}</aside>`;
   return `<aside class="batch desayunos">
     <h3>Desayunos de cada uno, todos los días</h3>
-    <ul>${Object.entries(familia.desayunos)
+    <ul>${enMenu
       .map(([id, d]) => {
         const r = receta(id);
         const kcal = r?.comensales.find((c) => c.id === id)?.kcal;
@@ -385,7 +394,7 @@ function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
         }${a ? `<br><span class="sub">Se lleva almuerzo al ${esc(a.lugar)} (${a.dias.join(" ")}).</span>` : ""}</li>`;
       })
       .join("")}</ul>
-    ${familia.preferencias?.length ? `<p class="sub"><strong>En casa:</strong> ${esc(familia.preferencias.join(" · "))}</p>` : ""}
+    ${notaOcultos}
   </aside>`;
 }
 
@@ -398,13 +407,14 @@ function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana): st
       </aside>`,
     )
     .join("");
+  const visibles = menuVisible(familia, dias);
   return `<div class="avisos-menu">${desayunosHabituales(familia, dias)}${batch}</div>
   <div class="scroll semana-scroll"><table class="semana">
-    <thead><tr><th scope="col"><span class="sr">Comida</span></th>${dias
+    <thead><tr><th scope="col"><span class="sr">Comida</span></th>${visibles
       .map((d) => `<th scope="col">${esc(d.nombre)}</th>`)
       .join("")}</tr></thead>
-    <tbody>${COMIDAS.map(
-      ({ tipo, nombre }) => `<tr><th scope="row">${nombre}</th>${dias.map((d) => celdaMenu(d, tipo)).join("")}</tr>`,
+    <tbody>${COMIDAS.filter(({ tipo }) => visibles.some((d) => d.comidas.some((c) => c.tipo === tipo))).map(
+      ({ tipo, nombre }) => `<tr><th scope="row">${nombre}</th>${visibles.map((d) => celdaMenu(d, tipo)).join("")}</tr>`,
     ).join("")}</tbody>
   </table></div>`;
 }
@@ -436,7 +446,7 @@ function usosDeRecetas(dias: DiaDelMenu[]): Map<string, UsoReceta[]> {
   return usos;
 }
 
-const cantidad = (n: number, unidad: string) => {
+export const cantidad = (n: number, unidad: string) => {
   if (unidad === "g" && n >= 1000) return `${num(n / 1000, 2)} kg`;
   if (unidad === "ml" && n >= 1000) return `${num(n / 1000, 2)} l`;
   if (unidad === "ud") return `${num(n, n % 1 ? 1 : 0)} ud`;

@@ -26,6 +26,8 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Preferencias:** leche siempre semidesnatada.
 - **Pescado azul:** salmón, atún, anchoas y sardinas solo los jueves a la hora de comer, las semanas que toque (no es obligatorio ponerlo todos los jueves).
 - **Cocina por la mañana:** por las mañanas no se cocina en casa. Almuerzos y tuppers se preparan la noche anterior o en el batch. La tortilla francesa se hace al momento: no se prepara el día antes.
+- **Desayunos fijos:** cada persona elige si su desayuno fijo aparece en el menú (por defecto no). Siempre se cuenta en la lista de la compra.
+- **PDF:** el menú se puede sacar en PDF en formato horizontal y la lista de la compra en vertical (`npm run pdf`).
 - **Validación del menú:** por el momento solo CCT puede dar por válido un menú y publicarlo. Puede pedir cambios antes de validarlo; cualquier cambio devuelve el menú a borrador.
 
 Los datos están en [`data/familia.json`](../data/familia.json).

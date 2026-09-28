@@ -64,13 +64,14 @@
     }
   ],
   "desayunos": {
-    "AFC": { "receta": "desayuno-afc", "nota": "Su desayuno de todos los días." },
-    "RFC": { "receta": "cafe-solo", "nota": "Solo café en casa; come el almuerzo que se lleva al colegio." },
+    "AFC": { "receta": "desayuno-afc", "nota": "Su desayuno de todos los días.", "mostrarEnMenu": false },
+    "RFC": { "receta": "cafe-solo", "nota": "Solo café en casa; come el almuerzo que se lleva al colegio.", "mostrarEnMenu": false },
     "CCT": {
       "receta": "desayuno-cct",
-      "nota": "Propuesta: pan integral con tomate y queso fresco en lugar de azúcar. Antes: café cortado con tostada de pan, aceite y azúcar."
+      "nota": "Propuesta: pan integral con tomate y queso fresco en lugar de azúcar. Antes: café cortado con tostada de pan, aceite y azúcar.",
+      "mostrarEnMenu": false
     },
-    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. En días de running, añadir fruta." }
+    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. En días de running, añadir fruta.", "mostrarEnMenu": false }
   },
   "regimen": {
     "comida": {

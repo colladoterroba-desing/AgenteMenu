@@ -6,7 +6,8 @@
     "test": "node --import tsx --test test/*.test.ts",
     "start": "node --env-file-if-exists=.env --import tsx src/agente.ts",
     "typecheck": "tsc",
-    "web": "tsx src/web.ts"
+    "web": "tsx src/web.ts",
+    "pdf": "tsx src/pdf.ts"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.3",
+    "playwright-core": "^1.63.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

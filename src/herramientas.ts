@@ -104,6 +104,24 @@ export function crearHerramientas(almacen: Almacen) {
       },
     }),
     herramienta({
+      nombre: "configurar_desayuno",
+      descripcion:
+        "Cambia el desayuno habitual de un miembro: la receta, una nota o si se muestra en el menú (mostrarEnMenu). Aunque no se muestre, cuenta en la lista de la compra. Úsala solo cuando esa persona lo pida.",
+      esquema: z.object({
+        id: z.string(),
+        receta: z.string().optional(),
+        nota: z.string().optional(),
+        mostrarEnMenu: z.boolean().optional(),
+      }),
+      ejecutar: async ({ id, ...cambios }) => {
+        if (cambios.receta && !(await almacen.recetas()).some((r) => r.id === cambios.receta)) {
+          throw new Error(`No existe la receta ${cambios.receta}`);
+        }
+        await almacen.configurarDesayuno(id, cambios);
+        return { guardado: true, id, ...cambios };
+      },
+    }),
+    herramienta({
       nombre: "ver_despensa",
       descripcion: "Productos disponibles en casa (con caducidad si se conoce) y sobras de raciones ya cocinadas.",
       esquema: z.object({}),

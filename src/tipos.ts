@@ -63,8 +63,11 @@ export interface Familia {
     soloEn: { dia: Dia; comida: string }[];
     motivo: string;
   }[];
-  /** Desayuno habitual de cada miembro, el mismo todos los días. */
-  desayunos?: Record<string, { receta: string; nota?: string }>;
+  /**
+   * Desayuno habitual de cada miembro, el mismo todos los días. Por defecto no se
+   * muestra en el menú (mostrarEnMenu: true para verlo); siempre cuenta en la compra.
+   */
+  desayunos?: Record<string, { receta: string; nota?: string; mostrarEnMenu?: boolean }>;
   objetivos: Record<string, Objetivo>;
 }
 

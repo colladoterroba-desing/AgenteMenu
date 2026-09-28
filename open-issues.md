@@ -18,6 +18,8 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - **Identidad de la app.** Nombre, icono y colores del manifiesto.
   - **Relación con OI-01 y OI-02.** Si la app permite editar la configuración, dónde se guardan los datos. Y cómo se actualiza cuando el agente genera un menú nuevo.
 
+- [ ] **OI-24 · Identificar a quien valida el menú.** Decidido: por el momento solo CCT puede dar por válido un menú y publicarlo, y puede pedir cambios antes (que lo devuelven a borrador). Falta decidir cómo se comprueba que es CCT: en el chat del agente se confía en que quien escribe dice la verdad, y la web no identifica a nadie. Va ligado a OI-01, OI-03 y OI-23 (cuentas o contraseña). También hay que decidir si la validación caduca (por ejemplo, un menú por semana).
+
 ## Personas y hábitos
 
 - [ ] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** En los datos aparecía dos veces RFA. Se ha asignado a **RFC**; falta confirmarlo.

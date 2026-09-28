@@ -2,7 +2,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
-import { componerMenu, listaCompra, SECCIONES, validarMenu, type MenuSemana } from "./menu.js";
+import { componerMenu, listaCompra, SECCIONES, validarMenu, validarPublicacion, type MenuSemana } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
 import { DIAS } from "./tipos.js";
 
@@ -188,19 +188,36 @@ export function crearHerramientas(almacen: Almacen) {
     herramienta({
       nombre: "guardar_menu",
       descripcion:
-        "Guarda el menú de la semana (es el que se muestra en la vista web). Todas las recetas deben existir (guardar_receta antes). Debe cubrir cada comida de planificar_comensales y cada tupper.",
+        "Guarda el menú de la semana como BORRADOR (cualquier cambio anula la validación anterior). Todas las recetas deben existir (guardar_receta antes). Debe cubrir cada comida de planificar_comensales y cada tupper. Indica quién pide el cambio y qué cambia.",
       esquema: z.object({
+        autor: z.string().describe("Quién pide o hace el cambio (p. ej. CCT o agente)"),
+        fecha,
+        descripcionCambio: z.string().describe("Qué se ha cambiado respecto al menú anterior"),
         semana: z.string(),
         batch: z.array(z.object({ dia: z.enum(DIAS), tareas: z.array(z.string()) })).optional(),
         dias: z.record(z.enum(DIAS), z.partialRecord(z.enum(TIPOS_COMIDA), plato)),
         tuppers: z.partialRecord(z.enum(DIAS), z.record(z.string(), plato)),
       }),
-      ejecutar: async (menu) => {
-        const [familia, recetas] = await Promise.all([almacen.familia(), almacen.recetas()]);
-        const errores = validarMenu(familia, menu as MenuSemana, recetas);
+      ejecutar: async ({ autor, fecha, descripcionCambio, ...datos }) => {
+        const [familia, recetas, anterior] = await Promise.all([
+          almacen.familia(), almacen.recetas(), almacen.menu().catch(() => undefined),
+        ]);
+        const errores = validarMenu(familia, datos as MenuSemana, recetas);
         if (errores.length) throw new Error(`Menú incompleto:\n${errores.join("\n")}`);
-        await almacen.guardarMenu(menu as MenuSemana);
-        return { guardado: true };
+        const cambios = [...(anterior?.cambios ?? []), { por: autor, fecha, descripcion: descripcionCambio }];
+        await almacen.guardarMenu({ ...(datos as MenuSemana), estado: "borrador", cambios });
+        return { guardado: true, estado: "borrador", pendienteDe: familia.permisos?.validarMenu ?? [] };
+      },
+    }),
+    herramienta({
+      nombre: "validar_menu",
+      descripcion:
+        "Da por válido el menú guardado y lo marca como publicado. Solo puede hacerlo quien figure en familia.permisos.validarMenu (CCT). Úsala únicamente cuando esa persona lo confirme de forma explícita en la conversación.",
+      esquema: z.object({ por: z.string(), fecha }),
+      ejecutar: async ({ por, fecha }) => {
+        const [familia, menu] = await Promise.all([almacen.familia(), almacen.menu()]);
+        await almacen.guardarMenu(validarPublicacion(familia, menu, por, fecha));
+        return { validado: true, por, fecha };
       },
     }),
     herramienta({

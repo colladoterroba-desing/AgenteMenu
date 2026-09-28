@@ -55,6 +55,8 @@ export interface Familia {
   roles: Record<string, string>;
   /** Normas de la casa que aplican a todas las recetas (p. ej. tipo de leche). */
   preferencias?: string[];
+  /** Quién puede hacer qué. validarMenu: quién da por válido y publica un menú. */
+  permisos?: { validarMenu: string[] };
   /** Desayuno habitual de cada miembro, el mismo todos los días. */
   desayunos?: Record<string, { receta: string; nota?: string }>;
   objetivos: Record<string, Objetivo>;

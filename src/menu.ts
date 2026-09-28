@@ -44,8 +44,18 @@ export interface PlatoMenu {
   variantes?: Record<string, string>;
 }
 
+export interface CambioMenu {
+  por: string;
+  fecha: string;
+  descripcion: string;
+}
+
 export interface MenuSemana {
   semana: string;
+  /** Un menú nuevo o modificado es borrador hasta que lo valida quien tiene permiso. */
+  estado?: "borrador" | "validado";
+  validacion?: { por: string; fecha: string };
+  cambios?: CambioMenu[];
   batch?: { dia: Dia; tareas: string[] }[];
   dias: Record<Dia, Partial<Record<TipoComida, PlatoMenu>>>;
   tuppers: Partial<Record<Dia, Record<string, PlatoMenu>>>;
@@ -224,3 +234,15 @@ export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Sec
   return lista;
 }
 
+
+/** Quién puede validar menús (por defecto, nadie: hay que configurarlo). */
+export const validadoresMenu = (familia: Familia) => familia.permisos?.validarMenu ?? [];
+
+/** Marca el menú como validado. Solo lo permite a quien tenga permiso. */
+export function validarPublicacion(familia: Familia, menu: MenuSemana, por: string, fecha: string): MenuSemana {
+  const validadores = validadoresMenu(familia);
+  if (!validadores.includes(por)) {
+    throw new Error(`Solo ${validadores.join(", ") || "(nadie configurado)"} puede validar y publicar el menú; ${por} no.`);
+  }
+  return { ...menu, estado: "validado", validacion: { por, fecha } };
+}

@@ -24,6 +24,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Tuppers de oficina (L, M y X):** RFA, frío; CCT, para recalentar. Propuesta en [propuestas/tuppers-oficina.md](propuestas/tuppers-oficina.md).
 - **Desayunos habituales (todos los días):** AFC, vaso de leche con 1 cucharada de Nesquik y 8 galletas tostadas Animadas Hacendado. RFC, café solo y almuerzo para el colegio (L-V). CCT, café cortado con tostada de pan, aceite y azúcar (propuesta: pan integral con tomate y queso fresco, sin azúcar). RFA, café cortado con 2 tortitas de maíz Hacendado, jamón york o pavo, aceite, sal y pimienta.
 - **Preferencias:** leche siempre semidesnatada.
+- **Validación del menú:** por el momento solo CCT puede dar por válido un menú y publicarlo. Puede pedir cambios antes de validarlo; cualquier cambio devuelve el menú a borrador.
 
 Los datos están en [`data/familia.json`](../data/familia.json).
 

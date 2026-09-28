@@ -214,6 +214,22 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
   </div>`;
 }
 
+function estadoMenu(familia: Familia, menu: MenuSemana): string {
+  const validadores = familia.permisos?.validarMenu ?? [];
+  const validado = menu.estado === "validado" && menu.validacion;
+  const cambios = (menu.cambios ?? []).slice().reverse();
+  return `<div class="estado-menu ${validado ? "validado" : "borrador"}" role="status">
+    <p><strong>${validado ? "Menú validado" : "Borrador"}</strong> ${
+      validado
+        ? `por ${esc(menu.validacion!.por)} el ${esc(menu.validacion!.fecha)}.`
+        : `pendiente de que ${esc(validadores.join(" o ") || "alguien con permiso")} lo dé por válido. Hasta entonces no está publicado.`
+    }</p>
+    ${cambios.length ? `<details><summary>Historial de cambios (${cambios.length})</summary><ul>${cambios
+      .map((c) => `<li><span class="mono">${esc(c.fecha)}</span> · <span class="comensal">${esc(c.por)}</span> ${esc(c.descripcion)}</li>`)
+      .join("")}</ul></details>` : ""}
+  </div>`;
+}
+
 function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
   const porId = new Map(recetas.map((r) => [r.id, r]));
   const filaRegimen = (nombre: string, quien: (d: Dia) => string[]) =>
@@ -239,6 +255,13 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
           ["Preferencias", familia.preferencias?.length ? esc(familia.preferencias.join(" · ")) : `<span class="sub">Ninguna</span>`],
           ["Alergias", familia.alergias.length ? esc(familia.alergias.join(", ")) : `<span class="sub">No detectadas</span>`],
           ["Merienda", esc(familia.regimen.merienda)],
+        ]),
+      )}
+      ${categoria(
+        "Permisos",
+        pares([
+          ["Validar y publicar el menú", (familia.permisos?.validarMenu ?? []).map((id) => `<span class="comensal">${esc(id)}</span>`).join(" ") || `<span class="sub">Nadie</span>`],
+          ["Pedir cambios al menú", `<span class="sub">Cualquiera; el menú vuelve a borrador</span>`],
         ]),
       )}
       ${categoria(
@@ -665,6 +688,13 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .desayunos-dia a{color:var(--ink);text-decoration:none}
 .desayunos-dia a:hover,.desayunos a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
 .batch ul{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.92rem}
+.estado-menu{border-radius:10px;padding:12px 16px;display:grid;gap:6px;border:1px solid}
+.estado-menu.borrador{background:var(--aviso-soft);border-color:var(--aviso);color:var(--ink)}
+.estado-menu.validado{background:var(--bien-soft);border-color:var(--bien);color:var(--ink)}
+.estado-menu.borrador strong{color:var(--aviso)}
+.estado-menu.validado strong{color:var(--bien)}
+.estado-menu summary{cursor:pointer;font-size:.88rem;font-weight:600}
+.estado-menu ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:grid;gap:4px}
 .barra{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
 .barra-dentro{max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px);display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
 .marca{font:700 1.05rem var(--f-display);display:flex;gap:8px;align-items:baseline}
@@ -895,6 +925,7 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
         <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
       </dl>
     </header>
+    ${estadoMenu(familia, menu)}
     ${seccionMenu(familia, dias, menu)}
   </section>
 

@@ -22,7 +22,7 @@ Tu trabajo:
 8. Generar la lista de la compra agrupada por secciones del supermercado, descontando lo que ya hay en la despensa (ver_despensa) y dando prioridad a lo que caduca antes y a las sobras.
 9. Registrar tickets de compra (registrar_ticket) y usar resumen_habitos para detectar hábitos y proponer mejoras de salud y de ahorro.
 
-Para fijar el menú: guarda cada receta nueva con guardar_receta (cantidades por ración de referencia) y el menú con guardar_menu; es lo que se ve en la vista web (npm run web). La lista de la compra sale de lista_compra. Los planes de cocina u otros documentos, guárdalos con guardar_documento en Markdown. No inventes datos de la familia: consúltalos con las herramientas. Si falta información importante, pregúntala.`;
+Para fijar el menú: guarda cada receta nueva con guardar_receta (cantidades por ración de referencia) y el menú con guardar_menu, que lo deja en borrador. Solo quien figure en familia.permisos.validarMenu (CCT) puede dar el menú por válido y publicarlo: antes de llamar a validar_menu pregunta quién eres hablando y pide su confirmación explícita. CCT puede pedir cambios; aplícalos con guardar_menu (el menú vuelve a borrador) y muéstrale el resultado antes de validar. La vista web (npm run web) indica si el menú es borrador o está validado. La lista de la compra sale de lista_compra. Los planes de cocina u otros documentos, guárdalos con guardar_documento en Markdown. No inventes datos de la familia: consúltalos con las herramientas. Si falta información importante, pregúntala.`;
 
 const TIPOS_IMAGEN = {
   ".jpg": "image/jpeg",

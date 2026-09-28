@@ -1,5 +1,13 @@
 {
   "semana": "A",
+  "estado": "borrador",
+  "cambios": [
+    {
+      "por": "agente",
+      "fecha": "2026-09-28",
+      "descripcion": "Menú de ejemplo de la semana A con desayunos habituales, almuerzo de RFC y tuppers"
+    }
+  ],
   "batch": [
     {
       "dia": "D",

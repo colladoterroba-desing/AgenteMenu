@@ -169,3 +169,28 @@ test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entr
   const galletas = listaCompra(dias).Despensa.find((l) => l.nombre.startsWith("Galletas"))!;
   assert.equal(galletas.cantidad, 56);
 });
+
+test("solo CCT puede validar el menú y cualquier cambio lo devuelve a borrador", async () => {
+  const almacen = await almacenTemporal();
+  const { ejecutar } = crearHerramientas(almacen);
+  const noPermitido = await ejecutar("validar_menu", { por: "RFA", fecha: "2026-09-28" });
+  assert.equal(noPermitido.error, true);
+  assert.match(noPermitido.contenido, /Solo CCT/);
+  assert.equal((await almacen.menu()).estado, "borrador");
+
+  const ok = await ejecutar("validar_menu", { por: "CCT", fecha: "2026-09-28" });
+  assert.equal(ok.error, false);
+  const validado = await almacen.menu();
+  assert.equal(validado.estado, "validado");
+  assert.deepEqual(validado.validacion, { por: "CCT", fecha: "2026-09-28" });
+
+  const { estado: _e, validacion: _v, cambios: _c, ...datos } = validado;
+  const cambio = await ejecutar("guardar_menu", {
+    ...datos, autor: "CCT", fecha: "2026-09-29", descripcionCambio: "Cambio la cena del jueves",
+  });
+  assert.equal(cambio.error, false, cambio.contenido);
+  const tras = await almacen.menu();
+  assert.equal(tras.estado, "borrador");
+  assert.equal(tras.validacion, undefined);
+  assert.equal(tras.cambios!.at(-1)!.por, "CCT");
+});

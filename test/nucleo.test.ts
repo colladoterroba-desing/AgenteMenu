@@ -16,7 +16,7 @@ test("IMC y clasificación de la familia", () => {
   assert.equal(Math.round(imc(miembro("RFA")) * 10) / 10, 26.8);
   assert.equal(clasificarImc(miembro("RFA")), "sobrepeso");
   assert.equal(clasificarImc(miembro("CCT")), "sobrepeso");
-  assert.equal(clasificarImc(miembro("RFC")), "normopeso");
+  assert.equal(clasificarImc(miembro("RFC")), "sobrepeso"); // 76 kg, 1,73 m: IMC 25,4
   assert.equal(clasificarImc(miembro("AFC")), "menor: valorar con percentiles");
 });
 
@@ -24,7 +24,7 @@ test("propuesta de objetivo solo para adultos con sobrepeso", () => {
   const rfa = proponerObjetivo(miembro("RFA"))!;
   assert.equal(rfa.pesoObjetivoKg, 67.8);
   assert.equal(rfa.semanas, 11);
-  assert.equal(proponerObjetivo(miembro("RFC")), null);
+  assert.equal(proponerObjetivo(miembro("RFC"))!.pesoObjetivoKg, 74.5);
   assert.equal(proponerObjetivo(miembro("AFC")), null);
 });
 

@@ -28,7 +28,7 @@
       "edad": 18,
       "sexo": "V",
       "alturaCm": 173,
-      "pesoKg": 68,
+      "pesoKg": 76,
       "gustos": [],
       "actividades": [
         { "deporte": "natacion", "dias": ["M", "J"], "minutos": 60 }

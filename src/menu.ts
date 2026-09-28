@@ -32,6 +32,8 @@ export interface Receta {
   ingredientes: Ingrediente[];
   pasos: string[];
   conservacion?: string;
+  /** Cantidades por persona, sin escalar por ración (desayunos habituales, envasados...). */
+  racionFija?: boolean;
 }
 
 export interface PlatoMenu {
@@ -54,6 +56,7 @@ export interface Racion {
   comensales: { id: string; kcal: number; factorRacion: number }[];
   raciones: number;
   prepara?: string;
+  nota?: string;
 }
 
 export interface ComidaDelMenu {
@@ -81,8 +84,16 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
       if (!ids.has(receta)) errores.push(`${donde} (variante ${id}): receta desconocida «${receta}»`);
     }
   };
+  for (const [id, d] of Object.entries(familia.desayunos ?? {})) comprobar(`Desayuno de ${id}`, d);
   for (const dia of planificarSemana(familia)) {
     for (const comida of dia.comidas) {
+      if (comida.tipo === "desayuno" && familia.desayunos && !menu.dias[dia.dia]?.desayuno) {
+        for (const c of comida.comensales) {
+          if (!familia.desayunos[c.id]) errores.push(`${dia.nombre} desayuno: falta el desayuno de ${c.id}`);
+        }
+        for (const t of comida.tuppers) errores.push(`${dia.nombre}: tupper inesperado de ${t.id}`);
+        continue;
+      }
       const plato = menu.dias[dia.dia]?.[comida.tipo];
       if (!plato) errores.push(`${dia.nombre} ${comida.tipo}: falta el plato`);
       else comprobar(`${dia.nombre} ${comida.tipo}`, plato);
@@ -105,25 +116,45 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
     return r;
   };
 
+  const raciones = (r: Receta, comensales: { factorRacion: number }[]) =>
+    redondear2(r.racionFija ? comensales.length : comensales.reduce((s, c) => s + c.factorRacion, 0));
+
+  /** Desayunos habituales: un plato por receta con quienes la toman. */
+  const desayunosHabituales = (comensales: Racion["comensales"]): Racion[] => {
+    const porReceta = new Map<string, Racion["comensales"]>();
+    for (const c of comensales) {
+      const id = familia.desayunos![c.id]?.receta;
+      if (id) porReceta.set(id, [...(porReceta.get(id) ?? []), c]);
+    }
+    return [...porReceta].map(([id, cs]) => ({
+      receta: receta(id),
+      comensales: cs,
+      raciones: raciones(receta(id), cs),
+      nota: cs.length === 1 ? familia.desayunos![cs[0].id].nota : undefined,
+    }));
+  };
+
   return planificarSemana(familia).map((dia) => ({
     dia: dia.dia,
     nombre: dia.nombre,
     comidas: dia.comidas.map((comida): ComidaDelMenu => {
       const plato = menu.dias[dia.dia]?.[comida.tipo];
       const platos: Racion[] = [];
-      if (plato) {
+      if (comida.tipo === "desayuno" && familia.desayunos && !plato) {
+        platos.push(...desayunosHabituales(comida.comensales));
+      } else if (plato) {
         const variantes = plato.variantes ?? {};
         const principal = comida.comensales.filter((c) => !variantes[c.id]);
         platos.push({
           receta: receta(plato.receta),
           comensales: principal,
-          raciones: redondear2(principal.reduce((s, c) => s + c.factorRacion, 0)),
+          raciones: raciones(receta(plato.receta), principal),
           prepara: plato.prepara,
         });
         for (const [id, variante] of Object.entries(variantes)) {
           const comensal = comida.comensales.find((c) => c.id === id);
           if (!comensal) continue;
-          platos.push({ receta: receta(variante), comensales: [comensal], raciones: comensal.factorRacion });
+          platos.push({ receta: receta(variante), comensales: [comensal], raciones: raciones(receta(variante), [comensal]) });
         }
       }
       const tuppers = comida.tuppers.flatMap((t) => {
@@ -132,7 +163,7 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
         return [{
           receta: receta(tupper.receta),
           comensales: [t],
-          raciones: t.factorRacion,
+          raciones: raciones(receta(tupper.receta), [t]),
           prepara: tupper.prepara,
           para: t.id,
           tipoTupper: t.tipo,

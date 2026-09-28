@@ -136,5 +136,7 @@ export function calcularNecesidades(m: Miembro, objetivo?: Objetivo): Necesidade
 }
 
 /** Reparto de las kcal diarias entre comidas. */
-export const REPARTO_LABORABLE = { desayuno: 0.2, comida: 0.35, merienda: 0.15, cena: 0.3 };
-export const REPARTO_FIN_DE_SEMANA = { desayuno: 0.25, comida: 0.4, merienda: 0, cena: 0.35 };
+export const REPARTO_LABORABLE = { desayuno: 0.2, almuerzo: 0, comida: 0.35, merienda: 0.15, cena: 0.3 };
+export const REPARTO_FIN_DE_SEMANA = { desayuno: 0.25, almuerzo: 0, comida: 0.4, merienda: 0, cena: 0.35 };
+/** Quien se lleva almuerzo desayuna poco: el almuerzo se queda con esta parte del desayuno. */
+export const PARTE_DESAYUNO_PARA_ALMUERZO = 0.75;

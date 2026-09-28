@@ -45,12 +45,18 @@ export interface Familia {
   regimen: {
     comida: Record<Dia, string[]>;
     cena: Record<Dia, string[]>;
+    /** Quién se lleva un almuerzo de media mañana (colegio, trabajo) y qué días. */
+    almuerzo?: Record<string, { dias: Dia[]; lugar: string }>;
     /** Quién se lleva la comida a la oficina, qué días y si se come frío o recalentado. */
     tupper?: Record<string, { dias: Dia[]; tipo: "frío" | "para recalentar" }>;
     desayuno: string;
     merienda: string;
   };
   roles: Record<string, string>;
+  /** Normas de la casa que aplican a todas las recetas (p. ej. tipo de leche). */
+  preferencias?: string[];
+  /** Desayuno habitual de cada miembro, el mismo todos los días. */
+  desayunos?: Record<string, { receta: string; nota?: string }>;
   objetivos: Record<string, Objetivo>;
 }
 

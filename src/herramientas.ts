@@ -23,7 +23,7 @@ const producto = z.object({
   caducidad: fecha.optional(),
 });
 
-const TIPOS_COMIDA = ["desayuno", "comida", "merienda", "cena"] as const;
+const TIPOS_COMIDA = ["desayuno", "almuerzo", "comida", "merienda", "cena"] as const;
 
 const receta = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/).describe("Identificador en minúsculas con guiones"),
@@ -43,6 +43,7 @@ const receta = z.object({
     .min(1),
   pasos: z.array(z.string()).min(1),
   conservacion: z.string().optional(),
+  racionFija: z.boolean().optional().describe("true si las cantidades son por persona y no se escalan (desayunos habituales)"),
 });
 
 const plato = z.object({

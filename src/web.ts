@@ -35,6 +35,7 @@ const DEPORTE: Record<string, string> = {
 
 const COMIDAS: { tipo: TipoComida; nombre: string }[] = [
   { tipo: "desayuno", nombre: "Desayuno" },
+  { tipo: "almuerzo", nombre: "Almuerzo" },
   { tipo: "comida", nombre: "Comida" },
   { tipo: "merienda", nombre: "Merienda" },
   { tipo: "cena", nombre: "Cena" },
@@ -168,6 +169,11 @@ const comensalesChips = (r: Racion) =>
 function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
   const c = dia.comidas.find((x) => x.tipo === tipo);
   if (!c || !c.platos.length) return `<td class="vacia"><span class="sub">—</span></td>`;
+  if (tipo === "desayuno" && c.platos.length > 1) {
+    return `<td><ul class="desayunos-dia">${c.platos
+      .map((p) => `<li>${comensalesChips(p)} <a href="#r-${esc(p.receta.id)}">${esc(p.receta.nombre)}</a></li>`)
+      .join("")}</ul></td>`;
+  }
   const [principal, ...variantes] = c.platos;
   const variantesHtml = variantes
     .map(
@@ -192,7 +198,28 @@ function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
   </td>`;
 }
 
-function seccionMenu(dias: DiaDelMenu[], menu: MenuSemana): string {
+function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
+  if (!familia.desayunos) return "";
+  const platos = dias[0]?.comidas.find((c) => c.tipo === "desayuno")?.platos ?? [];
+  const receta = (id: string) => platos.find((p) => p.comensales.some((c) => c.id === id));
+  const almuerzo = familia.regimen.almuerzo ?? {};
+  return `<aside class="batch desayunos">
+    <h3>Desayunos de cada uno, todos los días</h3>
+    <ul>${Object.entries(familia.desayunos)
+      .map(([id, d]) => {
+        const r = receta(id);
+        const kcal = r?.comensales.find((c) => c.id === id)?.kcal;
+        const a = almuerzo[id];
+        return `<li><span class="comensal">${esc(id)}</span> <a href="#r-${esc(d.receta)}">${esc(r?.receta.nombre ?? d.receta)}</a>${kcal ? ` <span class="sub mono">~${num(kcal)} kcal objetivo</span>` : ""}${
+          d.nota ? `<br><span class="sub">${esc(d.nota)}</span>` : ""
+        }${a ? `<br><span class="sub">Se lleva almuerzo al ${esc(a.lugar)} (${a.dias.join(" ")}).</span>` : ""}</li>`;
+      })
+      .join("")}</ul>
+    ${familia.preferencias?.length ? `<p class="sub"><strong>En casa:</strong> ${esc(familia.preferencias.join(" · "))}</p>` : ""}
+  </aside>`;
+}
+
+function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana): string {
   const batch = (menu.batch ?? [])
     .map(
       (b) => `<aside class="batch">
@@ -201,7 +228,7 @@ function seccionMenu(dias: DiaDelMenu[], menu: MenuSemana): string {
       </aside>`,
     )
     .join("");
-  return `${batch}
+  return `<div class="avisos-menu">${desayunosHabituales(familia, dias)}${batch}</div>
   <div class="scroll semana-scroll"><table class="semana">
     <thead><tr><th scope="col"><span class="sr">Comida</span></th>${dias
       .map((d) => `<th scope="col">${esc(d.nombre)}</th>`)
@@ -252,6 +279,7 @@ function seccionRecetas(recetas: Receta[], dias: DiaDelMenu[]): string {
   const filtros = [
     ["todas", "Todas"],
     ["desayuno", "Desayunos"],
+    ["almuerzo", "Almuerzos"],
     ["comida", "Comidas"],
     ["merienda", "Meriendas"],
     ["cena", "Cenas"],
@@ -484,6 +512,12 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .tupper-linea .prepara{margin-top:0;color:var(--muted);font-weight:400}
 .batch{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;display:grid;gap:6px}
 .batch h3{font-size:1rem}
+.avisos-menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}
+.desayunos ul{list-style:none;padding:0;gap:8px}
+.desayunos a{color:var(--ink);font-weight:600;text-decoration:none}
+.desayunos-dia{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:.8rem;line-height:1.25}
+.desayunos-dia a{color:var(--ink);text-decoration:none}
+.desayunos-dia a:hover,.desayunos a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
 .batch ul{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.92rem}
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * clamp(16px,4vw,40px));padding:10px clamp(16px,4vw,40px);display:flex;gap:4px 18px;flex-wrap:wrap;font-size:.9rem;font-weight:600}
 .nav a{color:var(--muted);text-decoration:none}
@@ -640,7 +674,7 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
     <h1>${esc(familia.nombre)}</h1>
     <p class="sub">Menú de la semana con recetas, lista de la compra y raciones calculadas para cada persona. Generado el ${esc(fecha)}.</p>
     <dl class="resumen">
-      <div><dt>Comidas en casa</dt><dd>${comidas.length}</dd></div>
+      <div><dt>Comidas planificadas</dt><dd>${comidas.length}</dd></div>
       <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>
       <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
       <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
@@ -654,7 +688,7 @@ export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha
   <section class="seccion" id="menu" aria-labelledby="h-menu">
     <header><h2 id="h-menu">Menú de la semana</h2>
     <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y ×N las raciones totales (1 = adulto de 2.000 kcal). En naranja, cuándo se prepara si no se cocina en el momento.</p></header>
-    ${seccionMenu(dias, menu)}
+    ${seccionMenu(familia, dias, menu)}
   </section>
 
   <section class="seccion" id="recetas" aria-labelledby="h-recetas">

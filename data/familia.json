@@ -50,6 +50,16 @@
     }
   ],
   "alergias": [],
+  "preferencias": ["Leche siempre semidesnatada"],
+  "desayunos": {
+    "AFC": { "receta": "desayuno-afc", "nota": "Su desayuno de todos los días." },
+    "RFC": { "receta": "cafe-solo", "nota": "Solo café en casa; come el almuerzo que se lleva al colegio." },
+    "CCT": {
+      "receta": "desayuno-cct",
+      "nota": "Propuesta: pan integral con tomate y queso fresco en lugar de azúcar. Antes: café cortado con tostada de pan, aceite y azúcar."
+    },
+    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. En días de running, añadir fruta." }
+  },
   "regimen": {
     "comida": {
       "L": ["RFC", "AFC"],
@@ -69,11 +79,14 @@
       "S": ["RFA", "CCT", "RFC", "AFC"],
       "D": ["RFA", "CCT", "RFC", "AFC"]
     },
+    "almuerzo": {
+      "RFC": { "dias": ["L", "M", "X", "J", "V"], "lugar": "colegio" }
+    },
     "tupper": {
       "RFA": { "dias": ["L", "M", "X"], "tipo": "frío" },
       "CCT": { "dias": ["L", "M", "X"], "tipo": "para recalentar" }
     },
-    "desayuno": "todos, todos los días",
+    "desayuno": "todos, todos los días; cada uno su desayuno habitual (ver desayunos)",
     "merienda": "todos, de lunes a viernes"
   },
   "roles": {

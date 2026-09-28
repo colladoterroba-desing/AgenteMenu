@@ -68,7 +68,10 @@
         { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
-      "pasos": ["Abrir el pan y rellenarlo con el pavo y el queso.", "Acompañar con una pieza de fruta."]
+      "pasos": [
+        "Abrir el pan y rellenarlo con el pavo y el queso.",
+        "Acompañar con una pieza de fruta."
+      ]
     },
     {
       "id": "yogur-fruta-frutos-secos",
@@ -82,7 +85,10 @@
         { "nombre": "Copos de avena", "cantidad": 20, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Almendras", "cantidad": 20, "unidad": "g", "seccion": "Despensa" }
       ],
-      "pasos": ["Trocear la fruta.", "Mezclar con el yogur, la avena y las almendras."]
+      "pasos": [
+        "Trocear la fruta.",
+        "Mezclar con el yogur, la avena y las almendras."
+      ]
     },
     {
       "id": "tostada-cacahuete-platano",
@@ -96,7 +102,10 @@
         { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
         { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" }
       ],
-      "pasos": ["Tostar el pan y untar la crema de cacahuete.", "Cubrir con el plátano en rodajas y acompañar con un vaso de leche."]
+      "pasos": [
+        "Tostar el pan y untar la crema de cacahuete.",
+        "Cubrir con el plátano en rodajas y acompañar con un vaso de leche."
+      ]
     },
     {
       "id": "garbanzos-espinacas",
@@ -355,7 +364,10 @@
         { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
         { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
       ],
-      "pasos": ["Usar el mismo brócoli salteado de la merluza.", "Batir los huevos con sal y cuajar la tortilla en la sartén."]
+      "pasos": [
+        "Usar el mismo brócoli salteado de la merluza.",
+        "Batir los huevos con sal y cuajar la tortilla en la sartén."
+      ]
     },
     {
       "id": "pizza-casera-verduras",
@@ -491,6 +503,135 @@
         "Enrollar apretado, cortar por la mitad y envolver en film o papel."
       ],
       "conservacion": "Mejor montarlos la noche anterior: si se hacen antes, el tomate humedece la tortilla."
+    },
+    {
+      "id": "desayuno-afc",
+      "nombre": "Leche con Nesquik y galletas Animadas",
+      "tipo": "desayuno",
+      "tiempoMin": 3,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Cacao soluble Nesquik", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Galletas tostadas Animadas Hacendado", "cantidad": 8, "unidad": "ud", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Calentar el vaso de leche si se quiere templada.",
+        "Disolver 1 cucharada de Nesquik.",
+        "Acompañar con 8 galletas."
+      ]
+    },
+    {
+      "id": "cafe-solo",
+      "nombre": "Café solo",
+      "tipo": "desayuno",
+      "tiempoMin": 3,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Preparar el café en la cafetera."
+      ]
+    },
+    {
+      "id": "desayuno-cct",
+      "nombre": "Café cortado y tostada integral con aceite y tomate",
+      "tipo": "desayuno",
+      "tiempoMin": 8,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Tomate", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Queso fresco", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
+        "Tostar el pan integral, rallar el tomate por encima y añadir el aceite.",
+        "Acompañar con el queso fresco y una pieza de fruta."
+      ],
+      "conservacion": "Si cuesta dejar el azúcar de golpe, empezar con media cucharadita y bajarla poco a poco."
+    },
+    {
+      "id": "desayuno-rfa",
+      "nombre": "Café cortado con tortitas de maíz, pavo o jamón york y aceite",
+      "tipo": "desayuno",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 2, "unidad": "ud", "seccion": "Despensa" },
+        { "nombre": "Pechuga de pavo en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
+        "Aliñar las tortitas con el aceite, sal y pimienta.",
+        "Poner encima el pavo o el jamón york."
+      ],
+      "conservacion": "Los días de running (lunes y martes) conviene añadir una pieza de fruta o una tercera tortita."
+    },
+    {
+      "id": "almuerzo-bocadillo-tortilla",
+      "nombre": "Bocadillo integral de tortilla francesa y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Batir los huevos con sal y cuajar la tortilla francesa en la sartén.",
+        "Meterla en el pan y envolver en papel de aluminio o film.",
+        "Llevar una pieza de fruta que aguante (manzana, mandarina, plátano)."
+      ],
+      "conservacion": "Se puede hacer la noche anterior y guardar en la nevera."
+    },
+    {
+      "id": "almuerzo-bocadillo-atun",
+      "nombre": "Bocadillo integral de atún con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Atún en aceite de oliva (lata)", "cantidad": 1, "unidad": "ud", "seccion": "Despensa" },
+        { "nombre": "Tomate", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Escurrir el atún.",
+        "Abrir el pan, poner el tomate en rodajas finas y el atún.",
+        "Envolver y llevar una pieza de fruta."
+      ]
+    },
+    {
+      "id": "almuerzo-yogur-frutos-secos",
+      "nombre": "Yogur bebible, plátano y frutos secos",
+      "tipo": "almuerzo",
+      "tiempoMin": 2,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Yogur líquido natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Almendras", "cantidad": 30, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 2, "unidad": "ud", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Meter en la mochila el yogur bebible (mejor recién sacado de la nevera), el plátano, las almendras en un bote y las tortitas."
+      ]
     }
   ]
 }

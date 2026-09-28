@@ -1,7 +1,7 @@
-import { calcularNecesidades, REPARTO_FIN_DE_SEMANA, REPARTO_LABORABLE } from "./nutricion.js";
+import { calcularNecesidades, PARTE_DESAYUNO_PARA_ALMUERZO, REPARTO_FIN_DE_SEMANA, REPARTO_LABORABLE } from "./nutricion.js";
 import { DIAS, NOMBRE_DIA, type Dia, type Familia } from "./tipos.js";
 
-export type TipoComida = "desayuno" | "comida" | "merienda" | "cena";
+export type TipoComida = "desayuno" | "almuerzo" | "comida" | "merienda" | "cena";
 
 export interface Comensal {
   id: string;
@@ -51,24 +51,34 @@ export function planificarSemana(familia: Familia): DiaPlanificado[] {
   return DIAS.map((dia) => {
     const laborable = LABORABLES.includes(dia);
     const reparto = laborable ? REPARTO_LABORABLE : REPARTO_FIN_DE_SEMANA;
+    const conAlmuerzo = Object.entries(familia.regimen.almuerzo ?? {})
+      .filter(([, a]) => a.dias.includes(dia))
+      .map(([id]) => id);
     const presentesPorComida: Record<TipoComida, string[]> = {
       desayuno: todos,
+      almuerzo: conAlmuerzo,
       comida: familia.regimen.comida[dia],
       merienda: laborable ? todos : [],
       cena: familia.regimen.cena[dia],
     };
 
+    const parte = (tipo: TipoComida, id: string) => {
+      if (!conAlmuerzo.includes(id)) return reparto[tipo];
+      if (tipo === "desayuno") return reparto.desayuno * (1 - PARTE_DESAYUNO_PARA_ALMUERZO);
+      if (tipo === "almuerzo") return reparto.desayuno * PARTE_DESAYUNO_PARA_ALMUERZO;
+      return reparto[tipo];
+    };
     const comidas = (Object.keys(presentesPorComida) as TipoComida[])
       .filter((tipo) => presentesPorComida[tipo].length > 0)
       .map((tipo): ComidaPlanificada => {
         const presentes = presentesPorComida[tipo];
         const comensales = presentes.map((id) => {
           const n = necesidades.get(id)!;
-          return { id, kcal: Math.round(n.kcalObjetivo * reparto[tipo]), factorRacion: n.factorRacion };
+          return { id, kcal: Math.round(n.kcalObjetivo * parte(tipo, id)), factorRacion: n.factorRacion };
         });
         const racionesEquivalentes =
           Math.round(comensales.reduce((s, c) => s + c.factorRacion, 0) * 100) / 100;
-        const comenFuera = todos.filter((id) => !presentes.includes(id));
+        const comenFuera = tipo === "almuerzo" ? [] : todos.filter((id) => !presentes.includes(id));
         const tuppers =
           tipo === "comida"
             ? comenFuera.flatMap((id) => {
@@ -84,7 +94,7 @@ export function planificarSemana(familia: Familia): DiaPlanificado[] {
           racionesEquivalentes,
           comenFuera,
           tuppers,
-          cocina: quienCocina(familia, presentes),
+          cocina: tipo === "almuerzo" ? "Se lo lleva preparado" : quienCocina(familia, presentes),
         };
       });
 

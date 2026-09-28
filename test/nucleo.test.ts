@@ -141,3 +141,31 @@ test("la despensa se descuenta de la lista de la compra", async () => {
   assert.ok(sin.comprar > 0);
   assert.equal(con.comprar, 0);
 });
+
+test("la leche de todas las recetas es semidesnatada", async () => {
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const leches = recetas.flatMap((r: { ingredientes: { nombre: string }[] }) => r.ingredientes)
+    .filter((i: { nombre: string }) => /^leche/i.test(i.nombre));
+  assert.ok(leches.length > 0);
+  for (const l of leches) assert.equal(l.nombre, "Leche semidesnatada");
+});
+
+test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entre semana", async () => {
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dias = componerMenu(familia, menu, recetas);
+  for (const dia of dias) {
+    const desayuno = dia.comidas.find((c) => c.tipo === "desayuno")!;
+    assert.deepEqual(
+      Object.fromEntries(desayuno.platos.map((p) => [p.comensales[0].id, p.receta.id])),
+      { RFA: "desayuno-rfa", CCT: "desayuno-cct", RFC: "cafe-solo", AFC: "desayuno-afc" },
+    );
+    const almuerzo = dia.comidas.find((c) => c.tipo === "almuerzo");
+    assert.equal(Boolean(almuerzo), !["S", "D"].includes(dia.dia));
+    if (almuerzo) assert.deepEqual(almuerzo.platos[0].comensales.map((c) => c.id), ["RFC"]);
+  }
+  // 8 galletas al día, 7 días: sin escalar por el factor de ración de AFC.
+  const galletas = listaCompra(dias).Despensa.find((l) => l.nombre.startsWith("Galletas"))!;
+  assert.equal(galletas.cantidad, 56);
+});

@@ -67,4 +67,4 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 ## Agente y proyecto
 
 - [ ] **OI-21 · Probar el agente con Claude.** No se ha ejecutado contra la API. Hace falta una `ANTHROPIC_API_KEY` en `.env` y probar el flujo completo: necesidades, menú, recetas, lista de la compra y tickets.
-- [ ] **OI-22 · Llevar el trabajo a `main`.** Todo está en la rama `claude/init-repo-menu-agent-surwuu`. Decidir si se abre una pull request.
+- [x] **OI-22 · Llevar el trabajo a `main`.** Hecho el 28/09/2026: PR colladoterroba-desing/AgenteMenu#2 fusionada en `main`.

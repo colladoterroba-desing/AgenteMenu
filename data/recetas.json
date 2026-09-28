@@ -330,7 +330,8 @@
         "Triturar con el queso fresco y ajustar de sal.",
         "Hacer las tortillas francesas en la sartén con el resto del aceite."
       ],
-      "conservacion": "La crema aguanta 3 días en nevera y se congela bien."
+      "conservacion": "La crema aguanta 3 días en nevera y se congela bien.",
+      "alMomento": true
     },
     {
       "id": "merluza-plancha-brocoli",
@@ -367,7 +368,8 @@
       "pasos": [
         "Usar el mismo brócoli salteado de la merluza.",
         "Batir los huevos con sal y cuajar la tortilla en la sartén."
-      ]
+      ],
+      "alMomento": true
     },
     {
       "id": "pizza-casera-verduras",
@@ -581,25 +583,6 @@
       "conservacion": "Los días de running (lunes y martes) conviene añadir una pieza de fruta o una tercera tortita."
     },
     {
-      "id": "almuerzo-bocadillo-tortilla",
-      "nombre": "Bocadillo integral de tortilla francesa y fruta",
-      "tipo": "almuerzo",
-      "tiempoMin": 10,
-      "tecnica": "plancha",
-      "ingredientes": [
-        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
-      ],
-      "pasos": [
-        "Batir los huevos con sal y cuajar la tortilla francesa en la sartén.",
-        "Meterla en el pan y envolver en papel de aluminio o film.",
-        "Llevar una pieza de fruta que aguante (manzana, mandarina, plátano)."
-      ],
-      "conservacion": "Se puede hacer la noche anterior y guardar en la nevera."
-    },
-    {
       "id": "almuerzo-bocadillo-atun",
       "nombre": "Bocadillo integral de atún con tomate y fruta",
       "tipo": "almuerzo",
@@ -631,6 +614,88 @@
       ],
       "pasos": [
         "Meter en la mochila el yogur bebible (mejor recién sacado de la nevera), el plátano, las almendras en un bote y las tortitas."
+      ]
+    },
+    {
+      "id": "almuerzo-bocadillo-pollo",
+      "nombre": "Bocadillo integral de pollo asado con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Pechuga de pollo", "cantidad": 70, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "El pollo se asa en el batch del domingo, junto con el de la ensalada de RFA; enfriar y cortar en tiras.",
+        "El domingo por la noche, abrir el pan, poner el tomate en rodajas finas con un hilo de aceite y el pollo.",
+        "Envolver, guardar en la nevera y llevar una pieza de fruta."
+      ],
+      "conservacion": "Se monta la noche anterior; el pollo asado aguanta 3 días en la nevera."
+    },
+    {
+      "id": "almuerzo-bocadillo-serrano",
+      "nombre": "Bocadillo integral de jamón serrano con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Jamón serrano en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La noche anterior, untar el pan con tomate y un hilo de aceite.",
+        "Poner el jamón, envolver y guardar en la nevera.",
+        "Llevar una pieza de fruta."
+      ]
+    },
+    {
+      "id": "albondigas-pavo-cuscus",
+      "nombre": "Albóndigas de pavo en salsa de tomate con cuscús integral",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Carne picada de pavo", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Pan rallado", "cantidad": 10, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Huevos", "cantidad": 0.25, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tomate triturado", "cantidad": 120, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cuscús integral", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Mezclar el pavo con el huevo batido, el pan rallado, sal, ajo y perejil; formar bolas pequeñas.",
+        "Dorarlas en la cazuela con el aceite y reservar.",
+        "Pochar la cebolla, añadir el tomate y cocer 10 minutos; volver a poner las albóndigas y cocer 15 minutos más.",
+        "Hidratar el cuscús con el mismo volumen de agua hirviendo con sal, 5 minutos tapado, y soltarlo con un tenedor."
+      ],
+      "conservacion": "3 días en nevera o 3 meses congeladas. La ración del tupper, junto con el cuscús."
+    },
+    {
+      "id": "almuerzo-bocadillo-queso-fresco",
+      "nombre": "Bocadillo integral de queso fresco con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Queso fresco", "cantidad": 60, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La noche anterior, poner en el pan el tomate en rodajas con un hilo de aceite y orégano.",
+        "Añadir el queso fresco en lonchas, envolver y guardar en la nevera.",
+        "Llevar una pieza de fruta."
       ]
     }
   ]

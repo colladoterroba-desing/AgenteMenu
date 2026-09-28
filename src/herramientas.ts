@@ -44,6 +44,7 @@ const receta = z.object({
   pasos: z.array(z.string()).min(1),
   conservacion: z.string().optional(),
   racionFija: z.boolean().optional().describe("true si las cantidades son por persona y no se escalan (desayunos habituales)"),
+  alMomento: z.boolean().optional().describe("true si se prepara justo antes de comer (p. ej. tortilla francesa): no vale para almuerzos ni tuppers"),
 });
 
 const plato = z.object({

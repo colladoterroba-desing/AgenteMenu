@@ -252,7 +252,8 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
       ${categoria(
         "Normas de la casa",
         pares([
-          ["Preferencias", familia.preferencias?.length ? esc(familia.preferencias.join(" · ")) : `<span class="sub">Ninguna</span>`],
+          ["Preferencias", familia.preferencias?.length ? `<ul class="criterios">${familia.preferencias.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<span class="sub">Ninguna</span>`],
+          ["Restricciones", familia.restricciones?.length ? `<ul class="criterios">${familia.restricciones.map((r) => `<li>${esc(r.motivo)}</li>`).join("")}</ul>` : `<span class="sub">Ninguna</span>`],
           ["Alergias", familia.alergias.length ? esc(familia.alergias.join(", ")) : `<span class="sub">No detectadas</span>`],
           ["Merienda", esc(familia.regimen.merienda)],
         ]),

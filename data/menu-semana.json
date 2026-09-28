@@ -6,6 +6,16 @@
       "por": "agente",
       "fecha": "2026-09-28",
       "descripcion": "Menú de ejemplo de la semana A con desayunos habituales, almuerzo de RFC y tuppers"
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Almuerzo de RFC de lunes y jueves: el bocadillo de tortilla francesa se cambia por bocadillos que se preparan la noche anterior (pollo asado del batch y jamón serrano). Por las mañanas no se cocina."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Salmón, atún, anchoas y sardinas solo el jueves a mediodía: el salmón pasa a la comida del jueves; fuera los bocadillos de atún (martes y viernes: jamón serrano; jueves: queso fresco); cena del lunes: albóndigas de pavo (también tupper de CCT del martes); cena del miércoles: merluza; cena del jueves: lentejas."
     }
   ],
   "batch": [
@@ -14,7 +24,7 @@
       "tareas": [
         "Garbanzos con espinacas para la comida del lunes (RFC y AFC) y el tupper de CCT, unos 35 min.",
         "Arroz integral cocido para el lomo del martes, 25 min; enfriar y guardar en la nevera.",
-        "Ensalada de pasta con pollo para el tupper frío de RFA del lunes, 20 min.",
+        "Asar pechuga de pollo para la ensalada de pasta del tupper de RFA y el bocadillo de RFC del lunes, 20 min.",
         "Cocer 4 huevos duros para la semana."
       ]
     }
@@ -22,8 +32,8 @@
   "dias": {
     "L": {
       "almuerzo": {
-        "receta": "almuerzo-bocadillo-tortilla",
-        "prepara": "RFC, la noche anterior o por la mañana a la plancha"
+        "receta": "almuerzo-bocadillo-pollo",
+        "prepara": "Domingo por la noche, con el pollo asado del batch"
       },
       "comida": {
         "receta": "garbanzos-espinacas",
@@ -33,16 +43,14 @@
         "receta": "yogur-fruta-frutos-secos"
       },
       "cena": {
-        "receta": "salmon-horno-patata",
-        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes",
-        "variantes": {
-          "RFA": "pollo-horno-patata"
-        }
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes"
       }
     },
     "M": {
       "almuerzo": {
-        "receta": "almuerzo-bocadillo-atun"
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Lunes por la noche, sin cocinar"
       },
       "comida": {
         "receta": "lomo-plancha-arroz",
@@ -58,7 +66,8 @@
     },
     "X": {
       "almuerzo": {
-        "receta": "almuerzo-yogur-frutos-secos"
+        "receta": "almuerzo-yogur-frutos-secos",
+        "prepara": "Martes por la noche: dejarlo junto en la nevera"
       },
       "comida": {
         "receta": "pollo-guisado-arroz",
@@ -68,30 +77,31 @@
         "receta": "bocadillo-pavo-queso"
       },
       "cena": {
-        "receta": "crema-calabacin-tortilla"
-      }
-    },
-    "J": {
-      "almuerzo": {
-        "receta": "almuerzo-bocadillo-tortilla",
-        "prepara": "RFC, la noche anterior o por la mañana a la plancha"
-      },
-      "comida": {
-        "receta": "lentejas-estofadas"
-      },
-      "merienda": {
-        "receta": "yogur-fruta-frutos-secos"
-      },
-      "cena": {
         "receta": "merluza-plancha-brocoli",
         "variantes": {
           "RFA": "tortilla-francesa-brocoli"
         }
       }
     },
+    "J": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Miércoles por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "salmon-horno-patata"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "lentejas-estofadas"
+      }
+    },
     "V": {
       "almuerzo": {
-        "receta": "almuerzo-bocadillo-atun"
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Jueves por la noche, sin cocinar"
       },
       "comida": {
         "receta": "espaguetis-bolonesa"
@@ -137,7 +147,7 @@
         "prepara": "Lunes por la noche"
       },
       "CCT": {
-        "receta": "salmon-horno-patata",
+        "receta": "albondigas-pavo-cuscus",
         "prepara": "Ración extra de la cena del lunes"
       }
     },

@@ -57,6 +57,12 @@ export interface Familia {
   preferencias?: string[];
   /** Quién puede hacer qué. validarMenu: quién da por válido y publica un menú. */
   permisos?: { validarMenu: string[] };
+  /** Ingredientes que solo pueden aparecer en ciertas comidas (p. ej. pescado azul solo el jueves a mediodía). */
+  restricciones?: {
+    ingredientes: string[];
+    soloEn: { dia: Dia; comida: string }[];
+    motivo: string;
+  }[];
   /** Desayuno habitual de cada miembro, el mismo todos los días. */
   desayunos?: Record<string, { receta: string; nota?: string }>;
   objetivos: Record<string, Objetivo>;

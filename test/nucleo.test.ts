@@ -117,14 +117,17 @@ test("las variantes sacan al comensal del plato principal y la compra suma todas
   const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
-  const cenaLunes = dias[0].comidas.find((c) => c.tipo === "cena")!;
-  assert.deepEqual(cenaLunes.platos.map((p) => [p.receta.id, p.comensales.map((c) => c.id)]), [
-    ["salmon-horno-patata", ["CCT", "RFC", "AFC"]],
-    ["pollo-horno-patata", ["RFA"]],
+  const cenaMiercoles = dias[2].comidas.find((c) => c.tipo === "cena")!;
+  assert.deepEqual(cenaMiercoles.platos.map((p) => [p.receta.id, p.comensales.map((c) => c.id)]), [
+    ["merluza-plancha-brocoli", ["CCT", "RFC", "AFC"]],
+    ["tortilla-francesa-brocoli", ["RFA"]],
   ]);
-  // Salmón: 3 comensales de la cena del lunes + tupper de CCT del martes.
+  // Albóndigas: 4 comensales de la cena del lunes + tupper de CCT del martes.
+  const pavo = listaCompra(dias).Carnicería.find((l) => l.nombre === "Carne picada de pavo")!;
+  assert.ok(Math.abs(pavo.cantidad - 130 * (1.17 + 1.01 + 1.23 + 1.12 + 1.01)) < 1);
+  // Salmón: solo la comida del jueves (CCT, RFC y AFC).
   const salmon = listaCompra(dias).Pescadería.find((l) => l.nombre === "Lomo de salmón")!;
-  const esperado = 130 * (1.01 + 1.23 + 1.12 + 1.01);
+  const esperado = 130 * (1.01 + 1.23 + 1.12);
   assert.ok(Math.abs(salmon.cantidad - esperado) < 1);
   assert.ok(salmon.comprar >= salmon.cantidad);
 });
@@ -193,4 +196,27 @@ test("solo CCT puede validar el menú y cualquier cambio lo devuelve a borrador"
   assert.equal(tras.estado, "borrador");
   assert.equal(tras.validacion, undefined);
   assert.equal(tras.cambios!.at(-1)!.por, "CCT");
+});
+
+test("normas de la casa: pescado azul solo el jueves a mediodía y nada «al momento» para llevar", async () => {
+  const { validarMenu } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+
+  const salmonEnCena = structuredClone(menu);
+  salmonEnCena.dias.L.cena = { receta: "salmon-horno-patata" };
+  assert.ok(validarMenu(familia, salmonEnCena, recetas).some((e) => /salmón/.test(e) && /jueves/.test(e)));
+
+  const atunEnAlmuerzo = structuredClone(menu);
+  atunEnAlmuerzo.dias.M.almuerzo = { receta: "almuerzo-bocadillo-atun" };
+  assert.ok(validarMenu(familia, atunEnAlmuerzo, recetas).some((e) => /atún/.test(e)));
+
+  const tortillaEnTupper = structuredClone(menu);
+  tortillaEnTupper.tuppers.L.CCT = { receta: "tortilla-francesa-brocoli" };
+  assert.ok(validarMenu(familia, tortillaEnTupper, recetas).some((e) => /al momento/.test(e)));
+
+  // En casa, a la hora de cenar, la tortilla francesa sí vale.
+  const tortillaEnCena = structuredClone(menu);
+  tortillaEnCena.dias.X.cena = { receta: "tortilla-francesa-brocoli" };
+  assert.deepEqual(validarMenu(familia, tortillaEnCena, recetas), []);
 });

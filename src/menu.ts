@@ -34,6 +34,8 @@ export interface Receta {
   conservacion?: string;
   /** Cantidades por persona, sin escalar por ración (desayunos habituales, envasados...). */
   racionFija?: boolean;
+  /** Se prepara justo antes de comerla (p. ej. tortilla francesa): no vale para almuerzos ni tuppers. */
+  alMomento?: boolean;
 }
 
 export interface PlatoMenu {
@@ -84,14 +86,35 @@ export interface DiaDelMenu {
 
 const redondear2 = (n: number) => Math.round(n * 100) / 100;
 
-/** Comprueba que el menú solo usa recetas existentes y que cubre las comidas de la rejilla. */
+const normalizar = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+/** Normas de la familia que incumple una receta servida en ese día y comida. */
+function incumpleNormas(familia: Familia, receta: Receta, dia: Dia, comida: string, fuera: boolean): string[] {
+  const avisos: string[] = [];
+  if (fuera && receta.alMomento) avisos.push(`«${receta.nombre}» se hace al momento y no se puede preparar antes`);
+  for (const r of familia.restricciones ?? []) {
+    const permitido = r.soloEn.some((x) => x.dia === dia && x.comida === comida);
+    const prohibido = receta.ingredientes.find((i) =>
+      r.ingredientes.some((palabra) => normalizar(i.nombre).includes(normalizar(palabra))),
+    );
+    if (prohibido && !permitido) avisos.push(`«${receta.nombre}» lleva ${prohibido.nombre.toLowerCase()}: ${r.motivo}`);
+  }
+  return avisos;
+}
+
+/** Comprueba que el menú solo usa recetas existentes, cumple las normas de la casa y cubre la rejilla. */
 export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[]): string[] {
-  const ids = new Set(recetas.map((r) => r.id));
+  const porId = new Map(recetas.map((r) => [r.id, r]));
   const errores: string[] = [];
-  const comprobar = (donde: string, p: PlatoMenu) => {
-    if (!ids.has(p.receta)) errores.push(`${donde}: receta desconocida «${p.receta}»`);
-    for (const [id, receta] of Object.entries(p.variantes ?? {})) {
-      if (!ids.has(receta)) errores.push(`${donde} (variante ${id}): receta desconocida «${receta}»`);
+  const comprobar = (donde: string, p: PlatoMenu, dia?: Dia, comida?: string, fuera = false) => {
+    const ids = [p.receta, ...Object.values(p.variantes ?? {})];
+    for (const id of ids) {
+      const receta = porId.get(id);
+      if (!receta) {
+        errores.push(`${donde}: receta desconocida «${id}»`);
+      } else if (dia && comida) {
+        for (const aviso of incumpleNormas(familia, receta, dia, comida, fuera)) errores.push(`${donde}: ${aviso}`);
+      }
     }
   };
   for (const [id, d] of Object.entries(familia.desayunos ?? {})) comprobar(`Desayuno de ${id}`, d);
@@ -106,11 +129,11 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
       }
       const plato = menu.dias[dia.dia]?.[comida.tipo];
       if (!plato) errores.push(`${dia.nombre} ${comida.tipo}: falta el plato`);
-      else comprobar(`${dia.nombre} ${comida.tipo}`, plato);
+      else comprobar(`${dia.nombre} ${comida.tipo}`, plato, dia.dia, comida.tipo, comida.tipo === "almuerzo");
       for (const t of comida.tuppers) {
         const tupper = menu.tuppers[dia.dia]?.[t.id];
         if (!tupper) errores.push(`${dia.nombre}: falta el tupper de ${t.id}`);
-        else comprobar(`${dia.nombre} tupper ${t.id}`, tupper);
+        else comprobar(`${dia.nombre} tupper ${t.id}`, tupper, dia.dia, "comida", true);
       }
     }
   }

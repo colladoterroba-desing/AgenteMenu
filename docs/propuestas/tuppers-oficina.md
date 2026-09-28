@@ -47,7 +47,7 @@ La idea es **hacer una ración de más en la cena de la noche anterior** o en el
 | Día | Tupper | Cantidades | kcal aprox. | Se cocina |
 |---|---|---|---|---|
 | **L** | **Garbanzos con espinacas** y huevo duro | Garbanzos cocidos 200 g · espinacas · sofrito con AOVE 10 ml · 1 huevo · pan 40 g + fruta | ~680 | Domingo (batch) |
-| **M** | **Salmón al horno con patata y calabacín** | Salmón 130 g · patata 200 g · calabacín · AOVE 10 ml + yogur + fruta | ~680 | Cena del lunes ×1 extra |
+| **M** | **Albóndigas de pavo en salsa de tomate con cuscús integral** | Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 10 ml + fruta | ~670 | Cena del lunes ×1 extra |
 | **X** | **Pollo guisado con verduras y arroz integral** | Pollo 130 g · arroz 60 g · verduras · AOVE 10 ml + yogur + fruta | ~700 | Cena del martes ×1 extra |
 
 ### Semana B
@@ -60,7 +60,7 @@ La idea es **hacer una ración de más en la cena de la noche anterior** o en el
 
 **Si CCT acepta el objetivo de peso (~570 kcal):** quita el pan y el yogur y dobla la verdura del plato.
 
-> El salmón y la merluza de CCT **no** se duplican para RFA, que los lunes y martes lleva su tupper frío sin pescado.
+> Norma de la casa: salmón, atún, anchoas y sardinas solo los jueves a mediodía, así que ningún tupper los lleva. La merluza de CCT (semana B) no se duplica para RFA, que lleva su tupper frío sin pescado.
 
 ---
 
@@ -73,7 +73,7 @@ La idea es **hacer una ración de más en la cena de la noche anterior** o en el
 
 ## Lista de la compra (por semana)
 
-**Semana A:** pasta integral · pechuga de pollo (≈500 g) · pavo en lonchas · salmón (1 lomo) · huevos · lentejas y garbanzos cocidos (1 bote de cada) · tortillas integrales · hummus · queso fresco · arroz integral · espinacas · tomate cherry · pimiento · maíz · cebolleta · lechuga · patata · calabacín · aceitunas · plátanos y fruta variada · yogures naturales · pan integral.
+**Semana A:** pasta integral · pechuga de pollo (≈500 g) · pavo en lonchas · pavo picado (≈150 g) · huevos · lentejas y garbanzos cocidos (1 bote de cada) · tortillas integrales · hummus · queso fresco · arroz integral · espinacas · tomate cherry · pimiento · maíz · cebolleta · lechuga · patata · calabacín · aceitunas · tomate triturado · cuscús integral · plátanos y fruta variada · yogures naturales · pan integral.
 
 **Semana B:** arroz integral · quinoa · cuscús integral · garbanzos cocidos · lentejas secas · pechuga de pollo (≈250 g) · pavo picado (≈150 g) · merluza (≈150 g) · guisantes · huevos · patata · calabacín · pepino · tomate · apio · manzana · zanahoria · cebolla · queso feta · yogur griego ligero · nueces · tomate triturado · pan integral · plátanos y fruta variada.
 

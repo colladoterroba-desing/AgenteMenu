@@ -28,13 +28,13 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 - [ ] **OI-07 · Desayuno de CCT.** Propuesta: tostada integral con tomate y queso fresco, sin azúcar, y una pieza de fruta. Pendiente de que CCT la acepte.
 - [ ] **OI-08 · Objetivos de peso de RFA y CCT.** Hay propuestas calculadas (67,8 kg: RFA en unas 11 semanas y CCT en unas 23), pero no se aplican hasta acordarlas. Recomendable consultarlas antes con su médico.
 - [ ] **OI-09 · Merienda.** Se ha supuesto que meriendan los cuatro de lunes a viernes y nadie el fin de semana. Confirmar.
-- [ ] **OI-10 · Pescado para RFA.** «No come mucho pescado»: de las 4 comidas de pescado de la semana, RFA tiene plato alternativo en 2. Confirmar si es la proporción adecuada.
+- [ ] **OI-10 · Pescado para RFA.** «No come mucho pescado». Con la norma del pescado azul (solo los jueves a mediodía, cuando RFA no come en casa), la semana A tiene merluza el miércoles por la noche (RFA toma tortilla), gambas el sábado y dorada el domingo. Confirmar si RFA come estas dos últimas.
 - [ ] **OI-11 · Energía según el día.** Las raciones usan el gasto medio de la semana. Valorar si se ajustan por día (más en días de entreno o partido).
 
 ## Tuppers y almuerzos
 
 - [ ] **OI-12 · Días y medios en la oficina.** Se ha supuesto tupper de RFA y CCT de lunes a miércoles. Confirmar, y si CCT tiene microondas y RFA nevera en la oficina.
-- [ ] **OI-13 · Almuerzo de RFC.** Confirmar que no tiene nevera en el colegio (las propuestas aguantan sin ella) y si le gustan los tres almuerzos propuestos.
+- [ ] **OI-13 · Almuerzo de RFC.** Confirmar que no tiene nevera en el colegio y si le gustan los almuerzos: bocadillos de pollo asado, jamón serrano y queso fresco, más un día de yogur bebible con frutos secos. Todos se preparan la noche anterior.
 
 ## Menú y recetas
 

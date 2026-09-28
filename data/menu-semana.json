@@ -21,6 +21,11 @@
       "por": "usuario",
       "fecha": "2026-09-28",
       "descripcion": "Legumbres solo con un adulto delante. Comida de RFC y AFC del lunes: macarrones con tomate, jamón york y queso (antes, garbanzos); los garbanzos quedan para el tupper de CCT."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Platos habituales de casa y más huevo: martes, puré de calabaza y lomo adobado (RFC y AFC); miércoles, RFA toma huevos revueltos con jamón y queso; sábado, solomillo a la naranja y tortilla de patata; domingo, crema de puerro y huevos revueltos."
     }
   ],
   "batch": [
@@ -28,7 +33,7 @@
       "dia": "D",
       "tareas": [
         "Garbanzos con espinacas para el tupper de CCT del lunes, unos 35 min.",
-        "Arroz integral cocido para el lomo del martes, 25 min; enfriar y guardar en la nevera.",
+        "Puré de calabaza para la comida del martes (RFC y AFC), 30 min.",
         "Asar pechuga de pollo para la ensalada de pasta del tupper de RFA y el bocadillo de RFC del lunes, 20 min.",
         "Cocer 4 huevos duros para la semana."
       ]
@@ -58,8 +63,9 @@
         "prepara": "Lunes por la noche, sin cocinar"
       },
       "comida": {
-        "receta": "lomo-plancha-arroz",
-        "prepara": "Plancha; el arroz está cocido del domingo"
+        "receta": "pure-calabaza",
+        "segundo": "lomo-adobado-plancha",
+        "prepara": "Puré del batch del domingo: recalentar; el lomo, a la plancha"
       },
       "merienda": {
         "receta": "bocadillo-pavo-queso"
@@ -84,7 +90,7 @@
       "cena": {
         "receta": "merluza-plancha-brocoli",
         "variantes": {
-          "RFA": "tortilla-francesa-brocoli"
+          "RFA": "huevos-revueltos-jamon-queso"
         }
       }
     },
@@ -120,10 +126,10 @@
     },
     "S": {
       "comida": {
-        "receta": "paella-pollo-verduras"
+        "receta": "solomillo-naranja"
       },
       "cena": {
-        "receta": "revuelto-setas-gambas"
+        "receta": "tortilla-patata"
       }
     },
     "D": {
@@ -131,7 +137,8 @@
         "receta": "dorada-horno"
       },
       "cena": {
-        "receta": "crema-calabaza-sandwich"
+        "receta": "crema-puerro",
+        "segundo": "huevos-revueltos-jamon-queso"
       }
     }
   },

@@ -48,7 +48,8 @@ const receta = z.object({
 });
 
 const plato = z.object({
-  receta: z.string(),
+  receta: z.string().describe("Plato único o primer plato"),
+  segundo: z.string().optional().describe("Segundo plato para los mismos comensales"),
   prepara: z.string().optional().describe("Batch, ración extra de otra comida, plancha..."),
   variantes: z.record(z.string(), z.string()).optional().describe("Miembro → receta alternativa"),
 });

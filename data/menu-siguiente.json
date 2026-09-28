@@ -16,6 +16,11 @@
       "por": "usuario",
       "fecha": "2026-09-28",
       "descripcion": "Legumbres solo con un adulto delante. Comida de RFC y AFC del lunes: lomo a la plancha con arroz integral (antes, lentejas); las lentejas quedan para el tupper de CCT."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Platos habituales de casa y más huevo: lunes, puré de zanahoria y chuleta de Sajonia (RFC y AFC); martes, puré de calabacín y huevos revueltos; viernes, crema de puerro y sándwich mixto; sábado, judías verdes y pollo empanado; domingo, ternera estofada."
     }
   ],
   "batch": [
@@ -26,7 +31,7 @@
         "Albóndigas de pavo con cuscús para la comida del miércoles (RFC y AFC) y el tupper de CCT; congelar y sacar el martes por la noche, 40 min.",
         "Ensalada de arroz integral con garbanzos y feta para el tupper frío de RFA del lunes, 30 min.",
         "Asar pechuga de pollo para la quinoa de RFA del martes y el bocadillo de RFC del lunes, 20 min.",
-        "Arroz integral cocido para el lomo del lunes (RFC y AFC), 25 min; enfriar y guardar en la nevera."
+        "Puré de zanahoria para la comida del lunes (RFC y AFC), 30 min."
       ]
     }
   ],
@@ -37,8 +42,9 @@
         "prepara": "Domingo por la noche, con el pollo asado del batch"
       },
       "comida": {
-        "receta": "lomo-plancha-arroz",
-        "prepara": "Plancha; el arroz está cocido del domingo"
+        "receta": "pure-zanahoria",
+        "segundo": "chuleta-sajonia-plancha",
+        "prepara": "Puré del batch del domingo: recalentar; la chuleta, a la plancha"
       },
       "merienda": {
         "receta": "bocadillo-pavo-queso"
@@ -64,7 +70,8 @@
         "receta": "yogur-fruta-frutos-secos"
       },
       "cena": {
-        "receta": "crema-calabacin-tortilla"
+        "receta": "pure-calabacin",
+        "segundo": "huevos-revueltos-jamon-queso"
       }
     },
     "X": {
@@ -110,12 +117,14 @@
         "receta": "yogur-fruta-frutos-secos"
       },
       "cena": {
-        "receta": "pizza-casera-verduras"
+        "receta": "crema-puerro",
+        "segundo": "sandwich-mixto"
       }
     },
     "S": {
       "comida": {
-        "receta": "pollo-horno-patata"
+        "receta": "judias-verdes-rehogadas",
+        "segundo": "pollo-empanado"
       },
       "cena": {
         "receta": "tortilla-patata-calabacin"
@@ -123,7 +132,7 @@
     },
     "D": {
       "comida": {
-        "receta": "espaguetis-bolonesa"
+        "receta": "ternera-estofada"
       },
       "cena": {
         "receta": "crema-calabaza-sandwich"

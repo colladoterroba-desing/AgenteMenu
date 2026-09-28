@@ -357,13 +357,14 @@ function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
     .map(
       (t) => `<div class="tupper-linea ${t.tipoTupper === "frío" ? "frio" : "calor"}">
         <span class="tupper-etq">Tupper ${esc(t.para)} · ${esc(t.tipoTupper)}</span>
-        <a href="#r-${esc(t.receta.id)}">${esc(t.receta.nombre)}</a>
+        <a href="#r-${esc(t.receta.id)}">${esc(t.receta.nombre)}</a>${t.segundo ? ` + <a href="#r-${esc(t.segundo.receta.id)}">${esc(t.segundo.receta.nombre)}</a>` : ""}
         ${t.prepara ? `<span class="prepara">${esc(t.prepara)}</span>` : ""}
       </div>`,
     )
     .join("");
   return `<td>
     <a class="plato-menu" href="#r-${esc(principal.receta.id)}">${esc(principal.receta.nombre)}</a>
+    ${principal.segundo ? `<a class="plato-menu segundo" href="#r-${esc(principal.segundo.receta.id)}">${esc(principal.segundo.receta.nombre)}</a>` : ""}
     <div class="comensales">${comensalesChips(principal)}<span class="raciones mono">×${num(principal.raciones, 2)}</span></div>
     ${variantesHtml}
     ${principal.prepara ? `<p class="prepara">${esc(principal.prepara)}</p>` : ""}
@@ -433,16 +434,14 @@ function usosDeRecetas(semanas: { semana: string; dias: DiaDelMenu[] }[]): Map<s
     for (const d of dias) {
       for (const c of d.comidas) {
         const nombre = COMIDAS.find((x) => x.tipo === c.tipo)!.nombre.toLowerCase();
-        c.platos.forEach((p, i) =>
-          anotar(p.receta.id, {
-            donde: `${d.nombre} ${nombre}${i > 0 ? ` (${p.comensales[0].id})` : ""}`,
-            categoria: c.tipo,
-            raciones: p.raciones,
-            semana,
-          }),
-        );
+        c.platos.forEach((p, i) => {
+          const donde = `${d.nombre} ${nombre}${i > 0 ? ` (${p.comensales[0].id})` : ""}`;
+          anotar(p.receta.id, { donde, categoria: c.tipo, raciones: p.raciones, semana });
+          if (p.segundo) anotar(p.segundo.receta.id, { donde: `${donde}, segundo`, categoria: c.tipo, raciones: p.segundo.raciones, semana });
+        });
         for (const t of c.tuppers) {
           anotar(t.receta.id, { donde: `${d.nombre}, tupper ${t.para}`, categoria: "tupper", raciones: t.raciones, semana });
+          if (t.segundo) anotar(t.segundo.receta.id, { donde: `${d.nombre}, tupper ${t.para}`, categoria: "tupper", raciones: t.segundo.raciones, semana });
         }
       }
     }
@@ -777,6 +776,7 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .semana tbody tr:last-child td,.semana tbody tr:last-child th{border-bottom:0}
 .semana td{min-width:128px}
 .semana td{min-width:150px}
+.plato-menu.segundo{margin-top:3px;padding-top:3px;border-top:1px dotted var(--line)}
 .plato-menu{display:block;font-weight:600;color:var(--ink);text-decoration:none;line-height:1.3}
 .plato-menu:hover,.variante a:hover,.tupper-linea a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
 .comensales{display:flex;flex-wrap:wrap;gap:3px;align-items:center;margin-top:6px}

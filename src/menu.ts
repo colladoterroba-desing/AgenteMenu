@@ -40,6 +40,8 @@ export interface Receta {
 
 export interface PlatoMenu {
   receta: string;
+  /** Segundo plato de la misma comida (p. ej. puré de primero y lomo de segundo). */
+  segundo?: string;
   /** Cuándo y cómo se prepara si no es en el momento (batch, ración extra...). */
   prepara?: string;
   /** Miembros que comen otra receta en esa comida (p. ej. RFA cuando hay pescado). */
@@ -69,6 +71,8 @@ export interface Racion {
   raciones: number;
   prepara?: string;
   nota?: string;
+  /** Segundo plato, para los mismos comensales. */
+  segundo?: { receta: Receta; raciones: number };
 }
 
 export interface ComidaDelMenu {
@@ -107,7 +111,7 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
   const porId = new Map(recetas.map((r) => [r.id, r]));
   const errores: string[] = [];
   const comprobar = (donde: string, p: PlatoMenu, dia?: Dia, comida?: string, fuera = false, quienes: string[] = []) => {
-    const ids = [p.receta, ...Object.values(p.variantes ?? {})];
+    const ids = [p.receta, ...(p.segundo ? [p.segundo] : []), ...Object.values(p.variantes ?? {})];
     for (const id of ids) {
       const receta = porId.get(id);
       if (!receta) {
@@ -117,7 +121,9 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
       }
     }
     // Platos no deseados: el principal lo comen quienes no tienen variante; cada variante, su dueño.
-    const comen = new Map<string, string[]>([[p.receta, quienes.filter((q) => !p.variantes?.[q])]]);
+    const principales = quienes.filter((q) => !p.variantes?.[q]);
+    const comen = new Map<string, string[]>([[p.receta, principales]]);
+    if (p.segundo) comen.set(p.segundo, [...(comen.get(p.segundo) ?? []), ...principales]);
     for (const [q, r] of Object.entries(p.variantes ?? {})) comen.set(r, [...(comen.get(r) ?? []), q]);
     for (const [receta, personas] of comen) {
       const r = porId.get(receta);
@@ -187,6 +193,9 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
     }));
   };
 
+  const segundo = (p: PlatoMenu, comensales: { factorRacion: number }[]) =>
+    p.segundo ? { receta: receta(p.segundo), raciones: raciones(receta(p.segundo), comensales) } : undefined;
+
   return planificarSemana(familia).map((dia) => ({
     dia: dia.dia,
     nombre: dia.nombre,
@@ -203,6 +212,7 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
           comensales: principal,
           raciones: raciones(receta(plato.receta), principal),
           prepara: plato.prepara,
+          segundo: segundo(plato, principal),
         });
         for (const [id, variante] of Object.entries(variantes)) {
           const comensal = comida.comensales.find((c) => c.id === id);
@@ -218,6 +228,7 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
           comensales: [t],
           raciones: raciones(receta(tupper.receta), [t]),
           prepara: tupper.prepara,
+          segundo: segundo(tupper, [t]),
           para: t.id,
           tipoTupper: t.tipo,
         }];
@@ -249,7 +260,9 @@ function redondearCompra(cantidad: number, unidad: string): number {
 /** Suma los ingredientes de todas las raciones de la semana y descuenta la despensa. */
 export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Seccion, LineaCompra[]> {
   const acumulado = new Map<string, LineaCompra & { seccion: Seccion }>();
-  const todas = dias.flatMap((d) => d.comidas.flatMap((c) => [...c.platos, ...c.tuppers]));
+  const todas = dias
+    .flatMap((d) => d.comidas.flatMap((c) => [...c.platos, ...c.tuppers]))
+    .flatMap((r) => [r, ...(r.segundo ? [r.segundo] : [])]);
   for (const { receta, raciones } of todas) {
     for (const ing of receta.ingredientes) {
       const clave = `${ing.nombre.toLowerCase()}|${ing.unidad}`;

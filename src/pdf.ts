@@ -54,12 +54,13 @@ function celda(dia: DiaDelMenu, tipo: string): string {
   }
   return `<td>
     <div class="plato">${esc(principal.receta.nombre)}</div>
+    ${principal.segundo ? `<div class="plato segundo">${esc(principal.segundo.receta.nombre)}</div>` : ""}
     <div>${quien(principal.comensales.map((x) => x.id))}</div>
     ${variantes.map((v) => `<div class="linea">${quien([v.comensales[0].id])} ${esc(v.receta.nombre)}</div>`).join("")}
     ${principal.prepara ? `<div class="prepara">${esc(principal.prepara)}</div>` : ""}
     ${c.tuppers
       .map(
-        (t) => `<div class="tupper ${t.tipoTupper === "frío" ? "frio" : "calor"}"><b>Tupper ${esc(t.para)} (${esc(t.tipoTupper)})</b> ${esc(t.receta.nombre)}${t.prepara ? ` <i>· ${esc(t.prepara)}</i>` : ""}</div>`,
+        (t) => `<div class="tupper ${t.tipoTupper === "frío" ? "frio" : "calor"}"><b>Tupper ${esc(t.para)} (${esc(t.tipoTupper)})</b> ${esc(t.receta.nombre)}${t.segundo ? ` + ${esc(t.segundo.receta.nombre)}` : ""}${t.prepara ? ` <i>· ${esc(t.prepara)}</i>` : ""}</div>`,
       )
       .join("")}
   </td>`;
@@ -79,6 +80,7 @@ th,td{border:0.75pt solid #c9d2c6;padding:3pt 4pt;vertical-align:top;text-align:
 thead th{background:#3d6a33;color:#fff;font-size:8.5pt;text-transform:uppercase;letter-spacing:.04em}
 tbody th{width:62pt;background:#eef2ec;font-size:9pt}
 .plato{font-weight:700;font-size:8.5pt}
+.plato.segundo{margin-top:1.5pt;padding-top:1.5pt;border-top:0.5pt dotted #c9d2c6}
 .quien{font-size:6.8pt;font-weight:700;color:#3d6a33}
 .linea{margin-top:1.5pt;font-size:8pt}
 .prepara{margin-top:2pt;font-size:7pt;color:#8f6200;font-style:italic}

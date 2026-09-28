@@ -22,6 +22,17 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 - [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa y los platos no deseados que se apuntan en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie a `data/despensa.json` y `data/familia.json` para que el agente los use. Decidir si se automatiza (ligado a OI-01 y OI-02).
 
+## Uso diario del menú
+
+- [x] **OI-26 · Inventario de despensa para actualizar el menú.** Hecho: página Despensa en la web; la compra se descuenta al momento. Queda pendiente copiar el inventario al repositorio (OI-25) y que el agente cambie platos para aprovecharlo.
+- [x] **OI-27 · Marcar platos como no deseados, con el motivo, para futuros menús.** Hecho: en Recetas, por persona o por la familia; el sistema no vuelve a servirlos a quien los marcó. Queda pendiente la sincronización (OI-25).
+- [x] **OI-28 · Mostrar la propuesta de la semana siguiente.** Hecho: pestaña «Semana siguiente» en el menú y PDF propio. Queda pendiente la rotación de semanas (OI-14).
+- [ ] **OI-29 · Registrar cuando no se cumple el menú.** A veces se come otra cosa. Hace falta una opción para marcar una comida como «no se hizo» y apuntar lo que se comió de verdad. Hay que decidir:
+  - Dónde se marca: en la web, en cada casilla del menú, y quién puede hacerlo.
+  - Qué se apunta: el plato real (de las recetas o texto libre) y quién lo comió.
+  - Qué pasa con lo que no se cocinó: los ingredientes vuelven a la despensa y se proponen para otro día.
+  - Cómo lo usa el agente: aprender qué platos se saltan a menudo, ajustar las cantidades y el seguimiento de calorías de quien tiene objetivo de peso.
+
 ## Personas y hábitos
 
 - [ ] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** En los datos aparecía dos veces RFA. Se ha asignado a **RFC**; falta confirmarlo.

@@ -31,6 +31,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Objetivos de peso (aceptados el 28/09/2026):** RFA, de 73 a 67,8 kg con 1.879 kcal/día (unas 11 semanas). CCT, de 79 a 67,8 kg con 1.623 kcal/día (unas 23 semanas). Consultarlo con su médico.
 - **Legumbres:** mejor con un adulto (RFA o CCT) que supervise cuánto comen; no se ponen en las comidas en las que RFC y AFC están solos.
 - **Comidas de los niños sin los mayores:** los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser pasta o algo más calórico.
+- **Platos habituales:** cenas fáciles (huevos revueltos con jamón york y/o queso, sándwich mixto, tortilla de patata) y comidas (purés de calabacín, calabaza y zanahoria; crema de puerro; judías verdes rehogadas; pechuga de pollo empanada; lomo adobado y chuleta de Sajonia a la plancha; ternera estofada con verduras; solomillo de cerdo a la naranja). Tienen prioridad en el menú, y el huevo debe aparecer varias veces por semana. Una comida puede llevar primero y segundo.
 - **Despensa:** apartado para completar el inventario de lo que hay en casa; la lista de la compra lo descuenta y el menú se puede actualizar para aprovecharlo.
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.

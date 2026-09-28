@@ -54,8 +54,16 @@
     "Leche siempre semidesnatada",
     "Por las mañanas no se cocina en casa: lo que se lleva fuera se prepara la noche anterior o en el batch",
     "La tortilla francesa se hace al momento: no se prepara el día antes",
-    "Los días que los mayores (RFA y CCT) no comen en casa, la comida de los niños puede ser pasta o algo más calórico"
+    "Los días que los mayores (RFA y CCT) no comen en casa, la comida de los niños puede ser pasta o algo más calórico",
+    "Dar prioridad a los platos habituales de casa y poner huevo varias veces por semana"
   ],
+  "platosHabituales": {
+    "cenas": ["huevos-revueltos-jamon-queso", "sandwich-mixto", "tortilla-patata"],
+    "comidas": [
+      "pure-calabacin", "pure-calabaza", "pure-zanahoria", "crema-puerro", "judias-verdes-rehogadas",
+      "pollo-empanado", "lomo-adobado-plancha", "chuleta-sajonia-plancha", "ternera-estofada", "solomillo-naranja"
+    ]
+  },
   "permisos": { "validarMenu": ["CCT"] },
   "noDeseados": [],
   "supervision": [

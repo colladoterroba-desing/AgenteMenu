@@ -120,7 +120,7 @@ test("las variantes sacan al comensal del plato principal y la compra suma todas
   const cenaMiercoles = dias[2].comidas.find((c) => c.tipo === "cena")!;
   assert.deepEqual(cenaMiercoles.platos.map((p) => [p.receta.id, p.comensales.map((c) => c.id)]), [
     ["merluza-plancha-brocoli", ["CCT", "RFC", "AFC"]],
-    ["tortilla-francesa-brocoli", ["RFA"]],
+    ["huevos-revueltos-jamon-queso", ["RFA"]],
   ]);
   // Albóndigas: 4 comensales de la cena del lunes + tupper de CCT del martes.
   const f = (id: string) => calcularNecesidades(miembro(id), familia.objetivos[id]).factorRacion;
@@ -289,4 +289,21 @@ test("legumbres solo con un adulto delante; pasta para los niños cuando están 
   const almuerzo = structuredClone(menu);
   almuerzo.dias.M.almuerzo = { receta: "arroz-garbanzos-feta" };
   assert.ok(validarMenu(familia, almuerzo, recetas).some((e) => /Martes almuerzo/.test(e)));
+});
+
+test("primero y segundo: el segundo lo comen los mismos y entra en la compra", async () => {
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dias = componerMenu(familia, menu, recetas);
+  const martes = dias[1].comidas.find((c) => c.tipo === "comida")!.platos[0];
+  assert.equal(martes.receta.id, "pure-calabaza");
+  assert.equal(martes.segundo!.receta.id, "lomo-adobado-plancha");
+  assert.equal(martes.segundo!.raciones, martes.raciones);
+  const lomo = listaCompra(dias).Carnicería.find((l) => l.nombre === "Lomo adobado en filetes")!;
+  assert.ok(Math.abs(lomo.cantidad - 120 * martes.raciones) < 1);
+  // Más huevo: al menos 4 comidas o cenas de la semana llevan huevo.
+  const conHuevo = dias.flatMap((d) => d.comidas.filter((c) => c.tipo === "comida" || c.tipo === "cena"))
+    .filter((c) => c.platos.some((p) => [p.receta, p.segundo?.receta].some((r) => r?.ingredientes.some((i) => i.nombre === "Huevos"))));
+  assert.ok(conHuevo.length >= 4, `solo ${conHuevo.length}`);
 });

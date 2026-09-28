@@ -872,6 +872,269 @@
         "Incorporar la patata en dados, cubrir de agua y cocer 15 minutos; añadir las alubias enjuagadas y cocer 5 minutos más."
       ],
       "conservacion": "4 días en nevera o 3 meses congeladas."
+    },
+    {
+      "id": "huevos-revueltos-jamon-queso",
+      "nombre": "Huevos revueltos con jamón york y queso",
+      "tipo": "cena",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "alMomento": true,
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Tomate", "cantidad": 100, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Batir los huevos con una pizca de sal.",
+        "Saltear el jamón en tiras con el aceite 1 minuto.",
+        "Añadir los huevos y el queso troceado y cuajar a fuego bajo removiendo, que queden jugosos.",
+        "Servir con el tomate aliñado y el pan."
+      ]
+    },
+    {
+      "id": "sandwich-mixto",
+      "nombre": "Sándwich mixto a la plancha",
+      "tipo": "cena",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "alMomento": true,
+      "ingredientes": [
+        { "nombre": "Pan de molde integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso en lonchas", "cantidad": 30, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Montar el sándwich con el jamón y el queso.",
+        "Pintar el pan por fuera con unas gotas de aceite y dorarlo en la plancha o la sandwichera, 2-3 minutos por lado, hasta que se funda el queso.",
+        "Fruta de postre."
+      ]
+    },
+    {
+      "id": "tortilla-patata",
+      "nombre": "Tortilla de patata con ensalada",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" }
+      ],
+      "pasos": [
+        "Cortar la patata y la cebolla finas y pocharlas en el aceite a fuego suave 20 minutos. Escurrir el aceite.",
+        "Mezclar con los huevos batidos y sal, dejar reposar 5 minutos y cuajar la tortilla por los dos lados.",
+        "Servir con la ensalada."
+      ],
+      "conservacion": "La tortilla de patata aguanta de un día para otro en la nevera."
+    },
+    {
+      "id": "pure-calabacin",
+      "nombre": "Puré de calabacín",
+      "tipo": "comida",
+      "tiempoMin": 25,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Calabacín", "cantidad": 250, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Queso fresco batido", "cantidad": 20, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite 5 minutos.",
+        "Añadir el calabacín y la patata troceados, cubrir justo de agua con sal y cocer 15 minutos.",
+        "Triturar con el queso fresco batido."
+      ],
+      "conservacion": "3 días en nevera; se congela bien."
+    },
+    {
+      "id": "pure-calabaza",
+      "nombre": "Puré de calabaza",
+      "tipo": "comida",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Calabaza", "cantidad": 250, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite.",
+        "Añadir la calabaza y la patata troceadas, cubrir de agua con sal y cocer 20 minutos.",
+        "Triturar hasta que quede fino."
+      ],
+      "conservacion": "3 días en nevera; se congela bien. Se recalienta en el microondas."
+    },
+    {
+      "id": "pure-zanahoria",
+      "nombre": "Puré de zanahoria",
+      "tipo": "comida",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Zanahoria", "cantidad": 220, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite.",
+        "Añadir la zanahoria y la patata en rodajas, cubrir de agua con sal y cocer 20 minutos.",
+        "Triturar; si queda espeso, añadir un poco del agua de cocción."
+      ],
+      "conservacion": "3 días en nevera; se congela bien."
+    },
+    {
+      "id": "crema-puerro",
+      "nombre": "Crema de puerro",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Puerro", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Leche semidesnatada", "cantidad": 50, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar el puerro y la cebolla en el aceite 8 minutos, sin que se doren.",
+        "Añadir la patata troceada, cubrir de agua con sal y cocer 20 minutos.",
+        "Triturar con la leche semidesnatada."
+      ],
+      "conservacion": "3 días en nevera."
+    },
+    {
+      "id": "judias-verdes-rehogadas",
+      "nombre": "Judías verdes rehogadas con patata",
+      "tipo": "comida",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Judías verdes", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Jamón serrano en taquitos", "cantidad": 15, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Cocer las judías y la patata troceadas en agua con sal 15 minutos y escurrir.",
+        "Rehogar ajo laminado y el jamón en el aceite, añadir pimentón y las judías con la patata, y saltear 2 minutos."
+      ],
+      "conservacion": "2 días en nevera."
+    },
+    {
+      "id": "pollo-empanado",
+      "nombre": "Pechuga de pollo empanada con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 25,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Pechuga de pollo en filetes finos", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Huevos", "cantidad": 0.5, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan rallado", "cantidad": 25, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Salar los filetes, pasarlos por huevo batido y pan rallado.",
+        "Freírlos en la sartén con el aceite caliente, 2-3 minutos por lado, y dejarlos sobre papel de cocina.",
+        "Servir con la ensalada y fruta de postre."
+      ]
+    },
+    {
+      "id": "lomo-adobado-plancha",
+      "nombre": "Filetes de lomo adobado a la plancha con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Lomo adobado en filetes", "cantidad": 120, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Calentar bien la plancha y hacer los filetes 1-2 minutos por lado.",
+        "Servir con la ensalada aliñada y fruta de postre."
+      ]
+    },
+    {
+      "id": "chuleta-sajonia-plancha",
+      "nombre": "Chuleta de Sajonia a la plancha con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Chuleta de Sajonia", "cantidad": 150, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La chuleta de Sajonia ya viene curada: solo hay que dorarla en la plancha caliente, 2-3 minutos por lado.",
+        "Servir con la ensalada y fruta de postre."
+      ]
+    },
+    {
+      "id": "ternera-estofada",
+      "nombre": "Carne de ternera estofada con verduras",
+      "tipo": "comida",
+      "tiempoMin": 90,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Ternera para guisar", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Patata", "cantidad": 120, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Zanahoria", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Guisantes congelados", "cantidad": 40, "unidad": "g", "seccion": "Congelados" },
+        { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Dorar la carne troceada y salpimentada en la cazuela con el aceite y reservar.",
+        "Pochar la cebolla y la zanahoria, añadir el tomate y sofreír 5 minutos.",
+        "Volver a poner la carne, cubrir de agua o caldo con una hoja de laurel y cocer a fuego suave 60 minutos.",
+        "Añadir la patata en trozos y los guisantes y cocer 20 minutos más."
+      ],
+      "conservacion": "4 días en nevera; mejor de un día para otro. Se congela bien."
+    },
+    {
+      "id": "solomillo-naranja",
+      "nombre": "Solomillo de cerdo a la naranja con patatas al horno",
+      "tipo": "comida",
+      "tiempoMin": 45,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Solomillo de cerdo", "cantidad": 140, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Naranjas", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Asar las patatas en gajos con la mitad del aceite y sal a 200 °C, 30 minutos.",
+        "Dorar el solomillo entero salpimentado en la sartén con el resto del aceite; reservar.",
+        "En la misma sartén pochar la cebolla, añadir el zumo de las naranjas y reducir 5 minutos.",
+        "Volver a poner el solomillo y cocer 8-10 minutos; cortar en medallones y napar con la salsa."
+      ]
     }
   ]
 }

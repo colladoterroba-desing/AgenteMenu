@@ -11,7 +11,7 @@
 - ♻️ **Reaprovecha las sobras** y da prioridad a lo que caduca antes.
 - 🧾 **Aprende de tus tickets de compra** (foto o PDF) para detectar hábitos y proponer mejoras.
 
-Los requisitos completos están en [docs/REQUISITOS.md](docs/REQUISITOS.md) y la propuesta de tuppers para la oficina en [docs/propuestas/tuppers-oficina.md](docs/propuestas/tuppers-oficina.md).
+Los requisitos completos están en [docs/REQUISITOS.md](docs/REQUISITOS.md) y la propuesta de tuppers para la oficina en [docs/propuestas/tuppers-oficina.md](docs/propuestas/tuppers-oficina.md). Los temas pendientes de definir están en [open-issues.md](open-issues.md).
 
 ## Puesta en marcha
 

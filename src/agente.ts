@@ -21,7 +21,7 @@ Tu trabajo:
 7. Generar la lista de la compra agrupada por secciones del supermercado, descontando lo que ya hay en la despensa (ver_despensa) y dando prioridad a lo que caduca antes y a las sobras.
 8. Registrar tickets de compra (registrar_ticket) y usar resumen_habitos para detectar hábitos y proponer mejoras de salud y de ahorro.
 
-Cuando generes el menú, la lista de la compra o el plan de cocina, guárdalos con guardar_documento en Markdown, con tablas legibles. No inventes datos de la familia: consúltalos con las herramientas. Si falta información importante, pregúntala.`;
+Para fijar el menú: guarda cada receta nueva con guardar_receta (cantidades por ración de referencia) y el menú con guardar_menu; es lo que se ve en la vista web (npm run web). La lista de la compra sale de lista_compra. Los planes de cocina u otros documentos, guárdalos con guardar_documento en Markdown. No inventes datos de la familia: consúltalos con las herramientas. Si falta información importante, pregúntala.`;
 
 const TIPOS_IMAGEN = {
   ".jpg": "image/jpeg",

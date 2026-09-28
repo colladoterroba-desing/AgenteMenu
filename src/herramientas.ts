@@ -2,7 +2,9 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
+import { componerMenu, listaCompra, SECCIONES, validarMenu, type MenuSemana } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
+import { DIAS } from "./tipos.js";
 
 interface Herramienta<S extends z.ZodObject> {
   nombre: string;
@@ -19,6 +21,34 @@ const producto = z.object({
   unidad: z.string().describe("g, kg, ml, l, ud, paquete..."),
   categoria: z.string().optional(),
   caducidad: fecha.optional(),
+});
+
+const TIPOS_COMIDA = ["desayuno", "comida", "merienda", "cena"] as const;
+
+const receta = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/).describe("Identificador en minúsculas con guiones"),
+  nombre: z.string(),
+  tipo: z.enum([...TIPOS_COMIDA, "tupper"]),
+  tiempoMin: z.number().int().positive(),
+  tecnica: z.enum(["sin cocinar", "plancha", "horno", "guiso", "frío"]),
+  ingredientes: z
+    .array(
+      z.object({
+        nombre: z.string(),
+        cantidad: z.number().positive().describe("Para una ración de referencia (adulto de 2000 kcal)"),
+        unidad: z.enum(["g", "ml", "ud"]),
+        seccion: z.enum(SECCIONES),
+      }),
+    )
+    .min(1),
+  pasos: z.array(z.string()).min(1),
+  conservacion: z.string().optional(),
+});
+
+const plato = z.object({
+  receta: z.string(),
+  prepara: z.string().optional().describe("Batch, ración extra de otra comida, plancha..."),
+  variantes: z.record(z.string(), z.string()).optional().describe("Miembro → receta alternativa"),
 });
 
 function herramienta<S extends z.ZodObject>(h: Herramienta<S>): Herramienta<S> {
@@ -128,6 +158,61 @@ export function crearHerramientas(almacen: Almacen) {
       descripcion: "Gasto total, gasto por categoría y productos más comprados según los tickets registrados.",
       esquema: z.object({}),
       ejecutar: async () => resumirHabitos(await almacen.tickets()),
+    }),
+    herramienta({
+      nombre: "ver_recetas",
+      descripcion: "Lista de recetas guardadas (ingredientes por ración de referencia, pasos, tiempo, técnica).",
+      esquema: z.object({}),
+      ejecutar: () => almacen.recetas(),
+    }),
+    herramienta({
+      nombre: "guardar_receta",
+      descripcion:
+        "Guarda o sustituye una receta. Las cantidades son para una ración de referencia (2000 kcal/día); el sistema las escala según los comensales.",
+      esquema: receta,
+      ejecutar: async (r) => {
+        await almacen.guardarReceta(r);
+        return { guardada: r.id };
+      },
+    }),
+    herramienta({
+      nombre: "ver_menu",
+      descripcion: "Menú de la semana guardado, con los platos, comensales y raciones de cada comida y de cada tupper.",
+      esquema: z.object({}),
+      ejecutar: async () => {
+        const [familia, menu, recetas] = await Promise.all([almacen.familia(), almacen.menu(), almacen.recetas()]);
+        return { semana: menu.semana, batch: menu.batch, dias: componerMenu(familia, menu, recetas) };
+      },
+    }),
+    herramienta({
+      nombre: "guardar_menu",
+      descripcion:
+        "Guarda el menú de la semana (es el que se muestra en la vista web). Todas las recetas deben existir (guardar_receta antes). Debe cubrir cada comida de planificar_comensales y cada tupper.",
+      esquema: z.object({
+        semana: z.string(),
+        batch: z.array(z.object({ dia: z.enum(DIAS), tareas: z.array(z.string()) })).optional(),
+        dias: z.record(z.enum(DIAS), z.partialRecord(z.enum(TIPOS_COMIDA), plato)),
+        tuppers: z.partialRecord(z.enum(DIAS), z.record(z.string(), plato)),
+      }),
+      ejecutar: async (menu) => {
+        const [familia, recetas] = await Promise.all([almacen.familia(), almacen.recetas()]);
+        const errores = validarMenu(familia, menu as MenuSemana, recetas);
+        if (errores.length) throw new Error(`Menú incompleto:\n${errores.join("\n")}`);
+        await almacen.guardarMenu(menu as MenuSemana);
+        return { guardado: true };
+      },
+    }),
+    herramienta({
+      nombre: "lista_compra",
+      descripcion:
+        "Lista de la compra del menú guardado: suma los ingredientes según las raciones de cada comida y tupper, descuenta la despensa y agrupa por sección.",
+      esquema: z.object({}),
+      ejecutar: async () => {
+        const [familia, menu, recetas, despensa] = await Promise.all([
+          almacen.familia(), almacen.menu(), almacen.recetas(), almacen.despensa(),
+        ]);
+        return listaCompra(componerMenu(familia, menu, recetas), despensa);
+      },
     }),
     herramienta({
       nombre: "guardar_documento",

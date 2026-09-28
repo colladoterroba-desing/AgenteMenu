@@ -104,3 +104,40 @@ test("tuppers de oficina: RFA frío y CCT para recalentar de lunes a miércoles"
     }
   }
 });
+
+test("el menú de ejemplo usa recetas existentes y cubre todas las comidas y tuppers", async () => {
+  const { validarMenu } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  assert.deepEqual(validarMenu(familia, menu, recetas), []);
+});
+
+test("las variantes sacan al comensal del plato principal y la compra suma todas las raciones", async () => {
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dias = componerMenu(familia, menu, recetas);
+  const cenaLunes = dias[0].comidas.find((c) => c.tipo === "cena")!;
+  assert.deepEqual(cenaLunes.platos.map((p) => [p.receta.id, p.comensales.map((c) => c.id)]), [
+    ["salmon-horno-patata", ["CCT", "RFC", "AFC"]],
+    ["pollo-horno-patata", ["RFA"]],
+  ]);
+  // Salmón: 3 comensales de la cena del lunes + tupper de CCT del martes.
+  const salmon = listaCompra(dias).Pescadería.find((l) => l.nombre === "Lomo de salmón")!;
+  const esperado = 130 * (1.01 + 1.23 + 1.12 + 1.01);
+  assert.ok(Math.abs(salmon.cantidad - esperado) < 1);
+  assert.ok(salmon.comprar >= salmon.cantidad);
+});
+
+test("la despensa se descuenta de la lista de la compra", async () => {
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dias = componerMenu(familia, menu, recetas);
+  const sin = listaCompra(dias).Despensa.find((l) => l.nombre === "Lentejas pardinas")!;
+  const con = listaCompra(dias, {
+    productos: [{ nombre: "lentejas pardinas", cantidad: 1000, unidad: "g" }], sobras: [],
+  }).Despensa.find((l) => l.nombre === "Lentejas pardinas")!;
+  assert.ok(sin.comprar > 0);
+  assert.equal(con.comprar, 0);
+});

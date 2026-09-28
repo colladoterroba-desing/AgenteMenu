@@ -1,0 +1,77 @@
+{
+  "semana": "A",
+  "batch": [
+    {
+      "dia": "D",
+      "tareas": [
+        "Garbanzos con espinacas para la comida del lunes (RFC y AFC) y el tupper de CCT, unos 35 min.",
+        "Arroz integral cocido para el lomo del martes, 25 min; enfriar y guardar en la nevera.",
+        "Ensalada de pasta con pollo para el tupper frío de RFA del lunes, 20 min.",
+        "Cocer 4 huevos duros para la semana."
+      ]
+    }
+  ],
+  "dias": {
+    "L": {
+      "desayuno": { "receta": "tostadas-tomate" },
+      "comida": { "receta": "garbanzos-espinacas", "prepara": "Batch del domingo: recalentar en el microondas" },
+      "merienda": { "receta": "yogur-fruta-frutos-secos" },
+      "cena": {
+        "receta": "salmon-horno-patata",
+        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes",
+        "variantes": { "RFA": "pollo-horno-patata" }
+      }
+    },
+    "M": {
+      "desayuno": { "receta": "porridge-avena" },
+      "comida": { "receta": "lomo-plancha-arroz", "prepara": "Plancha; el arroz está cocido del domingo" },
+      "merienda": { "receta": "bocadillo-pavo-queso" },
+      "cena": {
+        "receta": "pollo-guisado-arroz",
+        "prepara": "Hacer 3 raciones extra: tupper de CCT y comida de RFC y AFC del miércoles"
+      }
+    },
+    "X": {
+      "desayuno": { "receta": "tostadas-tomate" },
+      "comida": { "receta": "pollo-guisado-arroz", "prepara": "Guiso de la cena del martes: recalentar" },
+      "merienda": { "receta": "bocadillo-pavo-queso" },
+      "cena": { "receta": "crema-calabacin-tortilla" }
+    },
+    "J": {
+      "desayuno": { "receta": "porridge-avena" },
+      "comida": { "receta": "lentejas-estofadas" },
+      "merienda": { "receta": "yogur-fruta-frutos-secos" },
+      "cena": { "receta": "merluza-plancha-brocoli", "variantes": { "RFA": "tortilla-francesa-brocoli" } }
+    },
+    "V": {
+      "desayuno": { "receta": "tostadas-tomate" },
+      "comida": { "receta": "espaguetis-bolonesa" },
+      "merienda": { "receta": "tostada-cacahuete-platano" },
+      "cena": { "receta": "pizza-casera-verduras" }
+    },
+    "S": {
+      "desayuno": { "receta": "huevos-revueltos-tostada" },
+      "comida": { "receta": "paella-pollo-verduras" },
+      "cena": { "receta": "revuelto-setas-gambas" }
+    },
+    "D": {
+      "desayuno": { "receta": "tostadas-tomate" },
+      "comida": { "receta": "dorada-horno" },
+      "cena": { "receta": "crema-calabaza-sandwich" }
+    }
+  },
+  "tuppers": {
+    "L": {
+      "RFA": { "receta": "ensalada-pasta-pollo", "prepara": "Batch del domingo" },
+      "CCT": { "receta": "garbanzos-espinacas", "prepara": "Batch del domingo" }
+    },
+    "M": {
+      "RFA": { "receta": "ensalada-lentejas-huevo", "prepara": "Lunes por la noche" },
+      "CCT": { "receta": "salmon-horno-patata", "prepara": "Ración extra de la cena del lunes" }
+    },
+    "X": {
+      "RFA": { "receta": "wraps-pavo-hummus", "prepara": "Martes por la noche" },
+      "CCT": { "receta": "pollo-guisado-arroz", "prepara": "Ración extra de la cena del martes" }
+    }
+  }
+}

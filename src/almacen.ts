@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { MenuSemana, Receta } from "./menu.js";
 import type { Despensa, Familia, Objetivo, Producto, Sobra, Ticket } from "./tipos.js";
 
 /** Persistencia en ficheros JSON dentro de un directorio de datos. */
@@ -18,6 +19,19 @@ export class Almacen {
   familia = () => this.leer<Familia>("familia.json");
   despensa = () => this.leer<Despensa>("despensa.json");
   tickets = async () => (await this.leer<{ tickets: Ticket[] }>("tickets.json")).tickets;
+  recetas = async () => (await this.leer<{ recetas: Receta[] }>("recetas.json")).recetas;
+  menu = () => this.leer<MenuSemana>("menu-semana.json");
+
+  async guardarMenu(menu: MenuSemana): Promise<void> {
+    await this.escribir("menu-semana.json", menu);
+  }
+
+  /** Añade la receta o sustituye la que tenga el mismo id. */
+  async guardarReceta(receta: Receta): Promise<void> {
+    const recetas = (await this.recetas()).filter((r) => r.id !== receta.id);
+    recetas.push(receta);
+    await this.escribir("recetas.json", { recetas });
+  }
 
   async guardarObjetivo(id: string, objetivo: Objetivo): Promise<void> {
     const familia = await this.familia();

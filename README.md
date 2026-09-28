@@ -35,7 +35,7 @@ Ejemplos de uso en el chat:
 
 Los documentos generados (menú, lista de la compra, plan de cocina) se guardan en `salidas/`.
 
-Para ver los resultados en el navegador (personas y raciones, quién come qué cada día y tuppers de oficina):
+Para ver los resultados en el navegador (menú de la semana, recetas, lista de la compra, personas y tuppers):
 
 ```bash
 npm run web   # genera salidas/resultados.html
@@ -48,8 +48,11 @@ npm run web   # genera salidas/resultados.html
 | `data/familia.json` | Perfil de la familia: miembros, deporte, gustos, régimen de comidas, roles y objetivos |
 | `data/despensa.json` | Productos en casa y sobras |
 | `data/tickets.json` | Tickets de compra registrados |
+| `data/recetas.json` | Recetas con ingredientes por ración de referencia y pasos |
+| `data/menu-semana.json` | Menú de la semana: plato de cada comida, variantes, tuppers y batch |
 | `src/nutricion.ts` | IMC, metabolismo basal, gasto diario, objetivos y factor de ración |
 | `src/planificacion.ts` | Rejilla semanal de comensales, kcal por comida y quién cocina |
+| `src/menu.ts` | Une menú y comensales, escala raciones y calcula la lista de la compra |
 | `src/almacen.ts` | Lectura y escritura de datos y resumen de hábitos de compra |
 | `src/herramientas.ts` | Herramientas que usa el agente |
 | `src/agente.ts` | Chat de terminal con Claude |

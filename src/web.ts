@@ -2,8 +2,9 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { calcularNecesidades, kcalDeporteDiarias, tasaMetabolicaBasal } from "./nutricion.js";
-import { planificarSemana, type ComidaPlanificada, type TipoComida } from "./planificacion.js";
-import { type Dia, type Familia, type Miembro } from "./tipos.js";
+import { componerMenu, listaCompra, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
+import { type TipoComida } from "./planificacion.js";
+import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
 
 interface PlatoTupper {
   dia: Dia;
@@ -151,36 +152,172 @@ function graficoEnergia(familia: Familia): string {
   </figure>`;
 }
 
-function celdaComida(c: ComidaPlanificada | undefined): string {
-  if (!c) return `<td class="vacia"><span class="sub">—</span></td>`;
-  const comensales = c.comensales
-    .map((p) => `<span class="comensal" title="${esc(`${p.id}: ${num(p.kcal)} kcal`)}">${esc(p.id)} <b class="mono">${num(p.kcal)}</b></span>`)
+const TECNICA: Record<string, string> = {
+  "sin cocinar": "Sin cocinar",
+  plancha: "Plancha",
+  horno: "Horno",
+  guiso: "Cazuela",
+  frío: "Frío",
+};
+
+const comensalesChips = (r: Racion) =>
+  r.comensales
+    .map((c) => `<span class="comensal" title="${esc(`${c.id}: ${num(c.kcal)} kcal`)}">${esc(c.id)}</span>`)
+    .join("");
+
+function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
+  const c = dia.comidas.find((x) => x.tipo === tipo);
+  if (!c || !c.platos.length) return `<td class="vacia"><span class="sub">—</span></td>`;
+  const [principal, ...variantes] = c.platos;
+  const variantesHtml = variantes
+    .map(
+      (v) => `<p class="variante"><span class="comensal">${esc(v.comensales[0].id)}</span> <a href="#r-${esc(v.receta.id)}">${esc(v.receta.nombre)}</a></p>`,
+    )
     .join("");
   const tuppers = c.tuppers
     .map(
-      (t) =>
-        `<span class="tupper ${t.tipo === "frío" ? "frio" : "calor"}">Tupper ${esc(t.tipo)} · ${esc(t.id)} <b class="mono">${num(t.kcal)}</b></span>`,
+      (t) => `<div class="tupper-linea ${t.tipoTupper === "frío" ? "frio" : "calor"}">
+        <span class="tupper-etq">Tupper ${esc(t.para)} · ${esc(t.tipoTupper)}</span>
+        <a href="#r-${esc(t.receta.id)}">${esc(t.receta.nombre)}</a>
+        ${t.prepara ? `<span class="prepara">${esc(t.prepara)}</span>` : ""}
+      </div>`,
     )
     .join("");
-  const sinCocinera = c.cocina.startsWith("Sin ");
   return `<td>
-    <div class="comensales">${comensales}</div>
-    ${tuppers ? `<div class="tuppers">${tuppers}</div>` : ""}
-    ${sinCocinera ? `<p class="cocina-aviso">Plancha o recalentar</p>` : ""}
+    <a class="plato-menu" href="#r-${esc(principal.receta.id)}">${esc(principal.receta.nombre)}</a>
+    <div class="comensales">${comensalesChips(principal)}<span class="raciones mono">×${num(principal.raciones, 2)}</span></div>
+    ${variantesHtml}
+    ${principal.prepara ? `<p class="prepara">${esc(principal.prepara)}</p>` : ""}
+    ${tuppers}
   </td>`;
 }
 
-function tablaSemana(familia: Familia): string {
-  const semana = planificarSemana(familia);
-  return `<div class="scroll semana-scroll"><table class="semana">
-    <thead><tr><th scope="col"><span class="sr">Comida</span></th>${semana
+function seccionMenu(dias: DiaDelMenu[], menu: MenuSemana): string {
+  const batch = (menu.batch ?? [])
+    .map(
+      (b) => `<aside class="batch">
+        <h3>Batch del ${esc(NOMBRE_DIA[b.dia].toLowerCase())}</h3>
+        <ul>${b.tareas.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+      </aside>`,
+    )
+    .join("");
+  return `${batch}
+  <div class="scroll semana-scroll"><table class="semana">
+    <thead><tr><th scope="col"><span class="sr">Comida</span></th>${dias
       .map((d) => `<th scope="col">${esc(d.nombre)}</th>`)
       .join("")}</tr></thead>
     <tbody>${COMIDAS.map(
-      ({ tipo, nombre }) =>
-        `<tr><th scope="row">${nombre}</th>${semana.map((d) => celdaComida(d.comidas.find((c) => c.tipo === tipo))).join("")}</tr>`,
+      ({ tipo, nombre }) => `<tr><th scope="row">${nombre}</th>${dias.map((d) => celdaMenu(d, tipo)).join("")}</tr>`,
     ).join("")}</tbody>
   </table></div>`;
+}
+
+interface UsoReceta {
+  donde: string;
+  categoria: string;
+  raciones: number;
+}
+
+function usosDeRecetas(dias: DiaDelMenu[]): Map<string, UsoReceta[]> {
+  const usos = new Map<string, UsoReceta[]>();
+  const anotar = (id: string, uso: UsoReceta) => usos.set(id, [...(usos.get(id) ?? []), uso]);
+  for (const d of dias) {
+    for (const c of d.comidas) {
+      const nombre = COMIDAS.find((x) => x.tipo === c.tipo)!.nombre.toLowerCase();
+      c.platos.forEach((p, i) =>
+        anotar(p.receta.id, {
+          donde: `${d.nombre} ${nombre}${i > 0 ? ` (${p.comensales[0].id})` : ""}`,
+          categoria: c.tipo,
+          raciones: p.raciones,
+        }),
+      );
+      for (const t of c.tuppers) {
+        anotar(t.receta.id, { donde: `${d.nombre}, tupper ${t.para}`, categoria: "tupper", raciones: t.raciones });
+      }
+    }
+  }
+  return usos;
+}
+
+const cantidad = (n: number, unidad: string) => {
+  if (unidad === "g" && n >= 1000) return `${num(n / 1000, 2)} kg`;
+  if (unidad === "ml" && n >= 1000) return `${num(n / 1000, 2)} l`;
+  if (unidad === "ud") return `${num(n, n % 1 ? 1 : 0)} ud`;
+  return `${num(n)} ${unidad}`;
+};
+
+function seccionRecetas(recetas: Receta[], dias: DiaDelMenu[]): string {
+  const usos = usosDeRecetas(dias);
+  const usadas = recetas.filter((r) => usos.has(r.id));
+  const filtros = [
+    ["todas", "Todas"],
+    ["desayuno", "Desayunos"],
+    ["comida", "Comidas"],
+    ["merienda", "Meriendas"],
+    ["cena", "Cenas"],
+    ["tupper", "Tuppers"],
+  ];
+  const tarjetas = usadas
+    .map((r) => {
+      const u = usos.get(r.id)!;
+      const raciones = u.reduce((s, x) => s + x.raciones, 0);
+      const categorias = [...new Set(u.map((x) => x.categoria))].join(" ");
+      return `<article class="receta" id="r-${esc(r.id)}" data-categorias="${esc(categorias)}">
+        <header>
+          <h3>${esc(r.nombre)}</h3>
+          <p class="meta"><span class="chip info">${esc(TECNICA[r.tecnica] ?? r.tecnica)}</span><span class="mono">${r.tiempoMin} min</span></p>
+          <p class="usos"><span class="etq">Esta semana</span> ${u.map((x) => esc(x.donde)).join(" · ")}</p>
+        </header>
+        <table class="ingredientes">
+          <thead><tr><th>Ingrediente</th><th class="num">1 ración</th><th class="num">Semana <span class="mono">×${num(raciones, 2)}</span></th></tr></thead>
+          <tbody>${r.ingredientes
+            .map(
+              (i) =>
+                `<tr><td>${esc(i.nombre)}</td><td class="num mono">${cantidad(i.cantidad, i.unidad)}</td><td class="num mono">${cantidad(Math.round(i.cantidad * raciones * 10) / 10, i.unidad)}</td></tr>`,
+            )
+            .join("")}</tbody>
+        </table>
+        <ol class="pasos">${r.pasos.map((p) => `<li>${esc(p)}</li>`).join("")}</ol>
+        ${r.conservacion ? `<p class="nota"><strong>Conservación:</strong> ${esc(r.conservacion)}</p>` : ""}
+      </article>`;
+    })
+    .join("");
+  return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
+    .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
+    .join("")}</div>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal). La columna «Semana» ya multiplica por las raciones de todos los comensales. Sal, especias y caldo no se cuentan.</p>
+  <div class="recetas">${tarjetas}</div>`;
+}
+
+function seccionCompra(lista: Record<Seccion, LineaCompra[]>): string {
+  const bloques = SECCIONES.filter((s) => lista[s].length)
+    .map(
+      (s) => `<section class="pasillo">
+        <h3>${esc(s)} <span class="sub mono">${lista[s].length}</span></h3>
+        <ul>${lista[s]
+          .map((l, i) => {
+            const id = `c-${s.normalize("NFD").replace(/[^a-zA-Z]/g, "").toLowerCase()}-${i}`;
+            const texto = `${l.nombre}: ${cantidad(l.comprar, l.unidad)}`;
+            return `<li${l.comprar === 0 ? ' class="en-casa"' : ""}>
+              <input type="checkbox" id="${id}" data-texto="${esc(texto)}">
+              <label for="${id}"><span class="producto">${esc(l.nombre)}</span>
+                <span class="cant mono">${l.comprar === 0 ? "en casa" : cantidad(l.comprar, l.unidad)}</span>
+                <span class="para">${esc(l.recetas.length > 3 ? `${l.recetas.slice(0, 2).join(" · ")} y ${l.recetas.length - 2} recetas más` : l.recetas.join(" · "))}${l.enDespensa ? ` · en despensa ${cantidad(l.enDespensa, l.unidad)}` : ""}</span>
+              </label>
+            </li>`;
+          })
+          .join("")}</ul>
+      </section>`,
+    )
+    .join("");
+  const total = SECCIONES.reduce((s, x) => s + lista[x].length, 0);
+  return `<div class="compra-acciones">
+    <p class="sub"><span id="compra-marcados">0</span> de ${total} productos en el carro</p>
+    <button type="button" id="copiar-lista">Copiar lo que falta</button>
+    <button type="button" id="desmarcar" class="secundario">Desmarcar todo</button>
+    <span id="copiado" class="sub" role="status"></span>
+  </div>
+  <div class="pasillos">${bloques}</div>`;
 }
 
 function seccionTuppers(propuesta: PropuestaTuppers, familia: Familia): string {
@@ -330,15 +467,61 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .semana tbody th{font-family:var(--f-display);font-weight:650;white-space:nowrap}
 .semana tbody tr:last-child td,.semana tbody tr:last-child th{border-bottom:0}
 .semana td{min-width:128px}
-.comensales,.tuppers{display:flex;flex-wrap:wrap;gap:4px}
-.tuppers{margin-top:6px}
-.comensal{font-size:.78rem;background:var(--accent-soft);color:var(--ink);padding:1px 7px;border-radius:4px;font-weight:600}
-.comensal b,.tupper b{font-weight:400;color:var(--muted);margin-left:2px}
-.tupper{font-size:.74rem;padding:1px 7px;border-radius:4px;font-weight:600;border:1px solid}
-.tupper.frio{color:var(--frio);border-color:var(--frio);background:var(--frio-soft)}
-.tupper.calor{color:var(--calor);border-color:var(--calor);background:var(--calor-soft)}
-.cocina-aviso{margin-top:6px;font-size:.76rem;color:var(--aviso);font-weight:600}
-.leyenda-semana{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.85rem;color:var(--muted)}
+.semana td{min-width:150px}
+.plato-menu{display:block;font-weight:600;color:var(--ink);text-decoration:none;line-height:1.3}
+.plato-menu:hover,.variante a:hover,.tupper-linea a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
+.comensales{display:flex;flex-wrap:wrap;gap:3px;align-items:center;margin-top:6px}
+.comensal{font-size:.7rem;background:var(--accent-soft);color:var(--ink);padding:0 5px;border-radius:3px;font-weight:600}
+.raciones{font-size:.72rem;color:var(--muted);margin-left:3px}
+.variante{margin-top:6px;font-size:.8rem;line-height:1.3}
+.variante a,.tupper-linea a{color:var(--ink);text-decoration:none}
+.prepara{display:block;margin-top:5px;font-size:.74rem;color:var(--aviso);font-weight:600;line-height:1.3}
+.tupper-linea{margin-top:8px;padding:6px 8px;border-radius:6px;font-size:.8rem;line-height:1.3;display:grid;gap:2px;border-left:3px solid}
+.tupper-linea.frio{background:var(--frio-soft);border-left-color:var(--frio)}
+.tupper-linea.calor{background:var(--calor-soft);border-left-color:var(--calor)}
+.tupper-etq{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.frio .tupper-etq{color:var(--frio)}.calor .tupper-etq{color:var(--calor)}
+.tupper-linea .prepara{margin-top:0;color:var(--muted);font-weight:400}
+.batch{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;display:grid;gap:6px}
+.batch h3{font-size:1rem}
+.batch ul{margin:0;padding-left:1.1em;display:grid;gap:2px;font-size:.92rem}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * clamp(16px,4vw,40px));padding:10px clamp(16px,4vw,40px);display:flex;gap:4px 18px;flex-wrap:wrap;font-size:.9rem;font-weight:600}
+.nav a{color:var(--muted);text-decoration:none}
+.nav a:hover,.nav a:focus-visible{color:var(--accent)}
+section[id]{scroll-margin-top:64px}
+.receta[id]{scroll-margin-top:64px}
+.filtros{display:flex;flex-wrap:wrap;gap:6px}
+.filtros button,.compra-acciones button{font:600 .88rem var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
+.filtros button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.filtros button:focus-visible,.compra-acciones button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.recetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;align-items:start}
+.receta{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px}
+.receta:target{outline:2px solid var(--accent)}
+.receta header{display:grid;gap:6px}
+.meta{display:flex;gap:10px;align-items:center;font-size:.85rem;color:var(--muted)}
+.usos{font-size:.84rem;color:var(--muted)}
+.ingredientes{font-size:.86rem}
+.ingredientes th,.ingredientes td{padding:4px 6px}
+.ingredientes .num{text-align:right;white-space:nowrap}
+.ingredientes thead .mono{text-transform:none;letter-spacing:0}
+.pasos{margin:0;padding-left:1.3em;display:grid;gap:5px;font-size:.92rem}
+.compra-acciones{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.compra-acciones p{margin-right:auto}
+.compra-acciones button{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.compra-acciones button.secundario{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.pasillos{columns:3 300px;column-gap:16px}
+.pasillo{break-inside:avoid;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:grid;gap:8px}
+.pasillo h3{font-size:1rem;display:flex;justify-content:space-between;align-items:baseline}
+.pasillo ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.pasillo li{display:flex;gap:8px;align-items:flex-start;padding:4px 0;border-bottom:1px dashed var(--line)}
+.pasillo li:last-child{border-bottom:0}
+.pasillo input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.pasillo label{display:grid;grid-template-columns:1fr auto;gap:0 10px;width:100%;cursor:pointer}
+.producto{font-weight:600;font-size:.92rem}
+.cant{font-size:.88rem;white-space:nowrap}
+.para{grid-column:1 / -1;font-size:.74rem;color:var(--muted);line-height:1.3}
+.pasillo input:checked + label .producto,.pasillo input:checked + label .cant{text-decoration:line-through;color:var(--muted)}
+.en-casa .cant{color:var(--bien)}
 .pestanas{display:flex;gap:4px;border-bottom:1px solid var(--line)}
 .pestanas button{font:600 .95rem var(--f-body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;cursor:pointer;margin-bottom:-1px}
 .pestanas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
@@ -378,6 +561,7 @@ const SCRIPT = `
       if (e.key === "ArrowLeft") activar(tabs[(i - 1 + tabs.length) % tabs.length]);
     });
   });
+
   const tip = document.createElement("div");
   tip.className = "tip"; tip.hidden = true; document.body.append(tip);
   const mostrar = (el, x, y) => { tip.textContent = el.dataset.tip; tip.hidden = false;
@@ -388,17 +572,60 @@ const SCRIPT = `
     el.addEventListener("focus", () => { const r = el.getBoundingClientRect(); mostrar(el, r.left + r.width / 2, r.top); });
     el.addEventListener("blur", () => (tip.hidden = true));
   });
+
+  const filtros = [...document.querySelectorAll("[data-filtro]")];
+  filtros.forEach((b) => b.addEventListener("click", () => {
+    filtros.forEach((x) => x.setAttribute("aria-pressed", x === b));
+    const f = b.dataset.filtro;
+    document.querySelectorAll(".receta").forEach((r) => {
+      r.hidden = f !== "todas" && !r.dataset.categorias.split(" ").includes(f);
+    });
+  }));
+  document.querySelectorAll('a[href^="#r-"]').forEach((a) => a.addEventListener("click", () => {
+    const todas = filtros.find((b) => b.dataset.filtro === "todas");
+    if (todas) todas.click();
+  }));
+
+  const CLAVE = "agentemenu-compra-" + document.title;
+  const casillas = [...document.querySelectorAll(".pasillo input[type=checkbox]")];
+  const marcados = document.getElementById("compra-marcados");
+  const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE) || "[]"); } catch { return []; } };
+  const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(casillas.filter((c) => c.checked).map((c) => c.id))); } catch {} };
+  const contar = () => { if (marcados) marcados.textContent = casillas.filter((c) => c.checked).length; };
+  const previos = new Set(leer());
+  casillas.forEach((c) => { c.checked = previos.has(c.id); c.addEventListener("change", () => { guardar(); contar(); }); });
+  contar();
+  document.getElementById("desmarcar")?.addEventListener("click", () => { casillas.forEach((c) => (c.checked = false)); guardar(); contar(); });
+  const aviso = document.getElementById("copiado");
+  document.getElementById("copiar-lista")?.addEventListener("click", () => {
+    const texto = [...document.querySelectorAll(".pasillo")].map((p) => {
+      const lineas = [...p.querySelectorAll("li:not(.en-casa) input")].filter((c) => !c.checked).map((c) => "- " + c.dataset.texto);
+      return lineas.length ? p.querySelector("h3").firstChild.textContent.trim() + "\\n" + lineas.join("\\n") : "";
+    }).filter(Boolean).join("\\n\\n");
+    navigator.clipboard.writeText(texto).then(
+      () => { aviso.textContent = "Lista copiada"; },
+      () => { aviso.textContent = "No se ha podido copiar; selecciona la lista a mano."; },
+    );
+  });
 })();
 `;
 
-export function generarHtml(familia: Familia, propuesta: PropuestaTuppers, fecha: string): string {
-  const semana = planificarSemana(familia);
-  const comidasEnCasa = semana.flatMap((d) => d.comidas).length;
-  const tuppersSemana = semana.flatMap((d) => d.comidas).reduce((s, c) => s + c.tuppers.length, 0);
-  const kcalFamilia = familia.miembros.reduce(
-    (s, m) => s + calcularNecesidades(m, familia.objetivos[m.id]).kcalObjetivo,
-    0,
-  );
+export interface DatosWeb {
+  familia: Familia;
+  propuesta: PropuestaTuppers;
+  menu: MenuSemana;
+  recetas: Receta[];
+  despensa?: Despensa;
+  fecha: string;
+}
+
+export function generarHtml({ familia, propuesta, menu, recetas, despensa, fecha }: DatosWeb): string {
+  const dias = componerMenu(familia, menu, recetas);
+  const compra = listaCompra(dias, despensa);
+  const comidas = dias.flatMap((d) => d.comidas);
+  const tuppersSemana = comidas.reduce((s, c) => s + c.tuppers.length, 0);
+  const recetasUsadas = new Set(comidas.flatMap((c) => [...c.platos, ...c.tuppers].map((p) => p.receta.id))).size;
+  const productos = SECCIONES.reduce((s, x) => s + compra[x].length, 0);
 
   return `<title>Menú ${esc(familia.nombre)}</title>
 <meta charset="utf-8">
@@ -409,34 +636,48 @@ export function generarHtml(familia: Familia, propuesta: PropuestaTuppers, fecha
 <style>${ESTILOS}</style>
 <main class="pagina">
   <header class="cab">
-    <span class="etq">AgenteMenú · semana tipo</span>
+    <span class="etq">AgenteMenú · semana ${esc(menu.semana)}</span>
     <h1>${esc(familia.nombre)}</h1>
-    <p class="sub">Raciones, comensales y tuppers calculados a partir de los datos de la familia. Generado el ${esc(fecha)}.</p>
+    <p class="sub">Menú de la semana con recetas, lista de la compra y raciones calculadas para cada persona. Generado el ${esc(fecha)}.</p>
     <dl class="resumen">
-      <div><dt>Personas</dt><dd>${familia.miembros.length}</dd></div>
-      <div><dt>Comidas en casa / semana</dt><dd>${comidasEnCasa}</dd></div>
-      <div><dt>Tuppers / semana</dt><dd>${tuppersSemana}</dd></div>
-      <div><dt>kcal familia / día</dt><dd>${num(kcalFamilia)}</dd></div>
+      <div><dt>Comidas en casa</dt><dd>${comidas.length}</dd></div>
+      <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>
+      <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
+      <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
     </dl>
   </header>
 
-  <section class="seccion" aria-labelledby="h-personas">
+  <nav class="nav" aria-label="Secciones">
+    <a href="#menu">Menú</a><a href="#recetas">Recetas</a><a href="#compra">Lista de la compra</a><a href="#personas">Personas</a><a href="#tuppers">Rotación de tuppers</a>
+  </nav>
+
+  <section class="seccion" id="menu" aria-labelledby="h-menu">
+    <header><h2 id="h-menu">Menú de la semana</h2>
+    <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y ×N las raciones totales (1 = adulto de 2.000 kcal). En naranja, cuándo se prepara si no se cocina en el momento.</p></header>
+    ${seccionMenu(dias, menu)}
+  </section>
+
+  <section class="seccion" id="recetas" aria-labelledby="h-recetas">
+    <header><h2 id="h-recetas">Recetas</h2></header>
+    ${seccionRecetas(recetas, dias)}
+  </section>
+
+  <section class="seccion" id="compra" aria-labelledby="h-compra">
+    <header><h2 id="h-compra">Lista de la compra</h2>
+    <p class="sub">Suma de los ingredientes de todo el menú y los tuppers, redondeada hacia arriba${despensa?.productos.length ? " y descontando lo que hay en la despensa" : ""}. Marca lo que ya llevas en el carro.</p></header>
+    ${seccionCompra(compra)}
+  </section>
+
+  <section class="seccion" id="personas" aria-labelledby="h-personas">
     <header><h2 id="h-personas">Personas y raciones</h2>
     <p class="sub">La ración compara las kcal de cada persona con un adulto de referencia de 2.000 kcal: ×1,17 es un 17 % más.</p></header>
     <div class="personas">${familia.miembros.map((m) => tarjetaMiembro(m, familia)).join("")}</div>
     ${graficoEnergia(familia)}
   </section>
 
-  <section class="seccion" aria-labelledby="h-semana">
-    <header><h2 id="h-semana">Quién come qué, cada día</h2>
-    <p class="sub">Cada etiqueta es un comensal con sus kcal para esa comida. Merienda de lunes a viernes.</p>
-    <div class="leyenda-semana"><span class="tupper frio">Tupper frío</span><span class="tupper calor">Tupper para recalentar</span><span class="cocina-aviso">Plancha o recalentar: sin CCT en casa</span></div></header>
-    ${tablaSemana(familia)}
-  </section>
-
-  <section class="seccion" aria-labelledby="h-tuppers">
-    <header><h2 id="h-tuppers">Tuppers de oficina</h2>
-    <p class="sub">Rotación de dos semanas. Los tuppers de CCT salen del batch del domingo o de una ración extra de la cena anterior, y ese mismo plato sirve de comida a RFC y AFC.</p></header>
+  <section class="seccion" id="tuppers" aria-labelledby="h-tuppers">
+    <header><h2 id="h-tuppers">Rotación de tuppers de oficina</h2>
+    <p class="sub">Propuesta de dos semanas. La semana A es la que está en el menú de arriba.</p></header>
     ${seccionTuppers(propuesta, familia)}
   </section>
 
@@ -449,8 +690,14 @@ export function generarHtml(familia: Familia, propuesta: PropuestaTuppers, fecha
 async function main() {
   const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const leer = async <T>(f: string) => JSON.parse(await readFile(path.join(raiz, "data", f), "utf8")) as T;
-  const fecha = new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
-  const html = generarHtml(await leer<Familia>("familia.json"), await leer<PropuestaTuppers>("propuesta-tuppers.json"), fecha);
+  const html = generarHtml({
+    familia: await leer<Familia>("familia.json"),
+    propuesta: await leer<PropuestaTuppers>("propuesta-tuppers.json"),
+    menu: await leer<MenuSemana>("menu-semana.json"),
+    recetas: (await leer<{ recetas: Receta[] }>("recetas.json")).recetas,
+    despensa: await leer<Despensa>("despensa.json"),
+    fecha: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }),
+  });
   const destino = path.join(raiz, "salidas", "resultados.html");
   await mkdir(path.dirname(destino), { recursive: true });
   await writeFile(destino, html);

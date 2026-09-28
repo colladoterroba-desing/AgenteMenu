@@ -506,6 +506,31 @@ function bloqueNoDeseado(r: Receta, familia: Familia): string {
   </div>`;
 }
 
+/** Apuntar cuántas raciones se han hecho: lo que no se come esta semana queda en reserva. */
+function bloqueHecho(r: Receta, raciones: number): string {
+  const medias = (n: number) => Math.round(n * 2) / 2;
+  const id = esc(r.id);
+  return `<div class="hecho" data-receta="${id}">
+    <p class="reserva-receta" hidden></p>
+    <details class="marcar" data-solo-editable>
+      <summary>Marcar cantidad hecha</summary>
+      <form class="form-hecho">
+        <div class="fila-form">
+          <div><label for="h-hechas-${id}">Raciones hechas</label><input id="h-hechas-${id}" name="hechas" type="number" inputmode="decimal" min="0.5" step="0.5" required value="${raciones ? Math.ceil(raciones) : ""}"></div>
+          <div><label for="h-comer-${id}">Se comen esta semana</label><input id="h-comer-${id}" name="comer" type="number" inputmode="decimal" min="0" step="0.5" required value="${medias(raciones)}"></div>
+        </div>
+        <div class="fila-form">
+          <div><label for="h-donde-${id}">Lo que sobra va a</label><select id="h-donde-${id}" name="donde"><option value="congelador">Congelador</option><option value="nevera">Nevera</option></select></div>
+          <div><label for="h-fecha-${id}">Hecho el</label><input id="h-fecha-${id}" name="fecha" type="date" required></div>
+        </div>
+        <p class="sub">Reserva = raciones hechas − las que se comen esta semana${raciones ? ` (el menú pide ${num(raciones, 2)} rac.)` : ""}. Se podrá usar otra semana y no se volverá a comprar.</p>
+        <button type="submit">Guardar</button>
+        <span class="sub estado-form" role="status"></span>
+      </form>
+    </details>
+  </div>`;
+}
+
 function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaDelMenu[] }[], familia: Familia): string {
   const usos = usosDeRecetas(semanas);
   const actual = semanas[0].semana;
@@ -519,6 +544,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
     ["cena", "Cenas"],
     ["tupper", "Tuppers"],
     ["thermomix", "Thermomix"],
+    ["reserva", "Con reserva"],
     ["no-deseado", "No deseados"],
   ];
   const tarjetas = usadas
@@ -563,6 +589,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
             : ""
         }
         ${r.conservacion ? `<p class="nota"><strong>Conservación:</strong> ${esc(r.conservacion)}</p>` : ""}
+        ${bloqueHecho(r, raciones)}
         ${bloqueNoDeseado(r, familia)}
       </article>`;
     })
@@ -570,7 +597,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
   return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
     .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
     .join("")}</div>
-  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Sal, especias y caldo no se cuentan. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Sal, especias y caldo no se cuentan. Con «Marcar cantidad hecha» apuntas cuántas raciones has cocinado: lo que sobra queda en reserva (nevera o congelador) para otra semana y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
   <div class="recetas">${tarjetas}</div>`;
 }
 
@@ -652,6 +679,11 @@ function seccionDespensa(lista: Record<Seccion, LineaCompra[]>, recetas: Receta[
         <button type="submit" data-solo-editable-input>Guardar en la despensa</button>
         <span class="sub estado-form" role="status"></span>
       </form>
+    </section>
+    <section class="categoria ancha">
+      <h4>Reservas de raciones cocinadas</h4>
+      <p class="sub">Lo que has marcado como hecho en Recetas y no se come esta semana. Úsalo antes de la fecha indicada; al comerlo, réstalo aquí.</p>
+      <ul id="reservas" class="inventario reservas"><li class="sub">Sin reservas. Márcalas desde cada receta con «Marcar cantidad hecha».</li></ul>
     </section>
     <section class="categoria">
       <h4>En casa ahora</h4>
@@ -893,6 +925,15 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .inventario li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:4px}
 .inventario .producto{flex:1}
 .nota-producto{flex-basis:100%;font-size:.76rem}
+.hecho{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+.reserva-receta{margin:0;font-size:.86rem;background:var(--bien-soft);color:var(--bien);border-radius:6px;padding:6px 8px;font-weight:600}
+.form-hecho{display:grid;gap:6px;margin-top:8px;font-size:.9rem}
+.form-hecho label{font-size:.8rem;color:var(--muted);font-weight:600}
+.form-hecho input,.form-hecho select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.form-hecho button{font:600 .88rem var(--f-body);background:var(--accent);color:var(--surface);border:0;border-radius:999px;padding:7px 14px;cursor:pointer;justify-self:start}
+.form-hecho .sub{margin:0}
+.reservas a{color:var(--ink);font-weight:600}
+.reservas .vence{color:var(--aviso);font-weight:600}
 .aviso-db{background:var(--info-soft);padding:8px 12px;border-radius:6px}
 .panel-semana{display:grid;gap:16px;padding-top:12px}
 .barra{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
@@ -1182,7 +1223,81 @@ const SCRIPT = `
     });
   };
 
-  const renderTodo = () => { renderCompra(); renderDespensa(); renderNoDeseados(); };
+  // ---- Raciones hechas y reservas ----
+  const reservasBase = new Map((datos.reservas || []).map((x) => [x.id, x]));
+  let reservasDb = new Map();
+  const reservasActuales = () => {
+    const todo = new Map(reservasBase);
+    reservasDb.forEach((v, k) => todo.set(k, v));
+    return [...todo.entries()].map(([id, v]) => ({ ...v, id })).filter((x) => Number(x.reserva) > 0);
+  };
+  const sumarDias = (iso, dias, meses) => {
+    const d = new Date(iso + "T12:00:00Z");
+    if (meses) d.setUTCMonth(d.getUTCMonth() + meses); else d.setUTCDate(d.getUTCDate() + dias);
+    return d.toISOString().slice(0, 10);
+  };
+  const caducaReserva = (fecha, donde) => donde === "congelador" ? sumarDias(fecha, 0, 3) : sumarDias(fecha, 3, 0);
+  const fechaCortaDia = (iso) => { try { return new Date(iso + "T12:00:00Z").toLocaleDateString("es-ES", { day: "numeric", month: "short" }); } catch (e) { return iso; } };
+  const fmtRac = (n) => fmtNum(Number(n), Number(n) % 1 ? 1 : 0) + " rac.";
+  const nombreReserva = (x) => (x.receta && datos.recetas[x.receta]) || x.descripcion || x.receta || "Reserva";
+
+  const renderReservas = () => {
+    const lista = reservasActuales().sort((a, b) => String(a.caduca || "9999").localeCompare(String(b.caduca || "9999")));
+    const porReceta = new Map();
+    lista.forEach((x) => { if (x.receta) porReceta.set(x.receta, [...(porReceta.get(x.receta) || []), x]); });
+    document.querySelectorAll(".hecho[data-receta]").forEach((bloque) => {
+      const suyas = porReceta.get(bloque.dataset.receta) || [];
+      const p = bloque.querySelector(".reserva-receta");
+      const total = suyas.reduce((s, x) => s + Number(x.reserva), 0);
+      p.hidden = !total;
+      p.textContent = total ? "En reserva: " + fmtRac(total) + " · " + suyas.map((x) => (x.donde || "nevera") + (x.caduca ? " hasta el " + fechaCortaDia(x.caduca) : "")).join(" · ") : "";
+      const tarjeta = bloque.closest(".receta");
+      const cats = tarjeta.dataset.categorias.split(" ").filter((c) => c && c !== "reserva");
+      if (total) cats.push("reserva");
+      tarjeta.dataset.categorias = cats.join(" ");
+    });
+    const ul = document.getElementById("reservas");
+    if (!ul) return;
+    ul.replaceChildren();
+    if (!lista.length) {
+      const li = document.createElement("li"); li.className = "sub"; li.textContent = "Sin reservas. Márcalas desde cada receta con «Marcar cantidad hecha»."; ul.append(li); return;
+    }
+    const hoyIso = hoy();
+    lista.forEach((x) => {
+      const li = document.createElement("li");
+      const nombre = document.createElement(x.receta ? "a" : "span"); nombre.className = "producto"; nombre.textContent = nombreReserva(x);
+      if (x.receta) nombre.href = "#r-" + x.receta;
+      const cant = document.createElement("span"); cant.className = "mono"; cant.textContent = fmtRac(x.reserva);
+      li.append(nombre, cant);
+      const det = document.createElement("span"); det.className = "sub nota-producto";
+      det.textContent = (x.donde === "congelador" ? "Congelador" : "Nevera") + (x.fecha ? " · hecho el " + fechaCortaDia(x.fecha) : "") + (x.hechas ? " (" + fmtRac(x.hechas) + " en total)" : "");
+      if (x.caduca) {
+        const vence = document.createElement("span");
+        vence.className = x.caduca <= sumarDias(hoyIso, 1, 0) ? "vence" : "";
+        vence.textContent = " · consumir antes del " + fechaCortaDia(x.caduca);
+        det.append(vence);
+      }
+      li.append(det);
+      if (db) {
+        const usar = document.createElement("button"); usar.type = "button"; usar.className = "enlace"; usar.textContent = "Usar 1 ración";
+        usar.addEventListener("click", () => guardarReserva({ ...x, reserva: Math.max(0, Math.round((Number(x.reserva) - 1) * 10) / 10) }));
+        const agotar = document.createElement("button"); agotar.type = "button"; agotar.className = "enlace"; agotar.textContent = "Ya no queda";
+        agotar.addEventListener("click", () => guardarReserva({ ...x, reserva: 0 }));
+        li.append(usar, agotar);
+      }
+      ul.append(li);
+    });
+  };
+  const guardarReserva = async (x) => {
+    const { id, ...doc } = x;
+    Object.keys(doc).forEach((k) => doc[k] === undefined && delete doc[k]);
+    doc.actualizado = new Date().toISOString();
+    try { await db.doc("hechas/" + id).set(doc); }
+    catch (e) { if (avisoDb) avisoDb.textContent = "No se ha podido guardar la reserva (" + (e && e.code || "error") + ")."; }
+  };
+  document.querySelectorAll('.form-hecho input[name="fecha"]').forEach((i) => { i.value = hoy(); });
+
+  const renderTodo = () => { renderCompra(); renderDespensa(); renderNoDeseados(); renderReservas(); };
   let db = null;
   const avisoDb = document.getElementById("despensa-aviso");
 
@@ -1223,6 +1338,33 @@ const SCRIPT = `
       ndDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
       renderTodo();
     }, () => {});
+    db.collection("hechas").onSnapshot((snap) => {
+      reservasDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
+      renderTodo();
+    }, () => {});
+    document.querySelectorAll(".form-hecho").forEach((formH) => {
+      formH.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const f = new FormData(formH);
+        const estado = formH.querySelector(".estado-form");
+        const receta = formH.closest(".hecho").dataset.receta;
+        const hechas = Number(f.get("hechas")) || 0;
+        const comer = Number(f.get("comer")) || 0;
+        const reserva = Math.max(0, Math.round((hechas - comer) * 10) / 10);
+        const fecha = String(f.get("fecha") || hoy());
+        const donde = String(f.get("donde"));
+        const doc = { id: receta + "__" + Date.now(), receta, hechas, comer, reserva, donde, fecha, caduca: caducaReserva(fecha, donde), semana: datos.semana };
+        try {
+          await guardarReserva(doc);
+          estado.textContent = reserva > 0
+            ? "Guardado: " + fmtRac(reserva) + " en reserva (" + donde + ")."
+            : "Guardado: se come todo esta semana, no queda reserva.";
+          formH.closest("details").open = false;
+        } catch (err) {
+          estado.textContent = "No se ha podido guardar (" + (err && err.code || "error") + ").";
+        }
+      });
+    });
 
     document.querySelectorAll(".tabla-despensa tr[data-clave] input").forEach((input) => {
       input.addEventListener("change", () => {
@@ -1418,6 +1560,11 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     recetas: Object.fromEntries(recetas.map((r) => [r.id, r.nombre])),
     despensa: (despensa?.productos ?? []).map((p) => ({ clave: claveProducto(p.nombre, p.unidad), ...p })),
     noDeseados: familia.noDeseados ?? [],
+    semana: menu.semana,
+    reservas: (despensa?.sobras ?? []).map((x, i) => ({
+      id: `repo-${i}`, receta: x.receta, descripcion: x.descripcion, reserva: x.raciones, hechas: x.hechas,
+      donde: x.ubicacion, fecha: x.fecha, caduca: x.consumirAntesDe,
+    })),
   };
   const compra = listaCompra(dias, despensa);
   const comidas = dias.flatMap((d) => d.comidas);

@@ -94,9 +94,16 @@ export interface Producto {
 
 export interface Sobra {
   descripcion: string;
+  /** Raciones que quedan en reserva. */
   raciones: number;
   fecha: string;
   consumirAntesDe?: string;
+  /** Receta de la que salen: si el menú la vuelve a poner, se descuentan de la compra. */
+  receta?: string;
+  /** Dónde se guardan. */
+  ubicacion?: "nevera" | "congelador";
+  /** Raciones que se hicieron en total ese día (lo que sobró es `raciones`). */
+  hechas?: number;
 }
 
 export interface Despensa {

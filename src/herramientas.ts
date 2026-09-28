@@ -2,7 +2,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
-import { componerMenu, listaCompra, SECCIONES, validarMenu, validarPublicacion, type MenuSemana } from "./menu.js";
+import { caducidadReserva, componerMenu, listaCompra, SECCIONES, validarMenu, validarPublicacion, type MenuSemana } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
 import { costeCesta } from "./precios.js";
 import { DIAS } from "./tipos.js";
@@ -159,20 +159,30 @@ export function crearHerramientas(almacen: Almacen) {
     }),
     herramienta({
       nombre: "registrar_sobra",
-      descripcion: "Registra raciones cocinadas que han sobrado para reaprovecharlas en el menú.",
+      descripcion:
+        "Registra raciones ya cocinadas que se guardan (reserva) para usarlas otro día u otra semana. Con `receta`, si el menú vuelve a ponerla, esas raciones se descuentan de la lista de la compra. Si no se indica consumirAntesDe, se calcula: nevera 3 días, congelador 3 meses.",
       esquema: z.object({
         descripcion: z.string(),
-        raciones: z.number().positive(),
+        raciones: z.number().positive().describe("Raciones que quedan en reserva."),
         fecha,
         consumirAntesDe: fecha.optional(),
+        receta: z.string().optional().describe("Id de la receta de la que salen."),
+        ubicacion: z.enum(["nevera", "congelador"]).optional(),
+        hechas: z.number().positive().optional().describe("Raciones que se hicieron en total."),
       }),
-      ejecutar: (sobra) => almacen.registrarSobra(sobra),
+      ejecutar: async (sobra) => {
+        if (sobra.receta && !(await almacen.recetas()).some((r) => r.id === sobra.receta)) {
+          throw new Error(`No existe la receta ${sobra.receta}`);
+        }
+        return almacen.registrarSobra({ ...sobra, consumirAntesDe: sobra.consumirAntesDe ?? caducidadReserva(sobra.fecha, sobra.ubicacion) });
+      },
     }),
     herramienta({
       nombre: "consumir_sobra",
-      descripcion: "Elimina una sobra ya aprovechada, por su índice en la lista de sobras de ver_despensa.",
-      esquema: z.object({ indice: z.number().int().min(0) }),
-      ejecutar: ({ indice }) => almacen.consumirSobra(indice),
+      descripcion:
+        "Gasta raciones de una sobra o reserva, por su índice en la lista de sobras de ver_despensa. Sin `raciones`, la quita entera.",
+      esquema: z.object({ indice: z.number().int().min(0), raciones: z.number().positive().optional() }),
+      ejecutar: ({ indice, raciones }) => almacen.consumirSobra(indice, raciones),
     }),
     herramienta({
       nombre: "registrar_ticket",

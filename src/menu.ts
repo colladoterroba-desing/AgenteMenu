@@ -262,6 +262,23 @@ function redondearCompra(cantidad: number, unidad: string): number {
 }
 
 /** Suma los ingredientes de todas las raciones de la semana y descuenta la despensa. */
+/** Hasta cuándo aguanta una reserva: nevera 3 días, congelador 3 meses. */
+export function caducidadReserva(fecha: string, ubicacion?: "nevera" | "congelador"): string {
+  const d = new Date(`${fecha}T12:00:00Z`);
+  if (ubicacion === "congelador") d.setUTCMonth(d.getUTCMonth() + 3);
+  else d.setUTCDate(d.getUTCDate() + 3);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Raciones ya cocinadas y guardadas (nevera o congelador), por receta. */
+export function reservasPorReceta(despensa?: Despensa): Map<string, number> {
+  const reservas = new Map<string, number>();
+  for (const s of despensa?.sobras ?? []) {
+    if (s.receta && s.raciones > 0) reservas.set(s.receta, (reservas.get(s.receta) ?? 0) + s.raciones);
+  }
+  return reservas;
+}
+
 export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Seccion, LineaCompra[]> {
   const acumulado = new Map<string, LineaCompra & { seccion: Seccion }>();
   const todas = dias
@@ -270,14 +287,20 @@ export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Sec
       { receta: r.receta, raciones: r.raciones, personas: r.comensales.length },
       ...(r.segundo ? [{ ...r.segundo, personas: r.comensales.length }] : []),
     ]);
-  for (const { receta, raciones, personas } of todas) {
+  const reservas = reservasPorReceta(despensa);
+  for (const { receta, raciones: pedidas, personas } of todas) {
+    // Las raciones que ya están hechas (reserva) no se vuelven a comprar.
+    const deReserva = Math.min(reservas.get(receta.id) ?? 0, pedidas);
+    if (deReserva > 0) reservas.set(receta.id, (reservas.get(receta.id) ?? 0) - deReserva);
+    const raciones = pedidas - deReserva;
+    if (raciones <= 0) continue;
     for (const ing of receta.ingredientes) {
       const clave = `${ing.nombre.toLowerCase()}|${ing.unidad}`;
       const linea = acumulado.get(clave) ?? {
         nombre: ing.nombre, unidad: ing.unidad, seccion: ing.seccion,
         cantidad: 0, enDespensa: 0, comprar: 0, recetas: [],
       };
-      linea.cantidad += ing.cantidad * (ing.porPersona ? personas : raciones);
+      linea.cantidad += ing.cantidad * (ing.porPersona ? (personas * raciones) / pedidas : raciones);
       if (!linea.recetas.includes(receta.nombre)) linea.recetas.push(receta.nombre);
       acumulado.set(clave, linea);
     }

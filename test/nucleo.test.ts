@@ -149,6 +149,40 @@ test("la despensa se descuenta de la lista de la compra", async () => {
   assert.equal(con.comprar, 0);
 });
 
+test("las raciones en reserva de una receta no se vuelven a comprar", async () => {
+  const { componerMenu, listaCompra, caducidadReserva } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const dias = componerMenu(familia, menu, recetas);
+  const plato = dias.flatMap((d) => d.comidas.flatMap((c) => c.platos))
+    .find((p) => !p.receta.racionFija && p.raciones >= 2 && p.receta.ingredientes.some((i) => !i.porPersona))!;
+  const ing = plato.receta.ingredientes.find((i) => !i.porPersona)!;
+  const linea = (sobras: { receta: string; raciones: number; descripcion: string; fecha: string }[]) =>
+    Object.values(listaCompra(dias, { productos: [], sobras })).flat()
+      .find((l) => l.nombre === ing.nombre && l.unidad === ing.unidad)?.cantidad ?? 0;
+  const sin = linea([]);
+  const con = linea([{ receta: plato.receta.id, raciones: 2, descripcion: plato.receta.nombre, fecha: "2026-09-28" }]);
+  assert.ok(Math.abs(sin - con - ing.cantidad * 2) < 0.1, `${ing.nombre}: ${sin} → ${con}`);
+  assert.equal(caducidadReserva("2026-09-28", "nevera"), "2026-10-01");
+  assert.equal(caducidadReserva("2026-09-28", "congelador"), "2026-12-28");
+});
+
+test("registrar y gastar raciones en reserva", async () => {
+  const { ejecutar } = crearHerramientas(await almacenTemporal());
+  const mala = await ejecutar("registrar_sobra", { descripcion: "x", raciones: 1, fecha: "2026-09-28", receta: "no-existe" });
+  assert.equal(mala.error, true);
+  const leer = (r: { contenido: string }) => JSON.parse(r.contenido);
+  const d = leer(await ejecutar("registrar_sobra", {
+    descripcion: "Lentejas", raciones: 3, hechas: 7, fecha: "2026-09-28", receta: "lentejas-estofadas", ubicacion: "congelador",
+  }));
+  const i = d.sobras.length - 1;
+  assert.equal(d.sobras[i].consumirAntesDe, "2026-12-28");
+  const tras = leer(await ejecutar("consumir_sobra", { indice: i, raciones: 1 }));
+  assert.equal(tras.sobras[i].raciones, 2);
+  const fin = leer(await ejecutar("consumir_sobra", { indice: i }));
+  assert.equal(fin.sobras.length, i);
+});
+
 test("la leche de todas las recetas es semidesnatada", async () => {
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const leches = recetas.flatMap((r: { ingredientes: { nombre: string }[] }) => r.ingredientes)

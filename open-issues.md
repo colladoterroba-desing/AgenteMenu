@@ -20,7 +20,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 - [ ] **OI-24 · Identificar a quien valida el menú.** Decidido: solo CCT puede dar por válido un menú y publicarlo, y puede pedir cambios antes (que lo devuelven a borrador). En la web ya hay botones «Aprobar el menú», «Pedir cambios» y «Retirar la aprobación», visibles solo para la dueña de la página en claude.ai, que se toma como CCT. Si el menú cambia después, la aprobación deja de valer. Pendiente: confirmar que la cuenta dueña es la de CCT, y cómo se identifica en el chat del agente, que hoy se fía de quien escribe.
 
-- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa, los platos no deseados y las aprobaciones o peticiones de cambios del menú que se hacen en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
+- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa, las raciones hechas (reservas), los platos no deseados y las aprobaciones o peticiones de cambios del menú que se hacen en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
 
 ## Uso diario del menú
 
@@ -32,6 +32,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - Qué se apunta: el plato real (de las recetas o texto libre) y quién lo comió.
   - Qué pasa con lo que no se cocinó: los ingredientes vuelven a la despensa y se proponen para otro día.
   - Cómo lo usa el agente: aprender qué platos se saltan a menudo, ajustar las cantidades y el seguimiento de calorías de quien tiene objetivo de peso.
+- [x] **OI-32 · Marcar la cantidad hecha de una receta y guardar la reserva.** Hecho: en cada receta, «Marcar cantidad hecha» (raciones hechas, las que se comen esta semana, nevera o congelador y fecha). Lo que sobra queda en reserva, aparece en Despensa con la fecha límite (nevera 3 días, congelador 3 meses) y se va gastando con «Usar 1 ración». En el repositorio, las reservas con receta se descuentan de la lista de la compra cuando el menú vuelve a poner esa receta, y el agente las gasta primero al preparar la semana siguiente. Queda pendiente la sincronización web → repositorio (OI-25).
 
 ## Personas y hábitos
 

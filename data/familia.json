@@ -1,0 +1,145 @@
+{
+  "nombre": "Familia RFA-CCT",
+  "miembros": [
+    {
+      "id": "RFA",
+      "edad": 57,
+      "sexo": "V",
+      "alturaCm": 165,
+      "pesoKg": 73,
+      "gustos": ["No come mucho pescado"],
+      "actividades": [
+        { "deporte": "running", "dias": ["L", "M"], "minutos": 90 }
+      ]
+    },
+    {
+      "id": "CCT",
+      "edad": 47,
+      "sexo": "M",
+      "alturaCm": 165,
+      "pesoKg": 79,
+      "gustos": [],
+      "actividades": [
+        { "deporte": "yoga_funcional", "dias": ["X"], "minutos": 60 }
+      ]
+    },
+    {
+      "id": "RFC",
+      "edad": 18,
+      "sexo": "V",
+      "alturaCm": 173,
+      "pesoKg": 68,
+      "gustos": [],
+      "actividades": [
+        { "deporte": "natacion", "dias": ["M", "J"], "minutos": 60 }
+      ]
+    },
+    {
+      "id": "AFC",
+      "edad": 13,
+      "sexo": "M",
+      "alturaCm": 158,
+      "pesoKg": 52,
+      "gustos": [],
+      "actividades": [
+        { "deporte": "futbol_entrenamiento", "dias": ["X", "V"], "minutos": 90 },
+        { "deporte": "futbol_partido", "dias": ["S"], "minutos": 90 },
+        { "deporte": "educacion_fisica", "dias": ["M", "J"], "minutos": 60 },
+        { "deporte": "natacion", "dias": ["V"], "minutos": 30 }
+      ]
+    }
+  ],
+  "alergias": [],
+  "preferencias": [
+    "Leche siempre semidesnatada",
+    "Por las mañanas no se cocina en casa: lo que se lleva fuera se prepara la noche anterior o en el batch",
+    "La tortilla francesa se hace al momento: no se prepara el día antes",
+    "Los días que los mayores (RFA y CCT) no comen en casa, la comida de los niños puede ser pasta o algo más calórico",
+    "Dar prioridad a los platos habituales de casa y poner huevo varias veces por semana"
+  ],
+  "equipamiento": ["Thermomix"],
+  "platosHabituales": {
+    "cenas": ["huevos-revueltos-jamon-queso", "sandwich-mixto", "tortilla-patata"],
+    "comidas": [
+      "pure-calabacin", "pure-calabaza", "pure-zanahoria", "crema-puerro", "judias-verdes-rehogadas",
+      "pollo-empanado", "lomo-adobado-plancha", "chuleta-sajonia-plancha", "ternera-estofada", "solomillo-naranja"
+    ]
+  },
+  "permisos": { "validarMenu": ["CCT"] },
+  "noDeseados": [],
+  "supervision": [
+    {
+      "ingredientes": ["garbanzo", "lenteja", "alubia", "hummus"],
+      "adultos": ["RFA", "CCT"],
+      "motivo": "Las legumbres, mejor con un adulto que supervise cuánto comen"
+    }
+  ],
+  "restricciones": [
+    {
+      "ingredientes": ["salmón", "atún", "anchoa", "sardina"],
+      "soloEn": [{ "dia": "J", "comida": "comida" }],
+      "motivo": "Salmón, atún, anchoas y sardinas solo los jueves a la hora de comer"
+    }
+  ],
+  "desayunos": {
+    "AFC": { "receta": "desayuno-afc", "nota": "Su desayuno de todos los días.", "mostrarEnMenu": false },
+    "RFC": { "receta": "cafe-solo", "nota": "Solo café en casa; come el almuerzo que se lleva al colegio.", "mostrarEnMenu": false },
+    "CCT": {
+      "receta": "desayuno-cct-actual",
+      "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-07): pan integral con tomate y queso fresco, sin azúcar (receta desayuno-cct).",
+      "mostrarEnMenu": false
+    },
+    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-06): añadir fruta en días de running.", "mostrarEnMenu": false }
+  },
+  "regimen": {
+    "comida": {
+      "L": ["RFC", "AFC"],
+      "M": ["RFC", "AFC"],
+      "X": ["RFC", "AFC"],
+      "J": ["RFC", "AFC", "CCT"],
+      "V": ["RFA", "CCT", "RFC", "AFC"],
+      "S": ["RFA", "CCT", "RFC", "AFC"],
+      "D": ["RFA", "CCT", "RFC", "AFC"]
+    },
+    "cena": {
+      "L": ["RFA", "CCT", "RFC", "AFC"],
+      "M": ["RFA", "CCT", "RFC", "AFC"],
+      "X": ["RFA", "CCT", "RFC", "AFC"],
+      "J": ["RFA", "CCT", "RFC", "AFC"],
+      "V": ["RFA", "CCT", "RFC", "AFC"],
+      "S": ["RFA", "CCT", "RFC", "AFC"],
+      "D": ["RFA", "CCT", "RFC", "AFC"]
+    },
+    "almuerzo": {
+      "RFC": { "dias": ["L", "M", "X", "J", "V"], "lugar": "colegio" }
+    },
+    "tupper": {
+      "RFA": { "dias": ["L", "M", "X"], "tipo": "frío" },
+      "CCT": { "dias": ["L", "M", "X"], "tipo": "para recalentar" }
+    },
+    "desayuno": "todos, todos los días; cada uno su desayuno habitual (ver desayunos)",
+    "merienda": "todos, de lunes a viernes"
+  },
+  "roles": {
+    "CCT": "cocinera principal",
+    "RFA": "cocina poco; plancha",
+    "RFC": "solo plancha",
+    "AFC": "solo plancha"
+  },
+  "objetivos": {
+    "RFA": {
+      "pesoObjetivoKg": 67.8,
+      "kcalDiarias": 1879,
+      "semanas": 11,
+      "fechaInicio": "2026-09-28",
+      "notas": "Aceptado el 28/09/2026. De 73 a 67,8 kg (IMC 24,9) a unos 0,5 kg por semana; fecha prevista, 14/12/2026. Revisar el peso cada 2 semanas y consultarlo con su médico."
+    },
+    "CCT": {
+      "pesoObjetivoKg": 67.8,
+      "kcalDiarias": 1623,
+      "semanas": 23,
+      "fechaInicio": "2026-09-28",
+      "notas": "Aceptado el 28/09/2026. De 79 a 67,8 kg (IMC 24,9) a unos 0,5 kg por semana; fecha prevista, 08/03/2027. Revisar el peso cada 2 semanas y consultarlo con su médico."
+    }
+  }
+}

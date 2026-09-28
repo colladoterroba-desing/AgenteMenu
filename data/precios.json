@@ -1,0 +1,9 @@
+{
+  "nota": "Solo precios reales: se añaden desde los tickets de compra o a mano. Se usa siempre el más reciente de cada producto y tienda.",
+  "tiendas": [
+    { "id": "Mercadona", "habitual": true },
+    { "id": "BM" },
+    { "id": "Elías", "nota": "Casa Elías, El Buen Mercado (Madrid)" }
+  ],
+  "precios": []
+}

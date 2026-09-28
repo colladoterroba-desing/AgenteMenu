@@ -1,0 +1,32 @@
+{
+  "name": "agente-menu",
+  "version": "1.0.0",
+  "description": "Agente planificador de menú familiar",
+  "scripts": {
+    "test": "node --import tsx --test test/*.test.ts",
+    "start": "node --env-file-if-exists=.env --import tsx src/agente.ts",
+    "typecheck": "tsc",
+    "web": "tsx src/web.ts",
+    "pdf": "tsx src/pdf.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colladoterroba-desing/AgenteMenu.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/colladoterroba-desing/AgenteMenu/issues"
+  },
+  "homepage": "https://github.com/colladoterroba-desing/AgenteMenu#readme",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "playwright-core": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

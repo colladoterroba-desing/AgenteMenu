@@ -1,0 +1,1212 @@
+{
+  "recetas": [
+    {
+      "id": "tostadas-tomate",
+      "nombre": "Tostadas integrales con tomate y aceite, yogur y fruta",
+      "tipo": "desayuno",
+      "tiempoMin": 10,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Tostar el pan.",
+        "Rallar el tomate y extenderlo sobre las tostadas con un chorrito de aceite y una pizca de sal.",
+        "Acompañar con el yogur y la fruta."
+      ]
+    },
+    {
+      "id": "porridge-avena",
+      "nombre": "Porridge de avena con plátano y nueces",
+      "tipo": "desayuno",
+      "tiempoMin": 10,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Copos de avena", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Nueces peladas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Calentar la leche con la avena a fuego medio, removiendo, 5 minutos hasta que espese.",
+        "Servir con el plátano en rodajas, las nueces troceadas y canela al gusto."
+      ],
+      "conservacion": "Se puede dejar hecho la noche anterior en la nevera (overnight oats) y tomarlo frío."
+    },
+    {
+      "id": "huevos-revueltos-tostada",
+      "nombre": "Huevos revueltos con tostada, leche y naranja",
+      "tipo": "desayuno",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan integral", "cantidad": 60, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Leche semidesnatada", "cantidad": 200, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Naranjas", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Batir los huevos con una pizca de sal.",
+        "Cuajarlos en la sartén con unas gotas de aceite a fuego bajo, removiendo, hasta que queden cremosos.",
+        "Servir con el pan tostado, un vaso de leche y la naranja."
+      ]
+    },
+    {
+      "id": "bocadillo-pavo-queso",
+      "nombre": "Bocadillo integral de pavo y queso con fruta",
+      "tipo": "merienda",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 70, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Pechuga de pavo en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Abrir el pan y rellenarlo con el pavo y el queso.",
+        "Acompañar con una pieza de fruta."
+      ]
+    },
+    {
+      "id": "yogur-fruta-frutos-secos",
+      "nombre": "Yogur con fruta, avena y almendras",
+      "tipo": "merienda",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Copos de avena", "cantidad": 20, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Almendras", "cantidad": 20, "unidad": "g", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Trocear la fruta.",
+        "Mezclar con el yogur, la avena y las almendras."
+      ]
+    },
+    {
+      "id": "tostada-cacahuete-platano",
+      "nombre": "Tostada con crema de cacahuete y plátano, y leche",
+      "tipo": "merienda",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 60, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Crema de cacahuete 100 %", "cantidad": 20, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Tostar el pan y untar la crema de cacahuete.",
+        "Cubrir con el plátano en rodajas y acompañar con un vaso de leche."
+      ]
+    },
+    {
+      "id": "garbanzos-espinacas",
+      "nombre": "Garbanzos con espinacas y huevo duro",
+      "tipo": "comida",
+      "tiempoMin": 35,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Garbanzos cocidos (bote)", "cantidad": 200, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Espinacas frescas", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate triturado", "cantidad": 80, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Huevos", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Cocer los huevos 10 minutos, enfriar y pelar.",
+        "Pochar la cebolla picada con el aceite y un diente de ajo, 8 minutos.",
+        "Añadir pimentón dulce y el tomate triturado; sofreír 5 minutos.",
+        "Incorporar los garbanzos escurridos y un vaso de agua o caldo; cocer 10 minutos.",
+        "Añadir las espinacas y dejar 3 minutos más hasta que se ablanden. Servir con el huevo en cuartos."
+      ],
+      "thermomix": [
+        "Poner en el vaso la cebolla y un diente de ajo: 4 s/vel 5. Añadir el aceite y sofreír 5 min/120 °C/vel 1.",
+        "Añadir el pimentón y el tomate triturado: 5 min/120 °C/vel 1.",
+        "Añadir los garbanzos escurridos y un vaso de agua: 8 min/100 °C/giro a la izquierda/vel cuchara.",
+        "Añadir las espinacas: 3 min/100 °C/giro a la izquierda/vel cuchara. Los huevos se pueden cocer a la vez en el Varoma (12 min/Varoma) en el primer paso."
+      ],
+      "conservacion": "3 días en la nevera o 3 meses congelado (sin el huevo). Recalentar en microondas 2-3 minutos."
+    },
+    {
+      "id": "lomo-plancha-arroz",
+      "nombre": "Lomo a la plancha con arroz integral y ensalada",
+      "tipo": "comida",
+      "tiempoMin": 15,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Lomo de cerdo en filetes", "cantidad": 120, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Arroz integral", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Lechuga", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "El arroz se deja cocido del domingo: calentarlo en el microondas con una cucharada de agua.",
+        "Calentar bien la plancha, salar los filetes y hacerlos 2 minutos por cada lado.",
+        "Aliñar la lechuga y el tomate con aceite y sal."
+      ]
+    },
+    {
+      "id": "pollo-guisado-arroz",
+      "nombre": "Pollo guisado con verduras y arroz integral",
+      "tipo": "cena",
+      "tiempoMin": 50,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Contramuslos de pollo deshuesados", "cantidad": 150, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Arroz integral", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Zanahoria", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pimiento rojo", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Guisantes congelados", "cantidad": 40, "unidad": "g", "seccion": "Congelados" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Trocear el pollo, salpimentar y dorarlo en la cazuela con el aceite. Reservar.",
+        "En el mismo aceite, pochar la cebolla, la zanahoria y el pimiento en dados, 10 minutos.",
+        "Volver a poner el pollo, añadir agua o caldo hasta cubrir y cocer 20 minutos. Añadir los guisantes los últimos 5.",
+        "Mientras, cocer el arroz integral en agua con sal según el paquete (unos 25 minutos) y escurrir.",
+        "Servir el guiso sobre el arroz. Yogur de postre."
+      ],
+      "conservacion": "3 días en nevera. Guardar arroz y guiso juntos en el tupper; recalentar 3 minutos."
+    },
+    {
+      "id": "lentejas-estofadas",
+      "nombre": "Lentejas estofadas con verduras",
+      "tipo": "comida",
+      "tiempoMin": 45,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Lentejas pardinas", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Zanahoria", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pimiento verde", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Picar la cebolla, el pimiento y la zanahoria y pocharlos en el aceite 10 minutos.",
+        "Añadir una cucharadita de pimentón, las lentejas lavadas, una hoja de laurel y agua fría hasta cubrir el doble.",
+        "Cocer a fuego suave 25 minutos. Añadir la patata cascada y cocer 15 minutos más, hasta que esté tierna.",
+        "Rectificar de sal y dejar reposar 5 minutos."
+      ],
+      "thermomix": [
+        "Poner en el vaso la cebolla, el pimiento y la zanahoria troceados: 4 s/vel 4.",
+        "Añadir el aceite y sofreír 7 min/120 °C/vel 1.",
+        "Añadir el pimentón, las lentejas lavadas, la patata en trozos, una hoja de laurel, la sal y agua (unos 3,5 vasos por cada vaso de lentejas, sin pasar de la marca de 2 l): 40 min/100 °C/giro a la izquierda/vel cuchara.",
+        "Dejar reposar 5 minutos en el vaso antes de servir."
+      ],
+      "conservacion": "4 días en nevera o 3 meses congelado."
+    },
+    {
+      "id": "espaguetis-bolonesa",
+      "nombre": "Espaguetis integrales a la boloñesa con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 35,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Espaguetis integrales", "cantidad": 90, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Carne picada de ternera", "cantidad": 100, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Tomate triturado", "cantidad": 120, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Zanahoria", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Queso rallado", "cantidad": 10, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Pochar la cebolla y la zanahoria picadas en el aceite 8 minutos.",
+        "Añadir la carne, dorarla desmenuzándola y salpimentar.",
+        "Incorporar el tomate y orégano; cocer 15 minutos a fuego suave.",
+        "Cocer la pasta en agua con sal según el paquete, escurrir y mezclar con la salsa. Servir con queso rallado y la ensalada."
+      ],
+      "thermomix": [
+        "La salsa en la Thermomix; la pasta, en un cazo aparte.",
+        "Poner en el vaso la cebolla y la zanahoria troceadas: 5 s/vel 5. Añadir el aceite y sofreír 7 min/120 °C/vel 1.",
+        "Añadir la carne picada y la sal: 5 min/120 °C/giro a la izquierda/vel cuchara.",
+        "Añadir el tomate y el orégano: 15 min/100 °C/giro a la izquierda/vel cuchara, con el cubilete puesto de lado o el cestillo encima para que no salpique.",
+        "Mezclar con la pasta cocida y servir con el queso rallado."
+      ],
+      "conservacion": "La salsa se congela bien: se puede hacer doble y guardar la mitad."
+    },
+    {
+      "id": "paella-pollo-verduras",
+      "nombre": "Paella de pollo y verduras",
+      "tipo": "comida",
+      "tiempoMin": 50,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Arroz redondo", "cantidad": 80, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Contramuslos de pollo deshuesados", "cantidad": 120, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Judías verdes", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pimiento rojo", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Limón", "cantidad": 0.25, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Dorar el pollo troceado y salado en la paella con el aceite. Apartarlo a los bordes.",
+        "Rehogar las judías y el pimiento 5 minutos; añadir el tomate y pimentón y sofreír 3 minutos.",
+        "Echar el arroz, mezclar y añadir el triple de agua o caldo caliente con azafrán o colorante. Probar de sal.",
+        "Cocer 10 minutos a fuego fuerte y 8 a fuego suave, sin remover. Reposar 5 minutos tapada con un paño y servir con limón."
+      ]
+    },
+    {
+      "id": "dorada-horno",
+      "nombre": "Dorada al horno con patatas y ensalada",
+      "tipo": "comida",
+      "tiempoMin": 45,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Dorada limpia (ración)", "cantidad": 1, "unidad": "ud", "seccion": "Pescadería", "porPersona": true },
+        { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Limón", "cantidad": 0.25, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Precalentar el horno a 200 °C.",
+        "Cortar las patatas en rodajas finas y la cebolla en juliana; hornearlas con la mitad del aceite y sal 25 minutos.",
+        "Poner las doradas encima con sal, rodajas de limón y el resto del aceite; hornear 15-18 minutos.",
+        "Servir con la ensalada aliñada."
+      ]
+    },
+    {
+      "id": "salmon-horno-patata",
+      "nombre": "Salmón al horno con patata y calabacín",
+      "tipo": "cena",
+      "tiempoMin": 35,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Lomo de salmón", "cantidad": 130, "unidad": "g", "seccion": "Pescadería" },
+        { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Calabacín", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Limón", "cantidad": 0.25, "unidad": "ud", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Precalentar el horno a 200 °C.",
+        "Hornear la patata en gajos con aceite y sal 15 minutos.",
+        "Añadir el calabacín en medias lunas y los lomos de salmón con sal, eneldo y limón; hornear 12-15 minutos más."
+      ],
+      "conservacion": "La ración del tupper, a la nevera en cuanto se enfríe; 2 días como máximo."
+    },
+    {
+      "id": "pollo-horno-patata",
+      "nombre": "Contramuslo al horno con patata y calabacín",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Contramuslos de pollo deshuesados", "cantidad": 150, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Calabacín", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Va en la misma bandeja que el salmón, pero entra antes.",
+        "Hornear el pollo salpimentado con la patata 15 minutos a 200 °C, y luego 15 minutos más junto al salmón y el calabacín."
+      ]
+    },
+    {
+      "id": "crema-calabacin-tortilla",
+      "nombre": "Crema de calabacín y tortilla francesa",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Calabacín", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Puerro", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Queso fresco batido", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Rehogar el puerro en la mitad del aceite 5 minutos.",
+        "Añadir el calabacín y la patata troceados, cubrir de agua y cocer 15 minutos.",
+        "Triturar con el queso fresco y ajustar de sal.",
+        "Hacer las tortillas francesas en la sartén con el resto del aceite."
+      ],
+      "thermomix": [
+        "La crema en la Thermomix; la tortilla, al momento en la sartén.",
+        "Poner en el vaso el puerro troceado y la mitad del aceite: 5 s/vel 5. Sofreír 5 min/120 °C/vel 1.",
+        "Añadir el calabacín y la patata troceados, la sal y agua justa para casi cubrir: 20 min/100 °C/vel 1.",
+        "Añadir el queso fresco batido y triturar 1 min/vel 5-10 subiendo poco a poco."
+      ],
+      "conservacion": "La crema aguanta 3 días en nevera y se congela bien.",
+      "alMomento": true
+    },
+    {
+      "id": "merluza-plancha-brocoli",
+      "nombre": "Merluza a la plancha con brócoli salteado",
+      "tipo": "cena",
+      "tiempoMin": 25,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Lomos de merluza", "cantidad": 150, "unidad": "g", "seccion": "Pescadería" },
+        { "nombre": "Brócoli", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Cocer el brócoli al vapor 5 minutos y saltearlo con ajo laminado y la mitad del aceite.",
+        "Secar la merluza, salar y hacerla a la plancha 3 minutos por lado, empezando por la piel.",
+        "Servir con perejil y limón. Yogur de postre."
+      ]
+    },
+    {
+      "id": "tortilla-francesa-brocoli",
+      "nombre": "Tortilla francesa con brócoli salteado",
+      "tipo": "cena",
+      "tiempoMin": 15,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Brócoli", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Usar el mismo brócoli salteado de la merluza.",
+        "Batir los huevos con sal y cuajar la tortilla en la sartén."
+      ],
+      "alMomento": true
+    },
+    {
+      "id": "pizza-casera-verduras",
+      "nombre": "Pizza casera integral de verduras y jamón",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Base de pizza integral", "cantidad": 0.5, "unidad": "ud", "seccion": "Panadería" },
+        { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Mozzarella", "cantidad": 50, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Champiñones", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pimiento rojo", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Precalentar el horno a 220 °C.",
+        "Extender el tomate sobre la base con orégano; repartir la mozzarella, el jamón, los champiñones laminados y el pimiento en tiras.",
+        "Hornear 12-15 minutos. Servir con ensalada.",
+        "Buena receta para cocinar con RFC y AFC."
+      ]
+    },
+    {
+      "id": "revuelto-setas-gambas",
+      "nombre": "Revuelto de setas y gambas con ensalada de tomate",
+      "tipo": "cena",
+      "tiempoMin": 20,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Gambas peladas congeladas", "cantidad": 60, "unidad": "g", "seccion": "Congelados" },
+        { "nombre": "Champiñones", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Tomate", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Saltear el ajo picado y las setas laminadas en el aceite 5 minutos.",
+        "Añadir las gambas descongeladas y saltear 2 minutos.",
+        "Echar los huevos batidos con sal y cuajar a fuego bajo removiendo.",
+        "Servir con el tomate en rodajas aliñado."
+      ]
+    },
+    {
+      "id": "crema-calabaza-sandwich",
+      "nombre": "Crema de calabaza y sándwich de pavo y queso",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Calabaza", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Zanahoria", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan de molde integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Pechuga de pavo en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite, añadir la calabaza y la zanahoria troceadas y cubrir de agua; cocer 20 minutos.",
+        "Triturar y ajustar de sal y pimienta.",
+        "Montar los sándwiches y dorarlos en la plancha o la sandwichera."
+      ],
+      "thermomix": [
+        "La crema en la Thermomix; los sándwiches, en la plancha o la sandwichera.",
+        "Poner en el vaso la cebolla en cuartos y el aceite: 5 s/vel 5. Sofreír 5 min/120 °C/vel 1.",
+        "Añadir la calabaza y la zanahoria troceadas, la sal y agua hasta cubrir la mitad de la verdura: 20 min/100 °C/vel 1.",
+        "Triturar 1 min/vel 5-10 subiendo poco a poco y ajustar de sal y pimienta."
+      ]
+    },
+    {
+      "id": "ensalada-pasta-pollo",
+      "nombre": "Ensalada de pasta integral con pollo asado",
+      "tipo": "tupper",
+      "tiempoMin": 20,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Pasta integral corta", "cantidad": 75, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Pechuga de pollo", "cantidad": 100, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Tomate cherry", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Maíz dulce (lata)", "cantidad": 30, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Pimiento asado (bote)", "cantidad": 40, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceitunas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Cocer la pasta, enfriarla bajo el grifo y escurrir bien.",
+        "Hacer la pechuga a la plancha o al horno, enfriar y cortar en tiras.",
+        "Mezclar con los tomates partidos, el maíz, el pimiento y las aceitunas. El aceite va aparte en un bote."
+      ],
+      "conservacion": "Prepararla el domingo por la noche. Nevera y bolsa isotérmica con placa de hielo."
+    },
+    {
+      "id": "ensalada-lentejas-huevo",
+      "nombre": "Ensalada de lentejas con huevo duro",
+      "tipo": "tupper",
+      "tiempoMin": 15,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Lentejas cocidas (bote)", "cantidad": 215, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Huevos", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pimiento rojo", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolleta", "cantidad": 25, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Enjuagar y escurrir las lentejas.",
+        "Picar pequeño el pimiento, la cebolleta y el tomate; cocer el huevo 10 minutos.",
+        "Mezclar todo. Vinagreta aparte: aceite, vinagre y una cucharadita de mostaza."
+      ],
+      "conservacion": "Prepararla el lunes por la noche."
+    },
+    {
+      "id": "wraps-pavo-hummus",
+      "nombre": "Wraps integrales de pavo, queso fresco y hummus",
+      "tipo": "tupper",
+      "tiempoMin": 10,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Tortillas integrales de trigo", "cantidad": 2, "unidad": "ud", "seccion": "Panadería" },
+        { "nombre": "Pechuga de pavo en lonchas", "cantidad": 85, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso fresco", "cantidad": 50, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Hummus", "cantidad": 45, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Lechuga", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Untar las tortillas con el hummus.",
+        "Repartir el pavo, el queso fresco en tiras, la lechuga y el tomate en rodajas finas.",
+        "Enrollar apretado, cortar por la mitad y envolver en film o papel."
+      ],
+      "conservacion": "Mejor montarlos la noche anterior: si se hacen antes, el tomate humedece la tortilla."
+    },
+    {
+      "id": "desayuno-afc",
+      "nombre": "Leche con Nesquik y galletas Animadas",
+      "tipo": "desayuno",
+      "tiempoMin": 3,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Cacao soluble Nesquik", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Galletas tostadas Animadas Hacendado", "cantidad": 8, "unidad": "ud", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Calentar el vaso de leche si se quiere templada.",
+        "Disolver 1 cucharada de Nesquik.",
+        "Acompañar con 8 galletas."
+      ]
+    },
+    {
+      "id": "cafe-solo",
+      "nombre": "Café solo",
+      "tipo": "desayuno",
+      "tiempoMin": 3,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Preparar el café en la cafetera."
+      ]
+    },
+    {
+      "id": "desayuno-cct-actual",
+      "nombre": "Café cortado y tostada con aceite y azúcar",
+      "tipo": "desayuno",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan de barra", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Azúcar", "cantidad": 5, "unidad": "g", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
+        "Tostar el pan, echar el aceite y espolvorear el azúcar."
+      ]
+    },
+    {
+      "id": "desayuno-cct",
+      "nombre": "Propuesta: café cortado y tostada integral con aceite y tomate",
+      "tipo": "desayuno",
+      "tiempoMin": 8,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Tomate", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Queso fresco", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
+        "Tostar el pan integral, rallar el tomate por encima y añadir el aceite.",
+        "Acompañar con el queso fresco y una pieza de fruta."
+      ],
+      "conservacion": "Si cuesta dejar el azúcar de golpe, empezar con media cucharadita y bajarla poco a poco."
+    },
+    {
+      "id": "desayuno-rfa",
+      "nombre": "Café cortado con tortitas de maíz, pavo o jamón york y aceite",
+      "tipo": "desayuno",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "racionFija": true,
+      "ingredientes": [
+        { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 2, "unidad": "ud", "seccion": "Despensa" },
+        { "nombre": "Pechuga de pavo en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
+        "Aliñar las tortitas con el aceite, sal y pimienta.",
+        "Poner encima el pavo o el jamón york."
+      ],
+      "conservacion": "Los días de running (lunes y martes) conviene añadir una pieza de fruta o una tercera tortita."
+    },
+    {
+      "id": "almuerzo-bocadillo-atun",
+      "nombre": "Bocadillo integral de atún con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Atún en aceite de oliva (lata)", "cantidad": 1, "unidad": "ud", "seccion": "Despensa" },
+        { "nombre": "Tomate", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Escurrir el atún.",
+        "Abrir el pan, poner el tomate en rodajas finas y el atún.",
+        "Envolver y llevar una pieza de fruta."
+      ]
+    },
+    {
+      "id": "almuerzo-yogur-frutos-secos",
+      "nombre": "Yogur bebible, plátano y frutos secos",
+      "tipo": "almuerzo",
+      "tiempoMin": 2,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Yogur líquido natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Almendras", "cantidad": 30, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 2, "unidad": "ud", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Meter en la mochila el yogur bebible (mejor recién sacado de la nevera), el plátano, las almendras en un bote y las tortitas."
+      ]
+    },
+    {
+      "id": "almuerzo-bocadillo-pollo",
+      "nombre": "Bocadillo integral de pollo asado con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Pechuga de pollo", "cantidad": 70, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "El pollo se asa en el batch del domingo, junto con el de la ensalada de RFA; enfriar y cortar en tiras.",
+        "El domingo por la noche, abrir el pan, poner el tomate en rodajas finas con un hilo de aceite y el pollo.",
+        "Envolver, guardar en la nevera y llevar una pieza de fruta."
+      ],
+      "conservacion": "Se monta la noche anterior; el pollo asado aguanta 3 días en la nevera."
+    },
+    {
+      "id": "almuerzo-bocadillo-serrano",
+      "nombre": "Bocadillo integral de jamón serrano con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Jamón serrano en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La noche anterior, untar el pan con tomate y un hilo de aceite.",
+        "Poner el jamón, envolver y guardar en la nevera.",
+        "Llevar una pieza de fruta."
+      ]
+    },
+    {
+      "id": "albondigas-pavo-cuscus",
+      "nombre": "Albóndigas de pavo en salsa de tomate con cuscús integral",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Carne picada de pavo", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Pan rallado", "cantidad": 10, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Huevos", "cantidad": 0.25, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tomate triturado", "cantidad": 120, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cuscús integral", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Mezclar el pavo con el huevo batido, el pan rallado, sal, ajo y perejil; formar bolas pequeñas.",
+        "Dorarlas en la cazuela con el aceite y reservar.",
+        "Pochar la cebolla, añadir el tomate y cocer 10 minutos; volver a poner las albóndigas y cocer 15 minutos más.",
+        "Hidratar el cuscús con el mismo volumen de agua hirviendo con sal, 5 minutos tapado, y soltarlo con un tenedor."
+      ],
+      "conservacion": "3 días en nevera o 3 meses congeladas. La ración del tupper, junto con el cuscús."
+    },
+    {
+      "id": "almuerzo-bocadillo-queso-fresco",
+      "nombre": "Bocadillo integral de queso fresco con tomate y fruta",
+      "tipo": "almuerzo",
+      "tiempoMin": 5,
+      "tecnica": "sin cocinar",
+      "ingredientes": [
+        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Queso fresco", "cantidad": 60, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La noche anterior, poner en el pan el tomate en rodajas con un hilo de aceite y orégano.",
+        "Añadir el queso fresco en lonchas, envolver y guardar en la nevera.",
+        "Llevar una pieza de fruta."
+      ]
+    },
+    {
+      "id": "arroz-garbanzos-feta",
+      "nombre": "Ensalada de arroz integral con garbanzos y feta",
+      "tipo": "tupper",
+      "tiempoMin": 30,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Arroz integral", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Garbanzos cocidos (bote)", "cantidad": 130, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Queso feta", "cantidad": 35, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Pepino", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceitunas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Cocer el arroz integral, enfriarlo bajo el grifo y escurrir.",
+        "Mezclar con los garbanzos enjuagados, el pepino y el tomate en dados, las aceitunas y el feta desmenuzado.",
+        "El aceite va aparte en un bote."
+      ],
+      "conservacion": "Batch del domingo; 3 días en nevera. Bolsa isotérmica con placa de hielo."
+    },
+    {
+      "id": "quinoa-pollo-curry",
+      "nombre": "Quinoa con pollo al curry suave, manzana y yogur",
+      "tipo": "tupper",
+      "tiempoMin": 25,
+      "tecnica": "frío",
+      "ingredientes": [
+        { "nombre": "Quinoa", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Pechuga de pollo", "cantidad": 100, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Manzana", "cantidad": 0.5, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Apio", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Yogur griego ligero", "cantidad": 45, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Nueces peladas", "cantidad": 13, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 35, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Lavar y cocer la quinoa 12 minutos; escurrir y enfriar.",
+        "Usar el pollo asado del batch, en dados.",
+        "Mezclar el yogur con una cucharadita de curry suave, sal y limón; unir con la quinoa, el pollo, la manzana y el apio en dados y las nueces."
+      ],
+      "conservacion": "Prepararla el lunes por la noche."
+    },
+    {
+      "id": "tortilla-patata-calabacin",
+      "nombre": "Tortilla de patata y calabacín con ensalada de tomate",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Calabacín", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Tomate", "cantidad": 120, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" }
+      ],
+      "pasos": [
+        "Cortar la patata, el calabacín y la cebolla finos y pocharlos en el aceite a fuego suave 20 minutos. Escurrir el aceite.",
+        "Mezclar con los huevos batidos y sal y cuajar la tortilla por los dos lados.",
+        "Servir con el tomate aliñado."
+      ],
+      "conservacion": "A diferencia de la francesa, la tortilla de patata aguanta de un día para otro en la nevera y se toma fría."
+    },
+    {
+      "id": "merluza-salsa-verde-arroz",
+      "nombre": "Merluza en salsa verde con arroz y guisantes",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Lomos de merluza", "cantidad": 150, "unidad": "g", "seccion": "Pescadería" },
+        { "nombre": "Arroz redondo", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Guisantes congelados", "cantidad": 50, "unidad": "g", "seccion": "Congelados" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Cocer el arroz en agua con sal y escurrir.",
+        "En una cazuela, dorar ajo picado en el aceite, añadir una cucharada de harina y medio vaso de caldo o agua, y el perejil picado.",
+        "Poner la merluza y los guisantes y cocer 6-8 minutos moviendo la cazuela para que ligue la salsa."
+      ],
+      "conservacion": "2 días en nevera; se recalienta bien en el microondas tapada."
+    },
+    {
+      "id": "pavo-plancha-verduras",
+      "nombre": "Pechuga de pavo a la plancha con verduras asadas",
+      "tipo": "cena",
+      "tiempoMin": 35,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Pechuga de pavo en filetes", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Pimiento rojo", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Calabacín", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Berenjena", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+      ],
+      "pasos": [
+        "Asar las verduras troceadas con la mitad del aceite y sal a 200 °C, 25 minutos.",
+        "Hacer los filetes de pavo a la plancha, 2-3 minutos por lado."
+      ]
+    },
+    {
+      "id": "macarrones-tomate-jamon",
+      "nombre": "Macarrones integrales con tomate, jamón york y queso",
+      "tipo": "comida",
+      "tiempoMin": 25,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Macarrones integrales", "cantidad": 100, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Tomate triturado", "cantidad": 120, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso rallado", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La noche anterior, mientras se hace la cena: pochar la cebolla en el aceite, añadir el tomate y cocer 10 minutos; incorporar el jamón en taquitos.",
+        "Cocer los macarrones 1 minuto menos de lo que marca el paquete, escurrir y mezclar con la salsa.",
+        "Guardar en la nevera en un recipiente apto para microondas; al día siguiente, recalentar con el queso rallado por encima."
+      ],
+      "thermomix": [
+        "La salsa en la Thermomix; la pasta, en un cazo aparte (o en el vaso después de la salsa: 1 l de agua 10 min/100 °C/vel 1, añadir la pasta y cocer el tiempo del paquete/100 °C/giro a la izquierda/vel cuchara).",
+        "Poner en el vaso la cebolla: 4 s/vel 5. Añadir el aceite y sofreír 5 min/120 °C/vel 1.",
+        "Añadir el tomate y la sal: 12 min/100 °C/vel 1.",
+        "Añadir el jamón en taquitos: 1 min/100 °C/giro a la izquierda/vel cuchara. Mezclar con la pasta."
+      ],
+      "conservacion": "2 días en nevera. Pensado para las comidas de RFC y AFC los días que los mayores no están."
+    },
+    {
+      "id": "alubias-estofadas",
+      "nombre": "Alubias blancas estofadas con verduras",
+      "tipo": "comida",
+      "tiempoMin": 35,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Alubias blancas cocidas (bote)", "cantidad": 200, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Zanahoria", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pimiento verde", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate triturado", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Pochar la cebolla, el pimiento y la zanahoria picados en el aceite 10 minutos.",
+        "Añadir el tomate y pimentón y sofreír 5 minutos.",
+        "Incorporar la patata en dados, cubrir de agua y cocer 15 minutos; añadir las alubias enjuagadas y cocer 5 minutos más."
+      ],
+      "thermomix": [
+        "Poner en el vaso la cebolla, el pimiento y la zanahoria troceados: 4 s/vel 4.",
+        "Añadir el aceite y sofreír 7 min/120 °C/vel 1. Añadir el tomate y el pimentón: 5 min/120 °C/vel 1.",
+        "Añadir la patata en dados y agua justa para cubrir: 15 min/100 °C/giro a la izquierda/vel cuchara.",
+        "Añadir las alubias enjuagadas: 5 min/100 °C/giro a la izquierda/vel cuchara."
+      ],
+      "conservacion": "4 días en nevera o 3 meses congeladas."
+    },
+    {
+      "id": "huevos-revueltos-jamon-queso",
+      "nombre": "Huevos revueltos con jamón york y queso",
+      "tipo": "cena",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "alMomento": true,
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Tomate", "cantidad": 100, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Batir los huevos con una pizca de sal.",
+        "Saltear el jamón en tiras con el aceite 1 minuto.",
+        "Añadir los huevos y el queso troceado y cuajar a fuego bajo removiendo, que queden jugosos.",
+        "Servir con el tomate aliñado y el pan."
+      ]
+    },
+    {
+      "id": "sandwich-mixto",
+      "nombre": "Sándwich mixto a la plancha",
+      "tipo": "cena",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "alMomento": true,
+      "ingredientes": [
+        { "nombre": "Pan de molde integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Queso en lonchas", "cantidad": 30, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Montar el sándwich con el jamón y el queso.",
+        "Pintar el pan por fuera con unas gotas de aceite y dorarlo en la plancha o la sandwichera, 2-3 minutos por lado, hasta que se funda el queso.",
+        "Fruta de postre."
+      ]
+    },
+    {
+      "id": "tortilla-patata",
+      "nombre": "Tortilla de patata con ensalada",
+      "tipo": "cena",
+      "tiempoMin": 40,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" }
+      ],
+      "pasos": [
+        "Cortar la patata y la cebolla finas y pocharlas en el aceite a fuego suave 20 minutos. Escurrir el aceite.",
+        "Mezclar con los huevos batidos y sal, dejar reposar 5 minutos y cuajar la tortilla por los dos lados.",
+        "Servir con la ensalada."
+      ],
+      "conservacion": "La tortilla de patata aguanta de un día para otro en la nevera."
+    },
+    {
+      "id": "pure-calabacin",
+      "nombre": "Puré de calabacín",
+      "tipo": "comida",
+      "tiempoMin": 25,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Calabacín", "cantidad": 250, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Queso fresco batido", "cantidad": 20, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite 5 minutos.",
+        "Añadir el calabacín y la patata troceados, cubrir justo de agua con sal y cocer 15 minutos.",
+        "Triturar con el queso fresco batido."
+      ],
+      "thermomix": [
+        "Poner en el vaso la cebolla en cuartos y el aceite: 5 s/vel 5. Bajar los restos con la espátula.",
+        "Sofreír 5 min/120 °C/vel 1 (en TM31, temperatura Varoma).",
+        "Añadir el calabacín y la patata troceados, la sal y agua justa para casi cubrir la verdura (el calabacín suelta mucha): 20 min/100 °C/vel 1.",
+        "Añadir el queso fresco batido y triturar 1 min/vel 5-10 subiendo poco a poco."
+      ],
+      "conservacion": "3 días en nevera; se congela bien."
+    },
+    {
+      "id": "pure-calabaza",
+      "nombre": "Puré de calabaza",
+      "tipo": "comida",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Calabaza", "cantidad": 250, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite.",
+        "Añadir la calabaza y la patata troceadas, cubrir de agua con sal y cocer 20 minutos.",
+        "Triturar hasta que quede fino."
+      ],
+      "thermomix": [
+        "Poner en el vaso la cebolla en cuartos y el aceite: 5 s/vel 5. Bajar los restos con la espátula.",
+        "Sofreír 5 min/120 °C/vel 1.",
+        "Añadir la calabaza y la patata troceadas, la sal y agua hasta cubrir la mitad de la verdura: 20 min/100 °C/vel 1.",
+        "Triturar 1 min/vel 5-10 subiendo poco a poco. Si queda espeso, añadir un poco de agua y mezclar 10 s/vel 5."
+      ],
+      "conservacion": "3 días en nevera; se congela bien. Se recalienta en el microondas."
+    },
+    {
+      "id": "pure-zanahoria",
+      "nombre": "Puré de zanahoria",
+      "tipo": "comida",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Zanahoria", "cantidad": 220, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar la cebolla en el aceite.",
+        "Añadir la zanahoria y la patata en rodajas, cubrir de agua con sal y cocer 20 minutos.",
+        "Triturar; si queda espeso, añadir un poco del agua de cocción."
+      ],
+      "thermomix": [
+        "Poner en el vaso la cebolla en cuartos y el aceite: 5 s/vel 5. Bajar los restos con la espátula.",
+        "Sofreír 5 min/120 °C/vel 1.",
+        "Añadir la zanahoria y la patata en rodajas, la sal y agua hasta cubrir: 22 min/100 °C/vel 1.",
+        "Triturar 1 min/vel 5-10 subiendo poco a poco."
+      ],
+      "conservacion": "3 días en nevera; se congela bien."
+    },
+    {
+      "id": "crema-puerro",
+      "nombre": "Crema de puerro",
+      "tipo": "cena",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Puerro", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Leche semidesnatada", "cantidad": 50, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Rehogar el puerro y la cebolla en el aceite 8 minutos, sin que se doren.",
+        "Añadir la patata troceada, cubrir de agua con sal y cocer 20 minutos.",
+        "Triturar con la leche semidesnatada."
+      ],
+      "thermomix": [
+        "Poner en el vaso el puerro y la cebolla troceados con el aceite: 5 s/vel 5.",
+        "Sofreír sin que se doren 8 min/100 °C/vel 1.",
+        "Añadir la patata troceada, la sal y agua hasta cubrir: 20 min/100 °C/vel 1.",
+        "Añadir la leche semidesnatada y triturar 1 min/vel 5-10 subiendo poco a poco."
+      ],
+      "conservacion": "3 días en nevera."
+    },
+    {
+      "id": "judias-verdes-rehogadas",
+      "nombre": "Judías verdes rehogadas con patata",
+      "tipo": "comida",
+      "tiempoMin": 30,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Judías verdes", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Jamón serrano en taquitos", "cantidad": 15, "unidad": "g", "seccion": "Charcutería y quesos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+      ],
+      "pasos": [
+        "Cocer las judías y la patata troceadas en agua con sal 15 minutos y escurrir.",
+        "Rehogar ajo laminado y el jamón en el aceite, añadir pimentón y las judías con la patata, y saltear 2 minutos."
+      ],
+      "thermomix": [
+        "Poner 500 ml de agua con sal en el vaso. Colocar las judías y la patata troceadas en el recipiente Varoma: 25 min/Varoma/vel 1.",
+        "Vaciar el vaso. Poner el aceite, el ajo laminado y el jamón: 3 min/120 °C/giro a la izquierda/vel cuchara.",
+        "Añadir el pimentón, las judías y la patata: 1 min/giro a la izquierda/vel cuchara."
+      ],
+      "conservacion": "2 días en nevera."
+    },
+    {
+      "id": "pollo-empanado",
+      "nombre": "Pechuga de pollo empanada con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 25,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Pechuga de pollo en filetes finos", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Huevos", "cantidad": 0.5, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Pan rallado", "cantidad": 25, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Salar los filetes, pasarlos por huevo batido y pan rallado.",
+        "Freírlos en la sartén con el aceite caliente, 2-3 minutos por lado, y dejarlos sobre papel de cocina.",
+        "Servir con la ensalada y fruta de postre."
+      ]
+    },
+    {
+      "id": "lomo-adobado-plancha",
+      "nombre": "Filetes de lomo adobado a la plancha con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Lomo adobado en filetes", "cantidad": 120, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Calentar bien la plancha y hacer los filetes 1-2 minutos por lado.",
+        "Servir con la ensalada aliñada y fruta de postre."
+      ]
+    },
+    {
+      "id": "chuleta-sajonia-plancha",
+      "nombre": "Chuleta de Sajonia a la plancha con ensalada",
+      "tipo": "comida",
+      "tiempoMin": 10,
+      "tecnica": "plancha",
+      "ingredientes": [
+        { "nombre": "Chuleta de Sajonia", "cantidad": 150, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "La chuleta de Sajonia ya viene curada: solo hay que dorarla en la plancha caliente, 2-3 minutos por lado.",
+        "Servir con la ensalada y fruta de postre."
+      ]
+    },
+    {
+      "id": "ternera-estofada",
+      "nombre": "Carne de ternera estofada con verduras",
+      "tipo": "comida",
+      "tiempoMin": 90,
+      "tecnica": "guiso",
+      "ingredientes": [
+        { "nombre": "Ternera para guisar", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Patata", "cantidad": 120, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Zanahoria", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Guisantes congelados", "cantidad": 40, "unidad": "g", "seccion": "Congelados" },
+        { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Dorar la carne troceada y salpimentada en la cazuela con el aceite y reservar.",
+        "Pochar la cebolla y la zanahoria, añadir el tomate y sofreír 5 minutos.",
+        "Volver a poner la carne, cubrir de agua o caldo con una hoja de laurel y cocer a fuego suave 60 minutos.",
+        "Añadir la patata en trozos y los guisantes y cocer 20 minutos más."
+      ],
+      "conservacion": "4 días en nevera; mejor de un día para otro. Se congela bien."
+    },
+    {
+      "id": "solomillo-naranja",
+      "nombre": "Solomillo de cerdo a la naranja con patatas al horno",
+      "tipo": "comida",
+      "tiempoMin": 45,
+      "tecnica": "horno",
+      "ingredientes": [
+        { "nombre": "Solomillo de cerdo", "cantidad": 140, "unidad": "g", "seccion": "Carnicería" },
+        { "nombre": "Naranjas", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
+      ],
+      "pasos": [
+        "Asar las patatas en gajos con la mitad del aceite y sal a 200 °C, 30 minutos.",
+        "Dorar el solomillo entero salpimentado en la sartén con el resto del aceite; reservar.",
+        "En la misma sartén pochar la cebolla, añadir el zumo de las naranjas y reducir 5 minutos.",
+        "Volver a poner el solomillo y cocer 8-10 minutos; cortar en medallones y napar con la salsa."
+      ]
+    }
+  ]
+}

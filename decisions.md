@@ -37,7 +37,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 30/09/2026 | Tupper de RFA (frío) de lunes a jueves; CCT (para recalentar) de lunes a miércoles. | RFA amplía al jueves desde el 30/09/2026. |
 | 30/09/2026 | **Alias en lugar de siglas** en la web y los PDF: CCT = Cristina, RFA = Ricardo, RFC = Ricardo hijo, AFC = Alicia. Los datos siguen usando las siglas por dentro. | Que la página se lea con nombres y no con siglas. |
 | 30/09/2026 | Desde la ficha de cada persona se puede cambiar el **peso** (queda un registro con la fecha), el **objetivo** (peso y/o plazo, con «¿Aceptar?» Sí/No), los **gustos** y el **desayuno**. Se guarda en la página (colección `perfil`). La ficha se recalcula al momento; el menú, las raciones y la compra se ajustan cuando los datos se copian al proyecto y se regenera la página. | Recalcular también el menú y la compra en la página era bastante más trabajo y más fácil que fallara. Es como ya funcionan la despensa y el diario. |
-| 30/09/2026 | El **desayuno** se cambia con **texto libre**. | Elegido así sabiendo que un desayuno en texto libre no cuenta en la lista de la compra hasta que Claude lo pase a receta. Motivo: sin anotar. |
+| 30/09/2026 | El **desayuno** se cambia con **texto libre**. | Preferencia de la familia. Se sabe que un desayuno en texto libre no cuenta en la lista de la compra hasta que Claude lo pase a receta. |
 | 30/09/2026 | Un objetivo nuevo solo se puede aceptar si: no baja de IMC 18,5, no pasa de 1 kg por semana y no obliga a comer menos que el metabolismo basal. Solo adultos. | Salud: son los límites habituales de una pérdida de peso segura. Los menores no tienen objetivo de peso (su pediatra). Confirmado por la familia el 30/09/2026. |
 
 ## Compra, despensa y cantidades

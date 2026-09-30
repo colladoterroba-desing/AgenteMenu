@@ -13,6 +13,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 | RFC | 18 | V | 173 cm | 76 kg | Natación M y J (1 h) |
 | AFC | 13 | M | 158 cm | 52 kg | Fútbol: entrenamiento X y V (1 h 30 min), partido S (90 min); Ed. física M y J; natación V (30 min) |
 
+- **Nombres en la web (alias):** CCT es Cristina, RFA es Ricardo, RFC es Ricardo hijo y AFC es Alicia. La web y los PDF muestran el nombre, no las siglas.
 - **Alergias:** no detectadas.
 - **Gustos:** RFA no come mucho pescado.
 - **Régimen de comidas:**
@@ -45,6 +46,8 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Compra → despensa:** al marcar productos en la lista de la compra aparece un botón fijo abajo a la derecha, «Confirmar compra», que los suma a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa.
 - **Despensa:** se puede añadir cualquier producto, esté o no en el menú (se suma a lo que hubiera).
 - **Menú:** los días que ya han pasado no se muestran (se pueden ver con «Mostrarlos»).
+- **Ficha de cada persona (desde el 30/09/2026):** se pueden cambiar el peso, el objetivo de peso (peso y/o plazo, aceptando Sí/No), los gustos y el desayuno (texto libre). La ficha se recalcula al momento; el menú y la compra, al sincronizar con el proyecto. Un objetivo no puede bajar de IMC 18,5, pasar de 1 kg por semana ni quedar por debajo del metabolismo basal.
+- **Normas:** página propia con las normas de la casa, las alergias y quién cocina.
 
 Los datos están en [`data/familia.json`](../data/familia.json).
 

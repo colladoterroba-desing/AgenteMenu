@@ -35,6 +35,10 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 28/09/2026 | Los **desayunos de CCT y RFA** se mantienen como están mientras sus propuestas (OI-06, OI-07) sigan pendientes. | Las propuestas no se han aceptado todavía. |
 | 28/09/2026 | Cada persona elige si su **desayuno fijo** aparece en el menú (por defecto no). Siempre se cuenta en la compra. | Para que el menú no se llene de información que no hace falta. |
 | 30/09/2026 | Tupper de RFA (frío) de lunes a jueves; CCT (para recalentar) de lunes a miércoles. | RFA amplía al jueves desde el 30/09/2026. |
+| 30/09/2026 | **Alias en lugar de siglas** en la web y los PDF: CCT = Cristina, RFA = Ricardo, RFC = Ricardo hijo, AFC = Alicia. Los datos siguen usando las siglas por dentro. | Que la página se lea con nombres y no con siglas. |
+| 30/09/2026 | Desde la ficha de cada persona se puede cambiar el **peso** (queda un registro con la fecha), el **objetivo** (peso y/o plazo, con «¿Aceptar?» Sí/No), los **gustos** y el **desayuno**. Se guarda en la página (colección `perfil`). La ficha se recalcula al momento; el menú, las raciones y la compra se ajustan cuando los datos se copian al proyecto y se regenera la página. | Recalcular también el menú y la compra en la página era bastante más trabajo y más fácil que fallara. Es como ya funcionan la despensa y el diario. |
+| 30/09/2026 | El **desayuno** se cambia con **texto libre**. | Elegido así sabiendo que un desayuno en texto libre no cuenta en la lista de la compra hasta que Claude lo pase a receta. Motivo: sin anotar. |
+| 30/09/2026 | Un objetivo nuevo solo se puede aceptar si: no baja de IMC 18,5, no pasa de 1 kg por semana y no obliga a comer menos que el metabolismo basal. Solo adultos. | Salud: son los límites habituales de una pérdida de peso segura. Los menores no tienen objetivo de peso (su pediatra). |
 
 ## Compra, despensa y cantidades
 
@@ -45,6 +49,14 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 30/09/2026 | Botón **«Confirmar compra»** en la lista: suma lo marcado a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa. | No comprar lo que ya hay. |
 | 28/09/2026 | **Precios reales, sin estimaciones.** Se cargan desde los tickets o a mano; el coste solo se muestra cuando hay precios. | Los precios estimados no eran fiables. |
 | 28/09/2026 | Se compara el coste en **Mercadona, BM y Casa Elías** y se propone la combinación más barata. | Son las tiendas donde compra la familia. |
+
+## Web
+
+| Fecha | Decisión | Motivo |
+|---|---|---|
+| 30/09/2026 | **Página «Normas»** con las normas de la casa, las alergias y quién cocina. Salen de Configuración. | Separar las normas de la configuración de las personas. Definiciones se queda como glosario. |
+| 30/09/2026 | En **Configuración → Grupo familiar** no se repiten los datos de cada miembro (están en su ficha) ni se explica cómo se cambia el menú. Se quedan el régimen de comidas, el reparto de la energía, los criterios del menú y el gráfico que compara el gasto de los cuatro. | Los datos de cada miembro, solo en su ficha. |
+| 30/09/2026 | En el **régimen de comidas** cada persona lleva un color: en casa (verde), tupper frío (azul), tupper para recalentar (naranja) y almuerzo que se lleva (amarillo). | Ver de un vistazo quién come en casa y quién lleva tupper. |
 
 ## Proyecto
 

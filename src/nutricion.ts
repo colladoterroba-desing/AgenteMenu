@@ -17,11 +17,15 @@ const MET: Record<string, number> = {
 const MET_POR_DEFECTO = 5.0;
 
 /** Factor de actividad de la vida diaria sin contar el deporte. */
-const FACTOR_BASE = 1.4;
-const KCAL_REFERENCIA = 2000;
+export const FACTOR_BASE = 1.4;
+export const KCAL_REFERENCIA = 2000;
 const IMC_OBJETIVO = 24.9;
-const PERDIDA_KG_SEMANA = 0.5;
+export const PERDIDA_KG_SEMANA = 0.5;
 const DEFICIT_MAXIMO_KCAL = 500;
+/** Kcal que hay que dejar de comer para perder 1 kg de grasa (aproximado). */
+export const KCAL_POR_KG = 7700;
+/** Ritmo máximo de pérdida que se acepta al cambiar un objetivo desde la web. */
+export const PERDIDA_MAXIMA_KG_SEMANA = 1;
 
 export type ClasificacionImc =
   | "bajo peso"
@@ -47,23 +51,33 @@ export function clasificarImc(m: Miembro): ClasificacionImc {
   return "obesidad";
 }
 
-/** Tasa metabólica basal: Mifflin-St Jeor (adultos) o Schofield (10-17 años). */
+/**
+ * Tasa metabólica basal = porKg × peso + fija. Mifflin-St Jeor (adultos) o
+ * Schofield (10-17 años). Por separado para recalcularla en la web al cambiar el peso.
+ */
+export function coeficientesTmb(m: Miembro): { porKg: number; fija: number } {
+  if (esAdulto(m)) return { porKg: 10, fija: 6.25 * m.alturaCm - 5 * m.edad + (m.sexo === "V" ? 5 : -161) };
+  return m.sexo === "V" ? { porKg: 17.686, fija: 658.2 } : { porKg: 13.384, fija: 692.6 };
+}
+
 export function tasaMetabolicaBasal(m: Miembro): number {
-  if (esAdulto(m)) {
-    const base = 10 * m.pesoKg + 6.25 * m.alturaCm - 5 * m.edad;
-    return m.sexo === "V" ? base + 5 : base - 161;
-  }
-  return m.sexo === "V" ? 17.686 * m.pesoKg + 658.2 : 13.384 * m.pesoKg + 692.6;
+  const { porKg, fija } = coeficientesTmb(m);
+  return porKg * m.pesoKg + fija;
+}
+
+/** Kcal diarias del deporte por cada kg de peso (el gasto del deporte es proporcional al peso). */
+export function kcalDeportePorKg(m: Miembro): number {
+  const semanales = m.actividades.reduce((total, a) => {
+    const met = MET[a.deporte] ?? MET_POR_DEFECTO;
+    const horas = (a.minutos / 60) * a.dias.length;
+    return total + (met - 1) * horas;
+  }, 0);
+  return semanales / 7;
 }
 
 /** Kcal semanales del deporte por encima del reposo, repartidas por día. */
 export function kcalDeporteDiarias(m: Miembro): number {
-  const semanales = m.actividades.reduce((total, a) => {
-    const met = MET[a.deporte] ?? MET_POR_DEFECTO;
-    const horas = (a.minutos / 60) * a.dias.length;
-    return total + (met - 1) * m.pesoKg * horas;
-  }, 0);
-  return semanales / 7;
+  return kcalDeportePorKg(m) * m.pesoKg;
 }
 
 export function gastoEnergeticoDiario(m: Miembro): number {

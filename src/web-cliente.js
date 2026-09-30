@@ -102,10 +102,14 @@
   const fechaCelda = (c) => { const [y, m, d] = MENU[c.sem].inicio.split("-").map(Number); return isoLocal(new Date(y, m - 1, d + c.dia)); };
   const fechaCorta = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }); };
   const nombreRec = (id) => (REC[id] ? REC[id].n : id);
+  // Las siglas de cada miembro se muestran con su alias (Cristina, Ricardo...).
+  const ALIAS = datos.alias || {};
+  const reAlias = Object.keys(ALIAS).length ? new RegExp("\\b(" + Object.keys(ALIAS).join("|") + ")\\b", "g") : null;
+  const conAlias = (t) => (reAlias ? String(t).replace(reAlias, (x) => ALIAS[x] || x) : String(t));
   const el = (tag, props, ...hijos) => {
     const e = document.createElement(tag);
-    if (props) Object.entries(props).forEach(([k, v]) => { if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else if (k in e) e[k] = v; else e.setAttribute(k, v); });
-    hijos.flat().forEach((h) => h != null && e.append(h));
+    if (props) Object.entries(props).forEach(([k, v]) => { if (k === "class") e.className = v; else if (k === "text") e.textContent = conAlias(v); else if (k === "title") e.title = conAlias(v); else if (k in e) e[k] = v; else e.setAttribute(k, v); });
+    hijos.flat().forEach((h) => h != null && e.append(typeof h === "string" ? conAlias(h) : h));
     return e;
   };
   const aviso = (txt) => {
@@ -363,7 +367,7 @@
     celdaDiario = c;
     const d = diarioDb.get(c.id) || {};
     document.getElementById("dlg-diario-titulo").textContent = "Diario · " + DIAS[c.dia] + " " + fechaCorta(fechaCelda(c)).split(" ").slice(1).join(" ") + ", " + COMIDA_TXT[c.comida].toLowerCase();
-    document.getElementById("dlg-diario-previsto").textContent = "Previsto: " + c.platos.map(nombreRec).join(" + ") + " (" + c.quien.join(", ") + ")";
+    document.getElementById("dlg-diario-previsto").textContent = "Previsto: " + c.platos.map(nombreRec).join(" + ") + " (" + conAlias(c.quien.join(", ")) + ")";
     formD.tipo.value = d.tipo || "previsto";
     selD.value = d.receta || c.platos[0] || "";
     formD.texto.value = d.texto || "";
@@ -591,8 +595,8 @@
       let badge = a.nextElementSibling && a.nextElementSibling.classList.contains("badge-nd") ? a.nextElementSibling : null;
       if (!lista.length) { if (badge) badge.remove(); return; }
       if (!badge) { badge = el("span", { class: "badge-nd" }); a.after(badge); }
-      badge.textContent = "No deseado: " + lista.map((n) => (n.por === "familia" ? "familia" : n.por)).join(", ");
-      badge.title = lista.map((n) => n.por + ": " + n.motivo).join(" · ");
+      badge.textContent = conAlias("No deseado: " + lista.map((n) => (n.por === "familia" ? "familia" : n.por)).join(", "));
+      badge.title = conAlias(lista.map((n) => n.por + ": " + n.motivo).join(" · "));
     });
   };
   document.querySelectorAll(".form-nd").forEach((formNd) => formNd.addEventListener("submit", async (e) => {
@@ -695,7 +699,7 @@
     const fijas = [...celdas.values()].filter((c) => fechaCelda(c) > HOY && c.comida !== "desayuno" && c.platos.length && !futuras.some((f) => f.celda === c.id))
       .map((c) => ({ fecha: fechaCelda(c), comida: c.comida, platos: efectivo(c).recetas.map(nombreRec) }));
     return {
-      hoy: HOY, normas: datos.normas, factoresRacion: datos.factores,
+      hoy: HOY, normas: datos.normas, factoresRacion: datos.factores, nombres: ALIAS,
       comentariosDeLaFamilia: comentarios.map((x) => ({ fecha: String(x.fecha).slice(0, 10), texto: x.texto })),
       noDeseados: noDeseadosActuales().map((n) => ({ receta: n.receta, quien: n.por, motivo: n.motivo })),
       comidasHastaHoy: pasadas, platosQueNoSeTocan: fijas, platosRevisables: futuras,
@@ -706,7 +710,7 @@
   const pedirPropuesta = async () => {
     const ctx = contexto();
     if (!ctx.platosRevisables.length) { actEstado.textContent = "No quedan platos que revisar en el menú."; return; }
-    const prompt = "Eres el planificador del menú semanal de una familia española. Revisa SOLO los platos de 'platosRevisables' (días posteriores a hoy) teniendo en cuenta lo que se ha comido de verdad hasta hoy ('comidasHastaHoy': si se comió otra cosa distinta de lo previsto, reequilibra el resto de la semana: legumbre, pescado, verdura, no repetir lo ya comido), lo que hay en la despensa (aprovecha lo que haya, sobre todo lo que caduca antes), las normas de la casa, los platos no deseados y los comentarios de la familia (por ejemplo, si alguien no come en casa ciertos días, quítalo de 'comensales' en esas casillas; si nadie come, no incluyas la casilla). Cambia solo lo que tenga un motivo claro y explícalo con datos de la entrada; no inventes peticiones de la familia. Si todo está bien, no cambies nada. Usa únicamente ids del 'recetario', adecuados al tipo de comida (almuerzo, comida, merienda o cena). Cada casilla lleva 1 o 2 recetas. 'comensales' es opcional: ponlo solo si cambia quién come (códigos " + datos.miembros.join(", ") + ").\n\nDevuelve solo JSON con esta forma: {\"resumen\": \"una o dos frases en español\", \"cambios\": [{\"celda\": \"id de platosRevisables\", \"recetas\": [\"id del recetario\"], \"comensales\": [\"" + datos.miembros[0] + "\"], \"motivo\": \"frase corta en español\"}]}\n\nDatos:\n" + JSON.stringify(ctx);
+    const prompt = "Eres el planificador del menú semanal de una familia española. Revisa SOLO los platos de 'platosRevisables' (días posteriores a hoy) teniendo en cuenta lo que se ha comido de verdad hasta hoy ('comidasHastaHoy': si se comió otra cosa distinta de lo previsto, reequilibra el resto de la semana: legumbre, pescado, verdura, no repetir lo ya comido), lo que hay en la despensa (aprovecha lo que haya, sobre todo lo que caduca antes), las normas de la casa, los platos no deseados y los comentarios de la familia (por ejemplo, si alguien no come en casa ciertos días, quítalo de 'comensales' en esas casillas; si nadie come, no incluyas la casilla). Cambia solo lo que tenga un motivo claro y explícalo con datos de la entrada; no inventes peticiones de la familia. Si todo está bien, no cambies nada. Usa únicamente ids del 'recetario', adecuados al tipo de comida (almuerzo, comida, merienda o cena). Cada casilla lleva 1 o 2 recetas. 'comensales' es opcional: ponlo solo si cambia quién come (códigos " + datos.miembros.join(", ") + "; en 'nombres' está el nombre de cada código, que es como la familia se refiere a ellos en los comentarios).\n\nDevuelve solo JSON con esta forma: {\"resumen\": \"una o dos frases en español\", \"cambios\": [{\"celda\": \"id de platosRevisables\", \"recetas\": [\"id del recetario\"], \"comensales\": [\"" + datos.miembros[0] + "\"], \"motivo\": \"frase corta en español\"}]}\n\nDatos:\n" + JSON.stringify(ctx);
     botonesA(el("button", { type: "button", class: "btn-principal", text: "Pensando…", disabled: true }), cerrarBtn());
     actEstado.textContent = "Claude está revisando el menú. Puede tardar un minuto.";
     abortar = new AbortController();
@@ -760,8 +764,180 @@
     botonesA(aplicar, cerrarBtn());
   };
 
+  // ================= Fichas de las personas: peso, objetivo, gustos y desayuno =================
+  // Se guardan en la colección «perfil» (un documento por persona). La ficha se recalcula al momento;
+  // el menú y la compra se ajustan cuando se copian al proyecto y se regenera la página.
+  const PERF = datos.perfiles, K = datos.constantes;
+  let perfilDb = new Map();
+  const perfil = (id) => {
+    const base = PERF[id], d = perfilDb.get(id) || {};
+    return { ...base, pesoKg: d.pesoKg ?? base.pesoKg, objetivo: d.objetivo ?? base.objetivo, gustos: d.gustos ?? base.gustos,
+      desayunoTexto: d.desayuno ? d.desayuno.texto : null, desayunoFecha: d.desayuno ? d.desayuno.fecha : null, pesos: d.pesos || [] };
+  };
+  const energia = (p, peso) => {
+    const tmb = p.tmbPorKg * peso + p.tmbFija;
+    const gasto = tmb * K.factorBase + p.deportePorKg * peso;
+    const kcal = p.objetivo ? p.objetivo.kcalDiarias : Math.round(gasto);
+    return { tmb, gasto, kcal, imc: peso / Math.pow(p.alturaCm / 100, 2), racion: kcal / K.kcalReferencia };
+  };
+  const estadoImc = (p, imc) => (!p.adulto ? ["info", "Menor: percentiles"] : imc < 18.5 ? ["aviso", "Bajo peso"]
+    : imc < 25 ? ["bien", "Normopeso"] : imc < 30 ? ["aviso", "Sobrepeso"] : ["aviso", "Obesidad"]);
+  const posImc = (v) => ((Math.min(Math.max(v, K.imcMin), K.imcMax) - K.imcMin) / (K.imcMax - K.imcMin)) * 100;
+  const fmtDia = (iso) => new Date(String(iso).slice(0, 10) + "T12:00:00").toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+  const huecoDe = (id, campo) => document.querySelector('[data-m="' + id + '"][data-campo="' + campo + '"]');
+
+  const renderPerfiles = () => {
+    Object.keys(PERF).forEach((id) => {
+      const p = perfil(id), e = energia(p, p.pesoKg);
+      const poner = (campo, txt) => { const x = huecoDe(id, campo); if (x) x.textContent = txt; };
+      poner("peso", fmtNum(p.pesoKg, 1) + " kg");
+      poner("imc", fmtNum(e.imc, 1));
+      poner("tmb", fmtNum(e.tmb)); poner("gasto", fmtNum(e.gasto)); poner("kcal", fmtNum(e.kcal)); poner("racion", "×" + fmtNum(e.racion, 2));
+      const [clase, txt] = estadoImc(p, e.imc);
+      const est = huecoDe(id, "estado"); if (est) { est.className = "chip " + clase; est.textContent = txt; }
+      const marca = huecoDe(id, "imc-marca"); if (marca) marca.style.left = posImc(e.imc) + "%";
+      const hist = huecoDe(id, "historial-peso");
+      if (hist) {
+        hist.replaceChildren();
+        if (p.pesos.length) hist.append(el("ul", { class: "historial-peso", "aria-label": "Últimos pesos" },
+          p.pesos.slice(-5).reverse().map((x) => el("li", null, el("span", { text: fmtDia(x.fecha) }), el("span", { class: "mono", text: fmtNum(x.kg, 1) + " kg" })))));
+      }
+      const obj = huecoDe(id, "objetivo");
+      if (obj) {
+        const o = p.objetivo;
+        obj.replaceChildren(o
+          ? el("p", { class: "nota bien-borde" }, el("strong", { text: "Objetivo acordado: " }),
+            fmtNum(o.pesoObjetivoKg, 1) + " kg en " + o.semanas + " semanas · " + fmtNum(o.kcalDiarias) + " kcal/día" + (o.fechaInicio ? " (desde el " + fmtDia(o.fechaInicio) + ")" : ""))
+          : !p.adulto ? el("p", { class: "nota", text: "Sin restricciones calóricas: prioridad al crecimiento y al deporte. Dudas de peso, con su pediatra." })
+          : e.imc >= 25 ? el("p", { class: "nota aviso-borde", text: "IMC por encima de 25 y sin objetivo acordado. Con «Cambiar objetivo» se calcula una propuesta. Conviene consultarlo con su médico." })
+          : el("p", { class: "nota", text: "Sin objetivo de peso: está en normopeso." }));
+      }
+      const gus = huecoDe(id, "gustos");
+      if (gus) gus.replaceChildren(p.gustos.length ? p.gustos.join(", ") : el("span", { class: "sub", text: "Sin indicar" }));
+      const des = huecoDe(id, "desayuno");
+      if (des && p.desayunoTexto) des.replaceChildren(p.desayunoTexto, el("br"), el("span", { class: "sub",
+        text: "Apuntado el " + fmtDia(p.desayunoFecha) + (p.desayuno ? ". La lista de la compra sigue contando «" + p.desayuno + "» hasta que se pase a receta." : ".") }));
+    });
+    document.querySelectorAll(".botones-ficha").forEach((b) => (b.hidden = !editable));
+  };
+
+  const dlgP = document.getElementById("dlg-perfil");
+  const cuerpoP = document.getElementById("dlg-perfil-cuerpo");
+  const estadoP = document.getElementById("dlg-perfil-estado");
+  const botonesP = document.getElementById("dlg-perfil-botones");
+  const botonP = (texto, fn, principal) => { const b = el("button", { type: "button", class: principal ? "btn-principal" : "secundario", text: texto }); b.addEventListener("click", fn); return b; };
+  const cancelarP = () => botonP("Cancelar", () => dlgP.close());
+  const abrirPerfil = (titulo, cuerpo, botones) => {
+    document.getElementById("dlg-perfil-titulo").textContent = titulo;
+    cuerpoP.replaceChildren(...cuerpo); estadoP.textContent = ""; botonesP.replaceChildren(...botones);
+    dlgP.showModal();
+  };
+  const guardarPerfil = async (id, cambios, evento) => {
+    const doc = { ...(perfilDb.get(id) || {}), ...cambios, actualizado: new Date().toISOString() };
+    try {
+      await db.doc("perfil/" + id).set(doc);
+      perfilDb.set(id, doc);
+      await registrar("perfil", evento);
+      dlgP.close(); renderPerfiles(); aviso("Guardado.");
+    } catch (e) { estadoP.textContent = "No se ha podido guardar (" + (e && e.code || "error") + ")."; }
+  };
+  const nom = (id) => ALIAS[id] || id;
+  const campoNum = (etq, valor, attrs) => { const i = el("input", { type: "number", inputmode: "decimal", value: String(valor), ...attrs }); return [i, el("label", null, etq, i)]; };
+
+  const editarPeso = (id) => {
+    const p = perfil(id);
+    const [inp, lab] = campoNum("Peso (kg)", p.pesoKg, { min: "20", max: "250", step: "0.1" });
+    abrirPerfil("Peso de " + nom(id), [lab, p.objetivo ? el("p", { class: "sub", text: "Tiene un objetivo acordado: las kcal del día no cambian con el peso. Si hace falta, cambia también el objetivo." }) : null].filter(Boolean), [
+      botonP("Guardar", () => {
+        const kg = Math.round(Number(inp.value) * 10) / 10;
+        if (!(kg >= 20 && kg <= 250)) { estadoP.textContent = "Escribe un peso entre 20 y 250 kg."; return; }
+        const pesos = p.pesos.filter((x) => x.fecha !== HOY).concat({ fecha: HOY, kg });
+        guardarPerfil(id, { pesoKg: kg, pesos }, nom(id) + ": peso " + fmtNum(kg, 1) + " kg");
+      }, true), cancelarP()]);
+    inp.focus();
+  };
+
+  const editarObjetivo = (id) => {
+    const p = perfil(id), e = energia(p, p.pesoKg);
+    const h2 = Math.pow(p.alturaCm / 100, 2);
+    const pesoSano = Math.round(24.9 * h2 * 10) / 10;
+    const pesoIni = p.objetivo ? p.objetivo.pesoObjetivoKg : (e.imc >= 25 ? pesoSano : p.pesoKg);
+    const semIni = p.objetivo ? p.objetivo.semanas : Math.max(1, Math.ceil(Math.abs(p.pesoKg - pesoIni) / K.perdidaKgSemana));
+    const [inpPeso, labPeso] = campoNum("Peso objetivo (kg)", pesoIni, { min: "30", max: "250", step: "0.1" });
+    const [inpSem, labSem] = campoNum("Plazo (semanas)", semIni, { min: "1", max: "104", step: "1" });
+    const resultado = el("div", { class: "resultado-objetivo", "aria-live": "polite" });
+    let propuesta = null;
+    const calcular = () => {
+      propuesta = null;
+      const objetivo = Math.round(Number(inpPeso.value) * 10) / 10, semanas = Math.round(Number(inpSem.value));
+      const errores = [];
+      if (!(objetivo >= 30 && objetivo <= 250)) errores.push("Escribe un peso objetivo entre 30 y 250 kg.");
+      if (!(semanas >= 1 && semanas <= 104)) errores.push("Escribe un plazo entre 1 y 104 semanas.");
+      if (errores.length) return mostrar(errores);
+      const kg = p.pesoKg - objetivo, ritmo = Math.abs(kg) / semanas;
+      const kcal = Math.round(e.gasto - (kg * K.kcalPorKg) / (semanas * 7));
+      if (objetivo / h2 < 18.5) errores.push("Ese peso queda por debajo de lo saludable (IMC " + fmtNum(objetivo / h2, 1) + "; el mínimo es 18,5, unos " + fmtNum(Math.ceil(18.5 * h2 * 10) / 10, 1) + " kg).");
+      if (ritmo > K.perdidaMaxima) errores.push("Es demasiado rápido: " + fmtNum(ritmo, 2) + " kg por semana. No conviene pasar de " + fmtNum(K.perdidaMaxima) + " kg por semana; alarga el plazo.");
+      else if (kg > 0 && kcal < e.tmb) errores.push("Tendría que comer " + fmtNum(kcal) + " kcal al día, por debajo de su metabolismo basal (" + fmtNum(e.tmb) + " kcal). Alarga el plazo.");
+      if (errores.length) return mostrar(errores);
+      const fin = new Date(HOY + "T12:00:00"); fin.setDate(fin.getDate() + semanas * 7);
+      propuesta = { pesoObjetivoKg: objetivo, semanas, kcalDiarias: kcal, fechaInicio: HOY, notas: "Cambiado desde la web" };
+      const accion = kg > 0 ? "Perder " + fmtNum(kg, 1) + " kg" : kg < 0 ? "Ganar " + fmtNum(-kg, 1) + " kg" : "Mantener el peso";
+      mostrar([], [
+        el("p", { class: "nota" }, el("strong", { text: accion + " en " + semanas + " semanas" }),
+          (kg ? " (" + fmtNum(ritmo, 2) + " kg por semana)" : "") + ": unas " + fmtNum(kcal) + " kcal al día (ahora gasta unas " + fmtNum(e.gasto) + "). Fecha prevista: " + fmtDia(isoLocal(fin)) + "."),
+        el("p", { class: "sub", text: "Conviene consultarlo con su médico." }),
+        el("p", { text: "¿Aceptar este objetivo?" }),
+      ]);
+    };
+    const mostrar = (errores, contenido) => {
+      resultado.replaceChildren(...(errores.length ? errores.map((x) => el("p", { class: "nota aviso-borde", text: x })) : contenido));
+      botonesP.replaceChildren(...(propuesta
+        ? [botonP("Sí, aceptar", () => guardarPerfil(id, { objetivo: propuesta },
+            nom(id) + ": nuevo objetivo, " + fmtNum(propuesta.pesoObjetivoKg, 1) + " kg en " + propuesta.semanas + " semanas (" + fmtNum(propuesta.kcalDiarias) + " kcal/día)"), true),
+          botonP("No", () => { dlgP.close(); aviso("El objetivo no ha cambiado."); })]
+        : [botonP("Calcular", calcular, true), cancelarP()]));
+    };
+    [inpPeso, inpSem].forEach((i) => i.addEventListener("input", () => { if (propuesta) { propuesta = null; resultado.replaceChildren(); mostrar([], []); } }));
+    abrirPerfil("Objetivo de " + nom(id), [
+      el("p", { class: "sub", text: "Peso actual: " + fmtNum(p.pesoKg, 1) + " kg." + (p.objetivo ? " Objetivo actual: " + fmtNum(p.objetivo.pesoObjetivoKg, 1) + " kg en " + p.objetivo.semanas + " semanas." : "") + " Cambia el peso objetivo, el plazo o los dos y pulsa «Calcular»." }),
+      el("div", { class: "fila-campos" }, labPeso, labSem), resultado,
+    ], [botonP("Calcular", calcular, true), cancelarP()]);
+    inpPeso.focus();
+  };
+
+  const editarTexto = (id, que) => {
+    const p = perfil(id);
+    const esGustos = que === "gustos";
+    const area = el("textarea", { rows: esGustos ? 4 : 3, value: esGustos ? p.gustos.join("\n") : (p.desayunoTexto || p.desayuno || "") });
+    abrirPerfil((esGustos ? "Gustos de " : "Desayuno de ") + nom(id), [
+      el("label", null, esGustos ? "Uno por línea (por ejemplo: «No le gusta el pescado»)" : "Qué desayuna", area),
+      esGustos ? null : el("p", { class: "sub", text: "Texto libre. La lista de la compra seguirá contando el desayuno actual" + (p.desayuno ? " («" + p.desayuno + "»)" : "") + " hasta que Claude lo pase a receta." }),
+    ].filter(Boolean), [
+      botonP("Guardar", () => {
+        if (esGustos) {
+          const gustos = area.value.split("\n").map((x) => x.trim()).filter(Boolean).slice(0, 20);
+          guardarPerfil(id, { gustos }, nom(id) + ": gustos «" + (gustos.join(", ") || "sin indicar") + "»");
+        } else {
+          const texto = area.value.trim().slice(0, 300);
+          if (!texto) { estadoP.textContent = "Escribe qué desayuna."; return; }
+          guardarPerfil(id, { desayuno: { texto, fecha: HOY } }, nom(id) + ": desayuno «" + texto + "»");
+        }
+      }, true), cancelarP()]);
+    area.focus();
+  };
+
+  document.querySelectorAll(".botones-ficha").forEach((caja) => caja.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b || !editable) return;
+    const id = caja.dataset.m, tipo = caja.dataset.editar;
+    if (tipo === "peso") editarPeso(id);
+    else if (tipo === "objetivo") editarObjetivo(id);
+    else editarTexto(id, b.dataset.que);
+  }));
+
   // ================= Arranque =================
-  const renderTodo = () => { renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderNoDeseados(); renderDiario(); renderComentarios(); };
+  const renderTodo = () => { renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
   const avisoDb = document.getElementById("despensa-aviso");
   const soloLectura = (motivo) => {
     editable = false;
@@ -785,6 +961,7 @@
     sub("diario", (m) => (diarioDb = m));
     sub("cambios", (m) => (cambiosDb = m));
     sub("cocinado", (m) => (cocinadoDb = m));
+    sub("perfil", (m) => (perfilDb = m));
     db.collection("comentarios").onSnapshot((snap) => { comentarios = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((x, y) => String(y.fecha).localeCompare(String(x.fecha))); renderComentarios(); }, () => {});
     db.collection("eventos").orderBy("fecha", "desc").limit(100).onSnapshot((snap) => { eventos = snap.docs.map((d) => d.data()); renderDiario(); }, () => {});
     sample = await window.claude.use("sample");

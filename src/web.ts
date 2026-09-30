@@ -4,7 +4,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   calcularNecesidades,
+  coeficientesTmb,
+  FACTOR_BASE,
+  KCAL_POR_KG,
+  KCAL_REFERENCIA,
   kcalDeporteDiarias,
+  kcalDeportePorKg,
+  PERDIDA_KG_SEMANA,
+  PERDIDA_MAXIMA_KG_SEMANA,
   PARTE_DESAYUNO_PARA_ALMUERZO,
   REPARTO_FIN_DE_SEMANA,
   REPARTO_LABORABLE,
@@ -124,7 +131,7 @@ function estadoImc(clasificacion: string) {
   return { clase: "info", texto: "Menor: percentiles" };
 }
 
-function escalaImc(imc: number): string {
+function escalaImc(imc: number, id?: string): string {
   return `<div class="imc" aria-label="IMC ${num(imc, 1)} en una escala de ${IMC_MIN} a ${IMC_MAX}">
     <div class="imc-bandas">
       <span style="width:${posImc(18.5)}%" class="b-bajo"></span>
@@ -132,7 +139,7 @@ function escalaImc(imc: number): string {
       <span style="width:${posImc(30) - posImc(25)}%" class="b-sobre"></span>
       <span style="width:${100 - posImc(30)}%" class="b-obes"></span>
     </div>
-    <span class="imc-marca" style="left:${posImc(imc)}%"></span>
+    <span class="imc-marca" style="left:${posImc(imc)}%"${id ? ` data-m="${esc(id)}" data-campo="imc-marca"` : ""}></span>
     <div class="imc-ejes mono"><span style="left:${posImc(18.5)}%">18,5</span><span style="left:${posImc(25)}%">25</span><span style="left:${posImc(30)}%">30</span></div>
   </div>`;
 }
@@ -143,10 +150,38 @@ const categoria = (titulo: string, cuerpo: string, clase = "") =>
 const pares = (filas: [string, string][]) =>
   `<dl class="pares">${filas.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
 
-/** Ficha de configuración de una persona, organizada por categorías. */
+/** Nombre que se muestra de un miembro: su alias o, si no tiene, sus siglas. */
+export const nombreMiembro = (familia: Familia, id: string) => familia.miembros.find((m) => m.id === id)?.alias ?? id;
+
+/**
+ * Cambia las siglas de cada miembro por su alias en el texto visible del HTML
+ * (texto y atributos title, data-tip, aria-label y placeholder). No toca ids,
+ * clases, valores de formularios, estilos ni scripts.
+ */
+export function conAlias(html: string, familia: Familia): string {
+  const alias = new Map(familia.miembros.filter((m) => m.alias).map((m) => [m.id, m.alias!]));
+  if (!alias.size) return html;
+  const siglas = new RegExp(`\\b(${[...alias.keys()].join("|")})\\b`, "g");
+  const cambiar = (t: string) => t.replace(siglas, (id) => alias.get(id)!);
+  return html
+    .split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>)/)
+    .map((trozo, i) =>
+      i % 2
+        ? trozo
+        : trozo
+            .replace(/>([^<]+)</g, (_, t: string) => `>${cambiar(t)}<`)
+            .replace(/\s(title|data-tip|aria-label|placeholder)="([^"]*)"/g, (_, a: string, v: string) => ` ${a}="${cambiar(v)}"`),
+    )
+    .join("");
+}
+
+/** Ficha de configuración de una persona. Peso, objetivo, gustos y desayuno se editan desde la página (web-cliente.js). */
 function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>): string {
   const n = calcularNecesidades(m, familia.objetivos[m.id]);
   const estado = estadoImc(n.clasificacion);
+  // Huecos que el script de la página actualiza al cambiar el peso o el objetivo.
+  const campo = (c: string, v: string, clase = "mono") => `<span class="${clase}" data-m="${esc(m.id)}" data-campo="${c}">${v}</span>`;
+  const hueco = (c: string, contenido: string) => `<div data-m="${esc(m.id)}" data-campo="${c}">${contenido}</div>`;
   const deportes = m.actividades
     .map((a) => `<li><span>${esc(DEPORTE[a.deporte] ?? a.deporte)}</span><span class="mono">${a.dias.join(" ")} · ${a.minutos} min</span></li>`)
     .join("");
@@ -167,60 +202,70 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
       const si = familia.regimen[tipo][d].includes(m.id);
       const fuera = !si && tipo === "comida" && tupper?.dias.includes(d);
       const texto = si ? "en casa" : fuera ? `fuera, tupper ${tupper!.tipo}` : "fuera";
-      return `<li class="${si ? "si" : fuera ? "tupper-dia" : "no"}" title="${esc(`${NOMBRE_DIA[d]}: ${texto}`)}"><span aria-hidden="true">${d}</span><span class="sr">${esc(`${NOMBRE_DIA[d]}: ${texto}`)}</span></li>`;
+      const clase = si ? "si" : fuera ? `tupper-dia ${tupper!.tipo === "frío" ? "frio" : "calor"}` : "no";
+      return `<li class="${clase}" title="${esc(`${NOMBRE_DIA[d]}: ${texto}`)}"><span aria-hidden="true">${d}</span><span class="sr">${esc(`${NOMBRE_DIA[d]}: ${texto}`)}</span></li>`;
     }).join("")}</ol>`;
 
   return `<div class="ficha">
     <header class="ficha-cab">
       <div>
-        <h3>${esc(m.id)}</h3>
-        <p class="sub">${m.edad} años · ${m.sexo === "V" ? "varón" : "mujer"}</p>
+        <h3>${esc(m.alias ?? m.id)}</h3>
+        <p class="sub">${m.edad} años · ${m.sexo === "V" ? "varón" : "mujer"} · <span class="mono">${m.alturaCm} cm</span></p>
       </div>
-      <span class="chip ${estado.clase}">${estado.texto}</span>
+      ${campo("estado", estado.texto, `chip ${estado.clase}`)}
     </header>
-    <div class="categorias">
+    <div class="categorias ficha-bloques">
       ${categoria(
-        "Datos físicos",
+        "Peso",
         pares([
-          ["Altura", `<span class="mono">${m.alturaCm} cm</span>`],
-          ["Peso", `<span class="mono">${m.pesoKg} kg</span>`],
-          ["IMC", `<span class="mono">${num(n.imc, 1)}</span>`],
-        ]) + (m.edad >= 18 ? escalaImc(n.imc) : `<p class="sub">En menores el IMC se valora con tablas de percentiles.</p>`),
+          ["Peso", `${campo("peso", `${num(m.pesoKg, 1)} kg`)}`],
+          ["IMC", campo("imc", num(n.imc, 1))],
+        ]) +
+          (m.edad >= 18 ? escalaImc(n.imc, m.id) : `<p class="sub">En menores el IMC se valora con tablas de percentiles.</p>`) +
+          hueco("historial-peso", "") +
+          `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="peso" hidden><button type="button" class="btn-mini">Cambiar peso</button></div>`,
       )}
       ${categoria(
-        "Energía y raciones",
+        "Energía y actividad",
         pares([
-          ["Metabolismo basal", `<span class="mono">${num(n.tmb)} kcal</span>`],
-          ["Gasto diario", `<span class="mono">${num(n.gastoDiario)} kcal</span>`],
-          ["Objetivo diario", `<span class="mono">${num(n.kcalObjetivo)} kcal</span>`],
-          ["Ración", `<span class="mono">×${num(n.factorRacion, 2)}</span>`],
-        ]) + objetivo,
+          ["Metabolismo basal", `${campo("tmb", num(n.tmb))} kcal`],
+          ["Gasto diario", `${campo("gasto", num(n.gastoDiario))} kcal`],
+          ["Objetivo diario", `${campo("kcal", num(n.kcalObjetivo))} kcal`],
+          ["Ración", campo("racion", `×${num(n.factorRacion, 2)}`)],
+        ]) + `<p class="etq">Actividad física</p><ul class="lista-deporte">${deportes || "<li>Sin deporte registrado</li>"}</ul>`,
       )}
-      ${categoria("Actividad física", `<ul class="lista-deporte">${deportes || "<li>Sin deporte registrado</li>"}</ul>`)}
+      ${categoria(
+        "Objetivo de peso",
+        hueco("objetivo", objetivo) +
+          (m.edad >= 18 ? `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="objetivo" hidden><button type="button" class="btn-mini">Cambiar objetivo</button></div>` : ""),
+      )}
       ${categoria(
         "Alimentación",
         pares([
-          ["Gustos", m.gustos.length ? esc(m.gustos.join(", ")) : `<span class="sub">Sin indicar</span>`],
-          ["Alergias", familia.alergias.length ? esc(familia.alergias.join(", ")) : `<span class="sub">No detectadas</span>`],
+          ["Gustos", hueco("gustos", m.gustos.length ? esc(m.gustos.join(", ")) : `<span class="sub">Sin indicar</span>`)],
           [
             "Desayuno",
-            recetaDesayuno
-              ? `<a href="#r-${esc(recetaDesayuno.id)}">${esc(recetaDesayuno.nombre)}</a>${desayuno?.nota ? `<br><span class="sub">${esc(desayuno.nota)}</span>` : ""}`
-              : `<span class="sub">El del menú</span>`,
+            hueco(
+              "desayuno",
+              recetaDesayuno
+                ? `<a href="#r-${esc(recetaDesayuno.id)}">${esc(recetaDesayuno.nombre)}</a>${desayuno?.nota ? `<br><span class="sub">${esc(desayuno.nota)}</span>` : ""}`
+                : `<span class="sub">El del menú</span>`,
+            ),
           ],
           ...(desayuno
             ? ([["Desayuno en el menú", desayuno.mostrarEnMenu ? "Se muestra" : `<span class="sub">No se muestra (sí cuenta en la compra)</span>`]] as [string, string][])
             : []),
           ["Almuerzo", almuerzo ? `Se lo lleva al ${esc(almuerzo.lugar)} · <span class="mono">${almuerzo.dias.join(" ")}</span>` : `<span class="sub">No</span>`],
-        ]),
+        ]) +
+          `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="alimentacion" hidden><button type="button" class="btn-mini" data-que="gustos">Cambiar gustos</button><button type="button" class="btn-mini" data-que="desayuno">Cambiar desayuno</button></div>`,
+        "doble",
       )}
       ${categoria(
         "Comidas en casa",
         `<div class="en-casa-fila"><span class="etq">Comida</span>${enCasa("comida")}</div>
          <div class="en-casa-fila"><span class="etq">Cena</span>${enCasa("cena")}</div>
-         ${tupper ? `<p class="sub">Los días que come fuera se lleva tupper <strong>${esc(tupper.tipo)}</strong> (en color).</p>` : ""}`,
+         <ul class="leyenda-regimen"><li><span class="muestra-dia si"></span>En casa</li>${tupper ? `<li><span class="muestra-dia tupper-dia ${tupper.tipo === "frío" ? "frio" : "calor"}"></span>Tupper ${esc(tupper.tipo)}</li>` : ""}<li><span class="muestra-dia"></span>Fuera</li></ul>`,
       )}
-      ${categoria("En la cocina", `<p>${esc(familia.roles[m.id] ?? "—")}</p>`)}
     </div>
   </div>`;
 }
@@ -234,47 +279,40 @@ function historialMenu(menu: MenuSemana): string {
     .join("")}</ul></details></div>`;
 }
 
-function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
-  const porId = new Map(recetas.map((r) => [r.id, r]));
-  const filaRegimen = (nombre: string, quien: (d: Dia) => string[]) =>
-    `<tr><th scope="row">${nombre}</th>${DIAS_SEMANA.map(
-      (d) => `<td>${quien(d).map((id) => `<span class="comensal">${esc(id)}</span>`).join(" ") || `<span class="sub">—</span>`}</td>`,
-    ).join("")}</tr>`;
+/** Régimen de comidas por día, con un color para quien come en casa, quien lleva tupper y quien lleva almuerzo. */
+function tablaRegimen(familia: Familia): string {
   const tuppers = familia.regimen.tupper ?? {};
   const almuerzos = familia.regimen.almuerzo ?? {};
-  const quienTupper = (d: Dia) => Object.entries(tuppers).filter(([, t]) => t.dias.includes(d)).map(([id]) => id);
-  const quienAlmuerzo = (d: Dia) => Object.entries(almuerzos).filter(([, a]) => a.dias.includes(d)).map(([id]) => id);
+  const chip = (id: string, clase: string, titulo: string) => `<span class="comensal ${clase}" title="${esc(`${id}: ${titulo}`)}">${esc(id)}</span>`;
+  const celda = (chips: string[]) => `<td>${chips.join(" ") || `<span class="sub">—</span>`}</td>`;
+  const fila = (nombre: string, porDia: (d: Dia) => string[]) =>
+    `<tr><th scope="row">${nombre}</th>${DIAS_SEMANA.map((d) => celda(porDia(d))).join("")}</tr>`;
+  const claseTupper = (t: { tipo: string }) => (t.tipo === "frío" ? "tupper-frio" : "tupper-calor");
+  return `<div class="scroll"><table class="regimen">
+      <thead><tr><th><span class="sr">Comida</span></th>${DIAS_SEMANA.map((d) => `<th>${NOMBRE_DIA[d]}</th>`).join("")}</tr></thead>
+      <tbody>
+        ${fila("Almuerzo", (d) => Object.entries(almuerzos).filter(([, a]) => a.dias.includes(d)).map(([id, a]) => chip(id, "almuerzo", `almuerzo, se lo lleva al ${a.lugar}`)))}
+        ${fila("Comida", (d) => [
+          ...familia.regimen.comida[d].map((id) => chip(id, "casa", "come en casa")),
+          ...Object.entries(tuppers).filter(([, t]) => t.dias.includes(d)).map(([id, t]) => chip(id, claseTupper(t), `tupper ${t.tipo}`)),
+        ])}
+        ${fila("Cena", (d) => familia.regimen.cena[d].map((id) => chip(id, "casa", "cena en casa")))}
+      </tbody>
+    </table></div>
+    <ul class="leyenda-regimen">
+      <li><span class="comensal casa">En casa</span></li>
+      <li><span class="comensal tupper-frio">Tupper frío</span></li>
+      <li><span class="comensal tupper-calor">Tupper para recalentar</span></li>
+      <li><span class="comensal almuerzo">Almuerzo que se lleva</span></li>
+    </ul>
+    <p class="sub">Desayuno: ${esc(familia.regimen.desayuno)}. Merienda: ${esc(familia.regimen.merienda)}.</p>`;
+}
 
+function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
+  const porId = new Map(recetas.map((r) => [r.id, r]));
   const grupo = `<div class="grupo">
+    ${categoria("Régimen de comidas", tablaRegimen(familia), "ancha")}
     <div class="categorias">
-      ${categoria(
-        "Miembros",
-        `<ul class="miembros">${familia.miembros
-          .map((m) => `<li><span class="comensal">${esc(m.id)}</span> ${m.edad} años · ${m.sexo === "V" ? "varón" : "mujer"}</li>`)
-          .join("")}</ul>`,
-      )}
-      ${categoria(
-        "Normas de la casa",
-        pares([
-          ["Preferencias", familia.preferencias?.length ? `<ul class="criterios">${familia.preferencias.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<span class="sub">Ninguna</span>`],
-          ["Restricciones", familia.restricciones?.length ? `<ul class="criterios">${familia.restricciones.map((r) => `<li>${esc(r.motivo)}</li>`).join("")}</ul>` : `<span class="sub">Ninguna</span>`],
-          ["Alergias", familia.alergias.length ? esc(familia.alergias.join(", ")) : `<span class="sub">No detectadas</span>`],
-          ["Merienda", esc(familia.regimen.merienda)],
-        ]),
-      )}
-      ${categoria(
-        "Cambios al menú",
-        pares([
-          ["Diario", "Cualquiera con acceso de edición apunta lo que se comió de verdad y sus comentarios"],
-          ["Actualizar menú", "Claude revisa los días que quedan con el diario, lo cocinado y la despensa; los cambios se aplican al confirmarlos"],
-        ]),
-      )}
-      ${categoria(
-        "Quién cocina",
-        `<ul class="miembros">${Object.entries(familia.roles)
-          .map(([id, rol]) => `<li><span class="comensal">${esc(id)}</span> ${esc(rol)}</li>`)
-          .join("")}</ul>`,
-      )}
       ${categoria(
         "Reparto de la energía del día",
         `<table class="reparto"><thead><tr><th>Comida</th><th class="num">L-V</th><th class="num">S-D</th></tr></thead><tbody>
@@ -295,26 +333,13 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
         </ul>`,
       )}
     </div>
-    ${categoria(
-      "Régimen de comidas",
-      `<div class="scroll"><table class="regimen">
-        <thead><tr><th><span class="sr">Comida</span></th>${DIAS_SEMANA.map((d) => `<th>${NOMBRE_DIA[d]}</th>`).join("")}</tr></thead>
-        <tbody>
-          ${filaRegimen("Almuerzo fuera", quienAlmuerzo)}
-          ${filaRegimen("Comida en casa", (d) => familia.regimen.comida[d])}
-          ${filaRegimen("Tupper", quienTupper)}
-          ${filaRegimen("Cena en casa", (d) => familia.regimen.cena[d])}
-        </tbody>
-      </table></div>`,
-      "ancha",
-    )}
     ${graficoEnergia(familia)}
   </div>`;
 
   return `<div class="pestanas" role="tablist" aria-label="Configuración">
       <button role="tab" id="tab-cfg-grupo" aria-controls="cfg-grupo" aria-selected="true" tabindex="0">Grupo familiar</button>
       ${familia.miembros
-        .map((m) => `<button role="tab" id="tab-cfg-${esc(m.id)}" aria-controls="cfg-${esc(m.id)}" aria-selected="false" tabindex="-1">${esc(m.id)}</button>`)
+        .map((m) => `<button role="tab" id="tab-cfg-${esc(m.id)}" aria-controls="cfg-${esc(m.id)}" aria-selected="false" tabindex="-1">${esc(m.alias ?? m.id)}</button>`)
         .join("")}
     </div>
     <div role="tabpanel" id="cfg-grupo" aria-labelledby="tab-cfg-grupo" class="panel-config">${grupo}</div>
@@ -324,7 +349,28 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
           `<div role="tabpanel" id="cfg-${esc(m.id)}" aria-labelledby="tab-cfg-${esc(m.id)}" class="panel-config" hidden>${fichaPersona(m, familia, porId)}</div>`,
       )
       .join("")}
-    <p class="sub">Estos datos salen de <code>data/familia.json</code>. Para cambiarlos, díselo al agente o edita el fichero y vuelve a generar la página.</p>`;
+    <p class="sub" id="cfg-aviso">El peso, el objetivo, los gustos y el desayuno se cambian desde la ficha de cada persona y se guardan en esta página; la ficha se recalcula al momento. El menú, las raciones y la lista de la compra se ajustan cuando esos datos se copian al proyecto y se vuelve a generar la página. El resto de datos salen de <code>data/familia.json</code>: para cambiarlos, díselo al agente.</p>`;
+}
+
+/** Normas de la casa y quién cocina (página Normas). */
+function seccionNormas(familia: Familia): string {
+  const lista = (xs: string[]) => (xs.length ? `<ul class="criterios">${xs.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="sub">Ninguna</p>`);
+  return `<header class="cab"><h1 id="h-normas">Normas de la casa</h1>
+    <p class="sub">Lo que el menú respeta siempre. El motivo de cada norma está en <code>decisions.md</code>.</p></header>
+    <div class="categorias">
+      ${categoria("Normas", lista(familia.preferencias ?? []))}
+      ${categoria(
+        "Cuándo y con quién",
+        lista([...(familia.restricciones ?? []).map((r) => r.motivo), ...(familia.supervision ?? []).map((s) => s.motivo)]),
+      )}
+      ${categoria("Alergias", familia.alergias.length ? lista(familia.alergias) : `<p class="sub">No detectadas</p>`)}
+      ${categoria(
+        "Quién cocina",
+        `<ul class="miembros">${Object.entries(familia.roles)
+          .map(([id, rol]) => `<li><span class="comensal">${esc(id)}</span> ${esc(rol)}</li>`)
+          .join("")}</ul>${familia.equipamiento?.length ? `<p class="sub">En la cocina: ${esc(familia.equipamiento.join(", "))}.</p>` : ""}`,
+      )}
+    </div>`;
 }
 
 const TECNICA: Record<string, string> = {
@@ -762,6 +808,12 @@ const DIALOGOS = `
   <p class="sub estado-form" id="act-estado" role="status"></p>
   <div class="botones-dlg" id="act-botones"></div>
 </dialog>
+<dialog id="dlg-perfil" class="dlg">
+  <h3 id="dlg-perfil-titulo"></h3>
+  <div id="dlg-perfil-cuerpo" class="cuerpo-dlg"></div>
+  <p class="sub estado-form" id="dlg-perfil-estado" role="status"></p>
+  <div class="botones-dlg" id="dlg-perfil-botones"></div>
+</dialog>
 <button type="button" id="btn-confirmar-compra" class="btn-flotante" hidden>Confirmar compra</button>
 <div id="aviso-flotante" class="aviso-flotante" role="status" hidden></div>`;
 
@@ -892,7 +944,8 @@ p{margin:0}
 .muestra{width:12px;height:12px;border-radius:3px;display:inline-block}
 .s1{background:var(--s1)}.s2{background:var(--s2)}.s3{background:var(--s3)}
 .barras{display:grid;gap:12px}
-.fila{display:grid;grid-template-columns:44px 1fr;align-items:center;gap:10px}
+.fila{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:10px}
+@media (max-width:520px){.fila{grid-template-columns:64px 1fr}.fila-id{font-size:.8rem;line-height:1.1}}
 .fila-id{font-weight:600;font-size:.9rem}
 .pista{position:relative;height:22px;margin-right:52px}
 .rejilla{position:absolute;top:-6px;bottom:-6px;width:1px;background:var(--line)}
@@ -1009,6 +1062,7 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .pares div{display:grid;grid-template-columns:minmax(110px,40%) 1fr;gap:10px;align-items:baseline}
 .pares dt{color:var(--muted);font-size:.86rem}
 .pares dd{margin:0;font-size:.95rem}
+.pares dd div{display:block}
 .pares a,.categoria a{color:var(--ink);font-weight:600;text-decoration-color:var(--accent)}
 .ficha{display:grid;gap:16px}
 .ficha-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -1022,7 +1076,27 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .dias-mini{list-style:none;margin:0;padding:0;display:flex;gap:4px}
 .dias-mini li{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font:600 .78rem var(--f-mono);border:1px solid var(--line);color:var(--muted)}
 .dias-mini li.si{background:var(--accent);border-color:var(--accent);color:var(--surface)}
-.dias-mini li.tupper-dia{background:var(--calor-soft);border-color:var(--calor);color:var(--calor)}
+.dias-mini li.tupper-dia,.muestra-dia.tupper-dia{background:var(--calor-soft);border-color:var(--calor);color:var(--calor)}
+.dias-mini li.tupper-dia.frio,.muestra-dia.tupper-dia.frio{background:var(--frio-soft);border-color:var(--frio);color:var(--frio)}
+.muestra-dia{width:14px;height:14px;border-radius:4px;border:1px solid var(--line);display:inline-block;flex:none}
+.muestra-dia.si{background:var(--accent);border-color:var(--accent)}
+.leyenda-regimen{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.84rem;align-items:center}
+.leyenda-regimen li{display:inline-flex;align-items:center;gap:6px}
+.regimen td .comensal{display:inline-block;margin:1px 0}
+.comensal.casa{background:var(--accent);color:var(--surface)}
+.comensal.tupper-frio{background:var(--frio-soft);color:var(--frio);box-shadow:inset 0 0 0 1px var(--frio)}
+.comensal.tupper-calor{background:var(--calor-soft);color:var(--calor);box-shadow:inset 0 0 0 1px var(--calor)}
+.comensal.almuerzo{background:var(--aviso-soft);color:var(--aviso);box-shadow:inset 0 0 0 1px var(--aviso)}
+.ficha-bloques{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));align-items:stretch}
+@media (min-width:1000px){.ficha-bloques{grid-template-columns:repeat(3,1fr)}.ficha-bloques .doble{grid-column:span 2}}
+.ficha-bloques .doble .pares div{grid-template-columns:minmax(110px,22%) 1fr}
+.botones-ficha{display:flex;flex-wrap:wrap;gap:6px}
+.historial-peso{list-style:none;margin:0;padding:0;display:grid;gap:2px;font-size:.82rem;color:var(--muted)}
+.historial-peso li{display:flex;justify-content:space-between;gap:10px}
+.dlg input[type=number],.dlg textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.dlg .fila-campos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlg .fila-campos label{display:grid;gap:4px}
+.resultado-objetivo,.cuerpo-dlg{display:grid;gap:8px}
 .reparto{font-size:.9rem}
 .reparto th,.reparto td{padding:4px 6px}
 .reparto .num{text-align:right}
@@ -1320,6 +1394,19 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     semanaActual: menu.semana,
     ordenPasillos: [...SECCIONES, "Otros"],
     factores: Object.fromEntries(familia.miembros.map((m) => [m.id, calcularNecesidades(m, familia.objetivos[m.id]).factorRacion])),
+    alias: Object.fromEntries(familia.miembros.map((m) => [m.id, m.alias ?? m.id])),
+    // Lo que hace falta para recalcular la ficha en la página al cambiar el peso o el objetivo.
+    perfiles: Object.fromEntries(familia.miembros.map((m) => {
+      const tmb = coeficientesTmb(m);
+      const desayuno = familia.desayunos?.[m.id];
+      return [m.id, {
+        adulto: m.edad >= 18, alturaCm: m.alturaCm, pesoKg: m.pesoKg,
+        tmbPorKg: tmb.porKg, tmbFija: tmb.fija, deportePorKg: kcalDeportePorKg(m),
+        objetivo: familia.objetivos[m.id] ?? null, gustos: m.gustos,
+        desayuno: desayuno ? recetas.find((r) => r.id === desayuno.receta)?.nombre ?? desayuno.receta : "",
+      }];
+    })),
+    constantes: { factorBase: FACTOR_BASE, kcalReferencia: KCAL_REFERENCIA, kcalPorKg: KCAL_POR_KG, perdidaKgSemana: PERDIDA_KG_SEMANA, perdidaMaxima: PERDIDA_MAXIMA_KG_SEMANA, imcMin: IMC_MIN, imcMax: IMC_MAX },
     gud: Object.fromEntries(recetas.flatMap((r) => r.ingredientes).map((i) => [claveProducto(i.nombre, "g"), gramosPorUnidad(i.nombre)]).filter(([, g]) => g)),
     den: Object.fromEntries(Object.keys(EQUIVALENCIAS.densidad).map((n) => [claveProducto(n, "g"), densidad(n)])),
     normas: [
@@ -1351,11 +1438,12 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     ["compra", "Compra"],
     ["despensa", "Despensa"],
     ["tuppers", "Tuppers"],
+    ["normas", "Normas"],
     ["definiciones", "Definiciones"],
     ["configuracion", "Configuración"],
   ];
 
-  return `<title>Menú ${esc(familia.nombre)}</title>
+  return conAlias(`<title>Menú ${esc(familia.nombre)}</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1424,13 +1512,17 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     ${seccionTuppers(propuesta, familia)}
   </section>
 
+  <section class="vista" id="normas" data-vista aria-labelledby="h-normas" hidden>
+    ${seccionNormas(familia)}
+  </section>
+
   <section class="vista" id="definiciones" data-vista aria-labelledby="h-def" hidden>
     ${seccionDefiniciones()}
   </section>
 
   <section class="vista" id="configuracion" data-vista aria-labelledby="h-config" hidden>
     <header class="cab"><h1 id="h-config">Configuración</h1>
-    <p class="sub">Lo que el agente tiene en cuenta para planificar: el grupo familiar y cada persona.</p></header>
+    <p class="sub">Lo que el agente tiene en cuenta para planificar: el grupo familiar y la ficha de cada persona.</p></header>
     ${seccionConfiguracion(familia, recetas)}
   </section>
 
@@ -1439,7 +1531,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 ${DIALOGOS}
 <script type="application/json" id="datos-pagina">${JSON.stringify(datosCliente).replace(/</g, "\\u003c")}</script>
 <script>${SCRIPT_CLIENTE}</script>
-`;
+`, familia);
 }
 
 async function main() {

@@ -13,7 +13,7 @@ import {
 } from "./menu.js";
 import { costeCesta, type TablaPrecios } from "./precios.js";
 import type { Despensa, Familia } from "./tipos.js";
-import { cantidad, COMIDAS, esc, num } from "./web.js";
+import { cantidad, COMIDAS, conAlias, esc, num } from "./web.js";
 
 export interface DatosPdf {
   familia: Familia;
@@ -63,7 +63,7 @@ export function htmlMenuPdf({ familia, menu, recetas, fecha }: DatosPdf): string
   const filas = COMIDAS.filter(({ tipo }) => dias.some((d) => d.comidas.some((c) => c.tipo === tipo)));
   const batch = (menu.batch ?? []).flatMap((b) => b.tareas);
   const ocultos = Object.entries(familia.desayunos ?? {}).filter(([, d]) => !d.mostrarEnMenu).map(([id]) => id);
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Menú semana ${esc(menu.semana)}</title><style>
+  return conAlias(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Menú semana ${esc(menu.semana)}</title><style>
 @page{size:A4 landscape;margin:9mm}
 ${BASE}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
@@ -89,7 +89,7 @@ tbody th{width:62pt;background:#eef2ec;font-size:9pt}
 <p class="pie">${batch.length ? `<b>Batch del domingo:</b> ${batch.map(esc).join(" · ")}<br>` : ""}${
     ocultos.length ? `Desayunos fijos no incluidos (${ocultos.join(", ")}): se cuentan en la lista de la compra.` : ""
   }</p>
-</body></html>`;
+</body></html>`, familia);
 }
 
 /** Lista de la compra para imprimir en A4 vertical. */
@@ -106,7 +106,7 @@ export function htmlCompraPdf({ familia, menu, recetas, despensa, precios, fecha
     return l?.masBarata ? { coste: l.porTienda[l.masBarata].coste, donde: l.masBarata } : undefined;
   };
   const euros = (n: number) => n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Lista de la compra semana ${esc(menu.semana)}</title><style>
+  return conAlias(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Lista de la compra semana ${esc(menu.semana)}</title><style>
 @page{size:A4 portrait;margin:10mm 12mm}
 ${BASE}
 body{font-size:9pt}
@@ -157,7 +157,7 @@ ${
 <p class="pie">Incluye todo el menú, los tuppers y los desayunos fijos, en gramos y redondeado hacia arriba${
     despensa?.productos.length ? ", descontando la despensa (lo que ya hay en casa no aparece)" : ""
   }. Sal, especias y caldo no se cuentan.</p>
-</body></html>`;
+</body></html>`, familia);
 }
 
 /** Chromium: CHROMIUM_PATH si está definido; si no, el de Playwright o el Chrome instalado. */

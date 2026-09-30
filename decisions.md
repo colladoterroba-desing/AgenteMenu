@@ -27,6 +27,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 28/09/2026 | **Legumbres** solo con un adulto (RFA o CCT) en la mesa, no cuando RFC y AFC comen solos. | Que un adulto supervise cuánto comen. |
 | 28/09/2026 | Los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser **pasta o algo más calórico**. | Les gusta más y es más fácil que se lo terminen. |
 | 28/09/2026 | Leche siempre **semidesnatada**. | Preferencia de la familia. |
+| 30/09/2026 | **Lubina en lugar de dorada.** | Preferencia de la familia (OI-10): RFA come mejor la lubina. |
 | 28/09/2026 | Las recetas de cremas, purés, guisos y salsas incluyen los pasos con **Thermomix**. | Hay Thermomix en casa. |
 
 ## Personas y salud
@@ -34,7 +35,8 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | Fecha | Decisión | Motivo |
 |---|---|---|
 | 28/09/2026 | **Objetivos de peso aceptados:** RFA y CCT, a 67,8 kg (IMC 24,9) perdiendo unos 0,5 kg por semana. RFA 1.879 kcal/día; CCT 1.623 kcal/día. | IMC en sobrepeso. Conviene consultarlo con su médico. |
-| 28/09/2026 | Los **desayunos de CCT y RFA** se mantienen como están mientras sus propuestas (OI-06, OI-07) sigan pendientes. | Las propuestas no se han aceptado todavía. |
+| 30/09/2026 | **Desayunos de CCT y RFA:** CCT pasa a la propuesta (café cortado, tostada integral con aceite y tomate, queso fresco y fruta, sin azúcar). RFA mantiene su desayuno actual. | CCT aceptó la propuesta (OI-07) y RFA la rechazó (OI-06). Sustituye a la decisión del 28/09/2026 («se mantienen como están mientras las propuestas sigan pendientes»). |
+| 30/09/2026 | **RFC no tiene objetivo de peso.** | Decisión de la familia (OI-31). |
 | 28/09/2026 | Cada persona elige si su **desayuno fijo** aparece en el menú (por defecto no). Siempre se cuenta en la compra. | Para que el menú no se llene de información que no hace falta. |
 | 30/09/2026 | Tupper de RFA (frío) de lunes a jueves; CCT (para recalentar) de lunes a miércoles. | RFA amplía al jueves desde el 30/09/2026. |
 | 30/09/2026 | **Alias en lugar de siglas** en la web y los PDF: CCT = Cristina, RFA = Ricardo, RFC = Ricardo hijo, AFC = Alicia. Los datos siguen usando las siglas por dentro. | Que la página se lea con nombres y no con siglas. |
@@ -52,6 +54,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 30/09/2026 | **En la despensa no hay cantidades negativas.** Si se gasta más de lo apuntado (o algo que no estaba), el producto se queda a 0, sin aviso. | Si saldría negativo, es que no se había apuntado bien lo que había (por ejemplo, los macarrones que comió Alicia no estaban en la despensa). |
 | 30/09/2026 | **Reservas de raciones:** en Despensa sale una sola línea por receta y lugar (nevera o congelador), con la suma; «Usar 1 ración» gasta antes la que caduca antes. Si se vuelve a apuntar lo cocinado de la misma receta, el mismo día y en el mismo sitio, se suma a la reserva que ya había. | Guardar dos veces la misma receta creaba dos líneas (pasó con el pollo guisado del 30/09/2026). |
 | 30/09/2026 | Botón **«Confirmar compra»** en la lista: suma lo marcado a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa. | No comprar lo que ya hay. |
+| 30/09/2026 | **Pesos estimados en las equivalencias a gramos** (`data/equivalencias.json`), sin pesarlos en casa. Se corrigen si algún día se pesan. | Decisión de la familia (OI-34): el error es pequeño y no merece el trabajo. |
 | 28/09/2026 | **Precios reales, sin estimaciones.** Se cargan desde los tickets o a mano; el coste solo se muestra cuando hay precios. | Los precios estimados no eran fiables. |
 | 28/09/2026 | Se compara el coste en **Mercadona, BM y Casa Elías** y se propone la combinación más barata. | Son las tiendas donde compra la familia. |
 

@@ -39,7 +39,7 @@ const receta = z.object({
         cantidad: z.number().positive().describe("Para una ración de referencia (adulto de 2000 kcal)"),
         unidad: z.enum(["g", "kg", "ml", "l", "ud"]).describe("Se guarda en gramos; ud y ml se convierten con data/equivalencias.json"),
         seccion: z.enum(SECCIONES),
-        porPersona: z.boolean().optional().describe("true si se compra uno por persona (una dorada, un filete)"),
+        porPersona: z.boolean().optional().describe("true si se compra uno por persona (una lubina, un filete)"),
       }),
     )
     .min(1),

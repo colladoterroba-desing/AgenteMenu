@@ -206,7 +206,7 @@ test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entr
     const desayuno = dia.comidas.find((c) => c.tipo === "desayuno")!;
     assert.deepEqual(
       Object.fromEntries(desayuno.platos.map((p) => [p.comensales[0].id, p.receta.id])),
-      { RFA: "desayuno-rfa", CCT: "desayuno-cct-actual", RFC: "cafe-solo", AFC: "desayuno-afc" },
+      { RFA: "desayuno-rfa", CCT: "desayuno-cct", RFC: "cafe-solo", AFC: "desayuno-afc" },
     );
     const almuerzo = dia.comidas.find((c) => c.tipo === "almuerzo");
     assert.equal(Boolean(almuerzo), !["S", "D"].includes(dia.dia));
@@ -373,14 +373,14 @@ test("coste de la cesta: envases enteros, granel, tienda más barata y sin preci
   assert.equal(c.hayPrecios, true);
 });
 
-test("ingredientes por persona: una dorada por comensal, sin redondear por la ración", async () => {
+test("ingredientes por persona: una lubina por comensal, sin redondear por la ración", async () => {
   const { componerMenu, listaCompra } = await import("../src/menu.js");
   const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
-  const dorada = listaCompra(componerMenu(familia, menu, recetas)).Pescadería.find((l) => l.nombre.startsWith("Dorada"))!;
-  assert.equal(dorada.unidad, "g");
-  assert.equal(dorada.comprar, 4 * 350);
-  assert.equal(dorada.equivalencia, "4 ud");
+  const lubina = listaCompra(componerMenu(familia, menu, recetas)).Pescadería.find((l) => l.nombre.startsWith("Lubina"))!;
+  assert.equal(lubina.unidad, "g");
+  assert.equal(lubina.comprar, 4 * 350);
+  assert.equal(lubina.equivalencia, "4 ud");
 });
 
 test("sin tickets no hay precios: ni estimaciones en los datos ni columna de precios en el PDF", async () => {

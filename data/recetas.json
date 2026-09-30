@@ -269,13 +269,13 @@
       ]
     },
     {
-      "id": "dorada-horno",
-      "nombre": "Dorada al horno con patatas y ensalada",
+      "id": "lubina-horno",
+      "nombre": "Lubina al horno con patatas y ensalada",
       "tipo": "comida",
       "tiempoMin": 45,
       "tecnica": "horno",
       "ingredientes": [
-        { "nombre": "Dorada limpia (ración)", "cantidad": 350, "unidad": "g", "seccion": "Pescadería", "porPersona": true },
+        { "nombre": "Lubina limpia (ración)", "cantidad": 350, "unidad": "g", "seccion": "Pescadería", "porPersona": true },
         { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
@@ -286,7 +286,7 @@
       "pasos": [
         "Precalentar el horno a 200 °C.",
         "Cortar las patatas en rodajas finas y la cebolla en juliana; hornearlas con la mitad del aceite y sal 25 minutos.",
-        "Poner las doradas encima con sal, rodajas de limón y el resto del aceite; hornear 15-18 minutos.",
+        "Poner las lubinas encima con sal, rodajas de limón y el resto del aceite; hornear 15-18 minutos.",
         "Servir con la ensalada aliñada."
       ]
     },
@@ -590,7 +590,7 @@
     },
     {
       "id": "desayuno-cct",
-      "nombre": "Propuesta: café cortado y tostada integral con aceite y tomate",
+      "nombre": "Café cortado y tostada integral con tomate, queso fresco y fruta",
       "tipo": "desayuno",
       "tiempoMin": 8,
       "tecnica": "sin cocinar",

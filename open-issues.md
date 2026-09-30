@@ -34,7 +34,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - Qué pasa con lo que no se cocinó: los ingredientes vuelven a la despensa y se proponen para otro día.
   - Cómo lo usa el agente: aprender qué platos se saltan a menudo, ajustar las cantidades y el seguimiento de calorías de quien tiene objetivo de peso.
 - [x] **OI-33 · Medidas en gramos y página de Definiciones.** Hecho el 30/09/2026: recetas, despensa, compra, precios y tuppers en gramos; equivalencias en `data/equivalencias.json`; página Definiciones con términos, equivalencias, medidas caseras, tamaño de una ración y Thermomix.
-- [ ] **OI-34 · Confirmar las equivalencias a gramos.** Son pesos medios supuestos: base de pizza (200 g), galletas Animadas (4 g), tortitas de maíz (7 g), yogur líquido (180 g), dorada limpia (350 g), tortillas integrales (40 g) y lata de atún (80 g). Pesarlos en casa o mirar el envase y corregir `data/equivalencias.json`.
+- [x] **OI-34 · Confirmar las equivalencias a gramos.** Decidido el 30/09/2026: se usan los pesos estimados de `data/equivalencias.json` (base de pizza 200 g, galletas Animadas 4 g, tortitas de maíz 7 g, yogur líquido 180 g, lubina limpia 350 g, tortillas integrales 40 g, lata de atún 80 g). Se corrigen si algún día se pesan.
 - [x] **OI-35 · Marcar lo cocinado y pasar la compra a la despensa.** Hecho el 30/09/2026: casilla «Cocinado» con raciones en cada plato del menú (resta los ingredientes de la despensa; al desmarcar vuelven) y botón fijo «Confirmar compra» en la lista (suma lo marcado a la despensa). Las sobras (`sobrasDe`) se marcan una sola vez, en la comida donde se cocinan.
 - [x] **OI-36 · Dos formas de apuntar lo cocinado.** Resuelto el 30/09/2026: una sola, «Cocinado» en cada receta (comidas del menú para las que se cocina + raciones hechas; lo que sobra va a la reserva). El menú ya no tiene casillas de cocinado.
 - [ ] **OI-37 · «Nadie come aquí».** Si nadie come una comida (por ejemplo, el almuerzo de RFC cuando está de viaje), no hay forma de quitarla del menú: Claude solo puede cambiar el plato o quién come. Falta una opción para dejarla vacía, que tampoco cuente en la compra.
@@ -47,20 +47,20 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 ## Personas y hábitos
 
-- [ ] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** En los datos aparecía dos veces RFA. Se ha asignado a **RFC**; falta confirmarlo.
+- [x] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** Confirmado el 30/09/2026: es **RFC**.
 - [ ] **OI-05 · Desayuno de RFC el fin de semana.** Sin almuerzo, solo toma café y le faltan unas 600 kcal del desayuno. ¿Desayuna algo más en casa el sábado y el domingo?
-- [ ] **OI-06 · Desayuno de RFA los días de running (L y M).** Tiene unas 170 kcal frente a unas 375 objetivo (con el objetivo de peso aceptado). Propuesta: añadir fruta o una tortita más. Pendiente de que RFA lo acepte. Pendiente por decisión del 28/09/2026; mientras tanto se mantiene su desayuno actual.
-- [ ] **OI-07 · Desayuno de CCT.** Propuesta: tostada integral con tomate y queso fresco, sin azúcar, y una pieza de fruta. Pendiente de que CCT la acepte. Pendiente por decisión del 28/09/2026; mientras tanto, el menú y la compra usan su desayuno actual (tostada con aceite y azúcar).
+- [x] **OI-06 · Desayuno de RFA los días de running (L y M).** Descartado el 30/09/2026: RFA no acepta la propuesta (añadir fruta o una tortita más). Mantiene su desayuno actual.
+- [x] **OI-07 · Desayuno de CCT.** Aceptado el 30/09/2026: café cortado, tostada integral con aceite y tomate, queso fresco y una pieza de fruta, sin azúcar (receta `desayuno-cct`). El menú y la compra ya lo usan.
 - [x] **OI-08 · Objetivos de peso de RFA y CCT.** Aceptados el 28/09/2026: los dos, a 67,8 kg (IMC 24,9) perdiendo unos 0,5 kg por semana. RFA: 1.879 kcal/día, fecha prevista 14/12/2026. CCT: 1.623 kcal/día, fecha prevista 08/03/2027. Pendiente: consultarlo con su médico. El peso se apunta con «Cambiar peso» en la ficha de cada persona (queda un registro con la fecha); falta decidir cada cuánto.
-- [ ] **OI-31 · Objetivo de peso de RFC.** Con 76 kg y 1,73 m (actualizado el 28/09/2026), su IMC es 25,4, justo por encima del límite de sobrepeso. Propuesta: 74,5 kg en unas 3 semanas con 2.089 kcal/día (gasto actual, unas 2.589). Pendiente de acordar. A tener en cuenta: tiene 18 años y nada dos días por semana, así que parte del peso puede ser músculo; el IMC no lo distingue. Conviene consultarlo con su médico antes de aceptarlo.
+- [x] **OI-31 · Objetivo de peso de RFC.** Descartado el 30/09/2026: no se define objetivo de peso para RFC.
 - [ ] **OI-09 · Merienda.** Se ha supuesto que meriendan los cuatro de lunes a viernes y nadie el fin de semana. Confirmar.
-- [ ] **OI-10 · Pescado para RFA.** «No come mucho pescado». Con la norma del pescado azul (solo los jueves a mediodía, cuando RFA no come en casa), la semana A tiene merluza el miércoles por la noche (RFA toma tortilla), gambas el sábado y dorada el domingo. Confirmar si RFA come estas dos últimas.
+- [ ] **OI-10 · Pescado para RFA.** El 30/09/2026: mejor lubina que dorada; la dorada al horno se cambia por **lubina al horno** (receta `lubina-horno`). Falta confirmar si RFA come gambas (revuelto de setas y gambas de la semana B).
 - [ ] **OI-11 · Energía según el día.** Las raciones usan el gasto medio de la semana. Valorar si se ajustan por día (más en días de entreno o partido).
 
 ## Tuppers y almuerzos
 
-- [ ] **OI-12 · Días y medios en la oficina.** Se ha supuesto tupper de RFA y CCT de lunes a miércoles. Confirmar, y si CCT tiene microondas y RFA nevera en la oficina.
-- [ ] **OI-13 · Almuerzo de RFC.** Confirmar que no tiene nevera en el colegio y si le gustan los almuerzos: bocadillos de pollo asado, jamón serrano y queso fresco, más un día de yogur bebible con frutos secos. Todos se preparan la noche anterior.
+- [x] **OI-12 · Días y medios en la oficina.** Confirmado el 30/09/2026: CCT, tupper de lunes a miércoles y tiene microondas; RFA, tupper de lunes a jueves y solo tiene nevera (tupper frío).
+- [ ] **OI-13 · Almuerzo de RFC.** Confirmado el 30/09/2026 que no tiene nevera en el colegio. Falta que diga si le gustan los almuerzos: bocadillos de pollo asado, jamón serrano y queso fresco, más un día de yogur bebible con frutos secos. Todos se preparan la noche anterior.
 
 ## Menú y recetas
 
@@ -69,7 +69,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 ## Lista de la compra y despensa
 
-- [ ] **OI-16 · Cantidades que conviene revisar.** Pan integral: unos 3,5 kg por semana. Resuelto para las doradas: los ingredientes pueden marcarse «por persona» (una dorada por comensal). Falta revisar si hay más casos (huevos, filetes).
+- [ ] **OI-16 · Cantidades que conviene revisar.** Pan integral: unos 3,5 kg por semana. Resuelto para el pescado entero: los ingredientes pueden marcarse «por persona» (una lubina por comensal). Falta revisar si hay más casos (huevos, filetes).
 - [ ] **OI-17 · Formatos de compra.** Desde el 30/09/2026 todo va en gramos, con la equivalencia en unidades o ml (`data/equivalencias.json`). Falta pasarla a paquetes, botes y latas (por ejemplo, cuántas galletas Animadas trae un paquete).
 - [ ] **OI-18 · Básicos que no se cuentan.** Sal, especias y caldo no entran en la lista. Decidir si se controlan desde la despensa.
 - [ ] **OI-19 · Inventario inicial de la despensa.** Ya se puede rellenar en la página Despensa de la web. Falta hacer el primer inventario.

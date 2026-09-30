@@ -583,6 +583,10 @@ test("sincronizar: la web manda en despensa, reservas, no deseados y perfil, sin
   assert.equal(cct.pesoKg, 78.5);
   assert.deepEqual(cct.gustos, ["Pasta"]);
   assert.match(r.avisos.join(), /Café con tostada/);
+  // Si el desayuno ya se pasó a receta desde ese mismo texto, no se vuelve a avisar.
+  const texto = (web.perfil.CCT.desayuno as { texto: string }).texto;
+  const conReceta = { ...familia, desayunos: { ...familia.desayunos, CCT: { receta: "desayuno-cct", desdeTexto: texto } } };
+  assert.doesNotMatch(unir(conReceta, despensa, web, {}).avisos.join(), /Café con tostada/);
 
   // Tras sincronizar, la página no repite la reserva: la del proyecto y la de la web tienen el mismo id.
   const { generarHtml } = await import("../src/web.js");

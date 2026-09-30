@@ -37,7 +37,8 @@ const texto = (v: unknown) => (typeof v === "string" && v ? v : undefined);
  * - despensa → productos (por nombre y unidad; lo que queda a 0 se quita).
  * - hechas → reservas de raciones (sobras), con el mismo id que en la web para que no salgan dos veces.
  * - no-deseados → familia.noDeseados (los quitados se borran).
- * - perfil → peso, gustos y objetivo de cada persona. El desayuno en texto libre no se toca: falta pasarlo a receta.
+ * - perfil → peso, gustos y objetivo de cada persona. El desayuno en texto libre no se toca: se avisa para que
+ *   Claude lo pase a receta (familia.desayunos[id].desdeTexto guarda de qué texto sale, para no avisar otra vez).
  */
 export function unir(familia: Familia, despensa: Despensa, web: Exportado, recetas: Record<string, string>) {
   const productos = new Map<string, Producto>();
@@ -91,7 +92,9 @@ export function unir(familia: Familia, despensa: Despensa, web: Exportado, recet
     if (num(d.pesoKg) > 0) cambiado.pesoKg = Math.round(num(d.pesoKg) * 10) / 10;
     if (Array.isArray(d.gustos)) cambiado.gustos = d.gustos.filter((g): g is string => typeof g === "string");
     const desayuno = d.desayuno as { texto?: string } | undefined;
-    if (desayuno?.texto) avisos.push(`${m.alias ?? m.id} tiene un desayuno nuevo en texto libre («${desayuno.texto}»): falta pasarlo a receta (OI-41).`);
+    if (desayuno?.texto && desayuno.texto !== familia.desayunos?.[m.id]?.desdeTexto) {
+      avisos.push(`Desayuno nuevo de ${m.id} (${m.alias ?? m.id}) en texto libre: «${desayuno.texto}». Falta pasarlo a receta (OI-41).`);
+    }
     return cambiado;
   });
   const objetivos = { ...familia.objetivos };

@@ -78,7 +78,13 @@ export interface Familia {
    * Desayuno habitual de cada miembro, el mismo todos los días. Por defecto no se
    * muestra en el menú (mostrarEnMenu: true para verlo); siempre cuenta en la compra.
    */
-  desayunos?: Record<string, { receta: string; nota?: string; mostrarEnMenu?: boolean }>;
+  desayunos?: Record<string, {
+    receta: string;
+    nota?: string;
+    mostrarEnMenu?: boolean;
+    /** Texto libre apuntado en la web del que sale la receta (así no se vuelve a pedir pasarlo a receta). */
+    desdeTexto?: string;
+  }>;
   objetivos: Record<string, Objetivo>;
 }
 

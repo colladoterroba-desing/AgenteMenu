@@ -374,7 +374,7 @@
   const nuevoGrupo = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
   /** Sustituye todas las anotaciones de una casilla por las del formulario. */
-  const guardarAnotaciones = async (c, bloques) => {
+  const guardarAnotaciones = async (c, bloques, sinRegistro) => {
     if (ocupado) return false; ocupado = true;
     let ok = true;
     try {
@@ -420,9 +420,25 @@
         }
         textos.push(b.personas.join(", ") + ": " + resumenAnot({ ...b.nuevo, ...extra }) + (otras ? " (y el resto de comidas de ese día)" : ""));
       }
-      await registrar("comido", "Anotaciones (" + textoCasilla(c) + "): " + (textos.join("; ") || "ninguna, se comió lo previsto") + ".");
+      if (!sinRegistro) await registrar("comido", "Anotaciones (" + textoCasilla(c) + "): " + (textos.join("; ") || "ninguna, se comió lo previsto") + ".");
     } catch (e) { ok = false; aviso("No se ha podido guardar (" + (e && e.code || "error") + ")."); }
     ocupado = false; renderTodo();
+    return ok;
+  };
+
+  // ===== «Nadie come aquí» (OI-37): todos los que estaban previstos, «no come». Sale de la compra. =====
+  const previstosEn = (c) => datos.miembros.filter((p) => previstoPara(c, p));
+  const nadieCome = (c) => { const q = previstosEn(c); return q.length > 0 && q.every((p) => anotDe(c, p)?.tipo === "nocome"); };
+  /** Marca que nadie come en esa comida (o en todas las de ese día). Sustituye las anotaciones que hubiera. */
+  const marcarNadie = async (c, todoElDia, nota) => {
+    const lista = todoElDia ? [...celdas.values()].filter((o) => fechaCelda(o) === fechaCelda(c)) : [c];
+    let ok = true;
+    for (const o of lista) {
+      const personas = previstosEn(o);
+      if (!personas.length) continue;
+      ok = (await guardarAnotaciones(o, [{ personas, nuevo: { tipo: "nocome", ...(nota ? { nota } : {}) }, usos: [], reserva: "", todoElDia: false }], true)) && ok;
+    }
+    if (ok) await registrar("comido", "Nadie come " + (todoElDia ? "en todo el " + DIAS[c.dia].toLowerCase() : "(" + textoCasilla(c) + ")") + (nota ? ": " + nota : "") + ".").catch(() => {});
     return ok;
   };
 
@@ -433,7 +449,10 @@
     const b = el("button", { type: "button", class: "btn-mini" + (anots.length ? " con-dato" : ""), text: anots.length ? "Anotaciones (" + anots.length + ")" : "Anotaciones", disabled: !editable });
     b.addEventListener("click", () => abrirAnotaciones(c));
     caja.append(b);
-    anots.forEach((x) => caja.append(el("span", { class: "comio-nota" }, el("strong", { text: x.personas.join(", ") + ": " }), resumenAnot(x.doc, x.docs))));
+    if (nadieCome(c)) {
+      const nota = anots.length === 1 ? anots[0].doc.nota : "";
+      caja.append(el("span", { class: "comio-nota" }, el("strong", { text: "Nadie come aquí" }), nota ? " · " + nota : ""));
+    } else anots.forEach((x) => caja.append(el("span", { class: "comio-nota" }, el("strong", { text: x.personas.join(", ") + ": " }), resumenAnot(x.doc, x.docs))));
     return caja;
   };
 
@@ -520,7 +539,21 @@
     const e = efectivo(c);
     const comen = [...new Set([...(e.comensales || c.quien), ...(c.variantes || []).map((v) => v.quien), ...c.tuppers.map((t) => t.quien)])];
     document.getElementById("dlg-anot-titulo").textContent = "Anotaciones · " + DIAS[c.dia] + ", " + COMIDA_TXT[c.comida].toLowerCase();
-    document.getElementById("dlg-anot-cuerpo").replaceChildren(
+    const nadie = el("div", { class: "nadie-come" });
+    if (previstosEn(c).length) {
+      const bNadie = (texto, todo) => {
+        const b = el("button", { type: "button", class: "secundario", text: texto });
+        b.addEventListener("click", async () => {
+          b.disabled = true;
+          if (await marcarNadie(c, todo)) { dlgN.close(); aviso(todo ? "Nadie come en todo el día." : "Nadie come aquí."); }
+          b.disabled = false;
+        });
+        return b;
+      };
+      nadie.append(bNadie("Nadie come aquí", false), bNadie("Nadie come en todo el día", true),
+        el("p", { class: "sub", text: "Quita esta comida (o todas las de ese día) de lo que se cocina y de la lista de la compra." }));
+    }
+    document.getElementById("dlg-anot-cuerpo").replaceChildren(nadie,
       el("p", { class: "sub", text: "Previsto: " + (c.comida === "desayuno" ? "desayunos fijos" : e.recetas.map(nombreRec).join(" + ")) + (comen.length ? ". Comen: " + comen.join(", ") : "") + ". Si no se apunta nada, se da por hecho que cada uno comió lo previsto." }),
       lista, el("div", null, mas));
     const guardar = el("button", { type: "button", class: "btn-principal", text: "Guardar" });
@@ -548,7 +581,9 @@
       const e = efectivo(c);
       // Si el cambio deja el mismo plato (p. ej. solo cambia quién come), no se tacha ni se repite.
       const mismoPlato = e.origen !== "menu" && e.recetas.length > 0 && e.recetas.join() === c.platos.join();
-      td.querySelectorAll(":scope > .plato-menu").forEach((a) => a.classList.toggle("tachado", e.origen !== "menu" && !mismoPlato));
+      const vacia = nadieCome(c);
+      td.classList.toggle("nadie", vacia);
+      td.querySelectorAll(":scope > .plato-menu").forEach((a) => a.classList.toggle("tachado", vacia || (e.origen !== "menu" && !mismoPlato)));
       td.querySelector(":scope > .plato-real")?.remove();
       const ancla = td.querySelector(":scope > .comensales, :scope > .des-sub, :scope > .desayunos-dia") || caja;
       if (e.origen !== "menu") {
@@ -1016,7 +1051,7 @@
   const actCuerpo = document.getElementById("act-cuerpo"), actEstado = document.getElementById("act-estado"), actBotones = document.getElementById("act-botones");
   let sample = null, abortar = null;
   const modificables = () => [...celdas.values()].filter((c) => fechaCelda(c) > HOY && c.comida !== "desayuno" && c.platos.length &&
-    !c.sobras && c.racCocinar === c.rac && !diarioDb.has(c.id));
+    !c.sobras && c.racCocinar === c.rac && !diarioDb.has(c.id) && !nadieCome(c));
   const botonesA = (...b) => actBotones.replaceChildren(...b);
   const cerrarBtn = () => { const b = el("button", { type: "button", class: "secundario", text: "Cerrar" }); b.addEventListener("click", () => { abortar?.abort(); dlgA.close(); }); return b; };
   const abrirActualizar = () => {
@@ -1056,7 +1091,7 @@
   const pedirPropuesta = async () => {
     const ctx = contexto();
     if (!ctx.platosRevisables.length) { actEstado.textContent = "No quedan platos que revisar en el menú."; return; }
-    const prompt = "Eres el planificador del menú semanal de una familia española. Revisa SOLO los platos de 'platosRevisables' (días posteriores a hoy) teniendo en cuenta lo que se ha comido de verdad hasta hoy ('comidasHastaHoy': si se comió otra cosa distinta de lo previsto, reequilibra el resto de la semana: legumbre, pescado, verdura, no repetir lo ya comido), lo que hay en la despensa (aprovecha lo que haya, sobre todo lo que caduca antes), las normas de la casa, los platos no deseados y los comentarios de la familia (por ejemplo, si alguien no come en casa ciertos días, quítalo de 'comensales' en esas casillas; si nadie come, no incluyas la casilla). Cambia solo lo que tenga un motivo claro y explícalo con datos de la entrada; no inventes peticiones de la familia. Si todo está bien, no cambies nada. Usa únicamente ids del 'recetario', adecuados al tipo de comida (almuerzo, comida, merienda o cena). Cada casilla lleva 1 o 2 recetas. 'comensales' es opcional: ponlo solo si cambia quién come (códigos " + datos.miembros.join(", ") + "; en 'nombres' está el nombre de cada código, que es como la familia se refiere a ellos en los comentarios).\n\nDevuelve solo JSON con esta forma: {\"resumen\": \"una o dos frases en español\", \"cambios\": [{\"celda\": \"id de platosRevisables\", \"recetas\": [\"id del recetario\"], \"comensales\": [\"" + datos.miembros[0] + "\"], \"motivo\": \"frase corta en español\"}]}\n\nDatos:\n" + JSON.stringify(ctx);
+    const prompt = "Eres el planificador del menú semanal de una familia española. Revisa SOLO los platos de 'platosRevisables' (días posteriores a hoy) teniendo en cuenta lo que se ha comido de verdad hasta hoy ('comidasHastaHoy': si se comió otra cosa distinta de lo previsto, reequilibra el resto de la semana: legumbre, pescado, verdura, no repetir lo ya comido), lo que hay en la despensa (aprovecha lo que haya, sobre todo lo que caduca antes), las normas de la casa, los platos no deseados y los comentarios de la familia (por ejemplo, si alguien no come en casa ciertos días, quítalo de 'comensales' en esas casillas; si no come nadie, marca la casilla con \"nadie\": true y sin recetas). Cambia solo lo que tenga un motivo claro y no inventes peticiones de la familia. El motivo es una frase corta (15 palabras como mucho); si el cambio sale de un comentario de la familia, cita entre comillas las palabras justas del comentario (por ejemplo: Cristina: «no ceno el jueves»). Si todo está bien, no cambies nada. Usa únicamente ids del 'recetario', adecuados al tipo de comida (almuerzo, comida, merienda o cena). Cada casilla lleva 1 o 2 recetas (ninguna si \"nadie\" es true). 'comensales' es opcional: ponlo solo si cambia quién come (códigos " + datos.miembros.join(", ") + "; en 'nombres' está el nombre de cada código, que es como la familia se refiere a ellos en los comentarios).\n\nDevuelve solo JSON con esta forma: {\"resumen\": \"una o dos frases en español\", \"cambios\": [{\"celda\": \"id de platosRevisables\", \"recetas\": [\"id del recetario\"], \"comensales\": [\"" + datos.miembros[0] + "\"], \"nadie\": false, \"motivo\": \"frase corta en español\"}]}\n\nDatos:\n" + JSON.stringify(ctx);
     botonesA(el("button", { type: "button", class: "btn-principal", text: "Pensando…", disabled: true }), cerrarBtn());
     actEstado.textContent = "Claude está revisando el menú. Puede tardar un minuto.";
     abortar = new AbortController();
@@ -1064,6 +1099,7 @@
       const r = await sample.json(prompt, { signal: abortar.signal, cache: false, modelTier: "default" });
       const validas = new Set(ctx.platosRevisables.map((p) => p.celda));
       const cambios = (Array.isArray(r && r.cambios) ? r.cambios : []).map((x) => {
+        if (x && validas.has(x.celda) && x.nadie === true) return { celda: x.celda, nadie: true, motivo: x.motivo };
         if (!x || !validas.has(x.celda) || !Array.isArray(x.recetas) || x.recetas.length < 1 || x.recetas.length > 2 || !x.recetas.every((id) => REC[id])) return null;
         const c = celdas.get(x.celda), e = efectivo(c);
         const com = Array.isArray(x.comensales) ? [...new Set(x.comensales.filter((q) => datos.factores[q]))] : null;
@@ -1089,7 +1125,7 @@
       const c = celdas.get(x.celda), id = "prop-" + n;
       lista.append(el("li", null, el("input", { type: "checkbox", id, checked: true, "data-n": String(n) }),
         el("label", { htmlFor: id }, el("strong", { text: DIAS[c.dia] + " " + fechaCorta(fechaCelda(c)).split(" ").slice(1).join(" ") + " · " + COMIDA_TXT[c.comida] + ": " }),
-          efectivo(c).recetas.map(nombreRec).join(" + ") + " → " + x.recetas.map(nombreRec).join(" + ") + (x.comensales ? " · comen " + x.comensales.join(", ") : "")),
+          efectivo(c).recetas.map(nombreRec).join(" + ") + " → " + (x.nadie ? "nadie come" : x.recetas.map(nombreRec).join(" + ") + (x.comensales ? " · comen " + x.comensales.join(", ") : ""))),
         el("span", { class: "motivo", text: x.motivo || "" })));
     });
     actCuerpo.replaceChildren(el("p", { text: resumen || "Propuesta de Claude:" }), cambios.length ? lista : el("p", { class: "sub", text: "Claude no ve necesario cambiar nada." }));
@@ -1099,7 +1135,8 @@
       aplicar.disabled = true;
       try {
         for (const x of elegidos) {
-          const doc = { celda: x.celda, recetas: x.recetas, motivo: String(x.motivo || "").slice(0, 300), fecha: new Date().toISOString() };
+          if (x.nadie) { if (!(await marcarNadie(celdas.get(x.celda), false, "Claude: " + String(x.motivo || "").slice(0, 160)))) throw { code: "anotaciones" }; continue; }
+          const doc = { celda: x.celda, recetas: x.recetas, motivo: String(x.motivo || "").slice(0, 160), fecha: new Date().toISOString() };
           if (x.comensales) doc.comensales = x.comensales;
           await db.doc("cambios/" + x.celda).set(doc); cambiosDb.set(x.celda, doc);
         }
@@ -1110,15 +1147,23 @@
     botonesA(aplicar, cerrarBtn());
   };
 
-  // ================= Fichas de las personas: peso, objetivo, gustos y desayuno =================
+  // ================= Fichas de las personas: peso, objetivo, gustos, desayuno, deporte, comidas en casa y cocina =================
   // Se guardan en la colección «perfil» (un documento por persona). La ficha se recalcula al momento;
   // el menú y la compra se ajustan cuando se copian al proyecto y se regenera la página.
-  const PERF = datos.perfiles, K = datos.constantes;
+  const PERF = datos.perfiles, K = datos.constantes, DEP = datos.deportes || {};
+  const LETRAS = ["L", "M", "X", "J", "V", "S", "D"];
   let perfilDb = new Map();
+  /** Kcal diarias del deporte por kg de peso (como kcalDeportePorKg en nutricion.ts). */
+  const deportePorKg = (acts) => acts.reduce((t, a) => t + ((DEP[a.deporte]?.met ?? K.metPorDefecto) - 1) * (a.minutos / 60) * a.dias.length, 0) / 7;
   const perfil = (id) => {
     const base = PERF[id], d = perfilDb.get(id) || {};
+    const actividades = d.actividades ?? base.actividades ?? [];
     return { ...base, pesoKg: d.pesoKg ?? base.pesoKg, objetivo: d.objetivo ?? base.objetivo, gustos: d.gustos ?? base.gustos,
-      desayunoTexto: d.desayuno ? d.desayuno.texto : null, desayunoFecha: d.desayuno ? d.desayuno.fecha : null, pesos: d.pesos || [] };
+      actividades, deportePorKg: d.actividades ? deportePorKg(actividades) : base.deportePorKg,
+      rol: d.rol ?? base.rol ?? "", regimen: d.regimen ?? base.regimen, regimenCambiado: !!d.regimen,
+      // Si el texto ya se pasó a receta (desayunoDesdeTexto), se muestra la receta.
+      ...(d.desayuno && d.desayuno.texto !== base.desayunoDesdeTexto ? { desayunoTexto: d.desayuno.texto, desayunoFecha: d.desayuno.fecha } : { desayunoTexto: null, desayunoFecha: null }),
+      pesos: d.pesos || [] };
   };
   const energia = (p, peso) => {
     const tmb = p.tmbPorKg * peso + p.tmbFija;
@@ -1164,7 +1209,33 @@
       if (des && p.desayunoTexto) des.replaceChildren(p.desayunoTexto, el("br"), el("span", { class: "sub",
         text: "Apuntado el " + fmtDia(p.desayunoFecha) + (p.desayuno ? ". La lista de la compra sigue contando «" + p.desayuno + "» hasta que se pase a receta." : ".") }));
     });
+    Object.keys(PERF).forEach((id) => {
+      const p = perfil(id);
+      const dep = huecoDe(id, "deporte");
+      if (dep) dep.replaceChildren(el("ul", { class: "lista-deporte" }, p.actividades.length
+        ? p.actividades.map((a) => el("li", null, el("span", { text: DEP[a.deporte]?.nombre || a.deporte }), el("span", { class: "mono", text: a.dias.join(" ") + " · " + a.minutos + " min" })))
+        : el("li", { text: "Sin deporte registrado" })));
+      const rol = huecoDe(id, "rol");
+      if (rol) rol.replaceChildren(p.rol || el("span", { class: "sub", text: "Sin indicar" }));
+      const reg = huecoDe(id, "regimen");
+      if (reg && p.regimenCambiado) reg.replaceChildren(...bloqueRegimen(p.regimen));
+    });
     document.querySelectorAll(".botones-ficha").forEach((b) => (b.hidden = !editable));
+  };
+  /** Comidas en casa de una persona (igual que la ficha que genera web.ts). */
+  const bloqueRegimen = (r) => {
+    const t = r.tupper, frio = t && t.tipo === "frío";
+    const fila = (tipo, etq) => el("div", { class: "en-casa-fila" }, el("span", { class: "etq", text: etq }), el("ol", { class: "dias-mini" }, LETRAS.map((d, i) => {
+      const si = r[tipo].includes(d), fuera = !si && tipo === "comida" && t && t.dias.includes(d);
+      const texto = DIAS[i] + ": " + (si ? "en casa" : fuera ? "fuera, tupper " + t.tipo : "fuera");
+      return el("li", { class: si ? "si" : fuera ? "tupper-dia " + (frio ? "frio" : "calor") : "no", title: texto }, el("span", { "aria-hidden": "true", text: d }), el("span", { class: "sr", text: texto }));
+    })));
+    return [fila("comida", "Comida"), fila("cena", "Cena"),
+      el("ul", { class: "leyenda-regimen" }, el("li", null, el("span", { class: "muestra-dia si" }), "En casa"),
+        t ? el("li", null, el("span", { class: "muestra-dia tupper-dia " + (frio ? "frio" : "calor") }), "Tupper " + t.tipo) : null,
+        el("li", null, el("span", { class: "muestra-dia" }), "Fuera")),
+      el("p", { class: "sub", text: "Almuerzo: " + (r.almuerzo ? "se lo lleva al " + r.almuerzo.lugar + " · " + r.almuerzo.dias.join(" ") : "no") }),
+      el("p", { class: "sub", text: "Cambiado en la web: el menú y la compra se ajustan en la sincronización de la noche." })];
   };
 
   const dlgP = document.getElementById("dlg-perfil");
@@ -1252,7 +1323,75 @@
     inpPeso.focus();
   };
 
+  const editarRol = (id) => {
+    const area = el("textarea", { rows: 2, value: perfil(id).rol });
+    abrirPerfil("Papel en la cocina de " + nom(id), [el("label", null, "Qué hace en la cocina (por ejemplo: «cocinera principal» o «solo plancha»)", area)], [
+      botonP("Guardar", () => {
+        const rol = area.value.trim().slice(0, 120);
+        guardarPerfil(id, { rol }, nom(id) + ": en la cocina, «" + (rol || "sin indicar") + "»");
+      }, true), cancelarP()]);
+    area.focus();
+  };
+
+  const editarDeporte = (id) => {
+    const filas = el("div", { class: "cuerpo-dlg" });
+    const fila = (a) => {
+      const sel = el("select", { "aria-label": "Deporte" }, Object.entries(DEP).map(([k, x]) => el("option", { value: k, text: x.nombre })));
+      if (a && !DEP[a.deporte]) sel.append(el("option", { value: a.deporte, text: a.deporte }));
+      sel.value = a ? a.deporte : Object.keys(DEP)[0];
+      const dias = el("div", { class: "quien-anot" }, LETRAS.map((d, i) => el("label", { class: "chip-quien", title: DIAS[i] },
+        el("input", { type: "checkbox", value: d, checked: !!a && a.dias.includes(d) }), el("span", { class: "comensal", text: d }))));
+      const min = el("input", { type: "number", min: "10", max: "300", step: "5", value: String(a ? a.minutos : 60), "aria-label": "Minutos" });
+      const quitar = el("button", { type: "button", class: "btn-mini", text: "Quitar" });
+      const caja = el("fieldset", { class: "bloque-anot" }, el("legend", { text: "Deporte" }), sel, dias, el("label", null, "Minutos cada día", min), quitar);
+      quitar.addEventListener("click", () => caja.remove());
+      caja.leer = () => ({ deporte: sel.value, dias: [...dias.querySelectorAll("input:checked")].map((i) => i.value), minutos: Math.round(Number(min.value)) });
+      filas.append(caja);
+    };
+    perfil(id).actividades.forEach(fila);
+    const mas = el("button", { type: "button", class: "secundario", text: "Añadir deporte" });
+    mas.addEventListener("click", () => fila());
+    abrirPerfil("Deporte de " + nom(id), [el("p", { class: "sub", text: "El gasto diario y la ración se recalculan al momento en la ficha; el menú y la compra, en la sincronización de la noche." }), filas, el("div", null, mas)], [
+      botonP("Guardar", () => {
+        const acts = [...filas.children].map((c) => c.leer());
+        if (acts.some((a) => !a.dias.length)) { estadoP.textContent = "Marca al menos un día en cada deporte (o quítalo)."; return; }
+        if (acts.some((a) => !(a.minutos >= 10 && a.minutos <= 300))) { estadoP.textContent = "Los minutos tienen que estar entre 10 y 300."; return; }
+        guardarPerfil(id, { actividades: acts }, nom(id) + ": deporte «" + (acts.map((a) => (DEP[a.deporte]?.nombre || a.deporte) + " " + a.dias.join("") + " " + a.minutos + " min").join(", ") || "ninguno") + "»");
+      }, true), cancelarP()]);
+  };
+
+  const editarRegimen = (id) => {
+    const r = perfil(id).regimen;
+    const chk = (fila, d, on) => el("input", { type: "checkbox", checked: on, "data-fila": fila, value: d, "aria-label": fila + " " + d });
+    const t = r.tupper || { dias: [], tipo: "frío" }, al = r.almuerzo || { dias: [], lugar: "colegio" };
+    const filas = [["comida", "Come en casa", r.comida], ["tupper", "Se lleva tupper", t.dias], ["cena", "Cena en casa", r.cena], ["almuerzo", "Se lleva almuerzo", al.dias]];
+    const tabla = el("table", { class: "tabla-regimen-edit" },
+      el("thead", null, el("tr", null, el("th"), LETRAS.map((d) => el("th", { text: d })))),
+      el("tbody", null, filas.map(([k, etq, dias]) => el("tr", null, el("th", { scope: "row", text: etq }), LETRAS.map((d) => el("td", null, chk(k, d, dias.includes(d))))))));
+    // Un día no puede ser a la vez comida en casa y tupper.
+    tabla.addEventListener("change", (ev) => {
+      const i = ev.target; if (!i.checked) return;
+      const otra = i.dataset.fila === "comida" ? "tupper" : i.dataset.fila === "tupper" ? "comida" : null;
+      if (otra) tabla.querySelector('input[data-fila="' + otra + '"][value="' + i.value + '"]').checked = false;
+    });
+    const tipo = el("select", null, el("option", { value: "frío", text: "frío" }), el("option", { value: "para recalentar", text: "para recalentar" }));
+    tipo.value = t.tipo;
+    const lugar = el("input", { type: "text", value: al.lugar, placeholder: "colegio, trabajo…" });
+    const dias = (k) => [...tabla.querySelectorAll('input[data-fila="' + k + '"]:checked')].map((i) => i.value);
+    abrirPerfil("Comidas en casa de " + nom(id), [el("div", { class: "scroll" }, tabla),
+      el("div", { class: "fila-campos" }, el("label", null, "Tupper", tipo), el("label", null, "Almuerzo, ¿dónde?", lugar)),
+      el("p", { class: "sub", text: "El menú, las raciones y la lista de la compra se ajustan en la sincronización de la noche." })], [
+      botonP("Guardar", () => {
+        const reg = { comida: dias("comida"), cena: dias("cena"),
+          tupper: dias("tupper").length ? { dias: dias("tupper"), tipo: tipo.value } : null,
+          almuerzo: dias("almuerzo").length ? { dias: dias("almuerzo"), lugar: lugar.value.trim().slice(0, 40) || "colegio" } : null };
+        guardarPerfil(id, { regimen: reg }, nom(id) + ": comidas en casa " + (reg.comida.join("") || "ninguna") + ", cenas " + (reg.cena.join("") || "ninguna")
+          + (reg.tupper ? ", tupper " + reg.tupper.tipo + " " + reg.tupper.dias.join("") : "") + (reg.almuerzo ? ", almuerzo " + reg.almuerzo.dias.join("") : ""));
+      }, true), cancelarP()]);
+  };
+
   const editarTexto = (id, que) => {
+    if (que === "rol") return editarRol(id);
     const p = perfil(id);
     const esGustos = que === "gustos";
     const area = el("textarea", { rows: esGustos ? 4 : 3, value: esGustos ? p.gustos.join("\n") : (p.desayunoTexto || p.desayuno || "") });
@@ -1279,6 +1418,8 @@
     const id = caja.dataset.m, tipo = caja.dataset.editar;
     if (tipo === "peso") editarPeso(id);
     else if (tipo === "objetivo") editarObjetivo(id);
+    else if (tipo === "deporte") editarDeporte(id);
+    else if (tipo === "regimen") editarRegimen(id);
     else editarTexto(id, b.dataset.que);
   }));
 

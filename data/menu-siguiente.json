@@ -68,8 +68,15 @@
         "prepara": "Lunes por la noche, sin cocinar"
       },
       "comida": {
-        "receta": "macarrones-tomate-jamon",
-        "prepara": "Lunes por la noche, con la cena: recalentar"
+        "receta": "paella-pollo-verduras",
+        "cambio": {
+          "antes": {
+            "receta": "macarrones-tomate-jamon",
+            "prepara": "Lunes por la noche, con la cena: recalentar"
+          },
+          "motivo": "La familia indicó que no le gusta macarrones-tomate-jamon (noDeseados); se cambia por paella de pollo y verduras aprovechando los contramuslos de pollo deshuesados de la despensa (1000 g).",
+          "fecha": "2026-09-30"
+        }
       },
       "merienda": {
         "receta": "yogur-fruta-frutos-secos"

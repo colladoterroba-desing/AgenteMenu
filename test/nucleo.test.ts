@@ -121,8 +121,9 @@ test("el menú de ejemplo usa recetas existentes y cubre todas las comidas y tup
 });
 
 test("las variantes sacan al comensal del plato principal y la compra suma todas las raciones", async () => {
-  const { componerMenu, listaCompra } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { componerMenu, listaCompra, sinCambios } = await import("../src/menu.js");
+  // El menú tal como se preparó, sin los cambios de «Actualizar menú» que llegan al sincronizar.
+  const menu = sinCambios(JSON.parse(await readFile("data/menu-semana.json", "utf8")));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   const cenaMiercoles = dias[2].comidas.find((c) => c.tipo === "cena")!;
@@ -601,4 +602,45 @@ test("el agente piensa más para el menú y menos para apuntar cosas sueltas", a
   assert.equal(esfuerzoPara("/ticket tickets/mercadona-27-09.jpg"), "medium");
   assert.equal(esfuerzoPara("¿En qué gastamos más?"), "medium");
   assert.equal(esfuerzoPara("Han sobrado 3 raciones de lentejas"), "low");
+});
+
+test("sincronizar: los cambios de «Actualizar menú» pasan al menú y la web los sigue mostrando encima del plato previsto", async () => {
+  const { aplicarCambios } = await import("../src/sincronizar.js");
+  const { componerMenu, sinCambios } = await import("../src/menu.js");
+  const { generarHtml } = await import("../src/web.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const nombres = Object.fromEntries(recetas.map((r: { id: string; nombre: string }) => [r.id, r.nombre]));
+  const previsto = menu.dias.L.cena;
+  const otra = recetas.find((r: { id: string; tipo: string }) => r.tipo === "cena" && r.id !== previsto.receta).id;
+  const celda = `${menu.inicio}-0-cena`;
+  const cambios = {
+    [celda]: { celda, recetas: [otra], comensales: ["CCT", "RFA", "AFC"], motivo: "RFC está de viaje", fecha: "2026-09-30T10:00:00Z" },
+    "2020-01-06-0-cena": { celda: "2020-01-06-0-cena", recetas: [otra], motivo: "otra semana" },
+  };
+  const r = aplicarCambios(menu, cambios, nombres);
+  assert.equal(r.aplicados, 1);
+  const cena = r.menu.dias.L.cena!;
+  assert.equal(cena.receta, otra);
+  assert.deepEqual(cena.comensales, ["CCT", "RFA", "AFC"]);
+  assert.equal(cena.cambio!.antes.receta, previsto.receta);
+  assert.equal(cena.cambio!.fecha, "2026-09-30");
+  // El agente y los PDF ven el plato nuevo y solo para quienes comen.
+  const lunes = componerMenu(familia, r.menu, recetas)[0].comidas.find((c) => c.tipo === "cena")!;
+  assert.equal(lunes.platos[0].receta.id, otra);
+  assert.ok(lunes.platos.every((p) => p.comensales.every((c) => c.id !== "RFC")));
+  // Volver a aplicar el mismo cambio no pierde el plato previsto; deshacerlo en la web lo recupera.
+  assert.equal(aplicarCambios(r.menu, cambios, nombres).menu.dias.L.cena!.cambio!.antes.receta, previsto.receta);
+  const deshecho = aplicarCambios(r.menu, { [celda]: { celda, quitado: true } }, nombres).menu;
+  assert.deepEqual(deshecho.dias.L.cena, previsto);
+  assert.deepEqual(sinCambios(r.menu).dias.L.cena, previsto);
+  // La página parte del plato previsto y trae el cambio aparte, con el mismo id que en la web.
+  const html = generarHtml({
+    familia, menu: r.menu, recetas, fecha: "30 de septiembre de 2026",
+    propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")),
+  });
+  const datos = JSON.parse(html.match(/<script type="application\/json" id="datos-pagina">(.*?)<\/script>/s)![1]);
+  assert.deepEqual(datos.menu[menu.inicio].celdas.find((c: { id: string }) => c.id === celda).platos[0], previsto.receta);
+  assert.deepEqual(datos.cambios[celda].recetas, [otra]);
+  assert.deepEqual(datos.cambios[celda].comensales, ["CCT", "RFA", "AFC"]);
 });

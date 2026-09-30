@@ -109,13 +109,48 @@
         "prepara": "Miércoles por la noche, sin cocinar"
       },
       "comida": {
-        "receta": "salmon-horno-patata"
+        "receta": "salmon-horno-patata",
+        "comensales": [
+          "AFC",
+          "CCT"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "salmon-horno-patata"
+          },
+          "motivo": "RFC de viaje el jueves, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
       },
       "merienda": {
-        "receta": "yogur-fruta-frutos-secos"
+        "receta": "yogur-fruta-frutos-secos",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "yogur-fruta-frutos-secos"
+          },
+          "motivo": "RFC de viaje el jueves, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
       },
       "cena": {
-        "receta": "lentejas-estofadas"
+        "receta": "lentejas-estofadas",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "lentejas-estofadas"
+          },
+          "motivo": "RFC de viaje el jueves, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
       }
     },
     "V": {
@@ -124,13 +159,49 @@
         "prepara": "Jueves por la noche, sin cocinar"
       },
       "comida": {
-        "receta": "espaguetis-bolonesa"
+        "receta": "garbanzos-espinacas",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "espaguetis-bolonesa"
+          },
+          "motivo": "RFC de viaje el viernes; además la semana solo tenía 1 legumbre (lentejas del jueves), por debajo de las 2-4 recomendadas, y hay garbanzos cocidos en la despensa (400 g)",
+          "fecha": "2026-09-30"
+        }
       },
       "merienda": {
-        "receta": "tostada-cacahuete-platano"
+        "receta": "tostada-cacahuete-platano",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "tostada-cacahuete-platano"
+          },
+          "motivo": "RFC de viaje el viernes, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
       },
       "cena": {
-        "receta": "pizza-casera-verduras"
+        "receta": "pizza-casera-verduras",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "pizza-casera-verduras"
+          },
+          "motivo": "RFC de viaje el viernes, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
       }
     },
     "S": {

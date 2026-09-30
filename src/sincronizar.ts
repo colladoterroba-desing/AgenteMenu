@@ -4,8 +4,9 @@
 import { readdir, readFile, rm, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { normalizarCantidad } from "./menu.js";
-import type { Despensa, Familia, Objetivo, Producto, Sobra } from "./tipos.js";
+import { normalizarCantidad, type MenuSemana, type PlatoMenu } from "./menu.js";
+import type { TipoComida } from "./planificacion.js";
+import { DIAS, type Despensa, type Familia, type Objetivo, type Producto, type Sobra } from "./tipos.js";
 import { claveProducto } from "./web.js";
 
 export const COLECCIONES = [
@@ -109,6 +110,43 @@ export function unir(familia: Familia, despensa: Despensa, web: Exportado, recet
   };
 }
 
+/**
+ * Pasa al menú los cambios de «Actualizar menú» de esa semana (casillas «<lunes>-<día 0-6>-<comida>»).
+ * El plato guarda el que había antes (`cambio.antes`) para que la web lo siga mostrando tachado y se pueda
+ * volver a él; un cambio deshecho en la web (`quitado`) devuelve el plato previsto.
+ */
+export function aplicarCambios(menu: MenuSemana, cambios: Record<string, Record<string, unknown>>, recetas: Record<string, string>) {
+  const avisos: string[] = [];
+  let aplicados = 0;
+  if (!menu.inicio) return { menu, aplicados, avisos };
+  const dias = structuredClone(menu.dias);
+  for (const d of Object.values(cambios)) {
+    const celda = texto(d.celda);
+    const m = celda?.match(/^(\d{4}-\d{2}-\d{2})-(\d)-(\w+)$/);
+    if (!m || m[1] !== menu.inicio) continue;
+    const dia = DIAS[Number(m[2])], tipo = m[3] as TipoComida;
+    const plato = dias[dia]?.[tipo];
+    if (!dia || !plato) { avisos.push(`El cambio de ${celda} no corresponde a ninguna comida del menú.`); continue; }
+    const previsto: PlatoMenu = plato.cambio?.antes ?? plato;
+    if (d.quitado) {
+      if (plato.cambio) { dias[dia]![tipo] = previsto; aplicados++; }
+      continue;
+    }
+    const ids = Array.isArray(d.recetas) ? d.recetas.filter((r): r is string => typeof r === "string") : [];
+    if (!ids.length || ids.length > 2 || !ids.every((r) => recetas[r])) { avisos.push(`El cambio de ${celda} tiene recetas que no existen.`); continue; }
+    const comensales = Array.isArray(d.comensales) ? d.comensales.filter((q): q is string => typeof q === "string") : [];
+    dias[dia]![tipo] = {
+      receta: ids[0],
+      ...(ids[1] ? { segundo: ids[1] } : {}),
+      ...(previsto.variantes ? { variantes: previsto.variantes } : {}),
+      ...(comensales.length ? { comensales } : {}),
+      cambio: { antes: previsto, motivo: texto(d.motivo) ?? "", fecha: texto(d.fecha)?.slice(0, 10) ?? "" },
+    };
+    aplicados++;
+  }
+  return { menu: { ...menu, dias }, aplicados, avisos };
+}
+
 async function main() {
   const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const datos = path.join(raiz, "data");
@@ -125,6 +163,15 @@ async function main() {
   const r = unir(await leer<Familia>("familia.json"), await leer<Despensa>("despensa.json"), web, recetas);
   await escribir("familia.json", r.familia);
   await escribir("despensa.json", r.despensa);
+  // Cambios de «Actualizar menú» → menú de esta semana y de la siguiente (así los ven el agente y los PDF).
+  for (const f of ["menu-semana.json", "menu-siguiente.json"]) {
+    const menu = await leer<MenuSemana>(f).catch(() => undefined);
+    if (!menu) continue;
+    const c = aplicarCambios(menu, web.cambios, recetas);
+    if (c.aplicados) await escribir(f, c.menu);
+    r.avisos.push(...c.avisos);
+    if (c.aplicados) console.log(`${f}: ${c.aplicados} cambios de «Actualizar menú».`);
+  }
   // Copia completa de lo apuntado (diario, anotaciones, cocinado, comentarios...): el agente la lee con ver_apuntes_web.
   await mkdir(path.join(datos, "web"), { recursive: true });
   for (const col of COLECCIONES) await escribir(path.join("web", `${col}.json`), web[col]);

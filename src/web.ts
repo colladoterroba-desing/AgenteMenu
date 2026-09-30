@@ -18,7 +18,7 @@ import {
   REPARTO_LABORABLE,
   tasaMetabolicaBasal,
 } from "./nutricion.js";
-import { componerMenu, listaCompra, menuVisible, normalizarCantidad, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
+import { componerMenu, listaCompra, menuVisible, sinCambios, normalizarCantidad, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
 import { costeCesta, type TablaPrecios } from "./precios.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
@@ -1436,6 +1436,23 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     { semana: menu.semana, clave: inicio, dias },
     ...(menuSiguiente && diasSiguiente ? [{ semana: menuSiguiente.semana, clave: inicioSiguiente, dias: diasSiguiente }] : []),
   ];
+  // Las casillas muestran el plato previsto antes de «Actualizar menú»; los cambios ya pasados al proyecto
+  // van aparte y la página los pone encima, como los que aún están solo en la web.
+  const celdasDe = (m: MenuSemana, clave: string) => celdasCliente(clave, componerMenu(familia, sinCambios(m), recetas));
+  const cambiosBase = Object.fromEntries(
+    [{ m: menu, clave: inicio }, ...(menuSiguiente ? [{ m: menuSiguiente, clave: inicioSiguiente }] : [])].flatMap(({ m, clave }) =>
+      Object.entries(m.dias).flatMap(([dia, comidas]) =>
+        Object.entries(comidas ?? {}).flatMap(([tipo, p]) => {
+          if (!p?.cambio) return [];
+          const celda = idCelda(clave, dia as Dia, tipo as TipoComida);
+          return [[celda, {
+            celda, recetas: [p.receta, ...(p.segundo ? [p.segundo] : [])], motivo: p.cambio.motivo, fecha: p.cambio.fecha,
+            ...(p.comensales ? { comensales: p.comensales } : {}),
+          }]];
+        }),
+      ),
+    ),
+  );
   const datosCliente = {
     miembros: familia.miembros.map((m) => m.id),
     recetas: Object.fromEntries(recetas.map((r) => [r.id, r.nombre])),
@@ -1447,7 +1464,11 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
         return [claveProducto(i.nombre, c.unidad), i.nombre, c.cantidad, i.seccion, i.porPersona ? 1 : 0, c.unidad];
       }),
     }])),
-    menu: Object.fromEntries(semanas.map(({ semana, clave, dias: d }) => [clave, { letra: semana, inicio: clave, celdas: celdasCliente(clave, d) }])),
+    menu: Object.fromEntries([
+      [inicio, { letra: menu.semana, inicio, celdas: celdasDe(menu, inicio) }],
+      ...(menuSiguiente ? [[inicioSiguiente, { letra: menuSiguiente.semana, inicio: inicioSiguiente, celdas: celdasDe(menuSiguiente, inicioSiguiente) }]] : []),
+    ]),
+    cambios: cambiosBase,
     // La página decide por la fecha cuál es la semana en curso (rotación de semanas).
     semanaActual: inicio,
     ordenPasillos: [...SECCIONES, "Otros"],

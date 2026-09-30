@@ -55,6 +55,7 @@ const plato = z.object({
   segundo: z.string().optional().describe("Segundo plato para los mismos comensales"),
   prepara: z.string().optional().describe("Batch, ración extra de otra comida, plancha..."),
   variantes: z.record(z.string(), z.string()).optional().describe("Miembro → receta alternativa"),
+  comensales: z.array(z.string()).optional().describe("Solo si no comen todos los previstos (p. ej. alguien de viaje): quiénes comen"),
   sobrasDe: z
     .object({ dia: z.enum(DIAS), comida: z.enum(TIPOS_COMIDA) })
     .optional()

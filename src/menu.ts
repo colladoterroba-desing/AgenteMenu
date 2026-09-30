@@ -56,6 +56,10 @@ export interface PlatoMenu {
    * esa comida. En la web no se marca como cocinado aparte; sus raciones se suman a las de esa comida.
    */
   sobrasDe?: { dia: Dia; comida: TipoComida };
+  /** Quiénes comen este plato, si no son todos los previstos (p. ej. alguien está de viaje). */
+  comensales?: string[];
+  /** Cambio aplicado con «Actualizar menú» en la web: el plato que había antes y el motivo. */
+  cambio?: { antes: PlatoMenu; motivo: string; fecha: string };
 }
 
 export interface CambioMenu {
@@ -178,6 +182,17 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
 }
 
 /** Une la rejilla de comensales con los platos del menú. */
+/** El menú como estaba antes de los cambios de «Actualizar menú» (la web los muestra encima). */
+export function sinCambios(menu: MenuSemana): MenuSemana {
+  const dias = Object.fromEntries(
+    Object.entries(menu.dias).map(([dia, comidas]) => [
+      dia,
+      Object.fromEntries(Object.entries(comidas ?? {}).map(([tipo, p]) => [tipo, p?.cambio ? p.cambio.antes : p])),
+    ]),
+  ) as MenuSemana["dias"];
+  return { ...menu, dias };
+}
+
 export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta[]): DiaDelMenu[] {
   const porId = new Map(recetas.map((r) => [r.id, r]));
   const receta = (id: string) => {
@@ -216,8 +231,9 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
       if (comida.tipo === "desayuno" && familia.desayunos && !plato) {
         platos.push(...desayunosHabituales(comida.comensales));
       } else if (plato) {
+        const comen = comida.comensales.filter((c) => !plato.comensales || plato.comensales.includes(c.id));
         const variantes = plato.variantes ?? {};
-        const principal = comida.comensales.filter((c) => !variantes[c.id]);
+        const principal = comen.filter((c) => !variantes[c.id]);
         platos.push({
           receta: receta(plato.receta),
           comensales: principal,
@@ -227,7 +243,7 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
           segundo: segundo(plato, principal),
         });
         for (const [id, variante] of Object.entries(variantes)) {
-          const comensal = comida.comensales.find((c) => c.id === id);
+          const comensal = comen.find((c) => c.id === id);
           if (!comensal) continue;
           platos.push({ receta: receta(variante), comensales: [comensal], raciones: raciones(receta(variante), [comensal]) });
         }

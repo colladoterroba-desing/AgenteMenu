@@ -149,6 +149,9 @@
   let eventos = [], comentarios = [];
   const ndBase = new Map(datos.noDeseados.map((n) => [n.receta + "__" + n.por, n]));
   const reservasBase = new Map((datos.reservas || []).map((x) => [x.id, x]));
+  // Cambios de «Actualizar menú» que ya están en el proyecto (sincronizados); los de la web mandan.
+  const cambiosBase = new Map(Object.entries(datos.cambios || {}));
+  const cambioDe = (id) => { const k = cambiosDb.has(id) ? cambiosDb.get(id) : cambiosBase.get(id); return k && !k.quitado ? k : null; };
 
   // En la despensa no hay cantidades negativas: si un dato guardado lo es, se toma como 0 (faltaba apuntarlo).
   const despensaActual = () => {
@@ -169,7 +172,7 @@
     const d = diarioDb.get(c.id);
     if (d && d.tipo === "receta" && REC[d.receta]) return { origen: "diario", recetas: [d.receta], nota: d.nota };
     if (d && d.tipo === "texto") return { origen: "diario", recetas: [], texto: d.texto, nota: d.nota };
-    const k = cambiosDb.get(c.id);
+    const k = cambioDe(c.id);
     if (k && Array.isArray(k.recetas) && k.recetas.every((r) => REC[r])) {
       const com = Array.isArray(k.comensales) && k.comensales.length ? k.comensales.filter((q) => datos.factores[q]) : null;
       return { origen: "claude", recetas: k.recetas, motivo: k.motivo, nota: d && d.nota, comensales: com,
@@ -560,7 +563,10 @@
         if (e.origen === "claude" && editable) {
           const b = el("button", { type: "button", class: "btn-mini", text: "Volver al plato previsto" });
           b.addEventListener("click", async () => {
-            try { await db.doc("cambios/" + c.id).delete(); cambiosDb.delete(c.id);
+            try {
+              // Si el cambio ya está en el proyecto, se deja constancia de que se deshizo; si no, basta con borrarlo.
+              if (cambiosBase.has(c.id)) { const doc = { celda: c.id, quitado: true, fecha: new Date().toISOString() }; await db.doc("cambios/" + c.id).set(doc); cambiosDb.set(c.id, doc); }
+              else { await db.doc("cambios/" + c.id).delete(); cambiosDb.delete(c.id); }
               await registrar("actualizacion", "Deshecho el cambio de Claude del " + DIAS[c.dia].toLowerCase() + " (" + COMIDA_TXT[c.comida].toLowerCase() + ")."); renderTodo(); }
             catch (err) { aviso("No se ha podido guardar."); }
           });

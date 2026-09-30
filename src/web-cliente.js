@@ -145,7 +145,7 @@
   let db = null;
   let editable = false;
   const despensaBase = new Map(datos.despensa.map((p) => [p.clave, p]));
-  let despensaDb = new Map(), ndDb = new Map(), diarioDb = new Map(), cambiosDb = new Map(), cocinadoDb = new Map(), reservasDb = new Map();
+  let despensaDb = new Map(), ndDb = new Map(), diarioDb = new Map(), cambiosDb = new Map(), cocinadoDb = new Map(), reservasDb = new Map(), comidoDb = new Map();
   let eventos = [], comentarios = [];
   const ndBase = new Map(datos.noDeseados.map((n) => [n.receta + "__" + n.por, n]));
   const reservasBase = new Map((datos.reservas || []).map((x) => [x.id, x]));
@@ -178,20 +178,65 @@
     return { origen: "menu", recetas: c.platos, nota: d && d.nota };
   };
   const corto = (r) => nombreRec(r).split(" ").filter((w) => !/^(de|con|a|al|la|el|en|y|del|los|las)$/i.test(w)).slice(0, 2).join(" ");
-  /** Lo que se cocina en una casilla: cada plato, variante y tupper, con sus raciones. */
+  // ===== Anotaciones por persona (colección «comido», documento «casilla__persona») =====
+  // Casilla marcada = ha comido lo previsto. Otra anotación (otro plato, otra cosa, no come) lo saca
+  // de lo previsto: sus raciones se descuentan de lo que se cocina y de la compra.
+  const anotDe = (c, p) => comidoDb.get(c.id + "__" + p);
+  const fueraDePrevisto = (c, p) => { const a = anotDe(c, p); return !!a && a.tipo !== "previsto"; };
+  const factorDe = (p) => datos.factores[p] || 0;
+  /** Lo que tenía previsto una persona en una casilla, o null si no estaba prevista. */
+  const previstoPara = (c, p) => {
+    if (c.comida === "desayuno") { const d = (c.desayunos || []).find((x) => (x.quien || []).includes(p)); return d ? [d.receta] : null; }
+    const v = (c.variantes || []).find((x) => x.quien === p); if (v) return [v.receta];
+    const t = c.tuppers.find((x) => x.quien === p); if (t) return t.recetas;
+    const e = efectivo(c);
+    return (e.comensales || c.quien).includes(p) ? e.recetas : null;
+  };
+  /** Quien no estaba previsto pero ha comido lo previsto suma sus raciones al plato principal. */
+  const extraEn = (c, p) => { const a = anotDe(c, p); return !!a && a.tipo === "previsto" && c.comida !== "desayuno" && !previstoPara(c, p); };
+  const ajustePrincipal = (c, quien) => {
+    let rac = 0, pers = 0;
+    datos.miembros.forEach((p) => {
+      if (quien.includes(p) && fueraDePrevisto(c, p)) { rac -= factorDe(p); pers--; }
+      else if (extraEn(c, p)) { rac += factorDe(p); pers++; }
+    });
+    return { rac, pers };
+  };
+  // Comidas y tuppers que salen de otra casilla (sobras): se cocinan en esa otra.
+  const dependientes = new Map();
+  const anadirDep = (k, x) => { if (!dependientes.has(k)) dependientes.set(k, []); dependientes.get(k).push(x); };
+  celdas.forEach((d) => {
+    if (d.sobrasDe) anadirDep(d.sobrasDe, { celda: d });
+    d.tuppers.forEach((t) => { if (t.sobrasDe) anadirDep(t.sobrasDe, { celda: d, t }); });
+  });
+  const ajusteDependientes = (c) => (dependientes.get(c.id) || []).reduce((acc, dep) => {
+    const a = dep.t ? (fueraDePrevisto(dep.celda, dep.t.quien) ? { rac: -dep.t.rac, pers: -1 } : { rac: 0, pers: 0 })
+      : (efectivo(dep.celda).origen === "menu" ? ajustePrincipal(dep.celda, dep.celda.quien) : { rac: 0, pers: 0 });
+    return { rac: acc.rac + a.rac, pers: acc.pers + a.pers };
+  }, { rac: 0, pers: 0 });
+  const r2 = (n) => Math.max(0, Math.round(n * 100) / 100);
+
+  /** Lo que se cocina en una casilla: cada plato, variante y tupper, con sus raciones (descontando las anotaciones). */
   const instancias = (c) => {
+    const conAlgo = (i) => cocinadoDb.has(i.inst) || i.items.some((it) => it.rac > 0);
     if (c.comida === "desayuno") {
-      return [{ inst: c.id + "~des", items: (c.desayunos || []).map((x) => ({ receta: x.receta, rac: x.rac, personas: x.personas })), etiqueta: "Desayunos", esDes: true }];
+      const items = (c.desayunos || []).map((x) => {
+        const quedan = x.personas - (x.quien || []).filter((p) => fueraDePrevisto(c, p)).length;
+        return { receta: x.receta, rac: quedan > 0 ? r2((x.rac * quedan) / x.personas) : 0, personas: Math.max(0, quedan) };
+      }).filter((it) => it.rac > 0);
+      return [{ inst: c.id + "~des", items: items.length ? items : [{ receta: (c.desayunos || [])[0]?.receta, rac: 0, personas: 0 }], etiqueta: "Desayunos", esDes: true }].filter(conAlgo);
     }
     const e = efectivo(c), out = [];
     e.recetas.forEach((r, i) => {
       const deMenu = e.origen === "menu";
-      out.push({ inst: c.id + "~p" + i, items: [{ receta: r, rac: deMenu ? c.racCocinar : (e.rac ?? c.rac), personas: deMenu ? c.personas : (e.personas ?? c.quien.length) }],
-        sobras: deMenu && c.sobras, etiqueta: e.recetas.length > 1 ? corto(r) : "" });
+      const aj = ajustePrincipal(c, e.comensales || c.quien), dep = deMenu ? ajusteDependientes(c) : { rac: 0, pers: 0 };
+      const rac = r2((deMenu ? c.racCocinar : (e.rac ?? c.rac)) + aj.rac + dep.rac);
+      const personas = Math.max(0, (deMenu ? c.personas : (e.personas ?? c.quien.length)) + aj.pers + dep.pers);
+      out.push({ inst: c.id + "~p" + i, items: [{ receta: r, rac, personas }], sobras: deMenu && c.sobras, etiqueta: e.recetas.length > 1 ? corto(r) : "" });
     });
-    (c.variantes || []).forEach((v, i) => out.push({ inst: c.id + "~var" + (i || ""), items: [{ receta: v.receta, rac: v.rac, personas: 1 }], etiqueta: v.quien }));
-    c.tuppers.forEach((t) => out.push({ inst: c.id + "~t" + t.quien, items: t.recetas.map((r) => ({ receta: r, rac: t.rac, personas: 1 })), sobras: t.sobras, etiqueta: "Tupper " + t.quien }));
-    return out;
+    (c.variantes || []).forEach((v, i) => out.push({ inst: c.id + "~var" + (i || ""), items: [{ receta: v.receta, rac: fueraDePrevisto(c, v.quien) ? 0 : v.rac, personas: 1 }], etiqueta: v.quien }));
+    c.tuppers.forEach((t) => out.push({ inst: c.id + "~t" + t.quien, items: t.recetas.map((r) => ({ receta: r, rac: fueraDePrevisto(c, t.quien) ? 0 : t.rac, personas: 1 })), sobras: t.sobras, etiqueta: "Tupper " + t.quien }));
+    return out.filter((i) => i.sobras || conAlgo(i));
   };
   const cantidadIng = ([, , g, , porPersona], it, rac) => (porPersona ? g * it.personas * (rac / (it.rac || 1)) : g * rac);
   const ingredientesDe = (items, factor) => {
@@ -293,6 +338,152 @@
   };
 
   // ================= Menú: casillas =================
+  // ================= Anotaciones: qué ha comido cada persona =================
+  const reservaPorId = (id) => { const t = new Map(reservasBase); reservasDb.forEach((v, k) => t.set(k, v)); const v = t.get(id); return v ? { ...v, id } : null; };
+  const ponerReserva = async (x) => { await guardarReserva(x); const { id, ...d } = x; reservasDb.set(id, d); };
+  /** Devuelve a la despensa (y a la reserva) lo que gastó una anotación anterior. */
+  const devolverGastado = async (a) => {
+    for (const [k, g] of Object.entries(a?.descontado || {})) await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengoDe(k) + Number(g));
+    const x = a?.reserva && reservaPorId(a.reserva);
+    if (x) await ponerReserva({ ...x, reserva: Math.round((Number(x.reserva) + 1) * 10) / 10 });
+  };
+  const resumenAnot = (a) => [
+    a.tipo === "nocome" ? "No come" : a.tipo === "receta" ? "Comió " + nombreRec(a.receta) : a.tipo === "texto" ? "Comió " + a.texto : "",
+    a.nota, (a.descontado && Object.keys(a.descontado).length) || a.reserva ? "gastado de la despensa" : "",
+  ].filter(Boolean).join(" · ");
+  const textoCasilla = (c) => DIAS[c.dia].toLowerCase() + ", " + COMIDA_TXT[c.comida].toLowerCase();
+
+  const guardarAnotacion = async (c, p, nuevo, usos = [], reservaId = "", todoElDia = false) => {
+    if (ocupado) return false; ocupado = true;
+    let ok = true;
+    try {
+      await devolverGastado(anotDe(c, p));
+      const descontado = {};
+      for (const u of usos) {
+        const tengo = tengoDe(u.k), quita = Math.min(tengo, u.g); // nunca por debajo de 0
+        if (quita > 0) { descontado[u.k] = Math.round(((descontado[u.k] || 0) + quita) * 10) / 10; await guardarProducto(despensaActual().get(u.k)?.nombre || nombreDe.get(u.k) || u.k, tengo - quita); }
+      }
+      const doc = { celda: c.id, persona: p, ...nuevo, fecha: new Date().toISOString() };
+      if (Object.keys(descontado).length) doc.descontado = descontado;
+      const x = reservaId && reservaPorId(reservaId);
+      if (x && Number(x.reserva) > 0) { await ponerReserva({ ...x, reserva: Math.max(0, Math.round((Number(x.reserva) - 1) * 10) / 10) }); doc.reserva = reservaId; }
+      Object.keys(doc).forEach((k) => (doc[k] === undefined || doc[k] === "") && delete doc[k]);
+      await db.doc("comido/" + c.id + "__" + p).set(doc); comidoDb.set(c.id + "__" + p, doc);
+      let otras = 0;
+      if (todoElDia && nuevo.tipo === "nocome") {
+        for (const o of celdas.values()) {
+          if (o.id === c.id || fechaCelda(o) !== fechaCelda(c) || anotDe(o, p) || !previstoPara(o, p)) continue;
+          const d2 = { celda: o.id, persona: p, tipo: "nocome", fecha: doc.fecha, ...(nuevo.nota ? { nota: nuevo.nota } : {}) };
+          await db.doc("comido/" + o.id + "__" + p).set(d2); comidoDb.set(o.id + "__" + p, d2); otras++;
+        }
+      }
+      await registrar("comido", p + " (" + textoCasilla(c) + "): " + (nuevo.tipo === "previsto" && !nuevo.nota ? "ha comido lo previsto" : resumenAnot(doc)) + (otras ? " (y " + otras + " comidas más de ese día)" : "") + ".");
+    } catch (e) { ok = false; aviso("No se ha podido guardar (" + (e && e.code || "error") + ")."); }
+    ocupado = false; renderTodo();
+    return ok;
+  };
+  const borrarAnotacion = async (c, p) => {
+    if (ocupado) return; ocupado = true;
+    try {
+      await devolverGastado(anotDe(c, p));
+      await db.doc("comido/" + c.id + "__" + p).delete(); comidoDb.delete(c.id + "__" + p);
+      await registrar("comido", p + " (" + textoCasilla(c) + "): anotación quitada.");
+    } catch (e) { aviso("No se ha podido guardar (" + (e && e.code || "error") + ")."); }
+    ocupado = false; renderTodo();
+  };
+
+  /** Una línea por persona con la casilla «ha comido lo previsto» y el botón «Anotaciones». */
+  const filasPersonas = (c) => {
+    const lista = el("div", { class: "comio" });
+    datos.miembros.forEach((p) => {
+      const a = anotDe(c, p), prev = previstoPara(c, p);
+      const conDato = !!a && (a.tipo !== "previsto" || !!a.nota);
+      const fila = el("div", { class: "comio-fila" + (prev ? "" : " no-previsto") });
+      const chk = el("input", { type: "checkbox", checked: !!a && a.tipo === "previsto", disabled: !editable });
+      chk.setAttribute("aria-label", conAlias(p) + ": ha comido lo previsto");
+      chk.addEventListener("change", () => (chk.checked ? guardarAnotacion(c, p, { tipo: "previsto", nota: a?.nota }) : borrarAnotacion(c, p)));
+      const b = el("button", { type: "button", class: "btn-mini" + (conDato ? " con-dato" : ""), text: "Anotaciones", disabled: !editable });
+      b.setAttribute("aria-label", "Anotaciones de " + conAlias(p));
+      b.addEventListener("click", () => abrirAnotacion(c, p));
+      fila.append(el("label", null, chk, el("span", { class: "comensal", text: p, title: prev ? "" : "No estaba previsto en esta comida" })), b);
+      lista.append(fila);
+      if (conDato) lista.append(el("span", { class: "comio-nota", text: resumenAnot(a) }));
+    });
+    return lista;
+  };
+
+  const dlgN = document.getElementById("dlg-anot");
+  const abrirAnotacion = (c, p) => {
+    const a = anotDe(c, p) || {}, prev = previstoPara(c, p);
+    const radio = (valor, texto) => { const r = el("input", { type: "radio", name: "anot-tipo", value: valor }); r.checked = (a.tipo || "previsto") === valor; return [r, el("label", { class: "opcion" }, r, texto)]; };
+    const [rPrev, lPrev] = radio("previsto", "Lo previsto");
+    const [rRec, lRec] = radio("receta", "Otro plato del recetario");
+    const selRec = el("select", { "aria-label": "Plato del recetario" }, Object.entries(REC).sort((x, y) => x[1].n.localeCompare(y[1].n)).map(([id, r]) => el("option", { value: id, text: r.n })));
+    if (a.receta) selRec.value = a.receta;
+    const [rTxt, lTxt] = radio("texto", "Otra cosa");
+    const inTxt = el("input", { type: "text", value: a.texto || "", placeholder: "Por ejemplo: macarrones con chorizo y tomate frito", "aria-label": "Qué comió" });
+    const [rNo, lNo] = radio("nocome", "No come");
+    const todoDia = el("input", { type: "checkbox" });
+    const lTodo = el("label", { class: "opcion sub" }, todoDia, "Tampoco las demás comidas de ese día");
+    const nota = el("input", { type: "text", value: a.nota || "", placeholder: "Opcional" });
+    // Gastado de la despensa: productos con gramos y, si acaso, una ración en reserva.
+    const despensaOpc = () => {
+      const t = despensaActual(), claves = new Set([...t.keys()].filter((k) => Number(t.get(k).cantidad) > 0 || a.descontado?.[k]));
+      return [...claves].map((k) => [k, t.get(k)?.nombre || nombreDe.get(k) || k, Number(t.get(k)?.cantidad || 0) + Number(a.descontado?.[k] || 0)])
+        .sort((x, y) => x[1].localeCompare(y[1]));
+    };
+    const filasDesp = el("div", { class: "cuerpo-dlg" });
+    const filaGasto = (k = "", g = "") => {
+      const sel = el("select", { "aria-label": "Producto" }, el("option", { value: "", text: "Producto de la despensa…" }), despensaOpc().map(([kk, n, hay]) => el("option", { value: kk, text: n + " (" + fmtG(hay) + ")" })));
+      sel.value = k;
+      const gr = el("input", { type: "number", min: "0", step: "1", value: String(g), placeholder: "g", "aria-label": "Gramos" });
+      const quitar = el("button", { type: "button", class: "btn-mini", text: "Quitar" });
+      const f = el("div", { class: "fila-gasto" }, sel, gr, quitar);
+      quitar.addEventListener("click", () => f.remove());
+      filasDesp.append(f);
+    };
+    Object.entries(a.descontado || {}).forEach(([k, g]) => filaGasto(k, g));
+    const masBtn = el("button", { type: "button", class: "btn-mini", text: "Añadir producto" });
+    masBtn.addEventListener("click", () => filaGasto());
+    const reservas = reservasActuales().filter((x) => x.id !== a.reserva);
+    const prevRes = a.reserva && reservaPorId(a.reserva);
+    const selRes = el("select", { "aria-label": "Ración en reserva" }, el("option", { value: "", text: "Ninguna" }),
+      [...(prevRes ? [prevRes] : []), ...reservas].map((x) => el("option", { value: x.id, text: (x.receta ? nombreRec(x.receta) : x.descripcion || "Reserva") + " (" + fmtNum(Number(x.reserva) + (x.id === a.reserva ? 1 : 0), 1) + " rac.)" })));
+    selRes.value = a.reserva || "";
+    const tipo = () => [rPrev, rRec, rTxt, rNo].find((r) => r.checked).value;
+    const actualizar = () => { lTodo.hidden = tipo() !== "nocome"; };
+    [rPrev, rRec, rTxt, rNo].forEach((r) => r.addEventListener("change", actualizar));
+    selRec.addEventListener("focus", () => (rRec.checked = true, actualizar()));
+    inTxt.addEventListener("input", () => (rTxt.checked = true, actualizar()));
+    actualizar();
+
+    document.getElementById("dlg-anot-titulo").textContent = conAlias("Anotaciones · " + p);
+    const estado = document.getElementById("dlg-anot-estado"); estado.textContent = "";
+    document.getElementById("dlg-anot-cuerpo").replaceChildren(
+      el("p", { class: "sub", text: DIAS[c.dia] + ", " + COMIDA_TXT[c.comida].toLowerCase() + ". Previsto: " + (prev ? prev.map(nombreRec).join(" + ") : "nada (no estaba previsto)") }),
+      el("fieldset", null, el("legend", { class: "sr", text: "¿Qué comió?" }), lPrev, lRec, selRec, lTxt, inTxt, lNo, lTodo),
+      el("label", null, "Nota", nota),
+      el("details", { class: "gasto", open: !!(a.descontado || a.reserva) }, el("summary", { text: "Gastado de la despensa" }),
+        el("p", { class: "sub", text: "Si comió algo que ya había en casa, elige qué y cuánto: se resta de la despensa." }),
+        filasDesp, el("div", null, masBtn), el("label", { class: "bloque" }, "Ración en reserva", selRes)),
+    );
+    const guardar = el("button", { type: "button", class: "btn-principal", text: "Guardar" });
+    guardar.addEventListener("click", async () => {
+      const t = tipo();
+      if (t === "texto" && !inTxt.value.trim()) { estado.textContent = "Escribe qué comió."; inTxt.focus(); return; }
+      const usos = [...filasDesp.querySelectorAll(".fila-gasto")].map((f) => ({ k: f.querySelector("select").value, g: Number(f.querySelector("input").value) })).filter((u) => u.k && u.g > 0);
+      const nuevo = { tipo: t, nota: nota.value.trim().slice(0, 200), ...(t === "receta" ? { receta: selRec.value } : {}), ...(t === "texto" ? { texto: inTxt.value.trim().slice(0, 200) } : {}) };
+      guardar.disabled = true;
+      if (await guardarAnotacion(c, p, nuevo, usos, selRes.value, todoDia.checked)) { dlgN.close(); aviso("Anotación guardada."); }
+      guardar.disabled = false;
+    });
+    const botones = [guardar];
+    if (anotDe(c, p)) { const q = el("button", { type: "button", class: "secundario", text: "Quitar anotación" }); q.addEventListener("click", async () => { await borrarAnotacion(c, p); dlgN.close(); }); botones.push(q); }
+    const cancelar = el("button", { type: "button", class: "secundario", text: "Cancelar" }); cancelar.addEventListener("click", () => dlgN.close()); botones.push(cancelar);
+    document.getElementById("dlg-anot-botones").replaceChildren(...botones);
+    dlgN.showModal();
+  };
+
   const renderMenu = () => {
     let cocinados = 0;
     document.querySelectorAll("[data-acciones]").forEach((caja) => {
@@ -349,12 +540,7 @@
         });
         caja.append(fila);
       });
-      if (c.comida !== "desayuno") {
-        const tiene = diarioDb.has(c.id);
-        const b = el("button", { type: "button", class: "btn-mini" + (tiene ? " con-dato" : ""), text: tiene ? "Diario ✓" : "Diario", disabled: !editable });
-        b.addEventListener("click", () => abrirDiario(c));
-        caja.append(b);
-      }
+      caja.append(filasPersonas(c));
     });
     const rc = document.getElementById("resumen-cocinados"); if (rc) rc.textContent = cocinados;
   };
@@ -651,7 +837,17 @@
       el("td", { text: e.origen === "menu" ? "Lo previsto" : (e.recetas.length ? e.recetas.map(nombreRec).join(" + ") + (e.comensales ? " (comen " + e.comensales.join(", ") + ")" : "") : e.texto) }),
       el("td", null, e.origen === "menu" ? "—" : el("span", { class: "origen " + e.origen, text: e.origen === "diario" ? "Diario" : "Claude" })),
       el("td", { text: [e.motivo, e.nota].filter(Boolean).join(" · ") || "—" }))));
-    if (!filas.length) tb.append(el("tr", null, el("td", { colSpan: 6, class: "sub", text: "Sin cambios: se está comiendo lo previsto." })));
+    const anots = [...comidoDb.values()].filter((a) => celdas.has(a.celda) && (a.tipo !== "previsto" || a.nota))
+      .map((a) => [fechaCelda(celdas.get(a.celda)), celdas.get(a.celda), a]).sort((x, y) => x[0].localeCompare(y[0]) || x[1].id.localeCompare(y[1].id));
+    anots.forEach(([f, c, a]) => {
+      const prev = previstoPara(c, a.persona);
+      tb.append(el("tr", null, el("td", { text: fechaCorta(f) }), el("td", { text: COMIDA_TXT[c.comida] }),
+        el("td", { text: prev ? prev.map(nombreRec).join(" + ") : "—" }),
+        el("td", null, el("span", { class: "comensal", text: a.persona }), " " + (a.tipo === "nocome" ? "No come" : a.tipo === "receta" ? nombreRec(a.receta) : a.tipo === "texto" ? a.texto : "Lo previsto")),
+        el("td", null, el("span", { class: "origen diario", text: "Anotación" })),
+        el("td", { text: [a.nota, (a.descontado && Object.keys(a.descontado).length) || a.reserva ? "gastado de la despensa" : ""].filter(Boolean).join(" · ") || "—" })));
+    });
+    if (!filas.length && !anots.length) tb.append(el("tr", null, el("td", { colSpan: 6, class: "sub", text: "Sin cambios: se está comiendo lo previsto." })));
 
     const tc = document.getElementById("diario-cocinado"); tc.replaceChildren();
     const coc = [...cocinadoDb.entries()].map(([inst, d]) => [celdas.get(d.celda || inst.split("~")[0]), d]).filter(([c]) => c)
@@ -722,9 +918,12 @@
   const contexto = () => {
     const pasadas = [...celdas.values()].filter((c) => fechaCelda(c) <= HOY && c.comida !== "desayuno" && c.platos.length).map((c) => {
       const e = efectivo(c);
-      return { fecha: fechaCelda(c), comida: c.comida, previsto: c.platos.map(nombreRec), comido: e.origen === "menu" ? "lo previsto" : (e.recetas.length ? e.recetas.map(nombreRec).join(" + ") : e.texto), nota: e.nota || undefined };
+      const porPersona = datos.miembros.map((p) => [p, anotDe(c, p)]).filter(([, a]) => a && a.tipo !== "previsto")
+        .map(([p, a]) => ({ quien: p, comio: a.tipo === "nocome" ? "no comió" : a.tipo === "receta" ? nombreRec(a.receta) : a.texto, nota: a.nota || undefined }));
+      return { fecha: fechaCelda(c), comida: c.comida, previsto: c.platos.map(nombreRec), comido: e.origen === "menu" ? "lo previsto" : (e.recetas.length ? e.recetas.map(nombreRec).join(" + ") : e.texto), nota: e.nota || undefined,
+        ...(porPersona.length ? { porPersona } : {}) };
     });
-    const futuras = modificables().map((c) => ({ celda: c.id, fecha: fechaCelda(c), dia: DIAS[c.dia], comida: c.comida, comensales: efectivo(c).comensales || c.quien, platos: efectivo(c).recetas.map((r) => ({ id: r, nombre: nombreRec(r) })) }));
+    const futuras = modificables().map((c) => ({ celda: c.id, fecha: fechaCelda(c), dia: DIAS[c.dia], comida: c.comida, comensales: (efectivo(c).comensales || c.quien).filter((p) => !fueraDePrevisto(c, p)), platos: efectivo(c).recetas.map((r) => ({ id: r, nombre: nombreRec(r) })) }));
     const fijas = [...celdas.values()].filter((c) => fechaCelda(c) > HOY && c.comida !== "desayuno" && c.platos.length && !futuras.some((f) => f.celda === c.id))
       .map((c) => ({ fecha: fechaCelda(c), comida: c.comida, platos: efectivo(c).recetas.map(nombreRec) }));
     return {
@@ -1015,6 +1214,7 @@
     sub("cambios", (m) => (cambiosDb = m));
     sub("cocinado", (m) => (cocinadoDb = m));
     sub("perfil", (m) => (perfilDb = m));
+    sub("comido", (m) => (comidoDb = m));
     db.collection("comentarios").onSnapshot((snap) => { comentarios = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((x, y) => String(y.fecha).localeCompare(String(x.fecha))); renderComentarios(); }, () => {});
     db.collection("eventos").orderBy("fecha", "desc").limit(100).onSnapshot((snap) => { eventos = snap.docs.map((d) => d.data()); renderDiario(); }, () => {});
     sample = await window.claude.use("sample");

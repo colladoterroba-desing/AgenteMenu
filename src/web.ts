@@ -709,7 +709,7 @@ function seccionDespensa(recetas: Receta[]): string {
 /** Diario de comidas: comentarios, cambios sobre el menú ideal, lo cocinado y la actividad. */
 function seccionDiario(): string {
   return `<header class="cab"><h1 id="h-diario">Diario de comidas</h1>
-    <p class="sub">Lo que se ha comido de verdad frente al menú ideal, lo cocinado y los cambios. Para apuntar una comida, pulsa «Diario» en su casilla del menú.</p>
+    <p class="sub">Lo que se ha comido de verdad frente al menú ideal, lo cocinado y los cambios. Lo que come cada persona se apunta en el menú, con la casilla y el botón «Anotaciones» de cada comida.</p>
     <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button></div>
     <p class="sub">«Actualizar menú» pasa al menú lo apuntado en el diario y pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa. Tú decides qué cambios se aplican.</p></header>
     <section class="categoria ancha destacada-cat"><h4>Comentarios</h4>
@@ -809,6 +809,12 @@ const DIALOGOS = `
   <div id="act-cuerpo"></div>
   <p class="sub estado-form" id="act-estado" role="status"></p>
   <div class="botones-dlg" id="act-botones"></div>
+</dialog>
+<dialog id="dlg-anot" class="dlg">
+  <h3 id="dlg-anot-titulo">Anotaciones</h3>
+  <div id="dlg-anot-cuerpo" class="cuerpo-dlg"></div>
+  <p class="sub estado-form" id="dlg-anot-estado" role="status"></p>
+  <div class="botones-dlg" id="dlg-anot-botones"></div>
 </dialog>
 <dialog id="dlg-perfil" class="dlg">
   <h3 id="dlg-perfil-titulo"></h3>
@@ -1099,6 +1105,17 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .dlg .fila-campos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dlg .fila-campos label{display:grid;gap:4px}
 .resultado-objetivo,.cuerpo-dlg{display:grid;gap:8px}
+.comio{display:grid;gap:3px;margin-top:4px}
+.comio-fila{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.comio-fila label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;min-width:0}
+.comio-fila input{accent-color:var(--accent);width:15px;height:15px;margin:0;flex:none}
+.comio-fila.no-previsto .comensal{background:transparent;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
+.comio-nota{font-size:.72rem;color:var(--muted);padding-left:20px;line-height:1.25}
+.fila-gasto{display:grid;grid-template-columns:1fr 80px auto;gap:6px;align-items:center}
+.dlg .fila-gasto input{width:100%}
+.gasto summary{cursor:pointer;font-weight:600;font-size:.9rem;color:var(--accent)}
+.gasto[open]{display:grid;gap:8px}
+.dlg label.bloque{display:grid;gap:4px}
 .reparto{font-size:.9rem}
 .reparto th,.reparto td{padding:4px 6px}
 .reparto .num{text-align:right}
@@ -1236,10 +1253,12 @@ export interface CeldaCliente {
   personas: number;
   /** Sale de otra comida: no se marca como cocinada aparte. */
   sobras: boolean;
+  /** Casilla donde se cocina, si sale de otra comida. */
+  sobrasDe?: string;
   variantes: { quien: string; receta: string; rac: number }[];
-  tuppers: { quien: string; recetas: string[]; rac: number; sobras: boolean }[];
-  /** Desayunos fijos del día (receta, raciones y personas). */
-  desayunos?: { receta: string; rac: number; personas: number }[];
+  tuppers: { quien: string; recetas: string[]; rac: number; sobras: boolean; sobrasDe?: string }[];
+  /** Desayunos fijos del día (receta, raciones, personas y quién los toma). */
+  desayunos?: { receta: string; rac: number; personas: number; quien: string[] }[];
 }
 
 const redondear2 = (n: number) => Math.round(n * 100) / 100;
@@ -1278,7 +1297,7 @@ export function celdasCliente(semana: string, dias: DiaDelMenu[]): CeldaCliente[
         celdas.push({
           id, sem: semana, dia, comida: c.tipo, platos: [], quien: c.platos.flatMap((p) => p.comensales.map((x) => x.id)),
           rac: 1, racCocinar: 1, personas: 0, sobras: false, variantes: [], tuppers: [],
-          desayunos: c.platos.map((p) => ({ receta: p.receta.id, rac: p.raciones, personas: p.comensales.length })),
+          desayunos: c.platos.map((p) => ({ receta: p.receta.id, rac: p.raciones, personas: p.comensales.length, quien: p.comensales.map((x) => x.id) })),
         });
         continue;
       }
@@ -1289,9 +1308,11 @@ export function celdasCliente(semana: string, dias: DiaDelMenu[]): CeldaCliente[
         quien: principal.comensales.map((x) => x.id),
         rac: principal.raciones, racCocinar: principal.raciones, personas: principal.comensales.length,
         sobras: Boolean(principal.sobrasDe),
+        ...(principal.sobrasDe ? { sobrasDe: idCelda(semana, principal.sobrasDe.dia, principal.sobrasDe.comida) } : {}),
         variantes: variantes.map((v) => ({ quien: v.comensales[0].id, receta: v.receta.id, rac: v.raciones })),
         tuppers: c.tuppers.map((t) => ({
           quien: t.para, recetas: [t.receta.id, ...(t.segundo ? [t.segundo.receta.id] : [])], rac: t.raciones, sobras: Boolean(t.sobrasDe),
+          ...(t.sobrasDe ? { sobrasDe: idCelda(semana, t.sobrasDe.dia, t.sobrasDe.comida) } : {}),
         })),
       });
       if (principal.sobrasDe) sobras.push({ destino: idCelda(semana, principal.sobrasDe.dia, principal.sobrasDe.comida), rac: principal.raciones, personas: principal.comensales.length });
@@ -1476,7 +1497,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. Con «Diario» apuntas lo que se comió de verdad si no fue lo previsto. Los días que ya han pasado no se muestran.</p>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. Debajo, cada persona: marca la casilla si ha comido lo previsto; con «Anotaciones» apuntas si comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra). Los días que ya han pasado no se muestran.</p>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
       <dl class="resumen">

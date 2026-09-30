@@ -471,7 +471,7 @@ test("web: alias en lugar de siglas, página Normas y fichas editables", async (
   const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, recetas, fecha: "30 de septiembre de 2026" });
   const visible = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]*>/g, " ");
   assert.doesNotMatch(visible, /\b(RFA|CCT|RFC|AFC)\b/);
-  for (const id of ["normas", "dlg-perfil"]) assert.match(html, new RegExp(`id="${id}"`));
+  for (const id of ["normas", "dlg-perfil", "dlg-anot"]) assert.match(html, new RegExp(`id="${id}"`));
   assert.doesNotMatch(html, /Cambios al menú/);
   for (const editar of ["peso", "objetivo", "alimentacion"]) assert.match(html, new RegExp(`data-m="CCT" data-editar="${editar}"`));
   // Los menores no tienen objetivo de peso que cambiar.

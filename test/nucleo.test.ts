@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { cp, mkdtemp, readFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -9,7 +9,9 @@ import { calcularNecesidades, clasificarImc, imc, proponerObjetivo } from "../sr
 import { planificarSemana } from "../src/planificacion.js";
 import type { Familia } from "../src/tipos.js";
 
-const familia: Familia = JSON.parse(await readFile("data/familia.json", "utf8"));
+// Las pruebas comprueban el menú de ejemplo con las normas; los no deseados que la familia apunta en la web
+// (y llegan al sincronizar) no forman parte del ejemplo: cada prueba de no deseados pone los suyos.
+const familia: Familia = { ...JSON.parse(await readFile("data/familia.json", "utf8")), noDeseados: [] };
 const miembro = (id: string) => familia.miembros.find((m) => m.id === id)!;
 
 test("IMC y clasificación de la familia", () => {
@@ -53,6 +55,7 @@ test("rejilla semanal respeta el régimen de comidas", () => {
 async function almacenTemporal() {
   const dir = await mkdtemp(path.join(tmpdir(), "agente-menu-"));
   await cp("data", path.join(dir, "data"), { recursive: true });
+  await writeFile(path.join(dir, "data", "familia.json"), JSON.stringify(familia));
   return new Almacen(path.join(dir, "data"));
 }
 
@@ -544,4 +547,49 @@ test("ver_recetas da un índice ligero y el detalle solo de las recetas pedidas;
   const menu = (await h.ejecutar("ver_menu", {})).contenido;
   assert.doesNotMatch(menu, /"ingredientes"|"pasos"/);
   assert.match(menu, /"receta":\{"id":"[a-z0-9-]+","nombre":"/);
+});
+
+test("sincronizar: la web manda en despensa, reservas, no deseados y perfil, sin duplicar reservas", async () => {
+  const { unir, COLECCIONES } = await import("../src/sincronizar.js");
+  const familia: Familia = JSON.parse(await readFile("data/familia.json", "utf8"));
+  const vacio = Object.fromEntries(COLECCIONES.map((c) => [c, {}])) as Parameters<typeof unir>[2];
+  const despensa = {
+    productos: [{ nombre: "Brócoli", cantidad: 876, unidad: "g" }, { nombre: "Puerro", cantidad: 500, unidad: "g" }],
+    sobras: [{ descripcion: "Lentejas", raciones: 2, fecha: "2026-09-28", receta: "lentejas-estofadas" }],
+  };
+  const web = {
+    ...vacio,
+    despensa: {
+      "brocoli-g": { nombre: "Brócoli", cantidad: 300, unidad: "g" },
+      "puerro-g": { nombre: "Puerro", cantidad: 0, unidad: "g" },
+      "huevos-g": { nombre: "Huevos", cantidad: 720, unidad: "g", caducidad: "2026-10-10" },
+    },
+    hechas: {
+      "repo-0": { receta: "lentejas-estofadas", reserva: 1, donde: "nevera", fecha: "2026-09-28" },
+      "pollo__1": { receta: "pollo-guisado-arroz", reserva: 3, hechas: 8, donde: "congelador", fecha: "2026-09-30", caduca: "2026-12-30" },
+      "pure__2": { receta: "pure-calabaza", reserva: 0, donde: "nevera", fecha: "2026-09-30" },
+    },
+    "no-deseados": { "pisto__RFA": { receta: "pisto", por: "RFA", motivo: "No le gusta", fecha: "2026-09-30" } },
+    perfil: { CCT: { pesoKg: 78.46, gustos: ["Pasta"], desayuno: { texto: "Café con tostada", fecha: "2026-09-30" } } },
+  };
+  const r = unir(familia, despensa, web, { "pollo-guisado-arroz": "Pollo guisado con arroz" });
+  assert.deepEqual(r.despensa.productos.map((p) => [p.nombre, p.cantidad]), [["Brócoli", 300], ["Huevos", 720]]);
+  assert.deepEqual(r.despensa.sobras.map((s) => [s.id, s.raciones]), [["repo-0", 1], ["pollo__1", 3]]);
+  assert.equal(r.despensa.sobras[1].descripcion, "Pollo guisado con arroz");
+  assert.equal(r.despensa.sobras[1].ubicacion, "congelador");
+  assert.ok(r.familia.noDeseados!.some((n) => n.receta === "pisto" && n.por === "RFA"));
+  const cct = r.familia.miembros.find((m) => m.id === "CCT")!;
+  assert.equal(cct.pesoKg, 78.5);
+  assert.deepEqual(cct.gustos, ["Pasta"]);
+  assert.match(r.avisos.join(), /Café con tostada/);
+
+  // Tras sincronizar, la página no repite la reserva: la del proyecto y la de la web tienen el mismo id.
+  const { generarHtml } = await import("../src/web.js");
+  const html = generarHtml({
+    familia: r.familia, despensa: r.despensa,
+    propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")),
+    menu: JSON.parse(await readFile("data/menu-semana.json", "utf8")),
+    recetas: JSON.parse(await readFile("data/recetas.json", "utf8")).recetas, fecha: "30 de septiembre de 2026",
+  });
+  assert.match(html, /"id":"pollo__1"/);
 });

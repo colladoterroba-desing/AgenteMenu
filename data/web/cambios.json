@@ -1,0 +1,87 @@
+{
+  "2026-09-28-3-cena": {
+    "celda": "2026-09-28-3-cena",
+    "comensales": [
+      "RFA",
+      "CCT",
+      "AFC"
+    ],
+    "fecha": "2026-09-30T10:48:31.027Z",
+    "motivo": "RFC de viaje el jueves, se retira de comensales",
+    "recetas": [
+      "lentejas-estofadas"
+    ]
+  },
+  "2026-09-28-3-comida": {
+    "celda": "2026-09-28-3-comida",
+    "comensales": [
+      "AFC",
+      "CCT"
+    ],
+    "fecha": "2026-09-30T10:48:30.426Z",
+    "motivo": "RFC de viaje el jueves, se retira de comensales",
+    "recetas": [
+      "salmon-horno-patata"
+    ]
+  },
+  "2026-09-28-3-merienda": {
+    "celda": "2026-09-28-3-merienda",
+    "comensales": [
+      "RFA",
+      "CCT",
+      "AFC"
+    ],
+    "fecha": "2026-09-30T10:48:30.756Z",
+    "motivo": "RFC de viaje el jueves, se retira de comensales",
+    "recetas": [
+      "yogur-fruta-frutos-secos"
+    ]
+  },
+  "2026-09-28-4-cena": {
+    "celda": "2026-09-28-4-cena",
+    "comensales": [
+      "RFA",
+      "CCT",
+      "AFC"
+    ],
+    "fecha": "2026-09-30T10:48:31.789Z",
+    "motivo": "RFC de viaje el viernes, se retira de comensales",
+    "recetas": [
+      "pizza-casera-verduras"
+    ]
+  },
+  "2026-09-28-4-comida": {
+    "celda": "2026-09-28-4-comida",
+    "comensales": [
+      "RFA",
+      "CCT",
+      "AFC"
+    ],
+    "fecha": "2026-09-30T10:48:31.264Z",
+    "motivo": "RFC de viaje el viernes; además la semana solo tenía 1 legumbre (lentejas del jueves), por debajo de las 2-4 recomendadas, y hay garbanzos cocidos en la despensa (400 g)",
+    "recetas": [
+      "garbanzos-espinacas"
+    ]
+  },
+  "2026-09-28-4-merienda": {
+    "celda": "2026-09-28-4-merienda",
+    "comensales": [
+      "RFA",
+      "CCT",
+      "AFC"
+    ],
+    "fecha": "2026-09-30T10:48:31.538Z",
+    "motivo": "RFC de viaje el viernes, se retira de comensales",
+    "recetas": [
+      "tostada-cacahuete-platano"
+    ]
+  },
+  "2026-10-05-1-comida": {
+    "celda": "2026-10-05-1-comida",
+    "fecha": "2026-09-30T10:45:49.459Z",
+    "motivo": "La familia indicó que no le gusta macarrones-tomate-jamon (noDeseados); se cambia por paella de pollo y verduras aprovechando los contramuslos de pollo deshuesados de la despensa (1000 g).",
+    "recetas": [
+      "paella-pollo-verduras"
+    ]
+  }
+}

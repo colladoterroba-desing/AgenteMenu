@@ -39,6 +39,10 @@ export class Almacen {
     await this.escribir("precios.json", tabla);
     return tabla.precios.length;
   }
+  /** Copia de una colección de la web (data/web/<colección>.json, la deja `npm run sincronizar`). */
+  apuntesWeb = (coleccion: string) =>
+    this.leer<Record<string, Record<string, unknown>>>(path.join("web", `${coleccion}.json`)).catch(() => ({}));
+
   /** Menú de esta semana o, con `siguiente`, la propuesta de la semana que viene. */
   menu = (siguiente = false) => this.leer<MenuSemana>(siguiente ? "menu-siguiente.json" : "menu-semana.json");
 

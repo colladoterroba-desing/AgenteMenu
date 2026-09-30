@@ -8,9 +8,18 @@
       "sexo": "V",
       "alturaCm": 165,
       "pesoKg": 73,
-      "gustos": ["No come mucho pescado"],
+      "gustos": [
+        "No come mucho pescado"
+      ],
       "actividades": [
-        { "deporte": "running", "dias": ["L", "M"], "minutos": 90 }
+        {
+          "deporte": "running",
+          "dias": [
+            "L",
+            "M"
+          ],
+          "minutos": 90
+        }
       ]
     },
     {
@@ -22,7 +31,13 @@
       "pesoKg": 79,
       "gustos": [],
       "actividades": [
-        { "deporte": "yoga_funcional", "dias": ["X"], "minutos": 60 }
+        {
+          "deporte": "yoga_funcional",
+          "dias": [
+            "X"
+          ],
+          "minutos": 60
+        }
       ]
     },
     {
@@ -34,7 +49,14 @@
       "pesoKg": 76,
       "gustos": [],
       "actividades": [
-        { "deporte": "natacion", "dias": ["M", "J"], "minutos": 60 }
+        {
+          "deporte": "natacion",
+          "dias": [
+            "M",
+            "J"
+          ],
+          "minutos": 60
+        }
       ]
     },
     {
@@ -46,10 +68,36 @@
       "pesoKg": 52,
       "gustos": [],
       "actividades": [
-        { "deporte": "futbol_entrenamiento", "dias": ["X", "V"], "minutos": 90 },
-        { "deporte": "futbol_partido", "dias": ["S"], "minutos": 90 },
-        { "deporte": "educacion_fisica", "dias": ["M", "J"], "minutos": 60 },
-        { "deporte": "natacion", "dias": ["V"], "minutos": 30 }
+        {
+          "deporte": "futbol_entrenamiento",
+          "dias": [
+            "X",
+            "V"
+          ],
+          "minutos": 90
+        },
+        {
+          "deporte": "futbol_partido",
+          "dias": [
+            "S"
+          ],
+          "minutos": 90
+        },
+        {
+          "deporte": "educacion_fisica",
+          "dias": [
+            "M",
+            "J"
+          ],
+          "minutos": 60
+        },
+        {
+          "deporte": "natacion",
+          "dias": [
+            "V"
+          ],
+          "minutos": 30
+        }
       ]
     }
   ],
@@ -61,64 +109,202 @@
     "Los días que los mayores (RFA y CCT) no comen en casa, la comida de los niños puede ser pasta o algo más calórico",
     "Dar prioridad a los platos habituales de casa y poner huevo 3-4 veces por semana"
   ],
-  "equipamiento": ["Thermomix"],
+  "equipamiento": [
+    "Thermomix"
+  ],
   "platosHabituales": {
-    "cenas": ["huevos-revueltos-jamon-queso", "sandwich-mixto", "tortilla-patata"],
+    "cenas": [
+      "huevos-revueltos-jamon-queso",
+      "sandwich-mixto",
+      "tortilla-patata"
+    ],
     "comidas": [
-      "pure-calabacin", "pure-calabaza", "pure-zanahoria", "crema-puerro", "judias-verdes-rehogadas",
-      "pollo-empanado", "lomo-adobado-plancha", "chuleta-sajonia-plancha", "ternera-estofada", "solomillo-naranja"
+      "pure-calabacin",
+      "pure-calabaza",
+      "pure-zanahoria",
+      "crema-puerro",
+      "judias-verdes-rehogadas",
+      "pollo-empanado",
+      "lomo-adobado-plancha",
+      "chuleta-sajonia-plancha",
+      "ternera-estofada",
+      "solomillo-naranja"
     ]
   },
-  "noDeseados": [],
+  "noDeseados": [
+    {
+      "receta": "macarrones-tomate-jamon",
+      "por": "familia",
+      "motivo": "No me gusta la receta. Prefiero otra pasta o sandchich mixto",
+      "fecha": "2026-09-28"
+    }
+  ],
   "supervision": [
     {
-      "ingredientes": ["garbanzo", "lenteja", "alubia", "hummus"],
-      "adultos": ["RFA", "CCT"],
+      "ingredientes": [
+        "garbanzo",
+        "lenteja",
+        "alubia",
+        "hummus"
+      ],
+      "adultos": [
+        "RFA",
+        "CCT"
+      ],
       "motivo": "Las legumbres, mejor con un adulto que supervise cuánto comen"
     }
   ],
   "restricciones": [
     {
-      "ingredientes": ["salmón", "atún", "anchoa", "sardina"],
-      "soloEn": [{ "dia": "J", "comida": "comida" }],
+      "ingredientes": [
+        "salmón",
+        "atún",
+        "anchoa",
+        "sardina"
+      ],
+      "soloEn": [
+        {
+          "dia": "J",
+          "comida": "comida"
+        }
+      ],
       "motivo": "Salmón, atún, anchoas y sardinas solo los jueves a la hora de comer"
     }
   ],
   "desayunos": {
-    "AFC": { "receta": "desayuno-afc", "nota": "Su desayuno de todos los días.", "mostrarEnMenu": false },
-    "RFC": { "receta": "cafe-solo", "nota": "Solo café en casa; come el almuerzo que se lleva al colegio.", "mostrarEnMenu": false },
+    "AFC": {
+      "receta": "desayuno-afc",
+      "nota": "Su desayuno de todos los días.",
+      "mostrarEnMenu": false
+    },
+    "RFC": {
+      "receta": "cafe-solo",
+      "nota": "Solo café en casa; come el almuerzo que se lleva al colegio.",
+      "mostrarEnMenu": false
+    },
     "CCT": {
       "receta": "desayuno-cct-actual",
       "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-07): pan integral con tomate y queso fresco, sin azúcar (receta desayuno-cct).",
       "mostrarEnMenu": false
     },
-    "RFA": { "receta": "desayuno-rfa", "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-06): añadir fruta en días de running.", "mostrarEnMenu": false }
+    "RFA": {
+      "receta": "desayuno-rfa",
+      "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-06): añadir fruta en días de running.",
+      "mostrarEnMenu": false
+    }
   },
   "regimen": {
     "comida": {
-      "L": ["RFC", "AFC"],
-      "M": ["RFC", "AFC"],
-      "X": ["RFC", "AFC"],
-      "J": ["RFC", "AFC", "CCT"],
-      "V": ["RFA", "CCT", "RFC", "AFC"],
-      "S": ["RFA", "CCT", "RFC", "AFC"],
-      "D": ["RFA", "CCT", "RFC", "AFC"]
+      "L": [
+        "RFC",
+        "AFC"
+      ],
+      "M": [
+        "RFC",
+        "AFC"
+      ],
+      "X": [
+        "RFC",
+        "AFC"
+      ],
+      "J": [
+        "RFC",
+        "AFC",
+        "CCT"
+      ],
+      "V": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "S": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "D": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ]
     },
     "cena": {
-      "L": ["RFA", "CCT", "RFC", "AFC"],
-      "M": ["RFA", "CCT", "RFC", "AFC"],
-      "X": ["RFA", "CCT", "RFC", "AFC"],
-      "J": ["RFA", "CCT", "RFC", "AFC"],
-      "V": ["RFA", "CCT", "RFC", "AFC"],
-      "S": ["RFA", "CCT", "RFC", "AFC"],
-      "D": ["RFA", "CCT", "RFC", "AFC"]
+      "L": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "M": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "X": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "J": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "V": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "S": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ],
+      "D": [
+        "RFA",
+        "CCT",
+        "RFC",
+        "AFC"
+      ]
     },
     "almuerzo": {
-      "RFC": { "dias": ["L", "M", "X", "J", "V"], "lugar": "colegio" }
+      "RFC": {
+        "dias": [
+          "L",
+          "M",
+          "X",
+          "J",
+          "V"
+        ],
+        "lugar": "colegio"
+      }
     },
     "tupper": {
-      "RFA": { "dias": ["L", "M", "X", "J"], "tipo": "frío" },
-      "CCT": { "dias": ["L", "M", "X"], "tipo": "para recalentar" }
+      "RFA": {
+        "dias": [
+          "L",
+          "M",
+          "X",
+          "J"
+        ],
+        "tipo": "frío"
+      },
+      "CCT": {
+        "dias": [
+          "L",
+          "M",
+          "X"
+        ],
+        "tipo": "para recalentar"
+      }
     },
     "desayuno": "todos, todos los días; cada uno su desayuno habitual (ver desayunos)",
     "merienda": "todos, de lunes a viernes"

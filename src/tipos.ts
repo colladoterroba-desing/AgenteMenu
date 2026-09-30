@@ -93,6 +93,8 @@ export interface Producto {
 }
 
 export interface Sobra {
+  /** Identificador de la reserva en la web (así no sale dos veces al sincronizar). */
+  id?: string;
   descripcion: string;
   /** Raciones que quedan en reserva. */
   raciones: number;

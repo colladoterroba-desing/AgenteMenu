@@ -1,0 +1,68 @@
+{
+  "espaguetis-bolonesa__1790764660435": {
+    "actualizado": "2026-09-30T10:37:40.435Z",
+    "caduca": "2026-12-30",
+    "comer": 4,
+    "donde": "congelador",
+    "fecha": "2026-09-30",
+    "hechas": 10,
+    "receta": "espaguetis-bolonesa",
+    "reserva": 6,
+    "semana": "A"
+  },
+  "garbanzos-espinacas__1790764603009": {
+    "actualizado": "2026-09-30T10:36:43.009Z",
+    "caduca": "2026-12-30",
+    "comer": 1,
+    "donde": "congelador",
+    "fecha": "2026-09-30",
+    "hechas": 1,
+    "receta": "garbanzos-espinacas",
+    "reserva": 0,
+    "semana": "A"
+  },
+  "lentejas-estofadas__1790764636764": {
+    "actualizado": "2026-09-30T10:37:16.764Z",
+    "caduca": "2026-12-30",
+    "comer": 4,
+    "donde": "congelador",
+    "fecha": "2026-09-30",
+    "hechas": 5,
+    "receta": "lentejas-estofadas",
+    "reserva": 1,
+    "semana": "A"
+  },
+  "pollo-guisado-arroz__1790764872272": {
+    "actualizado": "2026-09-30T11:00:00.000Z",
+    "caduca": "2026-12-30",
+    "comer": 5,
+    "donde": "congelador",
+    "fecha": "2026-09-30",
+    "hechas": 8,
+    "receta": "pollo-guisado-arroz",
+    "reserva": 3,
+    "semana": "A"
+  },
+  "pure-calabaza__1790764728521": {
+    "actualizado": "2026-09-30T10:38:48.521Z",
+    "caduca": "2026-12-30",
+    "comer": 3,
+    "donde": "congelador",
+    "fecha": "2026-09-30",
+    "hechas": 3,
+    "receta": "pure-calabaza",
+    "reserva": 0,
+    "semana": "A"
+  },
+  "solomillo-naranja__1790764756681": {
+    "actualizado": "2026-09-30T10:39:16.681Z",
+    "caduca": "2026-12-30",
+    "comer": 4,
+    "donde": "congelador",
+    "fecha": "2026-09-30",
+    "hechas": 12,
+    "receta": "solomillo-naranja",
+    "reserva": 8,
+    "semana": "A"
+  }
+}

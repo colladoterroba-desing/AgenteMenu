@@ -329,7 +329,7 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
       ${categoria(
         "Criterios del menú",
         `<ul class="criterios">
-          <li>Legumbres 2-4 veces por semana</li><li>Pescado 3-4 veces</li><li>Verdura en comida y cena</li>
+          <li>Legumbres 2-4 veces por semana</li><li>Pescado 3-4 veces</li><li>Huevo 3-4 veces</li><li>Verdura en comida y cena</li>
           <li>Fruta a diario</li><li>Carne roja, 1-2 veces como máximo</li><li>Ultraprocesados, ocasionales</li>
         </ul>`,
       )}
@@ -1447,7 +1447,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
       ...(familia.preferencias ?? []),
       ...(familia.restricciones ?? []).map((r) => r.motivo),
       ...(familia.supervision ?? []).map((s) => s.motivo),
-      "Legumbres 2-4 veces por semana", "Pescado 3-4 veces", "Verdura en comida y cena", "Fruta a diario",
+      "Legumbres 2-4 veces por semana", "Pescado 3-4 veces", "Huevo 3-4 veces por semana", "Verdura en comida y cena", "Fruta a diario",
       "Carne roja, 1-2 veces como máximo", "Ultraprocesados, ocasionales",
     ],
     despensa: (despensa?.productos ?? []).map((p) => {

@@ -537,13 +537,16 @@
       if (!c) return;
       const td = caja.closest("td");
       const e = efectivo(c);
-      td.querySelectorAll(":scope > .plato-menu").forEach((a) => a.classList.toggle("tachado", e.origen !== "menu"));
+      // Si el cambio deja el mismo plato (p. ej. solo cambia quién come), no se tacha ni se repite.
+      const mismoPlato = e.origen !== "menu" && e.recetas.length > 0 && e.recetas.join() === c.platos.join();
+      td.querySelectorAll(":scope > .plato-menu").forEach((a) => a.classList.toggle("tachado", e.origen !== "menu" && !mismoPlato));
       td.querySelector(":scope > .plato-real")?.remove();
       const ancla = td.querySelector(":scope > .comensales, :scope > .des-sub, :scope > .desayunos-dia") || caja;
       if (e.origen !== "menu") {
         const real = el("div", { class: "plato-real" });
         const etq = el("span", { class: "origen " + e.origen, text: e.origen === "diario" ? "Diario" : "Claude" });
-        if (e.recetas.length) e.recetas.forEach((r, n) => real.append(el("div", null, n ? null : etq, el("a", { href: "#r-" + r, text: nombreRec(r) }))));
+        if (mismoPlato) real.append(el("div", null, etq, el("span", { class: "motivo", text: "Mismo plato" })));
+        else if (e.recetas.length) e.recetas.forEach((r, n) => real.append(el("div", null, n ? null : etq, el("a", { href: "#r-" + r, text: nombreRec(r) }))));
         else real.append(el("div", null, etq, el("strong", { text: e.texto })));
         if (e.comensales) real.append(el("span", { class: "motivo", text: "Comen: " + e.comensales.join(", ") + " (" + fmtRac(e.rac) + " rac.)" }));
         const txt = [e.motivo, e.nota].filter(Boolean).join(" · ");

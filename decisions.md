@@ -59,6 +59,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 |---|---|---|
 | 30/09/2026 | **Página «Normas»** con las normas de la casa, las alergias y quién cocina. Salen de Configuración. | Separar las normas de la configuración de las personas. Definiciones se queda como glosario. |
 | 30/09/2026 | En **Configuración → Grupo familiar** no se repiten los datos de cada miembro (están en su ficha) ni se explica cómo se cambia el menú. Se quedan el régimen de comidas, el reparto de la energía, los criterios del menú y el gráfico que compara el gasto de los cuatro. | Los datos de cada miembro, solo en su ficha. |
+| 30/09/2026 | Si un cambio de Claude deja **el mismo plato** (por ejemplo, solo cambia quién come), el plato del menú no se tacha ni se repite: se ve «Claude · Mismo plato» con lo que cambia. | Tachar un plato para volver a escribir el mismo confunde. |
 | 30/09/2026 | En el **régimen de comidas** cada persona lleva un color: en casa (verde), tupper frío (azul), tupper para recalentar (naranja) y almuerzo que se lleva (amarillo). | Ver de un vistazo quién come en casa y quién lleva tupper. |
 
 ## Proyecto

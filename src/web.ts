@@ -596,6 +596,10 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
     ["reserva", "Con reserva"],
     ["no-deseado", "No deseados"],
   ];
+  // Las recetas sin cocinar (bocadillos, yogures, desayunos fijos) no salen en la lista ni se marcan como
+  // cocinadas: se restan solas de la despensa el día que tocan. Se abren desde el menú (enlace #r-…).
+  const sinCocinar = (r: Receta) => r.tecnica === "sin cocinar";
+  const visibles = new Set(usadas.filter((r) => !sinCocinar(r)).flatMap((r) => [...usos.get(r.id)!.map((x) => x.categoria), ...(r.thermomix?.length ? ["thermomix"] : [])]));
   const tarjetas = usadas
     .map((r) => {
       const u = usos.get(r.id)!;
@@ -610,7 +614,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
           return `<p class="usos"><span class="etq">${esc(etiqueta)}</span> ${deEsta.map((x) => esc(x.donde)).join(" · ")}</p>`;
         })
         .join("");
-      return `<article class="receta" id="r-${esc(r.id)}" data-categorias="${esc(categorias)}">
+      return `<article class="receta${sinCocinar(r) ? " sin-cocinar" : ""}" id="r-${esc(r.id)}" data-categorias="${esc(categorias)}">
         <header>
           <h3>${esc(r.nombre)}</h3>
           <p class="meta"><span class="chip info">${esc(TECNICA[r.tecnica] ?? r.tecnica)}</span><span class="mono">${r.tiempoMin} min</span>${
@@ -638,15 +642,16 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
             : ""
         }
         ${r.conservacion ? `<p class="nota"><strong>Conservación:</strong> ${esc(r.conservacion)}</p>` : ""}
-        ${bloqueHecho(r, raciones)}
+        ${sinCocinar(r) ? `<p class="nota">No hace falta cocinarla: el día que toca se resta sola de la despensa y deja de contar en la compra.</p>` : bloqueHecho(r, raciones)}
         ${bloqueNoDeseado(r, familia)}
       </article>`;
     })
     .join("");
   return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
+    .filter(([id]) => ["todas", "reserva", "no-deseado"].includes(id) || visibles.has(id))
     .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
     .join("")}</div>
-  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Todas las cantidades van en gramos; entre paréntesis, las unidades o los ml de referencia (equivalencias en <a href="#definiciones">Definiciones</a>). Sal, especias y caldo no se cuentan. Con «Cocinado» apuntas para qué comidas del menú has cocinado y cuántas raciones has hecho: se restan los ingredientes de la despensa, esas comidas dejan de contar en la compra y lo que sobra queda en reserva (nevera o congelador) y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Todas las cantidades van en gramos; entre paréntesis, las unidades o los ml de referencia (equivalencias en <a href="#definiciones">Definiciones</a>). Sal, especias y caldo no se cuentan. Con «Cocinado» apuntas para qué comidas del menú has cocinado y cuántas raciones has hecho: se restan los ingredientes de la despensa, esas comidas dejan de contar en la compra y lo que sobra queda en reserva (nevera o congelador) y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó. Las recetas que no se cocinan (bocadillos, yogures, desayunos fijos) no salen en esta lista: se abren desde el menú y se restan solas de la despensa el día que tocan.</p>
   <div class="recetas">${tarjetas}</div>`;
 }
 
@@ -1144,6 +1149,8 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .recetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;align-items:start}
 .receta{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px}
 .receta:target{outline:2px solid var(--accent)}
+.receta.sin-cocinar{display:none}
+.receta.sin-cocinar:target{display:grid}
 .receta header{display:grid;gap:6px}
 .meta{display:flex;gap:10px;align-items:center;font-size:.85rem;color:var(--muted)}
 .usos{font-size:.84rem;color:var(--muted)}
@@ -1434,7 +1441,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     recetas: Object.fromEntries(recetas.map((r) => [r.id, r.nombre])),
     // Ingredientes por ración en gramos: [clave, nombre, gramos, sección, por persona].
     rec: Object.fromEntries(recetas.map((r) => [r.id, {
-      n: r.nombre, cat: [r.tipo], fija: Boolean(r.racionFija),
+      n: r.nombre, cat: [r.tipo], fija: Boolean(r.racionFija), sc: r.tecnica === "sin cocinar",
       ing: r.ingredientes.map((i) => {
         const c = normalizarCantidad(i.nombre, i.cantidad, i.unidad);
         return [claveProducto(i.nombre, c.unidad), i.nombre, c.cantidad, i.seccion, i.porPersona ? 1 : 0, c.unidad];

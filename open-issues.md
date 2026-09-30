@@ -18,7 +18,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - **Identidad de la app.** Nombre, icono y colores del manifiesto.
   - **Relación con OI-01 y OI-02.** Si la app permite editar la configuración, dónde se guardan los datos. Y cómo se actualiza cuando el agente genera un menú nuevo.
 
-- [x] **OI-24 · Identificar a quien valida el menú.** Descartado el 30/09/2026: el menú ya no necesita validación. Se quitan los botones de aprobar y la herramienta `validar_menu`; lo que se come de verdad se apunta en el diario (OI-29).
+- [x] **OI-24 · Identificar a quien valida el menú.** Descartado el 30/09/2026: el menú ya no necesita validación. Anotado en `decisions.md`. Se quitan los botones de aprobar y la herramienta `validar_menu`; lo que se come de verdad se apunta en el diario (OI-29).
 
 - [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa, las raciones hechas (reservas), los platos no deseados, el diario, lo cocinado, los cambios de «Actualizar menú», los comentarios y la actividad que se hacen en la web se guardan en la página (colecciones `despensa`, `hechas`, `no-deseados`, `diario`, `cocinado`, `cambios`, `comentarios` y `eventos`); hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
 

@@ -1,0 +1,53 @@
+# Decisiones del proyecto
+
+Decisiones tomadas sobre Agente_Menú y su motivo. Antes de cualquier cambio hay que revisar esta lista: si un ajuste nuevo contradice una decisión, **se avisa antes de tocar nada** y se espera la respuesta. Si la decisión cambia, se actualiza aquí (con la fecha) en lugar de borrarla.
+
+Cuando no se anotó el motivo en su momento, figura «sin anotar».
+
+## Menú
+
+| Fecha | Decisión | Motivo |
+|---|---|---|
+| 30/09/2026 | **El menú no se valida.** No hay botones de aprobar ni herramienta `validar_menu`. Se publica tal cual. | El menú es un proceso vivo que se adapta a lo que se apunta en el diario (lo que se come de verdad, lo cocinado y los comentarios). Validarlo no tiene sentido si cambia cada día. Sustituye a la decisión del 28/09/2026 («menú en borrador hasta que CCT lo valide»). |
+| 30/09/2026 | **«Actualizar menú»** revisa los días que quedan (desde mañana) con el diario, los comentarios, lo cocinado y la despensa. Claude propone cambios; la familia elige cuáles se aplican y cada uno se puede deshacer. | El menú se ajusta a lo que pasa en casa sin rehacerlo entero. Elegir los cambios no es validar el menú: evita que se apliquen cambios que Claude se invente (OI-39). |
+| 30/09/2026 | **Diario de comidas** en cada casilla: lo previsto, otro plato del recetario u otra cosa, con nota. El plato previsto queda tachado. Lo que no se cocina no se resta de la despensa. | Registrar cuándo no se cumple el menú (OI-29) y usarlo para adaptar los días siguientes. |
+| 28/09/2026 | Se muestra también la propuesta de la **semana siguiente**. | Poder planificar la compra y el batch con antelación. |
+| 28/09/2026 | **Platos habituales** de casa con prioridad; el huevo aparece varias veces por semana; una comida puede llevar primero y segundo. | Son los platos que la familia ya come y sabe hacer. |
+| 28/09/2026 | Un plato se puede marcar como **no deseado** (por persona o por la familia) con el motivo; no se vuelve a proponer a quien lo marcó. | Que el menú aprenda de lo que no gusta. |
+| 28/09/2026 | Los días que ya han pasado no se muestran en el menú (se pueden ver con «Mostrarlos»). | Sin anotar. |
+
+## Normas de la casa
+
+| Fecha | Decisión | Motivo |
+|---|---|---|
+| 28/09/2026 | **Pescado azul** (salmón, atún, anchoas, sardinas) solo los jueves a mediodía, las semanas que toque (no todos los jueves). | Sin anotar. |
+| 28/09/2026 | **Por la mañana no se cocina.** Almuerzos y tuppers se preparan la noche anterior o en el batch. La tortilla francesa se hace al momento, no el día antes. | Sin anotar. |
+| 28/09/2026 | **Legumbres** solo con un adulto (RFA o CCT) en la mesa, no cuando RFC y AFC comen solos. | Que un adulto supervise cuánto comen. |
+| 28/09/2026 | Los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser **pasta o algo más calórico**. | Sin anotar. |
+| 28/09/2026 | Leche siempre **semidesnatada**. | Preferencia de la familia. |
+| 28/09/2026 | Las recetas de cremas, purés, guisos y salsas incluyen los pasos con **Thermomix**. | Hay Thermomix en casa. |
+
+## Personas y salud
+
+| Fecha | Decisión | Motivo |
+|---|---|---|
+| 28/09/2026 | **Objetivos de peso aceptados:** RFA y CCT, a 67,8 kg (IMC 24,9) perdiendo unos 0,5 kg por semana. RFA 1.879 kcal/día; CCT 1.623 kcal/día. | IMC en sobrepeso. Conviene consultarlo con su médico. |
+| 28/09/2026 | Los **desayunos de CCT y RFA** se mantienen como están mientras sus propuestas (OI-06, OI-07) sigan pendientes. | Las propuestas no se han aceptado todavía. |
+| 28/09/2026 | Cada persona elige si su **desayuno fijo** aparece en el menú (por defecto no). Siempre se cuenta en la compra. | Sin anotar. |
+| 30/09/2026 | Tupper de RFA (frío) de lunes a jueves; CCT (para recalentar) de lunes a miércoles. | RFA amplía al jueves desde el 30/09/2026. |
+
+## Compra, despensa y cantidades
+
+| Fecha | Decisión | Motivo |
+|---|---|---|
+| 30/09/2026 | **Todo en gramos** (recetas, despensa, compra, precios, tuppers). Lo que va por unidades o ml se pasa a gramos con `data/equivalencias.json` y se muestra la equivalencia entre paréntesis. | Una sola unidad para poder sumar, restar y comparar precios. |
+| 30/09/2026 | Casilla **«Cocinado»** con raciones en cada plato: al marcarla se restan los ingredientes de la despensa; al desmarcarla, vuelven. Lo que sale de otra comida se marca una sola vez, donde se cocina. | Que la despensa refleje lo que hay en casa. |
+| 30/09/2026 | Botón **«Confirmar compra»** en la lista: suma lo marcado a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa. | No comprar lo que ya hay. |
+| 28/09/2026 | **Precios reales, sin estimaciones.** Se cargan desde los tickets o a mano; el coste solo se muestra cuando hay precios. | Los precios estimados no eran fiables. |
+| 28/09/2026 | Se compara el coste en **Mercadona, BM y Casa Elías** y se propone la combinación más barata. | Son las tiendas donde compra la familia. |
+
+## Proyecto
+
+| Fecha | Decisión | Motivo |
+|---|---|---|
+| 30/09/2026 | Se crea este documento y se revisa antes de cada cambio. | Evitar que un ajuste nuevo deshaga, sin avisar, algo que ya se decidió. |

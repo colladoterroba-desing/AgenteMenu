@@ -150,7 +150,12 @@
   const ndBase = new Map(datos.noDeseados.map((n) => [n.receta + "__" + n.por, n]));
   const reservasBase = new Map((datos.reservas || []).map((x) => [x.id, x]));
 
-  const despensaActual = () => { const t = new Map(despensaBase); despensaDb.forEach((v, k) => t.set(k, v)); return t; };
+  // En la despensa no hay cantidades negativas: si un dato guardado lo es, se toma como 0 (faltaba apuntarlo).
+  const despensaActual = () => {
+    const t = new Map(despensaBase); despensaDb.forEach((v, k) => t.set(k, v));
+    t.forEach((v, k) => { if (Number(v.cantidad) < 0) t.set(k, { ...v, cantidad: 0 }); });
+    return t;
+  };
   const tengoDe = (k) => Number(despensaActual().get(k)?.cantidad || 0);
   const noDeseadosActuales = () => { const t = new Map(ndBase); ndDb.forEach((v, k) => (v.quitado ? t.delete(k) : t.set(k, v))); return [...t.values()]; };
   const reservasActuales = () => {
@@ -260,6 +265,7 @@
       const descontado = {};
       for (const [k, g] of nec) {
         const tengo = tengoDe(k);
+        // Nunca por debajo de 0: si se gasta más de lo apuntado, faltaba apuntarlo en la despensa.
         const quita = Math.min(tengo, g);
         if (quita > 0) { descontado[k] = Math.round(quita * 10) / 10; await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengo - quita); }
       }

@@ -108,7 +108,11 @@ export class Almacen {
     return despensa;
   }
 
-  /** Suma cantidades (negativas para consumir); elimina productos que llegan a 0. */
+  /**
+   * Suma cantidades (negativas para consumir); elimina productos que llegan a 0. Nunca quedan
+   * cantidades negativas: gastar más de lo que hay (o algo que no está) se toma como que faltaba
+   * apuntarlo, y el producto se queda a 0.
+   */
   async ajustarProductos(cambios: Producto[]): Promise<Despensa> {
     const despensa = await this.despensa();
     for (const original of cambios) {

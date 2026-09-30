@@ -48,6 +48,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 |---|---|---|
 | 30/09/2026 | **Todo en gramos** (recetas, despensa, compra, precios, tuppers). Lo que va por unidades o ml se pasa a gramos con `data/equivalencias.json` y se muestra la equivalencia entre paréntesis. | Una sola unidad para poder sumar, restar y comparar precios. |
 | 30/09/2026 | Casilla **«Cocinado»** con raciones en cada plato: al marcarla se restan los ingredientes de la despensa; al desmarcarla, vuelven. Lo que sale de otra comida se marca una sola vez, donde se cocina. | Que la despensa refleje lo que hay en casa. |
+| 30/09/2026 | **En la despensa no hay cantidades negativas.** Si se gasta más de lo apuntado (o algo que no estaba), el producto se queda a 0, sin aviso. | Si saldría negativo, es que no se había apuntado bien lo que había (por ejemplo, los macarrones que comió Alicia no estaban en la despensa). |
 | 30/09/2026 | Botón **«Confirmar compra»** en la lista: suma lo marcado a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa. | No comprar lo que ya hay. |
 | 28/09/2026 | **Precios reales, sin estimaciones.** Se cargan desde los tickets o a mano; el coste solo se muestra cuando hay precios. | Los precios estimados no eran fiables. |
 | 28/09/2026 | Se compara el coste en **Mercadona, BM y Casa Elías** y se propone la combinación más barata. | Son las tiendas donde compra la familia. |

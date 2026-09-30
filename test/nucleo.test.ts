@@ -515,3 +515,17 @@ test("web: las casillas se identifican por el lunes de su semana", async () => {
   assert.match(html, /Semana en curso · A/);
   assert.match(html, /Próxima semana · B/);
 });
+
+test("la despensa nunca queda en negativo: gastar más de lo apuntado la deja a 0", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "menu-"));
+  await cp("data", dir, { recursive: true });
+  const almacen = new Almacen(dir);
+  await almacen.guardarProductos([{ nombre: "Macarrones", cantidad: 100, unidad: "g" }, { nombre: "Chorizo", cantidad: -50, unidad: "g" }]);
+  let despensa = await almacen.ajustarProductos([
+    { nombre: "Macarrones", cantidad: -250, unidad: "g" },
+    { nombre: "Tomate frito", cantidad: -200, unidad: "g" },
+  ]);
+  assert.equal(despensa.productos.length, 0);
+  despensa = await almacen.ajustarProductos([{ nombre: "Macarrones", cantidad: 500, unidad: "g" }]);
+  assert.equal(despensa.productos.find((p) => p.nombre === "Macarrones")?.cantidad, 500);
+});

@@ -37,6 +37,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Despensa:** apartado para completar el inventario de lo que hay en casa; la lista de la compra lo descuenta y el menú se puede actualizar para aprovecharlo.
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.
+- **Rotación de semanas (desde el 30/09/2026):** la semana A es la semana en curso y la B la próxima. Cuando empieza la próxima, pasa a ser la semana en curso y hay que preparar la nueva próxima semana.
 - **Coste de la cesta:** la familia compra sobre todo en Mercadona y a veces en BM y Casa Elías (Madrid). Hay que valorar el coste de la lista de la compra en cada tienda y proponer la combinación más barata.
 - **Sin validación del menú (desde el 30/09/2026):** el menú no hay que aprobarlo. Lo que se come de verdad se apunta en el diario.
 - **Medidas en gramos:** todas las cantidades (recetas, despensa, compra, precios, tuppers) van en gramos. Lo que se cuenta por unidades o se mide en ml se pasa a gramos con [`data/equivalencias.json`](../data/equivalencias.json) y se muestra la equivalencia entre paréntesis («1.320 g (≈22 ud)»). La página **Definiciones** explica los términos y las equivalencias.

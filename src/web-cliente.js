@@ -65,7 +65,7 @@
 
   // ================= Datos =================
   const datos = JSON.parse(document.getElementById("datos-pagina").textContent);
-  const REC = datos.rec, MENU = datos.menu, ACTUAL = datos.semanaActual;
+  const REC = datos.rec, MENU = datos.menu;
   const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
   const COMIDA_TXT = { desayuno: "Desayuno", almuerzo: "Almuerzo", comida: "Comida", merienda: "Merienda", cena: "Cena" };
   const celdas = new Map();
@@ -99,6 +99,29 @@
   const isoLocal = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   const HOY = isoLocal(new Date());
   const hoy = () => HOY;
+  // Rotación de semanas: la semana en curso es la que contiene hoy; si ya ha empezado la
+  // semana siguiente y la página no se ha regenerado, esa pasa a ser la semana en curso.
+  const sumar = (iso, n) => { const [y, m, d] = iso.split("-").map(Number); return isoLocal(new Date(y, m - 1, d + n)); };
+  const SEMANAS = Object.keys(MENU).sort();
+  const ACTUAL = SEMANAS.filter((k) => k <= HOY).pop() || SEMANAS[0];
+  const PROXIMA = SEMANAS.find((k) => k > ACTUAL) || null;
+  (() => {
+    const avisoSem = document.getElementById("aviso-semanas");
+    const tabs = [...document.querySelectorAll('[role="tab"][data-sem]')];
+    const etiqueta = (t, txt) => { t.firstChild.textContent = txt + " · " + MENU[t.dataset.sem].letra + " "; };
+    tabs.forEach((t) => {
+      const k = t.dataset.sem;
+      if (k < ACTUAL) { t.hidden = true; t.setAttribute("aria-selected", "false"); t.tabIndex = -1; document.getElementById(t.getAttribute("aria-controls")).hidden = true; }
+      else if (k === ACTUAL) { etiqueta(t, "Semana en curso"); t.setAttribute("aria-selected", "true"); t.tabIndex = 0; document.getElementById(t.getAttribute("aria-controls")).hidden = false; }
+      else etiqueta(t, "Próxima semana");
+    });
+    const etq = document.getElementById("etq-semana");
+    if (etq && ACTUAL !== datos.semanaActual) { const dm = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("es-ES", { day: "numeric", month: "short" }); };
+      etq.textContent = "Semana " + MENU[ACTUAL].letra + " · " + dm(ACTUAL) + " – " + dm(sumar(ACTUAL, 6)); }
+    const falta = !PROXIMA ? "Falta el menú de la próxima semana: pídeselo a Claude." : "";
+    const caducado = HOY > sumar(ACTUAL, 6) ? "El menú de esta semana ya ha terminado. " : "";
+    if (avisoSem && (caducado || falta)) { avisoSem.textContent = caducado + falta; avisoSem.hidden = false; }
+  })();
   const fechaCelda = (c) => { const [y, m, d] = MENU[c.sem].inicio.split("-").map(Number); return isoLocal(new Date(y, m - 1, d + c.dia)); };
   const fechaCorta = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }); };
   const nombreRec = (id) => (REC[id] ? REC[id].n : id);
@@ -337,7 +360,7 @@
       const fila = [...t.querySelectorAll("tbody tr")].find((tr) => tr.querySelector("td[data-celda]"));
       if (!fila) return;
       const pasados = [...fila.querySelectorAll("td[data-celda]")].map((td) => {
-        const [sem, dia] = td.dataset.celda.split("-");
+        const [, sem, dia] = /^(.+)-(\d)-[a-z]+$/.exec(td.dataset.celda);
         return fechaCelda({ sem, dia: Number(dia) }) < HOY;
       });
       t.querySelectorAll("tr").forEach((tr) => [...tr.children].slice(1).forEach((cel, i) => (cel.hidden = !verPasados && pasados[i])));
@@ -936,6 +959,30 @@
     else editarTexto(id, b.dataset.que);
   }));
 
+  // ================= Ids antiguos de las casillas =================
+  // Hasta el 30/09/2026 las casillas se llamaban por la letra de la semana («A-3-cena»). Ahora se llaman
+  // por su lunes («2026-09-28-3-cena») para que no choquen al rotar las semanas. Lo guardado con el
+  // formato antiguo se traslada al nuevo la primera vez que se abre la página con permiso de edición.
+  const LEGADO = { A: "2026-09-28", B: "2026-10-05" };
+  const idNuevo = (id) => { const m = /^([AB])-(\d-.+)$/.exec(String(id)); return m ? LEGADO[m[1]] + "-" + m[2] : id; };
+  const trasladados = new Set();
+  const migrar = (col, m) => {
+    if (!["diario", "cambios", "cocinado"].includes(col)) return m;
+    const out = new Map([...m].filter(([k]) => idNuevo(k) === k));
+    m.forEach((v, k) => {
+      const nk = idNuevo(k);
+      if (nk === k) return;
+      const nv = v && v.celda ? { ...v, celda: idNuevo(v.celda) } : v;
+      const yaEsta = out.has(nk);
+      if (!yaEsta) out.set(nk, nv);
+      if (editable && !trasladados.has(col + "/" + k)) {
+        trasladados.add(col + "/" + k);
+        (async () => { try { if (!yaEsta) await db.doc(col + "/" + nk).set(nv); await db.doc(col + "/" + k).delete(); } catch (e) {} })();
+      }
+    });
+    return out;
+  };
+
   // ================= Arranque =================
   const renderTodo = () => { renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
   const avisoDb = document.getElementById("despensa-aviso");
@@ -953,7 +1000,7 @@
     editable = true;
     document.querySelectorAll("[data-solo-editable-input]").forEach((x) => (x.disabled = false));
     if (avisoDb) avisoDb.textContent = "Los cambios se guardan al momento.";
-    const sub = (col, fn) => db.collection(col).onSnapshot((snap) => { fn(new Map(snap.docs.map((d) => [d.id, d.data()]))); renderTodo(); },
+    const sub = (col, fn) => db.collection(col).onSnapshot((snap) => { fn(migrar(col, new Map(snap.docs.map((d) => [d.id, d.data()])))); renderTodo(); },
       () => { if (col === "despensa") soloLectura("No se puede acceder a los datos guardados ahora mismo."); });
     sub("despensa", (m) => (despensaDb = m));
     sub("no-deseados", (m) => (ndDb = m));

@@ -1,5 +1,6 @@
 import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { Almacen } from "./almacen.js";
 import { fileURLToPath } from "node:url";
 import { chromium, type Browser } from "playwright-core";
 import {
@@ -173,6 +174,8 @@ async function abrirNavegador(): Promise<Browser> {
 async function main() {
   const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const leer = async <T>(f: string) => JSON.parse(await readFile(path.join(raiz, "data", f), "utf8")) as T;
+  const rotada = await new Almacen(path.join(raiz, "data")).rotarSemanas();
+  if (rotada) console.log(`Empieza la semana ${rotada.semana} (${rotada.inicio}): pasa a ser la semana en curso. Falta preparar la semana siguiente.`);
   const datos: DatosPdf = {
     familia: await leer<Familia>("familia.json"),
     menu: await leer<MenuSemana>("menu-semana.json"),

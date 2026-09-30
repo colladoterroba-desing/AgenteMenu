@@ -1,9 +1,13 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { normalizarCantidad, type MenuSemana, type Receta } from "./menu.js";
 import { aGramosObligatorio } from "./unidades.js";
 import type { Precio, TablaPrecios } from "./precios.js";
 import type { Despensa, Familia, Objetivo, Producto, Sobra, Ticket } from "./tipos.js";
+
+/** Fecha de hoy (AAAA-MM-DD) en hora local. */
+export const hoyIso = (d = new Date()) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 /** Persistencia en ficheros JSON dentro de un directorio de datos. */
 export class Almacen {
@@ -14,7 +18,7 @@ export class Almacen {
   }
 
   private async escribir(fichero: string, datos: unknown): Promise<void> {
-    await mkdir(this.dir, { recursive: true });
+    await mkdir(path.dirname(path.join(this.dir, fichero)), { recursive: true });
     await writeFile(path.join(this.dir, fichero), JSON.stringify(datos, null, 2) + "\n");
   }
 
@@ -40,6 +44,21 @@ export class Almacen {
 
   async guardarMenu(menu: MenuSemana, siguiente = false): Promise<void> {
     await this.escribir(siguiente ? "menu-siguiente.json" : "menu-semana.json", menu);
+  }
+
+  /**
+   * Rotación de semanas: cuando llega el lunes de la semana siguiente, su menú pasa a ser
+   * el de la semana en curso (menu-semana.json), el anterior se guarda en data/historial/
+   * y falta preparar la nueva semana siguiente. Devuelve la semana que pasa a estar en curso.
+   */
+  async rotarSemanas(hoy: string = hoyIso()): Promise<MenuSemana | null> {
+    const siguiente = await this.menu(true).catch(() => undefined);
+    if (!siguiente?.inicio || hoy < siguiente.inicio) return null;
+    const actual = await this.menu().catch(() => undefined);
+    if (actual) await this.escribir(`historial/menu-${actual.inicio ?? actual.semana}.json`, actual);
+    await this.escribir("menu-semana.json", siguiente);
+    await rm(path.join(this.dir, "menu-siguiente.json"), { force: true });
+    return siguiente;
   }
 
   /** Añade la receta o sustituye la que tenga el mismo id. */

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { Almacen } from "./almacen.js";
 import { fileURLToPath } from "node:url";
 import {
   calcularNecesidades,
@@ -454,8 +455,9 @@ function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
   </aside>`;
 }
 
-function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana): string {
-  const semana = menu.semana;
+/** Menú de una semana; `clave` (el lunes de la semana) identifica sus casillas. */
+function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana, clave: string): string {
+  const semana = clave;
   const batch = (menu.batch ?? [])
     .map(
       (b) => `<aside class="batch">
@@ -1139,6 +1141,7 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .pestanas button{font:600 .95rem var(--f-body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;cursor:pointer;margin-bottom:-1px}
 .pestanas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .pestanas button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pestanas .rango{font-weight:400;font-size:.8rem;color:var(--muted);white-space:nowrap}
 .panel-tuppers{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;padding-top:16px}
 .col-tupper{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:14px;align-content:start;border-top:4px solid}
 .col-tupper.frio{border-top-color:var(--frio)}
@@ -1240,6 +1243,12 @@ export interface CeldaCliente {
 }
 
 const redondear2 = (n: number) => Math.round(n * 100) / 100;
+
+/** «28 sep – 4 oct» a partir del lunes de la semana. */
+export function rangoSemana(lunes: string): string {
+  const f = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
+  return `${f(lunes)} – ${f(sumarDias(lunes, 6))}`;
+}
 
 /** Lunes de la semana de una fecha (AAAA-MM-DD). */
 function lunesDe(fecha: Date): string {
@@ -1373,9 +1382,15 @@ function seccionCoste(compra: Record<Seccion, LineaCompra[]>, tabla: TablaPrecio
 export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, despensa, precios, fecha }: DatosWeb): string {
   const dias = componerMenu(familia, menu, recetas);
   const diasSiguiente = menuSiguiente ? componerMenu(familia, menuSiguiente, recetas) : undefined;
-  const semanas = [{ semana: menu.semana, dias }, ...(menuSiguiente && diasSiguiente ? [{ semana: menuSiguiente.semana, dias: diasSiguiente }] : [])];
   const hoy = new Date();
   const inicio = menu.inicio ?? lunesDe(hoy);
+  // Cada semana se identifica por su lunes: así las casillas de una semana A no se confunden con las
+  // de la semana A de dos semanas después (el diario y lo cocinado se guardan por casilla).
+  const inicioSiguiente = menuSiguiente?.inicio ?? sumarDias(inicio, 7);
+  const semanas = [
+    { semana: menu.semana, clave: inicio, dias },
+    ...(menuSiguiente && diasSiguiente ? [{ semana: menuSiguiente.semana, clave: inicioSiguiente, dias: diasSiguiente }] : []),
+  ];
   const datosCliente = {
     miembros: familia.miembros.map((m) => m.id),
     recetas: Object.fromEntries(recetas.map((r) => [r.id, r.nombre])),
@@ -1387,11 +1402,9 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
         return [claveProducto(i.nombre, c.unidad), i.nombre, c.cantidad, i.seccion, i.porPersona ? 1 : 0, c.unidad];
       }),
     }])),
-    menu: Object.fromEntries(semanas.map(({ semana, dias: d }, i) => [semana, {
-      inicio: i === 0 ? inicio : (menuSiguiente?.inicio ?? sumarDias(inicio, 7)),
-      celdas: celdasCliente(semana, d),
-    }])),
-    semanaActual: menu.semana,
+    menu: Object.fromEntries(semanas.map(({ semana, clave, dias: d }) => [clave, { letra: semana, inicio: clave, celdas: celdasCliente(clave, d) }])),
+    // La página decide por la fecha cuál es la semana en curso (rotación de semanas).
+    semanaActual: inicio,
     ordenPasillos: [...SECCIONES, "Otros"],
     factores: Object.fromEntries(familia.miembros.map((m) => [m.id, calcularNecesidades(m, familia.objetivos[m.id]).factorRacion])),
     alias: Object.fromEntries(familia.miembros.map((m) => [m.id, m.alias ?? m.id])),
@@ -1461,9 +1474,10 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 <main class="pagina">
   <section class="vista" id="menu" data-vista aria-labelledby="h-menu">
     <header class="cab">
-      <span class="etq">Semana ${esc(menu.semana)} · generado el ${esc(fecha)}</span>
+      <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
       <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. Con «Diario» apuntas lo que se comió de verdad si no fue lo previsto. Los días que ya han pasado no se muestran.</p>
+      <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
       <dl class="resumen">
         <div><dt>Platos cocinados</dt><dd id="resumen-cocinados">0</dd></div>
@@ -1475,12 +1489,12 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     ${
       menuSiguiente && diasSiguiente
         ? `<div class="pestanas" role="tablist" aria-label="Semana">
-            <button role="tab" id="tab-sem-actual" aria-controls="sem-actual" aria-selected="true" tabindex="0">Esta semana · ${esc(menu.semana)}</button>
-            <button role="tab" id="tab-sem-siguiente" aria-controls="sem-siguiente" aria-selected="false" tabindex="-1">Semana siguiente · ${esc(menuSiguiente.semana)}</button>
+            <button role="tab" id="tab-sem-actual" aria-controls="sem-actual" aria-selected="true" tabindex="0" data-sem="${esc(inicio)}">Semana en curso · ${esc(menu.semana)} <span class="rango">${rangoSemana(inicio)}</span></button>
+            <button role="tab" id="tab-sem-siguiente" aria-controls="sem-siguiente" aria-selected="false" tabindex="-1" data-sem="${esc(inicioSiguiente)}">Próxima semana · ${esc(menuSiguiente.semana)} <span class="rango">${rangoSemana(inicioSiguiente)}</span></button>
           </div>
-          <div role="tabpanel" id="sem-actual" aria-labelledby="tab-sem-actual" class="panel-semana">${historialMenu(menu)}${seccionMenu(familia, dias, menu)}</div>
-          <div role="tabpanel" id="sem-siguiente" aria-labelledby="tab-sem-siguiente" class="panel-semana" hidden>${historialMenu(menuSiguiente)}${seccionMenu(familia, diasSiguiente, menuSiguiente)}</div>`
-        : `${historialMenu(menu)}${seccionMenu(familia, dias, menu)}`
+          <div role="tabpanel" id="sem-actual" aria-labelledby="tab-sem-actual" class="panel-semana">${historialMenu(menu)}${seccionMenu(familia, dias, menu, inicio)}</div>
+          <div role="tabpanel" id="sem-siguiente" aria-labelledby="tab-sem-siguiente" class="panel-semana" hidden>${historialMenu(menuSiguiente)}${seccionMenu(familia, diasSiguiente, menuSiguiente, inicioSiguiente)}</div>`
+        : `${historialMenu(menu)}${seccionMenu(familia, dias, menu, inicio)}`
     }
   </section>
 
@@ -1537,6 +1551,8 @@ ${DIALOGOS}
 async function main() {
   const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const leer = async <T>(f: string) => JSON.parse(await readFile(path.join(raiz, "data", f), "utf8")) as T;
+  const rotada = await new Almacen(path.join(raiz, "data")).rotarSemanas();
+  if (rotada) console.log(`Empieza la semana ${rotada.semana} (${rotada.inicio}): pasa a ser la semana en curso. Falta preparar la semana siguiente.`);
   const html = generarHtml({
     familia: await leer<Familia>("familia.json"),
     propuesta: await leer<PropuestaTuppers>("propuesta-tuppers.json"),

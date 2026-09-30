@@ -486,3 +486,32 @@ test("la ficha de la web recalcula el gasto con los mismos coeficientes que el a
     assert.ok(Math.abs(gastoWeb - gastoEnergeticoDiario(m)) < 1e-9);
   }
 });
+
+test("rotación de semanas: el lunes de la semana siguiente, su menú pasa a ser el de la semana en curso", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "menu-"));
+  await cp("data", dir, { recursive: true });
+  const almacen = new Almacen(dir);
+  const antes = await almacen.menu();
+  const siguiente = await almacen.menu(true);
+  assert.equal(await almacen.rotarSemanas("2026-10-04"), null); // domingo: aún no toca
+  const rotada = await almacen.rotarSemanas(siguiente.inicio!);
+  assert.equal(rotada?.semana, siguiente.semana);
+  assert.equal((await almacen.menu()).inicio, siguiente.inicio);
+  await assert.rejects(almacen.menu(true)); // falta preparar la nueva semana siguiente
+  const archivado = JSON.parse(await readFile(path.join(dir, "historial", `menu-${antes.inicio}.json`), "utf8"));
+  assert.equal(archivado.semana, antes.semana);
+  assert.equal(await almacen.rotarSemanas("2026-10-20"), null); // sin semana siguiente no hay nada que rotar
+});
+
+test("web: las casillas se identifican por el lunes de su semana", async () => {
+  const { generarHtml } = await import("../src/web.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menuSiguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, menuSiguiente, recetas, fecha: "30 de septiembre de 2026" });
+  assert.match(html, new RegExp(`data-celda="${menu.inicio}-0-comida"`));
+  assert.match(html, new RegExp(`data-celda="${menuSiguiente.inicio}-0-comida"`));
+  assert.doesNotMatch(html, /data-celda="[AB]-/);
+  assert.match(html, /Semana en curso · A/);
+  assert.match(html, /Próxima semana · B/);
+});

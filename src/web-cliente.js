@@ -375,6 +375,12 @@
     if (ocupado) return false; ocupado = true;
     let ok = true;
     try {
+      // Lo que se restó solo (recetas sin cocinar) de las comidas de ese día se deshace y se vuelve a calcular con las anotaciones nuevas.
+      for (const [inst, d] of [...cocinadoDb.entries()]) {
+        if (!d.auto || !celdas.has(d.celda) || fechaCelda(celdas.get(d.celda)) !== fechaCelda(c)) continue;
+        for (const [k, g] of Object.entries(d.descontado || {})) await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengoDe(k) + Number(g));
+        await db.doc("cocinado/" + inst).delete(); cocinadoDb.delete(inst);
+      }
       for (const p of datos.miembros) {
         const a = anotDe(c, p);
         if (!a) continue;
@@ -566,7 +572,7 @@
       }
       caja.replaceChildren();
       // Lo cocinado se marca en la receta; aquí solo se indica.
-      const hechos = instancias(c).filter((i) => !i.esDes && cocinadoDb.has(i.inst));
+      const hechos = instancias(c).filter((i) => !i.esDes && cocinadoDb.has(i.inst) && !cocinadoDb.get(i.inst).auto);
       cocinados += hechos.length;
       if (hechos.length) caja.append(el("span", { class: "coc-menu", text: "✓ Cocinado" + (hechos.length > 1 || hechos[0].etiqueta ? ": " + hechos.map((i) => i.etiqueta || "plato").join(", ") : "") }));
       caja.append(bloqueAnotaciones(c));
@@ -790,17 +796,25 @@
     if (!ul) return;
     ul.replaceChildren();
     if (!lista.length) { ul.append(el("li", { class: "sub", text: "Sin reservas. Se apuntan desde cada receta con «Cocinado»." })); return; }
-    lista.forEach((x) => {
+    // Una línea por receta y lugar (nevera o congelador): se suman sus reservas; se gasta antes la que caduca antes.
+    const grupos = new Map();
+    lista.forEach((x) => { const k = (x.receta || x.descripcion || x.id) + "|" + (x.donde || "nevera"); if (!grupos.has(k)) grupos.set(k, []); grupos.get(k).push(x); });
+    grupos.forEach((xs) => {
+      const x = xs[0], total = Math.round(xs.reduce((t, y) => t + Number(y.reserva), 0) * 10) / 10;
       const nombre = el(x.receta ? "a" : "span", { class: "producto", text: nombreReserva(x) });
       if (x.receta) nombre.href = "#r-" + x.receta;
-      const det = el("span", { class: "sub nota-producto", text: (x.donde === "congelador" ? "Congelador" : "Nevera") + (x.fecha ? " · hecho el " + fechaCortaDia(x.fecha) : "") + (x.hechas ? " (" + fmtRacTxt(x.hechas) + " en total)" : "") });
+      const fechas = [...new Set(xs.map((y) => y.fecha).filter(Boolean))].sort().map(fechaCortaDia);
+      const det = el("span", { class: "sub nota-producto", text: (x.donde === "congelador" ? "Congelador" : "Nevera") + (fechas.length ? " · hecho el " + fechas.join(" y el ") : "") });
       if (x.caduca) det.append(el("span", { class: x.caduca <= sumarDias(HOY, 1, 0) ? "vence" : "", text: " · consumir antes del " + fechaCortaDia(x.caduca) }));
-      const li = el("li", null, nombre, el("span", { class: "mono", text: fmtRacTxt(x.reserva) }), det);
+      const li = el("li", null, nombre, el("span", { class: "mono", text: fmtRacTxt(total) }), det);
       if (editable) {
         const usar = el("button", { type: "button", class: "enlace", text: "Usar 1 ración" });
-        usar.addEventListener("click", () => guardarReserva({ ...x, reserva: Math.max(0, Math.round((Number(x.reserva) - 1) * 10) / 10) }));
+        usar.addEventListener("click", async () => {
+          let falta = 1;
+          for (const y of xs) { if (falta <= 0) break; const quita = Math.min(Number(y.reserva), falta); falta -= quita; await guardarReserva({ ...y, reserva: Math.max(0, Math.round((Number(y.reserva) - quita) * 10) / 10) }); }
+        });
         const agotar = el("button", { type: "button", class: "enlace", text: "Ya no queda" });
-        agotar.addEventListener("click", () => guardarReserva({ ...x, reserva: 0 }));
+        agotar.addEventListener("click", async () => { for (const y of xs) await guardarReserva({ ...y, reserva: 0 }); });
         li.append(usar, agotar);
       }
       ul.append(li);
@@ -872,7 +886,16 @@
         const tengo = tengoDe(k), quita = Math.min(tengo, g); // nunca por debajo de 0
         if (quita > 0) { descontado[k] = Math.round(quita * 10) / 10; await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengo - quita); }
       }
-      await guardarReserva({ id: receta + "__" + Date.now(), receta, hechas, comer: Math.round(Math.min(hechas, pide) * 100) / 100, reserva, donde, fecha, caduca: caducaReserva(fecha, donde), semana: ACTUAL, descontado });
+      // Misma receta, mismo día y mismo sitio: se suma a la reserva que ya había (no se crea otra línea).
+      const previa = reservasActuales().find((x) => x.receta === receta && x.fecha === fecha && (x.donde || "nevera") === donde);
+      if (previa) {
+        const sumado = { ...(previa.descontado || {}) };
+        Object.entries(descontado).forEach(([k, g]) => (sumado[k] = Math.round(((sumado[k] || 0) + g) * 10) / 10));
+        await guardarReserva({ ...previa, hechas: Math.round((Number(previa.hechas || 0) + hechas) * 100) / 100, comer: Math.round((Number(previa.comer || 0) + Math.min(hechas, pide)) * 100) / 100,
+          reserva: Math.round((Number(previa.reserva) + reserva) * 100) / 100, descontado: sumado });
+      } else {
+        await guardarReserva({ id: receta + "__" + Date.now(), receta, hechas, comer: Math.round(Math.min(hechas, pide) * 100) / 100, reserva, donde, fecha, caduca: caducaReserva(fecha, donde), semana: ACTUAL, descontado });
+      }
     }
     await registrar("cocinado", "Cocinado: " + nombreRec(receta) + " · " + fmtRac(hechas) + " rac." + (elegidas.length ? " para " + elegidas.map((u) => textoUso({ ...u, receta })).join("; ") : "") + (reserva > 0 ? ". En reserva: " + fmtRac(reserva) + " rac. (" + donde + ")" : "") + ".");
     formH.closest("details").open = false;
@@ -939,7 +962,7 @@
     if (!filas.length && !anots.length) tb.append(el("tr", null, el("td", { colSpan: 6, class: "sub", text: "Sin cambios: se está comiendo lo previsto." })));
 
     const tc = document.getElementById("diario-cocinado"); tc.replaceChildren();
-    const coc = [...cocinadoDb.entries()].map(([inst, d]) => [celdas.get(d.celda || inst.split("~")[0]), d]).filter(([c]) => c)
+    const coc = [...cocinadoDb.entries()].filter(([, d]) => !d.auto).map(([inst, d]) => [celdas.get(d.celda || inst.split("~")[0]), d]).filter(([c]) => c)
       .sort((a, b) => fechaCelda(a[0]).localeCompare(fechaCelda(b[0])));
     coc.forEach(([c, d]) => tc.append(el("tr", null, el("td", { text: fechaCorta(fechaCelda(c)) }),
       el("td", { text: COMIDA_TXT[c.comida] + (d.etiqueta && c.comida !== "desayuno" ? " · " + d.etiqueta : "") }),
@@ -1277,8 +1300,40 @@
     return out;
   };
 
+  // ================= Recetas sin cocinar: se restan solas =================
+  // Bocadillos, yogures, desayunos fijos… no se marcan como cocinados: el día que tocan se restan de la
+  // despensa (con las raciones de quien come, según las anotaciones) y dejan de contar en la compra.
+  const AUTO_DESDE = "2026-09-30"; // los días anteriores no se restan: la despensa aún no se llevaba así
+  const cargadas = new Set();
+  const esSinCocinar = (i) => i.items.length > 0 && i.items.every((it) => REC[it.receta]?.sc);
+  let restando = false;
+  const restarSinCocinar = async () => {
+    if (!editable || restando || ocupado || !["despensa", "cocinado", "comido"].every((x) => cargadas.has(x))) return;
+    const lista = [];
+    celdas.forEach((c) => {
+      const f = fechaCelda(c);
+      if (f < AUTO_DESDE || f > HOY) return;
+      instancias(c).forEach((i) => { if (!i.sobras && esSinCocinar(i) && !cocinadoDb.has(i.inst) && i.items.some((it) => it.rac > 0)) lista.push({ c, i }); });
+    });
+    if (!lista.length) return;
+    restando = true;
+    try {
+      for (const { c, i } of lista) {
+        const descontado = {};
+        for (const [k, g] of ingredientesDe(i.items, 1)) {
+          const tengo = tengoDe(k), quita = Math.min(tengo, g); // nunca por debajo de 0
+          if (quita > 0) { descontado[k] = Math.round(quita * 10) / 10; await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengo - quita); }
+        }
+        const doc = { celda: c.id, recetas: i.items.map((x) => x.receta), raciones: i.items[0].rac, descontado, fecha: new Date().toISOString(), etiqueta: i.etiqueta || "", auto: true };
+        await db.doc("cocinado/" + i.inst).set(doc); cocinadoDb.set(i.inst, doc);
+      }
+      await registrar("cocinado", "Se restan solas de la despensa " + lista.length + " comidas que no se cocinan (bocadillos, yogures, desayunos…).");
+    } catch (e) {}
+    restando = false; renderTodo();
+  };
+
   // ================= Arranque =================
-  const renderTodo = () => { renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderCocinadoRecetas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
+  const renderTodo = () => { setTimeout(restarSinCocinar, 0); renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderCocinadoRecetas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
   const avisoDb = document.getElementById("despensa-aviso");
   const soloLectura = (motivo) => {
     editable = false;
@@ -1294,7 +1349,7 @@
     editable = true;
     document.querySelectorAll("[data-solo-editable-input]").forEach((x) => (x.disabled = false));
     if (avisoDb) avisoDb.textContent = "Los cambios se guardan al momento.";
-    const sub = (col, fn) => db.collection(col).onSnapshot((snap) => { fn(migrar(col, new Map(snap.docs.map((d) => [d.id, d.data()])))); renderTodo(); },
+    const sub = (col, fn) => db.collection(col).onSnapshot((snap) => { fn(migrar(col, new Map(snap.docs.map((d) => [d.id, d.data()])))); cargadas.add(col); renderTodo(); },
       () => { if (col === "despensa") soloLectura("No se puede acceder a los datos guardados ahora mismo."); });
     sub("despensa", (m) => (despensaDb = m));
     sub("no-deseados", (m) => (ndDb = m));

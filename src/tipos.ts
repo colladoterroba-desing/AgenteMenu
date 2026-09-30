@@ -21,6 +21,8 @@ export interface Actividad {
 
 export interface Miembro {
   id: string;
+  /** Nombre que se muestra en la web y los PDF en lugar de las siglas. */
+  alias?: string;
   edad: number;
   sexo: Sexo;
   alturaCm: number;

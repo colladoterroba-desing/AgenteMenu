@@ -157,7 +157,7 @@ export function crearHerramientas(almacen: Almacen) {
     herramienta({
       nombre: "actualizar_despensa",
       descripcion:
-        "Añade (cantidad positiva) o consume (cantidad negativa) productos de la despensa. Los productos que llegan a 0 desaparecen.",
+        "Añade (cantidad positiva) o consume (cantidad negativa) productos de la despensa. Los productos que llegan a 0 desaparecen. Nunca quedan cantidades negativas: si se consume más de lo que hay (o algo que no está), se toma como que faltaba apuntarlo y se queda a 0.",
       esquema: z.object({ cambios: z.array(producto).min(1) }),
       ejecutar: ({ cambios }) => almacen.ajustarProductos(cambios),
     }),

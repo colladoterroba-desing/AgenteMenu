@@ -42,16 +42,18 @@ npm run web   # genera salidas/resultados.html
 npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) de esta semana y la siguiente, en salidas/
 ```
 
-La web tiene las páginas Menú (esta semana y la siguiente), Diario, Recetas, Compra, Despensa, Tuppers, Definiciones y Configuración:
+La web tiene las páginas Menú (esta semana y la siguiente), Diario, Recetas, Compra, Despensa, Tuppers, Normas, Definiciones y Configuración. Las personas aparecen con su nombre (alias) en lugar de las siglas:
 
-- **Menú:** los días que ya han pasado se ocultan. Cada plato tiene una casilla **Cocinado** con las raciones (al marcarla se restan sus ingredientes de la despensa) y un botón **Diario** para apuntar lo que se comió de verdad. El botón **Actualizar menú** pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa; tú eliges qué cambios se aplican. El menú no necesita validación.
+- **Menú:** pestañas «Semana en curso» y «Próxima semana». Cuando empieza la próxima semana, pasa sola a ser la semana en curso (y `npm run web`, `npm run pdf` y el agente mueven su menú a `data/menu-semana.json` y guardan el anterior en `data/historial/`); después hay que pedir a Claude la nueva próxima semana. Los días que ya han pasado se ocultan. Lo cocinado se ve con «✓ Cocinado» (se marca en la receta). Si no se apunta nada, se da por comido lo previsto; con **Anotaciones** se apunta quién comió otra cosa o no come (una o varias personas, y varias anotaciones por comida) y lo que se gastó de la despensa. Quien no come lo previsto se descuenta de las raciones y de la compra. El botón **Actualizar menú** pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa; tú eliges qué cambios se aplican. El menú no necesita validación.
 - **Diario:** comentarios de la semana (por ejemplo, «RFC no come X, J y V»), cambios sobre el menú ideal, lo cocinado y la actividad.
 - **Compra:** lo que falta para lo que queda de semana, en gramos, sin lo que ya hay en casa. Al marcar productos aparece **Confirmar compra** (abajo a la derecha), que los suma a la despensa.
 - **Despensa:** añadir cualquier producto, lo que hay en casa, reservas de raciones cocinadas y lo que pide el menú.
-- **Recetas:** cantidades en gramos con la equivalencia en unidades o ml; marcar la cantidad hecha (reserva) o un plato como no deseado.
+- **Recetas:** cantidades en gramos con la equivalencia en unidades o ml. **Cocinado**: eliges para qué comidas del menú has cocinado y cuántas raciones has hecho; se restan los ingredientes de la despensa, esas comidas dejan de contar en la compra y lo que sobra queda en reserva. También se marca un plato como no deseado.
+- **Normas:** normas de la casa, alergias y quién cocina.
+- **Configuración:** régimen de comidas (en color: en casa, tupper frío, tupper para recalentar y almuerzo), reparto de la energía y una ficha por persona. En la ficha se cambian el peso, el objetivo de peso (con «¿Aceptar?» Sí/No), los gustos y el desayuno; la ficha se recalcula al momento, y el menú y la compra cuando se sincronizan los datos con el proyecto.
 - **Definiciones:** términos de la página, equivalencias a gramos, medidas caseras, tamaño de una ración y Thermomix.
 
-Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios` y `eventos`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa, los no deseados, las reservas y el diario».
+Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios`, `eventos`, `perfil` y `comido`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa, los no deseados, las reservas, el diario, las anotaciones y los perfiles».
 
 `npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 

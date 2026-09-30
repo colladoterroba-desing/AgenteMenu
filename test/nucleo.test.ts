@@ -460,3 +460,72 @@ test("web: las comidas que salen de otra (sobras) suman sus raciones a la que se
   for (const id of ["diario", "definiciones", "dlg-actualizar", "btn-confirmar-compra"]) assert.match(html, new RegExp(`id="${id}"`));
   assert.doesNotMatch(html, /Aprobar el menú|Borrador/);
 });
+
+test("web: alias en lugar de siglas, página Normas y fichas editables", async () => {
+  const { conAlias, generarHtml } = await import("../src/web.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  // El alias cambia el texto visible, pero no ids, clases, valores ni scripts.
+  const trozo = conAlias(`<p id="cfg-RFA" title="RFA: 500 kcal">RFA y RFC</p><option value="CCT">CCT</option><script>const x = "AFC";</script>`, familia);
+  assert.equal(trozo, `<p id="cfg-RFA" title="Ricardo: 500 kcal">Ricardo y Ricardo hijo</p><option value="CCT">Cristina</option><script>const x = "AFC";</script>`);
+  const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, recetas, fecha: "30 de septiembre de 2026" });
+  const visible = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]*>/g, " ");
+  assert.doesNotMatch(visible, /\b(RFA|CCT|RFC|AFC)\b/);
+  for (const id of ["normas", "dlg-perfil", "dlg-anot"]) assert.match(html, new RegExp(`id="${id}"`));
+  assert.doesNotMatch(html, /Cambios al menú/);
+  for (const editar of ["peso", "objetivo", "alimentacion"]) assert.match(html, new RegExp(`data-m="CCT" data-editar="${editar}"`));
+  // Los menores no tienen objetivo de peso que cambiar.
+  assert.doesNotMatch(html, /data-m="AFC" data-editar="objetivo"/);
+});
+
+test("la ficha de la web recalcula el gasto con los mismos coeficientes que el agente", async () => {
+  const { coeficientesTmb, kcalDeportePorKg, gastoEnergeticoDiario, FACTOR_BASE } = await import("../src/nutricion.js");
+  for (const m of familia.miembros) {
+    const { porKg, fija } = coeficientesTmb(m);
+    const gastoWeb = (porKg * m.pesoKg + fija) * FACTOR_BASE + kcalDeportePorKg(m) * m.pesoKg;
+    assert.ok(Math.abs(gastoWeb - gastoEnergeticoDiario(m)) < 1e-9);
+  }
+});
+
+test("rotación de semanas: el lunes de la semana siguiente, su menú pasa a ser el de la semana en curso", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "menu-"));
+  await cp("data", dir, { recursive: true });
+  const almacen = new Almacen(dir);
+  const antes = await almacen.menu();
+  const siguiente = await almacen.menu(true);
+  assert.equal(await almacen.rotarSemanas("2026-10-04"), null); // domingo: aún no toca
+  const rotada = await almacen.rotarSemanas(siguiente.inicio!);
+  assert.equal(rotada?.semana, siguiente.semana);
+  assert.equal((await almacen.menu()).inicio, siguiente.inicio);
+  await assert.rejects(almacen.menu(true)); // falta preparar la nueva semana siguiente
+  const archivado = JSON.parse(await readFile(path.join(dir, "historial", `menu-${antes.inicio}.json`), "utf8"));
+  assert.equal(archivado.semana, antes.semana);
+  assert.equal(await almacen.rotarSemanas("2026-10-20"), null); // sin semana siguiente no hay nada que rotar
+});
+
+test("web: las casillas se identifican por el lunes de su semana", async () => {
+  const { generarHtml } = await import("../src/web.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menuSiguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, menuSiguiente, recetas, fecha: "30 de septiembre de 2026" });
+  assert.match(html, new RegExp(`data-celda="${menu.inicio}-0-comida"`));
+  assert.match(html, new RegExp(`data-celda="${menuSiguiente.inicio}-0-comida"`));
+  assert.doesNotMatch(html, /data-celda="[AB]-/);
+  assert.match(html, /Semana en curso · A/);
+  assert.match(html, /Próxima semana · B/);
+});
+
+test("la despensa nunca queda en negativo: gastar más de lo apuntado la deja a 0", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "menu-"));
+  await cp("data", dir, { recursive: true });
+  const almacen = new Almacen(dir);
+  await almacen.guardarProductos([{ nombre: "Macarrones", cantidad: 100, unidad: "g" }, { nombre: "Chorizo", cantidad: -50, unidad: "g" }]);
+  let despensa = await almacen.ajustarProductos([
+    { nombre: "Macarrones", cantidad: -250, unidad: "g" },
+    { nombre: "Tomate frito", cantidad: -200, unidad: "g" },
+  ]);
+  assert.equal(despensa.productos.length, 0);
+  despensa = await almacen.ajustarProductos([{ nombre: "Macarrones", cantidad: 500, unidad: "g" }]);
+  assert.equal(despensa.productos.find((p) => p.nombre === "Macarrones")?.cantidad, 500);
+});

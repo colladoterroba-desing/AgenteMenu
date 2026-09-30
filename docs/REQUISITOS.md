@@ -13,6 +13,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 | RFC | 18 | V | 173 cm | 76 kg | Natación M y J (1 h) |
 | AFC | 13 | M | 158 cm | 52 kg | Fútbol: entrenamiento X y V (1 h 30 min), partido S (90 min); Ed. física M y J; natación V (30 min) |
 
+- **Nombres en la web (alias):** CCT es Cristina, RFA es Ricardo, RFC es Ricardo hijo y AFC es Alicia. La web y los PDF muestran el nombre, no las siglas.
 - **Alergias:** no detectadas.
 - **Gustos:** RFA no come mucho pescado.
 - **Régimen de comidas:**
@@ -31,20 +32,23 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Objetivos de peso (aceptados el 28/09/2026):** RFA, de 73 a 67,8 kg con 1.879 kcal/día (unas 11 semanas). CCT, de 79 a 67,8 kg con 1.623 kcal/día (unas 23 semanas). Consultarlo con su médico.
 - **Legumbres:** mejor con un adulto (RFA o CCT) que supervise cuánto comen; no se ponen en las comidas en las que RFC y AFC están solos.
 - **Comidas de los niños sin los mayores:** los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser pasta o algo más calórico.
-- **Platos habituales:** cenas fáciles (huevos revueltos con jamón york y/o queso, sándwich mixto, tortilla de patata) y comidas (purés de calabacín, calabaza y zanahoria; crema de puerro; judías verdes rehogadas; pechuga de pollo empanada; lomo adobado y chuleta de Sajonia a la plancha; ternera estofada con verduras; solomillo de cerdo a la naranja). Tienen prioridad en el menú, y el huevo debe aparecer varias veces por semana. Una comida puede llevar primero y segundo.
+- **Platos habituales:** cenas fáciles (huevos revueltos con jamón york y/o queso, sándwich mixto, tortilla de patata) y comidas (purés de calabacín, calabaza y zanahoria; crema de puerro; judías verdes rehogadas; pechuga de pollo empanada; lomo adobado y chuleta de Sajonia a la plancha; ternera estofada con verduras; solomillo de cerdo a la naranja). Tienen prioridad en el menú, y el huevo debe aparecer 3-4 veces por semana. Una comida puede llevar primero y segundo.
 - **Thermomix:** en casa hay Thermomix; las recetas de cremas, purés, guisos y salsas incluyen los pasos para hacerlas con ella.
 - **Despensa:** apartado para completar el inventario de lo que hay en casa; la lista de la compra lo descuenta y el menú se puede actualizar para aprovecharlo.
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.
+- **Rotación de semanas (desde el 30/09/2026):** la semana A es la semana en curso y la B la próxima. Cuando empieza la próxima, pasa a ser la semana en curso y hay que preparar la nueva próxima semana.
 - **Coste de la cesta:** la familia compra sobre todo en Mercadona y a veces en BM y Casa Elías (Madrid). Hay que valorar el coste de la lista de la compra en cada tienda y proponer la combinación más barata.
 - **Sin validación del menú (desde el 30/09/2026):** el menú no hay que aprobarlo. Lo que se come de verdad se apunta en el diario.
 - **Medidas en gramos:** todas las cantidades (recetas, despensa, compra, precios, tuppers) van en gramos. Lo que se cuenta por unidades o se mide en ml se pasa a gramos con [`data/equivalencias.json`](../data/equivalencias.json) y se muestra la equivalencia entre paréntesis («1.320 g (≈22 ud)»). La página **Definiciones** explica los términos y las equivalencias.
-- **Diario de comidas:** en cada casilla del menú se apunta si se comió lo previsto, otro plato del recetario u otra cosa, con una nota; el plato previsto queda tachado. El diario muestra los cambios sobre el menú ideal, lo cocinado y la actividad. Tiene un campo de **comentarios** para avisos de la semana (por ejemplo, «RFC no come esta semana X, J y V»).
+- **Qué ha comido cada persona (desde el 30/09/2026):** si no se apunta nada, se da por comido lo previsto. Cada comida del menú tiene un botón «Anotaciones»: cada anotación dice a quién se refiere y qué pasó (no come, otra cosa, otro plato o una nota), y lo gastado de la despensa o de una ración en reserva (se resta). Puede haber varias en la misma comida. Quien no come lo previsto se descuenta de las raciones y de la compra. El Diario muestra estas anotaciones y tiene un campo de **comentarios** para avisos de la semana.
 - **Actualizar menú:** un botón pide a Claude que revise los días que quedan (a partir de mañana) con el diario, los comentarios, lo cocinado y la despensa. Puede cambiar platos y quién come en cada comida. Los cambios se proponen y solo se aplican los que se aprueban; cada uno se puede deshacer.
-- **Cocinado:** cada plato, variante y tupper del menú tiene una casilla «Cocinado» con las raciones (se pueden cambiar). Al marcarla se restan de la despensa los ingredientes de esas raciones; al desmarcarla, vuelven. Lo que sale de otra comida (ración extra, batch) se marca una sola vez, en la comida donde se cocina. Los desayunos fijos se marcan como hechos una vez al día.
+- **Cocinado (en la receta):** en cada receta, «Cocinado»: se eligen las comidas del menú para las que se ha cocinado y cuántas raciones se han hecho. Se restan de la despensa los ingredientes, esas comidas dejan de contar en la compra y lo que sobra queda en reserva. Se puede deshacer. El menú solo muestra «✓ Cocinado». Los desayunos fijos no se marcan.
 - **Compra → despensa:** al marcar productos en la lista de la compra aparece un botón fijo abajo a la derecha, «Confirmar compra», que los suma a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa.
 - **Despensa:** se puede añadir cualquier producto, esté o no en el menú (se suma a lo que hubiera).
 - **Menú:** los días que ya han pasado no se muestran (se pueden ver con «Mostrarlos»).
+- **Ficha de cada persona (desde el 30/09/2026):** se pueden cambiar el peso, el objetivo de peso (peso y/o plazo, aceptando Sí/No), los gustos y el desayuno (texto libre). La ficha se recalcula al momento; el menú y la compra, al sincronizar con el proyecto. Un objetivo no puede bajar de IMC 18,5, pasar de 1 kg por semana ni quedar por debajo del metabolismo basal.
+- **Normas:** página propia con las normas de la casa, las alergias y quién cocina.
 
 Los datos están en [`data/familia.json`](../data/familia.json).
 

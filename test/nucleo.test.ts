@@ -529,3 +529,19 @@ test("la despensa nunca queda en negativo: gastar más de lo apuntado la deja a 
   despensa = await almacen.ajustarProductos([{ nombre: "Macarrones", cantidad: 500, unidad: "g" }]);
   assert.equal(despensa.productos.find((p) => p.nombre === "Macarrones")?.cantidad, 500);
 });
+
+test("ver_recetas da un índice ligero y el detalle solo de las recetas pedidas; ver_menu no repite las recetas", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "menu-"));
+  await cp("data", dir, { recursive: true });
+  const h = crearHerramientas(new Almacen(dir));
+  const indice = JSON.parse((await h.ejecutar("ver_recetas", {})).contenido);
+  assert.ok(indice.length > 10);
+  assert.ok(indice.every((r: Record<string, unknown>) => r.id && r.nombre && r.tipo && !("ingredientes" in r) && !("pasos" in r)));
+  const detalle = JSON.parse((await h.ejecutar("ver_recetas", { ids: [indice[0].id, "no-existe"] })).contenido);
+  assert.equal(detalle.recetas.length, 1);
+  assert.ok(detalle.recetas[0].ingredientes.length > 0);
+  assert.deepEqual(detalle.noExisten, ["no-existe"]);
+  const menu = (await h.ejecutar("ver_menu", {})).contenido;
+  assert.doesNotMatch(menu, /"ingredientes"|"pasos"/);
+  assert.match(menu, /"receta":\{"id":"[a-z0-9-]+","nombre":"/);
+});

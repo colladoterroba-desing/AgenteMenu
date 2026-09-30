@@ -2,7 +2,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
-import { caducidadReserva, componerMenu, listaCompra, SECCIONES, validarMenu, type MenuSemana } from "./menu.js";
+import { caducidadReserva, componerMenu, listaCompra, SECCIONES, validarMenu, type DiaDelMenu, type MenuSemana, type Receta } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
 import { costeCesta } from "./precios.js";
 import { DIAS } from "./tipos.js";
@@ -60,6 +60,28 @@ const plato = z.object({
     .optional()
     .describe("Si se cocina junto con otra comida (ración extra de una cena, batch): esa comida. Así en la web no se descuenta dos veces"),
 });
+
+/** Lo que hace falta para elegir una receta, sin ingredientes ni pasos (el detalle se pide aparte). */
+function indiceReceta(r: Receta) {
+  return {
+    id: r.id,
+    nombre: r.nombre,
+    tipo: r.tipo,
+    tecnica: r.tecnica,
+    tiempoMin: r.tiempoMin,
+    ...(r.alMomento ? { alMomento: true } : {}),
+    ...(r.racionFija ? { racionFija: true } : {}),
+  };
+}
+
+/** Cambia cada receta del menú compuesto por su id y nombre: la receta completa se repetiría en cada comida. */
+function sinDetalleDeRecetas(dias: DiaDelMenu[]): unknown {
+  return JSON.parse(
+    JSON.stringify(dias, (clave, valor) =>
+      clave === "receta" && valor && typeof valor === "object" ? { id: valor.id, nombre: valor.nombre } : valor,
+    ),
+  );
+}
 
 function herramienta<S extends z.ZodObject>(h: Herramienta<S>): Herramienta<S> {
   return h;
@@ -218,9 +240,16 @@ export function crearHerramientas(almacen: Almacen) {
     }),
     herramienta({
       nombre: "ver_recetas",
-      descripcion: "Lista de recetas guardadas (ingredientes por ración de referencia, pasos, tiempo, técnica).",
-      esquema: z.object({}),
-      ejecutar: () => almacen.recetas(),
+      descripcion:
+        "Sin ids: índice del recetario (id, nombre, tipo, técnica, tiempo). Con ids: la receta completa de cada una (ingredientes por ración de referencia, pasos, Thermomix, conservación). Pide el detalle solo de las recetas que necesites.",
+      esquema: z.object({ ids: z.array(z.string()).optional().describe("Recetas de las que quieres el detalle completo") }),
+      ejecutar: async ({ ids }) => {
+        const recetas = await almacen.recetas();
+        if (!ids?.length) return recetas.map(indiceReceta);
+        const pedidas = recetas.filter((r) => ids.includes(r.id));
+        const faltan = ids.filter((id) => !pedidas.some((r) => r.id === id));
+        return faltan.length ? { recetas: pedidas, noExisten: faltan } : pedidas;
+      },
     }),
     herramienta({
       nombre: "guardar_receta",
@@ -234,11 +263,12 @@ export function crearHerramientas(almacen: Almacen) {
     }),
     herramienta({
       nombre: "ver_menu",
-      descripcion: "Menú guardado (esta semana o, con siguiente=true, la propuesta de la siguiente), con platos, comensales y raciones de cada comida y tupper.",
+      descripcion:
+        "Menú guardado (esta semana o, con siguiente=true, la propuesta de la siguiente), con platos, comensales y raciones de cada comida y tupper. Cada receta va con su id y nombre; el detalle, con ver_recetas.",
       esquema: z.object({ siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente") }),
       ejecutar: async ({ siguiente }) => {
         const [familia, menu, recetas] = await Promise.all([almacen.familia(), almacen.menu(siguiente), almacen.recetas()]);
-        return { semana: menu.semana, batch: menu.batch, dias: componerMenu(familia, menu, recetas) };
+        return { semana: menu.semana, batch: menu.batch, dias: sinDetalleDeRecetas(componerMenu(familia, menu, recetas)) };
       },
     }),
     herramienta({

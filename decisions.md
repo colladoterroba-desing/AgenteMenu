@@ -69,3 +69,4 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | Fecha | Decisión | Motivo |
 |---|---|---|
 | 30/09/2026 | Se crea este documento y se revisa antes de cada cambio. | Evitar que un ajuste nuevo deshaga, sin avisar, algo que ya se decidió. |
+| 30/09/2026 | **Recetario ligero para el agente.** `ver_recetas` devuelve solo el índice (id, nombre, tipo, técnica y tiempo) y, si se le piden ids, el detalle de esas recetas. `ver_menu` da el id y el nombre de cada receta, no la receta completa. | Gastar menos IA: el recetario entero (54 KB) y el menú con las recetas dentro (66 KB) se enviaban completos y se reenviaban en cada mensaje. Ahora son 7,5 KB y 20 KB. |

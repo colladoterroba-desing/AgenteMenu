@@ -712,7 +712,7 @@ function seccionDespensa(recetas: Receta[]): string {
 /** Diario de comidas: comentarios, cambios sobre el menú ideal, lo cocinado y la actividad. */
 function seccionDiario(): string {
   return `<header class="cab"><h1 id="h-diario">Diario de comidas</h1>
-    <p class="sub">Lo que se ha comido de verdad frente al menú ideal, lo cocinado y los cambios. Lo que come cada persona se apunta en el menú, con la casilla y el botón «Anotaciones» de cada comida.</p>
+    <p class="sub">Lo que se ha comido de verdad frente al menú ideal, lo cocinado y los cambios. Si alguien no comió lo previsto, se apunta en el menú con el botón «Anotaciones» de esa comida; si no se apunta nada, se da por comido lo previsto.</p>
     <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button></div>
     <p class="sub">«Actualizar menú» pasa al menú lo apuntado en el diario y pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa. Tú decides qué cambios se aplican.</p></header>
     <section class="categoria ancha destacada-cat"><h4>Comentarios</h4>
@@ -1116,17 +1116,16 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .dlg .fila-campos label{display:grid;gap:4px}
 .resultado-objetivo,.cuerpo-dlg{display:grid;gap:8px}
 .comio{display:grid;gap:3px;margin-top:4px}
-.comio-plegable summary{cursor:pointer;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px;padding:2px 0;list-style:none}
-.comio-plegable summary::-webkit-details-marker{display:none}
-.comio-plegable summary::before{content:"▸";font-size:.8em}
-.comio-plegable[open] summary::before{content:"▾"}
-.comio-cuenta{font-weight:400;color:var(--muted);font-family:var(--f-mono);font-size:.7rem}
-.comio-cuenta.con-dato{color:var(--calor);font-weight:600}
-.comio-fila{display:flex;align-items:center;justify-content:space-between;gap:4px}
-.comio-fila label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;min-width:0}
-.comio-fila input{accent-color:var(--accent);width:15px;height:15px;margin:0;flex:none}
-.comio-fila.no-previsto .comensal{background:transparent;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
-.comio-nota{font-size:.72rem;color:var(--muted);padding-left:20px;line-height:1.25}
+.comio-nota{font-size:.74rem;color:var(--muted);line-height:1.25}
+.comio-nota strong{color:var(--ink)}
+.bloque-anot{border:1px solid var(--line)!important;border-radius:8px;padding:10px 12px!important;display:grid;gap:6px}
+.bloque-anot legend{font-weight:700;font-size:.85rem;padding:0 4px}
+.quien-anot{display:flex;flex-wrap:wrap;gap:6px 12px}
+.chip-quien{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.chip-quien input{accent-color:var(--accent)}
+.chip-quien input:disabled + .comensal{opacity:.4}
+.comensal.no-previsto{background:transparent;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
+.dlg .btn-mini{justify-self:start}
 .fila-gasto{display:grid;grid-template-columns:1fr 80px auto;gap:6px;align-items:center}
 .dlg .fila-gasto input{width:100%}
 .gasto summary{cursor:pointer;font-weight:600;font-size:.9rem;color:var(--accent)}
@@ -1219,6 +1218,8 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .des-sub{display:block;font-size:.74rem}
 .dlg{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:20px;width:min(460px,calc(100vw - 32px));box-shadow:0 12px 40px rgba(0,0,0,.25)}
 .dlg-ancho{width:min(680px,calc(100vw - 32px))}
+#dlg-anot{width:min(540px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto}
+#dlg-anot-botones{position:sticky;bottom:-20px;background:var(--surface);padding:10px 0 4px;border-top:1px solid var(--line)}
 .dlg::backdrop{background:rgba(0,0,0,.4)}
 .dlg form,.dlg{display:grid;gap:10px}
 .dlg:not([open]){display:none}
@@ -1513,7 +1514,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». En «Quién ha comido» (tócalo para abrirlo), cada persona: marca la casilla si ha comido lo previsto; con «Anotaciones» apuntas si comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra). Los días que ya han pasado no se muestran.</p>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». Si no se apunta nada, se da por hecho que cada uno comió lo previsto. Con «Anotaciones» apuntas quién comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra); puede haber varias en la misma comida. Los días que ya han pasado no se muestran.</p>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
       <dl class="resumen">

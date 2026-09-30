@@ -339,156 +339,194 @@
 
   // ================= Menú: casillas =================
   // ================= Anotaciones: qué ha comido cada persona =================
+  // Sin anotación se da por hecho que cada uno comió lo previsto. Cada anotación lleva sus personas;
+  // se guarda un documento por persona («casilla__persona») con el mismo «grupo». Lo gastado de la
+  // despensa va en el documento de la primera persona del grupo.
   const reservaPorId = (id) => { const t = new Map(reservasBase); reservasDb.forEach((v, k) => t.set(k, v)); const v = t.get(id); return v ? { ...v, id } : null; };
   const ponerReserva = async (x) => { await guardarReserva(x); const { id, ...d } = x; reservasDb.set(id, d); };
-  /** Devuelve a la despensa (y a la reserva) lo que gastó una anotación anterior. */
+  /** Devuelve a la despensa (y a la reserva) lo que gastó una anotación. */
   const devolverGastado = async (a) => {
     for (const [k, g] of Object.entries(a?.descontado || {})) await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengoDe(k) + Number(g));
     const x = a?.reserva && reservaPorId(a.reserva);
     if (x) await ponerReserva({ ...x, reserva: Math.round((Number(x.reserva) + 1) * 10) / 10 });
   };
-  const resumenAnot = (a) => [
-    a.tipo === "nocome" ? "No come" : a.tipo === "receta" ? "Comió " + nombreRec(a.receta) : a.tipo === "texto" ? "Comió " + a.texto : "",
-    a.nota, (a.descontado && Object.keys(a.descontado).length) || a.reserva ? "gastado de la despensa" : "",
+  const gastoDe = (docs) => docs.some((a) => (a.descontado && Object.keys(a.descontado).length) || a.reserva);
+  const resumenAnot = (a, docs = [a]) => [
+    a.tipo === "nocome" ? "no come" : a.tipo === "receta" ? "comió " + nombreRec(a.receta) : a.tipo === "texto" ? "comió " + a.texto : "lo previsto",
+    a.nota, gastoDe(docs) ? "gastado de la despensa" : "",
   ].filter(Boolean).join(" · ");
   const textoCasilla = (c) => DIAS[c.dia].toLowerCase() + ", " + COMIDA_TXT[c.comida].toLowerCase();
+  /** Anotaciones de una casilla, agrupadas. Las marcas antiguas de «ha comido lo previsto» sin nota no cuentan. */
+  const anotacionesDe = (c) => {
+    const grupos = new Map();
+    datos.miembros.forEach((p) => {
+      const a = anotDe(c, p);
+      if (!a || (a.tipo === "previsto" && !a.nota && previstoPara(c, p))) return;
+      const g = a.grupo || c.id + "__" + p;
+      if (!grupos.has(g)) grupos.set(g, { grupo: g, personas: [], docs: [] });
+      grupos.get(g).personas.push(p); grupos.get(g).docs.push(a);
+    });
+    return [...grupos.values()].map((x) => ({ ...x, doc: x.docs.find((d) => d.descontado || d.reserva) || x.docs[0] }));
+  };
+  const nuevoGrupo = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-  const guardarAnotacion = async (c, p, nuevo, usos = [], reservaId = "", todoElDia = false) => {
+  /** Sustituye todas las anotaciones de una casilla por las del formulario. */
+  const guardarAnotaciones = async (c, bloques) => {
     if (ocupado) return false; ocupado = true;
     let ok = true;
     try {
-      await devolverGastado(anotDe(c, p));
-      const descontado = {};
-      for (const u of usos) {
-        const tengo = tengoDe(u.k), quita = Math.min(tengo, u.g); // nunca por debajo de 0
-        if (quita > 0) { descontado[u.k] = Math.round(((descontado[u.k] || 0) + quita) * 10) / 10; await guardarProducto(despensaActual().get(u.k)?.nombre || nombreDe.get(u.k) || u.k, tengo - quita); }
+      for (const p of datos.miembros) {
+        const a = anotDe(c, p);
+        if (!a) continue;
+        await devolverGastado(a);
+        await db.doc("comido/" + c.id + "__" + p).delete(); comidoDb.delete(c.id + "__" + p);
       }
-      const doc = { celda: c.id, persona: p, ...nuevo, fecha: new Date().toISOString() };
-      if (Object.keys(descontado).length) doc.descontado = descontado;
-      const x = reservaId && reservaPorId(reservaId);
-      if (x && Number(x.reserva) > 0) { await ponerReserva({ ...x, reserva: Math.max(0, Math.round((Number(x.reserva) - 1) * 10) / 10) }); doc.reserva = reservaId; }
-      Object.keys(doc).forEach((k) => (doc[k] === undefined || doc[k] === "") && delete doc[k]);
-      await db.doc("comido/" + c.id + "__" + p).set(doc); comidoDb.set(c.id + "__" + p, doc);
-      let otras = 0;
-      if (todoElDia && nuevo.tipo === "nocome") {
-        for (const o of celdas.values()) {
-          if (o.id === c.id || fechaCelda(o) !== fechaCelda(c) || anotDe(o, p) || !previstoPara(o, p)) continue;
-          const d2 = { celda: o.id, persona: p, tipo: "nocome", fecha: doc.fecha, ...(nuevo.nota ? { nota: nuevo.nota } : {}) };
-          await db.doc("comido/" + o.id + "__" + p).set(d2); comidoDb.set(o.id + "__" + p, d2); otras++;
+      const fecha = new Date().toISOString(), textos = [];
+      for (const b of bloques) {
+        const grupo = nuevoGrupo(), extra = {};
+        const descontado = {};
+        for (const u of b.usos) {
+          const tengo = tengoDe(u.k), quita = Math.min(tengo, u.g); // nunca por debajo de 0
+          if (quita > 0) { descontado[u.k] = Math.round(((descontado[u.k] || 0) + quita) * 10) / 10; await guardarProducto(despensaActual().get(u.k)?.nombre || nombreDe.get(u.k) || u.k, tengo - quita); }
         }
+        if (Object.keys(descontado).length) extra.descontado = descontado;
+        const x = b.reserva && reservaPorId(b.reserva);
+        if (x && Number(x.reserva) > 0) { await ponerReserva({ ...x, reserva: Math.max(0, Math.round((Number(x.reserva) - 1) * 10) / 10) }); extra.reserva = b.reserva; }
+        for (const [n, p] of b.personas.entries()) {
+          const doc = { celda: c.id, persona: p, grupo, ...b.nuevo, fecha, ...(n === 0 ? extra : {}) };
+          Object.keys(doc).forEach((k) => (doc[k] === undefined || doc[k] === "") && delete doc[k]);
+          await db.doc("comido/" + c.id + "__" + p).set(doc); comidoDb.set(c.id + "__" + p, doc);
+        }
+        let otras = 0;
+        if (b.todoElDia && b.nuevo.tipo === "nocome") {
+          for (const o of celdas.values()) {
+            if (o.id === c.id || fechaCelda(o) !== fechaCelda(c)) continue;
+            const grupoO = nuevoGrupo();
+            for (const p of b.personas) {
+              if (anotDe(o, p) || !previstoPara(o, p)) continue;
+              const d2 = { celda: o.id, persona: p, grupo: grupoO, tipo: "nocome", fecha, ...(b.nuevo.nota ? { nota: b.nuevo.nota } : {}) };
+              await db.doc("comido/" + o.id + "__" + p).set(d2); comidoDb.set(o.id + "__" + p, d2); otras++;
+            }
+          }
+        }
+        textos.push(b.personas.join(", ") + ": " + resumenAnot({ ...b.nuevo, ...extra }) + (otras ? " (y el resto de comidas de ese día)" : ""));
       }
-      await registrar("comido", p + " (" + textoCasilla(c) + "): " + (nuevo.tipo === "previsto" && !nuevo.nota ? "ha comido lo previsto" : resumenAnot(doc)) + (otras ? " (y " + otras + " comidas más de ese día)" : "") + ".");
+      await registrar("comido", "Anotaciones (" + textoCasilla(c) + "): " + (textos.join("; ") || "ninguna, se comió lo previsto") + ".");
     } catch (e) { ok = false; aviso("No se ha podido guardar (" + (e && e.code || "error") + ")."); }
     ocupado = false; renderTodo();
     return ok;
   };
-  const borrarAnotacion = async (c, p) => {
-    if (ocupado) return; ocupado = true;
-    try {
-      await devolverGastado(anotDe(c, p));
-      await db.doc("comido/" + c.id + "__" + p).delete(); comidoDb.delete(c.id + "__" + p);
-      await registrar("comido", p + " (" + textoCasilla(c) + "): anotación quitada.");
-    } catch (e) { aviso("No se ha podido guardar (" + (e && e.code || "error") + ")."); }
-    ocupado = false; renderTodo();
-  };
 
-  /** Una línea por persona con la casilla «ha comido lo previsto» y el botón «Anotaciones». */
-  // La lista va plegada; se abre al tocar «Quién ha comido». Se recuerda cuáles están abiertas al redibujar.
-  const abiertas = new Set();
-  const filasPersonas = (c) => {
-    const lista = el("div", { class: "comio" });
-    datos.miembros.forEach((p) => {
-      const a = anotDe(c, p), prev = previstoPara(c, p);
-      const conDato = !!a && (a.tipo !== "previsto" || !!a.nota);
-      const fila = el("div", { class: "comio-fila" + (prev ? "" : " no-previsto") });
-      const chk = el("input", { type: "checkbox", checked: !!a && a.tipo === "previsto", disabled: !editable });
-      chk.setAttribute("aria-label", conAlias(p) + ": ha comido lo previsto");
-      chk.addEventListener("change", () => (chk.checked ? guardarAnotacion(c, p, { tipo: "previsto", nota: a?.nota }) : borrarAnotacion(c, p)));
-      const b = el("button", { type: "button", class: "btn-mini" + (conDato ? " con-dato" : ""), text: "Anotaciones", disabled: !editable });
-      b.setAttribute("aria-label", "Anotaciones de " + conAlias(p));
-      b.addEventListener("click", () => abrirAnotacion(c, p));
-      fila.append(el("label", null, chk, el("span", { class: "comensal", text: p, title: prev ? "" : "No estaba previsto en esta comida" })), b);
-      lista.append(fila);
-      if (conDato) lista.append(el("span", { class: "comio-nota", text: resumenAnot(a) }));
-    });
-    const hechas = datos.miembros.filter((p) => anotDe(c, p)).length;
-    const conNotas = datos.miembros.some((p) => { const a = anotDe(c, p); return a && (a.tipo !== "previsto" || a.nota); });
-    const pleg = el("details", { class: "comio-plegable", open: abiertas.has(c.id) },
-      el("summary", null, "Quién ha comido", el("span", { class: "comio-cuenta" + (conNotas ? " con-dato" : ""), text: hechas ? hechas + "/" + datos.miembros.length + (conNotas ? " · notas" : "") : "" })),
-      lista);
-    pleg.addEventListener("toggle", () => (pleg.open ? abiertas.add(c.id) : abiertas.delete(c.id)));
-    return pleg;
+  /** En la comida del menú: un botón «Anotaciones» y una línea por anotación. */
+  const bloqueAnotaciones = (c) => {
+    const anots = anotacionesDe(c);
+    const caja = el("div", { class: "comio" });
+    const b = el("button", { type: "button", class: "btn-mini" + (anots.length ? " con-dato" : ""), text: anots.length ? "Anotaciones (" + anots.length + ")" : "Anotaciones", disabled: !editable });
+    b.addEventListener("click", () => abrirAnotaciones(c));
+    caja.append(b);
+    anots.forEach((x) => caja.append(el("span", { class: "comio-nota" }, el("strong", { text: x.personas.join(", ") + ": " }), resumenAnot(x.doc, x.docs))));
+    return caja;
   };
 
   const dlgN = document.getElementById("dlg-anot");
-  const abrirAnotacion = (c, p) => {
-    const a = anotDe(c, p) || {}, prev = previstoPara(c, p);
-    const radio = (valor, texto) => { const r = el("input", { type: "radio", name: "anot-tipo", value: valor }); r.checked = (a.tipo || "previsto") === valor; return [r, el("label", { class: "opcion" }, r, texto)]; };
-    const [rPrev, lPrev] = radio("previsto", "Lo previsto");
-    const [rRec, lRec] = radio("receta", "Otro plato del recetario");
-    const selRec = el("select", { "aria-label": "Plato del recetario" }, Object.entries(REC).sort((x, y) => x[1].n.localeCompare(y[1].n)).map(([id, r]) => el("option", { value: id, text: r.n })));
-    if (a.receta) selRec.value = a.receta;
-    const [rTxt, lTxt] = radio("texto", "Otra cosa");
-    const inTxt = el("input", { type: "text", value: a.texto || "", placeholder: "Por ejemplo: macarrones con chorizo y tomate frito", "aria-label": "Qué comió" });
-    const [rNo, lNo] = radio("nocome", "No come");
-    const todoDia = el("input", { type: "checkbox" });
-    const lTodo = el("label", { class: "opcion sub" }, todoDia, "Tampoco las demás comidas de ese día");
-    const nota = el("input", { type: "text", value: a.nota || "", placeholder: "Opcional" });
-    // Gastado de la despensa: productos con gramos y, si acaso, una ración en reserva.
-    const despensaOpc = () => {
-      const t = despensaActual(), claves = new Set([...t.keys()].filter((k) => Number(t.get(k).cantidad) > 0 || a.descontado?.[k]));
-      return [...claves].map((k) => [k, t.get(k)?.nombre || nombreDe.get(k) || k, Number(t.get(k)?.cantidad || 0) + Number(a.descontado?.[k] || 0)])
-        .sort((x, y) => x[1].localeCompare(y[1]));
-    };
-    const filasDesp = el("div", { class: "cuerpo-dlg" });
-    const filaGasto = (k = "", g = "") => {
-      const sel = el("select", { "aria-label": "Producto" }, el("option", { value: "", text: "Producto de la despensa…" }), despensaOpc().map(([kk, n, hay]) => el("option", { value: kk, text: n + " (" + fmtG(hay) + ")" })));
-      sel.value = k;
-      const gr = el("input", { type: "number", min: "0", step: "1", value: String(g), placeholder: "g", "aria-label": "Gramos" });
-      const quitar = el("button", { type: "button", class: "btn-mini", text: "Quitar" });
-      const f = el("div", { class: "fila-gasto" }, sel, gr, quitar);
-      quitar.addEventListener("click", () => f.remove());
-      filasDesp.append(f);
-    };
-    Object.entries(a.descontado || {}).forEach(([k, g]) => filaGasto(k, g));
-    const masBtn = el("button", { type: "button", class: "btn-mini", text: "Añadir producto" });
-    masBtn.addEventListener("click", () => filaGasto());
-    const reservas = reservasActuales().filter((x) => x.id !== a.reserva);
-    const prevRes = a.reserva && reservaPorId(a.reserva);
-    const selRes = el("select", { "aria-label": "Ración en reserva" }, el("option", { value: "", text: "Ninguna" }),
-      [...(prevRes ? [prevRes] : []), ...reservas].map((x) => el("option", { value: x.id, text: (x.receta ? nombreRec(x.receta) : x.descripcion || "Reserva") + " (" + fmtNum(Number(x.reserva) + (x.id === a.reserva ? 1 : 0), 1) + " rac.)" })));
-    selRes.value = a.reserva || "";
-    const tipo = () => [rPrev, rRec, rTxt, rNo].find((r) => r.checked).value;
-    const actualizar = () => { lTodo.hidden = tipo() !== "nocome"; };
-    [rPrev, rRec, rTxt, rNo].forEach((r) => r.addEventListener("change", actualizar));
-    selRec.addEventListener("focus", () => (rRec.checked = true, actualizar()));
-    inTxt.addEventListener("input", () => (rTxt.checked = true, actualizar()));
-    actualizar();
-
-    document.getElementById("dlg-anot-titulo").textContent = conAlias("Anotaciones · " + p);
+  const abrirAnotaciones = (c) => {
     const estado = document.getElementById("dlg-anot-estado"); estado.textContent = "";
+    const lista = el("div", { class: "cuerpo-dlg" });
+    const bloques = [];
+    const refrescarQuien = () => bloques.forEach((b) => b.chks.forEach(([p, chk]) => {
+      chk.disabled = !chk.checked && bloques.some((o) => o !== b && o.chks.some(([q, k]) => q === p && k.checked));
+    }));
+    const despensaOpc = (previo) => {
+      const t = despensaActual(), claves = new Set([...t.keys()].filter((k) => Number(t.get(k).cantidad) > 0 || previo?.[k]));
+      return [...claves].map((k) => [k, t.get(k)?.nombre || nombreDe.get(k) || k, Number(t.get(k)?.cantidad || 0) + Number(previo?.[k] || 0)]).sort((x, y) => x[1].localeCompare(y[1]));
+    };
+    const nuevoBloque = (x) => {
+      const a = x?.doc || {}, n = bloques.length + 1;
+      const quien = el("div", { class: "quien-anot" });
+      const chks = datos.miembros.map((p) => {
+        const chk = el("input", { type: "checkbox", checked: !!x?.personas.includes(p) });
+        chk.addEventListener("change", refrescarQuien);
+        quien.append(el("label", { class: "chip-quien" }, chk, el("span", { class: "comensal" + (previstoPara(c, p) ? "" : " no-previsto"), text: p })));
+        return [p, chk];
+      });
+      const nombre = "anot-tipo-" + nuevoGrupo();
+      const radio = (valor, texto) => { const r = el("input", { type: "radio", name: nombre, value: valor }); r.checked = (a.tipo || "nocome") === valor; return [r, el("label", { class: "opcion" }, r, texto)]; };
+      const [rNo, lNo] = radio("nocome", "No come");
+      const [rTxt, lTxt] = radio("texto", "Otra cosa");
+      const inTxt = el("input", { type: "text", value: a.texto || "", placeholder: "Por ejemplo: macarrones con chorizo y tomate frito", "aria-label": "Qué comió" });
+      const [rRec, lRec] = radio("receta", "Otro plato del recetario");
+      const selRec = el("select", { "aria-label": "Plato del recetario" }, Object.entries(REC).sort((u, v) => u[1].n.localeCompare(v[1].n)).map(([id, r]) => el("option", { value: id, text: r.n })));
+      if (a.receta) selRec.value = a.receta;
+      const [rPrev, lPrev] = radio("previsto", "Lo previsto (para añadir una nota o a alguien que no estaba previsto)");
+      const todoDia = el("input", { type: "checkbox" });
+      const lTodo = el("label", { class: "opcion sub" }, todoDia, "Tampoco las demás comidas de ese día");
+      const nota = el("input", { type: "text", value: a.nota || "", placeholder: "Opcional" });
+      const filasDesp = el("div", { class: "cuerpo-dlg" });
+      const filaGasto = (k = "", g = "") => {
+        const sel = el("select", { "aria-label": "Producto" }, el("option", { value: "", text: "Producto de la despensa…" }), despensaOpc(a.descontado).map(([kk, nm, hay]) => el("option", { value: kk, text: nm + " (" + fmtG(hay) + ")" })));
+        sel.value = k;
+        const gr = el("input", { type: "number", min: "0", step: "1", value: String(g), placeholder: "g", "aria-label": "Gramos" });
+        const quitar = el("button", { type: "button", class: "btn-mini", text: "Quitar" });
+        const f = el("div", { class: "fila-gasto" }, sel, gr, quitar);
+        quitar.addEventListener("click", () => f.remove());
+        filasDesp.append(f);
+      };
+      Object.entries(a.descontado || {}).forEach(([k, g]) => filaGasto(k, g));
+      const masBtn = el("button", { type: "button", class: "btn-mini", text: "Añadir producto" });
+      masBtn.addEventListener("click", () => filaGasto());
+      const prevRes = a.reserva && reservaPorId(a.reserva);
+      const selRes = el("select", { "aria-label": "Ración en reserva" }, el("option", { value: "", text: "Ninguna" }),
+        [...(prevRes ? [prevRes] : []), ...reservasActuales().filter((r) => r.id !== a.reserva)].map((r) => el("option", { value: r.id, text: (r.receta ? nombreRec(r.receta) : r.descripcion || "Reserva") + " (" + fmtNum(Number(r.reserva) + (r.id === a.reserva ? 1 : 0), 1) + " rac.)" })));
+      selRes.value = a.reserva || "";
+      const tipo = () => [rNo, rTxt, rRec, rPrev].find((r) => r.checked).value;
+      const actualizar = () => { lTodo.hidden = tipo() !== "nocome"; };
+      [rNo, rTxt, rRec, rPrev].forEach((r) => r.addEventListener("change", actualizar));
+      selRec.addEventListener("focus", () => { rRec.checked = true; actualizar(); });
+      inTxt.addEventListener("input", () => { rTxt.checked = true; actualizar(); });
+      actualizar();
+      const quitarBloque = el("button", { type: "button", class: "btn-mini", text: "Quitar esta anotación" });
+      const caja = el("fieldset", { class: "bloque-anot" }, el("legend", { text: "Anotación " + n }),
+        el("p", { class: "etq", text: "¿A quién se refiere?" }), quien,
+        lNo, lTodo, lTxt, inTxt, lRec, selRec, lPrev,
+        el("label", { class: "bloque" }, "Nota", nota),
+        el("details", { class: "gasto", open: !!(a.descontado || a.reserva) }, el("summary", { text: "Gastado de la despensa" }),
+          el("p", { class: "sub", text: "Si comió algo que ya había en casa, elige qué y cuánto: se resta de la despensa." }),
+          filasDesp, el("div", null, masBtn), el("label", { class: "bloque" }, "Ración en reserva", selRes)),
+        quitarBloque);
+      const b = { caja, chks, leer: () => ({
+        personas: chks.filter(([, k]) => k.checked).map(([p]) => p),
+        nuevo: { tipo: tipo(), nota: nota.value.trim().slice(0, 200), ...(tipo() === "receta" ? { receta: selRec.value } : {}), ...(tipo() === "texto" ? { texto: inTxt.value.trim().slice(0, 200) } : {}) },
+        usos: [...filasDesp.querySelectorAll(".fila-gasto")].map((f) => ({ k: f.querySelector("select").value, g: Number(f.querySelector("input").value) })).filter((u) => u.k && u.g > 0),
+        reserva: selRes.value, todoElDia: todoDia.checked, inTxt,
+      }) };
+      quitarBloque.addEventListener("click", () => { bloques.splice(bloques.indexOf(b), 1); caja.remove(); refrescarQuien(); });
+      bloques.push(b); lista.append(caja); refrescarQuien();
+    };
+    const existentes = anotacionesDe(c);
+    existentes.forEach((x) => nuevoBloque(x));
+    if (!existentes.length) nuevoBloque();
+    const mas = el("button", { type: "button", class: "secundario", text: "Añadir otra anotación" });
+    mas.addEventListener("click", () => { nuevoBloque(); lista.lastChild.scrollIntoView({ block: "nearest" }); });
+
+    const e = efectivo(c);
+    const comen = [...new Set([...(e.comensales || c.quien), ...(c.variantes || []).map((v) => v.quien), ...c.tuppers.map((t) => t.quien)])];
+    document.getElementById("dlg-anot-titulo").textContent = "Anotaciones · " + DIAS[c.dia] + ", " + COMIDA_TXT[c.comida].toLowerCase();
     document.getElementById("dlg-anot-cuerpo").replaceChildren(
-      el("p", { class: "sub", text: DIAS[c.dia] + ", " + COMIDA_TXT[c.comida].toLowerCase() + ". Previsto: " + (prev ? prev.map(nombreRec).join(" + ") : "nada (no estaba previsto)") }),
-      el("fieldset", null, el("legend", { class: "sr", text: "¿Qué comió?" }), lPrev, lRec, selRec, lTxt, inTxt, lNo, lTodo),
-      el("label", null, "Nota", nota),
-      el("details", { class: "gasto", open: !!(a.descontado || a.reserva) }, el("summary", { text: "Gastado de la despensa" }),
-        el("p", { class: "sub", text: "Si comió algo que ya había en casa, elige qué y cuánto: se resta de la despensa." }),
-        filasDesp, el("div", null, masBtn), el("label", { class: "bloque" }, "Ración en reserva", selRes)),
-    );
+      el("p", { class: "sub", text: "Previsto: " + (c.comida === "desayuno" ? "desayunos fijos" : e.recetas.map(nombreRec).join(" + ")) + (comen.length ? ". Comen: " + comen.join(", ") : "") + ". Si no se apunta nada, se da por hecho que cada uno comió lo previsto." }),
+      lista, el("div", null, mas));
     const guardar = el("button", { type: "button", class: "btn-principal", text: "Guardar" });
     guardar.addEventListener("click", async () => {
-      const t = tipo();
-      if (t === "texto" && !inTxt.value.trim()) { estado.textContent = "Escribe qué comió."; inTxt.focus(); return; }
-      const usos = [...filasDesp.querySelectorAll(".fila-gasto")].map((f) => ({ k: f.querySelector("select").value, g: Number(f.querySelector("input").value) })).filter((u) => u.k && u.g > 0);
-      const nuevo = { tipo: t, nota: nota.value.trim().slice(0, 200), ...(t === "receta" ? { receta: selRec.value } : {}), ...(t === "texto" ? { texto: inTxt.value.trim().slice(0, 200) } : {}) };
+      const leidos = bloques.map((b) => b.leer());
+      for (const b of leidos) {
+        if (!b.personas.length) { estado.textContent = "Elige a quién se refiere cada anotación (o quítala)."; return; }
+        if (b.nuevo.tipo === "texto" && !b.nuevo.texto) { estado.textContent = "Escribe qué comió."; b.inTxt.focus(); return; }
+      }
       guardar.disabled = true;
-      if (await guardarAnotacion(c, p, nuevo, usos, selRes.value, todoDia.checked)) { dlgN.close(); aviso("Anotación guardada."); }
+      if (await guardarAnotaciones(c, leidos)) { dlgN.close(); aviso("Anotaciones guardadas."); }
       guardar.disabled = false;
     });
-    const botones = [guardar];
-    if (anotDe(c, p)) { const q = el("button", { type: "button", class: "secundario", text: "Quitar anotación" }); q.addEventListener("click", async () => { await borrarAnotacion(c, p); dlgN.close(); }); botones.push(q); }
-    const cancelar = el("button", { type: "button", class: "secundario", text: "Cancelar" }); cancelar.addEventListener("click", () => dlgN.close()); botones.push(cancelar);
-    document.getElementById("dlg-anot-botones").replaceChildren(...botones);
+    const cancelar = el("button", { type: "button", class: "secundario", text: "Cancelar" }); cancelar.addEventListener("click", () => dlgN.close());
+    document.getElementById("dlg-anot-botones").replaceChildren(guardar, cancelar);
     dlgN.showModal();
   };
 
@@ -528,7 +566,7 @@
       const hechos = instancias(c).filter((i) => !i.esDes && cocinadoDb.has(i.inst));
       cocinados += hechos.length;
       if (hechos.length) caja.append(el("span", { class: "coc-menu", text: "✓ Cocinado" + (hechos.length > 1 || hechos[0].etiqueta ? ": " + hechos.map((i) => i.etiqueta || "plato").join(", ") : "") }));
-      caja.append(filasPersonas(c));
+      caja.append(bloqueAnotaciones(c));
     });
     const rc = document.getElementById("resumen-cocinados"); if (rc) rc.textContent = cocinados;
   };

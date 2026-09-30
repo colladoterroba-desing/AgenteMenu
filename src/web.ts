@@ -1106,6 +1106,12 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .dlg .fila-campos label{display:grid;gap:4px}
 .resultado-objetivo,.cuerpo-dlg{display:grid;gap:8px}
 .comio{display:grid;gap:3px;margin-top:4px}
+.comio-plegable summary{cursor:pointer;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px;padding:2px 0;list-style:none}
+.comio-plegable summary::-webkit-details-marker{display:none}
+.comio-plegable summary::before{content:"▸";font-size:.8em}
+.comio-plegable[open] summary::before{content:"▾"}
+.comio-cuenta{font-weight:400;color:var(--muted);font-family:var(--f-mono);font-size:.7rem}
+.comio-cuenta.con-dato{color:var(--calor);font-weight:600}
 .comio-fila{display:flex;align-items:center;justify-content:space-between;gap:4px}
 .comio-fila label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;min-width:0}
 .comio-fila input{accent-color:var(--accent);width:15px;height:15px;margin:0;flex:none}
@@ -1497,7 +1503,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. Debajo, cada persona: marca la casilla si ha comido lo previsto; con «Anotaciones» apuntas si comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra). Los días que ya han pasado no se muestran.</p>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. En «Quién ha comido» (tócalo para abrirlo), cada persona: marca la casilla si ha comido lo previsto; con «Anotaciones» apuntas si comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra). Los días que ya han pasado no se muestran.</p>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
       <dl class="resumen">

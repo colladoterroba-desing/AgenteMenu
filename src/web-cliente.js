@@ -393,6 +393,8 @@
   };
 
   /** Una línea por persona con la casilla «ha comido lo previsto» y el botón «Anotaciones». */
+  // La lista va plegada; se abre al tocar «Quién ha comido». Se recuerda cuáles están abiertas al redibujar.
+  const abiertas = new Set();
   const filasPersonas = (c) => {
     const lista = el("div", { class: "comio" });
     datos.miembros.forEach((p) => {
@@ -409,7 +411,13 @@
       lista.append(fila);
       if (conDato) lista.append(el("span", { class: "comio-nota", text: resumenAnot(a) }));
     });
-    return lista;
+    const hechas = datos.miembros.filter((p) => anotDe(c, p)).length;
+    const conNotas = datos.miembros.some((p) => { const a = anotDe(c, p); return a && (a.tipo !== "previsto" || a.nota); });
+    const pleg = el("details", { class: "comio-plegable", open: abiertas.has(c.id) },
+      el("summary", null, "Quién ha comido", el("span", { class: "comio-cuenta" + (conNotas ? " con-dato" : ""), text: hechas ? hechas + "/" + datos.miembros.length + (conNotas ? " · notas" : "") : "" })),
+      lista);
+    pleg.addEventListener("toggle", () => (pleg.open ? abiertas.add(c.id) : abiertas.delete(c.id)));
+    return pleg;
   };
 
   const dlgN = document.getElementById("dlg-anot");

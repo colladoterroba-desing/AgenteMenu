@@ -48,13 +48,13 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 ## Personas y hábitos
 
 - [x] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** Confirmado el 30/09/2026: es **RFC**.
-- [ ] **OI-05 · Desayuno de RFC el fin de semana.** Sin almuerzo, solo toma café y le faltan unas 600 kcal del desayuno. ¿Desayuna algo más en casa el sábado y el domingo?
+- [x] **OI-05 · Desayuno de RFC el fin de semana.** Descartado el 30/09/2026: los fines de semana la familia no sigue el menú. El sábado y el domingo se dejan en el menú como están.
 - [x] **OI-06 · Desayuno de RFA los días de running (L y M).** Descartado el 30/09/2026: RFA no acepta la propuesta (añadir fruta o una tortita más). Mantiene su desayuno actual.
 - [x] **OI-07 · Desayuno de CCT.** Aceptado el 30/09/2026: café cortado, tostada integral con aceite y tomate, queso fresco y una pieza de fruta, sin azúcar (receta `desayuno-cct`). El menú y la compra ya lo usan.
 - [x] **OI-08 · Objetivos de peso de RFA y CCT.** Aceptados el 28/09/2026: los dos, a 67,8 kg (IMC 24,9) perdiendo unos 0,5 kg por semana. RFA: 1.879 kcal/día, fecha prevista 14/12/2026. CCT: 1.623 kcal/día, fecha prevista 08/03/2027. Pendiente: consultarlo con su médico. El peso se apunta con «Cambiar peso» en la ficha de cada persona (queda un registro con la fecha); falta decidir cada cuánto.
 - [x] **OI-31 · Objetivo de peso de RFC.** Descartado el 30/09/2026: no se define objetivo de peso para RFC.
-- [ ] **OI-09 · Merienda.** Se ha supuesto que meriendan los cuatro de lunes a viernes y nadie el fin de semana. Confirmar.
-- [ ] **OI-10 · Pescado para RFA.** El 30/09/2026: mejor lubina que dorada; la dorada al horno se cambia por **lubina al horno** (receta `lubina-horno`). Falta confirmar si RFA come gambas (revuelto de setas y gambas de la semana B).
+- [x] **OI-09 · Merienda.** Resuelto el 30/09/2026: meriendan los cuatro de lunes a viernes. El fin de semana no importa: la familia no sigue el menú esos días.
+- [x] **OI-10 · Pescado para RFA.** Resuelto el 30/09/2026: RFA come gambas; mejor lubina que dorada, así que la dorada al horno se cambia por **lubina al horno** (receta `lubina-horno`).
 - [ ] **OI-11 · Energía según el día.** Las raciones usan el gasto medio de la semana. Valorar si se ajustan por día (más en días de entreno o partido).
 
 ## Tuppers y almuerzos

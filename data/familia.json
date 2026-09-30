@@ -65,7 +65,6 @@
       "pollo-empanado", "lomo-adobado-plancha", "chuleta-sajonia-plancha", "ternera-estofada", "solomillo-naranja"
     ]
   },
-  "permisos": { "validarMenu": ["CCT"] },
   "noDeseados": [],
   "supervision": [
     {
@@ -114,7 +113,7 @@
       "RFC": { "dias": ["L", "M", "X", "J", "V"], "lugar": "colegio" }
     },
     "tupper": {
-      "RFA": { "dias": ["L", "M", "X"], "tipo": "frío" },
+      "RFA": { "dias": ["L", "M", "X", "J"], "tipo": "frío" },
       "CCT": { "dias": ["L", "M", "X"], "tipo": "para recalentar" }
     },
     "desayuno": "todos, todos los días; cada uno su desayuno habitual (ver desayunos)",

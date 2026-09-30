@@ -9,8 +9,8 @@
       "ingredientes": [
         { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -27,8 +27,8 @@
       "tecnica": "guiso",
       "ingredientes": [
         { "nombre": "Copos de avena", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" },
-        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Leche semidesnatada", "cantidad": 257.5, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Plátano", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Nueces peladas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
@@ -44,11 +44,11 @@
       "tiempoMin": 10,
       "tecnica": "plancha",
       "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Pan integral", "cantidad": 60, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Leche semidesnatada", "cantidad": 200, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Leche semidesnatada", "cantidad": 206, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Naranjas", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Batir los huevos con una pizca de sal.",
@@ -80,7 +80,7 @@
       "tiempoMin": 5,
       "tecnica": "sin cocinar",
       "ingredientes": [
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Copos de avena", "cantidad": 20, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Almendras", "cantidad": 20, "unidad": "g", "seccion": "Despensa" }
@@ -99,12 +99,12 @@
       "ingredientes": [
         { "nombre": "Pan integral", "cantidad": 60, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Crema de cacahuete 100 %", "cantidad": 20, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
-        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" }
+        { "nombre": "Plátano", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Leche semidesnatada", "cantidad": 257.5, "unidad": "g", "seccion": "Lácteos y huevos" }
       ],
       "pasos": [
         "Tostar el pan y untar la crema de cacahuete.",
-        "Cubrir con el plátano en rodajas y acompañar con un vaso de leche."
+        "Cubrir con el plátano en rodajas y acompañar con un vaso de leche (258 g)."
       ]
     },
     {
@@ -118,8 +118,8 @@
         { "nombre": "Espinacas frescas", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate triturado", "cantidad": 80, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Huevos", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Huevos", "cantidad": 60, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -127,13 +127,13 @@
         "Cocer los huevos 10 minutos, enfriar y pelar.",
         "Pochar la cebolla picada con el aceite y un diente de ajo, 8 minutos.",
         "Añadir pimentón dulce y el tomate triturado; sofreír 5 minutos.",
-        "Incorporar los garbanzos escurridos y un vaso de agua o caldo; cocer 10 minutos.",
+        "Incorporar los garbanzos escurridos y 250 g de agua o caldo (un vaso); cocer 10 minutos.",
         "Añadir las espinacas y dejar 3 minutos más hasta que se ablanden. Servir con el huevo en cuartos."
       ],
       "thermomix": [
         "Poner en el vaso la cebolla y un diente de ajo: 4 s/vel 5. Añadir el aceite y sofreír 5 min/120 °C/vel 1.",
         "Añadir el pimentón y el tomate triturado: 5 min/120 °C/vel 1.",
-        "Añadir los garbanzos escurridos y un vaso de agua: 8 min/100 °C/giro a la izquierda/vel cuchara.",
+        "Añadir los garbanzos escurridos y 250 g de agua (un vaso): 8 min/100 °C/giro a la izquierda/vel cuchara.",
         "Añadir las espinacas: 3 min/100 °C/giro a la izquierda/vel cuchara. Los huevos se pueden cocer a la vez en el Varoma (12 min/Varoma) en el primer paso."
       ],
       "conservacion": "3 días en la nevera o 3 meses congelado (sin el huevo). Recalentar en microondas 2-3 minutos."
@@ -149,7 +149,7 @@
         { "nombre": "Arroz integral", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Lechuga", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -171,8 +171,8 @@
         { "nombre": "Pimiento rojo", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Guisantes congelados", "cantidad": 40, "unidad": "g", "seccion": "Congelados" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" }
       ],
       "pasos": [
         "Trocear el pollo, salpimentar y dorarlo en la cazuela con el aceite. Reservar.",
@@ -195,20 +195,20 @@
         { "nombre": "Pimiento verde", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
         "Picar la cebolla, el pimiento y la zanahoria y pocharlos en el aceite 10 minutos.",
-        "Añadir una cucharadita de pimentón, las lentejas lavadas, una hoja de laurel y agua fría hasta cubrir el doble.",
+        "Añadir 2 g de pimentón (una cucharadita), las lentejas lavadas, una hoja de laurel y agua fría hasta cubrir el doble.",
         "Cocer a fuego suave 25 minutos. Añadir la patata cascada y cocer 15 minutos más, hasta que esté tierna.",
         "Rectificar de sal y dejar reposar 5 minutos."
       ],
       "thermomix": [
         "Poner en el vaso la cebolla, el pimiento y la zanahoria troceados: 4 s/vel 4.",
         "Añadir el aceite y sofreír 7 min/120 °C/vel 1.",
-        "Añadir el pimentón, las lentejas lavadas, la patata en trozos, una hoja de laurel, la sal y agua (unos 3,5 vasos por cada vaso de lentejas, sin pasar de la marca de 2 l): 40 min/100 °C/giro a la izquierda/vel cuchara.",
+        "Añadir el pimentón, las lentejas lavadas, la patata en trozos, una hoja de laurel, la sal y agua (unos 875 g de agua por cada 200 g de lentejas, sin pasar de la marca de 2 l del vaso): 40 min/100 °C/giro a la izquierda/vel cuchara.",
         "Dejar reposar 5 minutos en el vaso antes de servir."
       ],
       "conservacion": "4 días en nevera o 3 meses congelado."
@@ -226,7 +226,7 @@
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Zanahoria", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Queso rallado", "cantidad": 10, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -257,8 +257,8 @@
         { "nombre": "Judías verdes", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Pimiento rojo", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Limón", "cantidad": 0.25, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Limón", "cantidad": 25, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -275,11 +275,11 @@
       "tiempoMin": 45,
       "tecnica": "horno",
       "ingredientes": [
-        { "nombre": "Dorada limpia (ración)", "cantidad": 1, "unidad": "ud", "seccion": "Pescadería", "porPersona": true },
+        { "nombre": "Dorada limpia (ración)", "cantidad": 350, "unidad": "g", "seccion": "Pescadería", "porPersona": true },
         { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Limón", "cantidad": 0.25, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Limón", "cantidad": 25, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -300,8 +300,8 @@
         { "nombre": "Lomo de salmón", "cantidad": 130, "unidad": "g", "seccion": "Pescadería" },
         { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Calabacín", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Limón", "cantidad": 0.25, "unidad": "ud", "seccion": "Frutería" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Limón", "cantidad": 25, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
         "Precalentar el horno a 200 °C.",
@@ -320,7 +320,7 @@
         { "nombre": "Contramuslos de pollo deshuesados", "cantidad": 150, "unidad": "g", "seccion": "Carnicería" },
         { "nombre": "Patata", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Calabacín", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Va en la misma bandeja que el salmón, pero entra antes.",
@@ -338,9 +338,9 @@
         { "nombre": "Puerro", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Queso fresco batido", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -368,8 +368,8 @@
         { "nombre": "Lomos de merluza", "cantidad": 150, "unidad": "g", "seccion": "Pescadería" },
         { "nombre": "Brócoli", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" }
       ],
       "pasos": [
         "Cocer el brócoli al vapor 5 minutos y saltearlo con ajo laminado y la mitad del aceite.",
@@ -384,11 +384,11 @@
       "tiempoMin": 15,
       "tecnica": "plancha",
       "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Brócoli", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" }
       ],
       "pasos": [
         "Usar el mismo brócoli salteado de la merluza.",
@@ -403,7 +403,7 @@
       "tiempoMin": 30,
       "tecnica": "horno",
       "ingredientes": [
-        { "nombre": "Base de pizza integral", "cantidad": 0.5, "unidad": "ud", "seccion": "Panadería" },
+        { "nombre": "Base de pizza integral", "cantidad": 100, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Mozzarella", "cantidad": 50, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
@@ -425,13 +425,13 @@
       "tiempoMin": 20,
       "tecnica": "plancha",
       "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Gambas peladas congeladas", "cantidad": 60, "unidad": "g", "seccion": "Congelados" },
         { "nombre": "Champiñones", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Tomate", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" }
       ],
       "pasos": [
         "Saltear el ajo picado y las setas laminadas en el aceite 5 minutos.",
@@ -453,7 +453,7 @@
         { "nombre": "Pan de molde integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Pechuga de pavo en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -481,8 +481,8 @@
         { "nombre": "Maíz dulce (lata)", "cantidad": 30, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pimiento asado (bote)", "cantidad": 40, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Aceitunas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 12, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Plátano", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
         "Cocer la pasta, enfriarla bajo el grifo y escurrir bien.",
@@ -499,18 +499,18 @@
       "tecnica": "frío",
       "ingredientes": [
         { "nombre": "Lentejas cocidas (bote)", "cantidad": 215, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Huevos", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 60, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Pimiento rojo", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolleta", "cantidad": 25, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 12, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
         "Enjuagar y escurrir las lentejas.",
         "Picar pequeño el pimiento, la cebolleta y el tomate; cocer el huevo 10 minutos.",
-        "Mezclar todo. Vinagreta aparte: aceite, vinagre y una cucharadita de mostaza."
+        "Mezclar todo. Vinagreta aparte: aceite, vinagre y 5 g de mostaza (una cucharadita)."
       ],
       "conservacion": "Prepararla el lunes por la noche."
     },
@@ -521,13 +521,13 @@
       "tiempoMin": 10,
       "tecnica": "frío",
       "ingredientes": [
-        { "nombre": "Tortillas integrales de trigo", "cantidad": 2, "unidad": "ud", "seccion": "Panadería" },
+        { "nombre": "Tortillas integrales de trigo", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Pechuga de pavo en lonchas", "cantidad": 85, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Queso fresco", "cantidad": 50, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Hummus", "cantidad": 45, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Lechuga", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -545,14 +545,14 @@
       "tecnica": "sin cocinar",
       "racionFija": true,
       "ingredientes": [
-        { "nombre": "Leche semidesnatada", "cantidad": 250, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Leche semidesnatada", "cantidad": 257.5, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Cacao soluble Nesquik", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Galletas tostadas Animadas Hacendado", "cantidad": 8, "unidad": "ud", "seccion": "Despensa" }
+        { "nombre": "Galletas tostadas Animadas Hacendado", "cantidad": 32, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
-        "Calentar el vaso de leche si se quiere templada.",
-        "Disolver 1 cucharada de Nesquik.",
-        "Acompañar con 8 galletas."
+        "Calentar la leche (258 g, un vaso) si se quiere templada.",
+        "Disolver 15 g de Nesquik (1 cucharada).",
+        "Acompañar con 8 galletas (unos 32 g)."
       ]
     },
     {
@@ -578,9 +578,9 @@
       "racionFija": true,
       "ingredientes": [
         { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Leche semidesnatada", "cantidad": 41.2, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Pan de barra", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Azúcar", "cantidad": 5, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
@@ -597,9 +597,9 @@
       "racionFija": true,
       "ingredientes": [
         { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
+        { "nombre": "Leche semidesnatada", "cantidad": 41.2, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Pan integral", "cantidad": 50, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Tomate", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Queso fresco", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
@@ -620,17 +620,17 @@
       "racionFija": true,
       "ingredientes": [
         { "nombre": "Café molido", "cantidad": 8, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Leche semidesnatada", "cantidad": 40, "unidad": "ml", "seccion": "Lácteos y huevos" },
-        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 2, "unidad": "ud", "seccion": "Despensa" },
+        { "nombre": "Leche semidesnatada", "cantidad": 41.2, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 14, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pechuga de pavo en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Preparar el café y cortarlo con un chorro de leche semidesnatada.",
         "Aliñar las tortitas con el aceite, sal y pimienta.",
         "Poner encima el pavo o el jamón york."
       ],
-      "conservacion": "Los días de running (lunes y martes) conviene añadir una pieza de fruta o una tercera tortita."
+      "conservacion": "Los días de running (lunes y martes) conviene añadir una pieza de fruta (150 g) o una tercera tortita (7 g)."
     },
     {
       "id": "almuerzo-bocadillo-atun",
@@ -640,7 +640,7 @@
       "tecnica": "sin cocinar",
       "ingredientes": [
         { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Atún en aceite de oliva (lata)", "cantidad": 1, "unidad": "ud", "seccion": "Despensa" },
+        { "nombre": "Atún en aceite de oliva (lata)", "cantidad": 80, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Tomate", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -657,10 +657,10 @@
       "tiempoMin": 2,
       "tecnica": "sin cocinar",
       "ingredientes": [
-        { "nombre": "Yogur líquido natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" },
-        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Yogur líquido natural", "cantidad": 180, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Plátano", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Almendras", "cantidad": 30, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 2, "unidad": "ud", "seccion": "Despensa" }
+        { "nombre": "Tortitas de maíz Hacendado", "cantidad": 14, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Meter en la mochila el yogur bebible (mejor recién sacado de la nevera), el plátano, las almendras en un bote y las tortitas."
@@ -676,7 +676,7 @@
         { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Pechuga de pollo", "cantidad": 70, "unidad": "g", "seccion": "Carnicería" },
         { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -696,7 +696,7 @@
         { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Jamón serrano en lonchas", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -714,11 +714,11 @@
       "ingredientes": [
         { "nombre": "Carne picada de pavo", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
         { "nombre": "Pan rallado", "cantidad": 10, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Huevos", "cantidad": 0.25, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 15, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Tomate triturado", "cantidad": 120, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cuscús integral", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -739,7 +739,7 @@
         { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Queso fresco", "cantidad": 60, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Tomate", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -761,8 +761,8 @@
         { "nombre": "Pepino", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Aceitunas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
-        { "nombre": "Plátano", "cantidad": 1, "unidad": "ud", "seccion": "Frutería" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
+        { "nombre": "Plátano", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
         "Cocer el arroz integral, enfriarlo bajo el grifo y escurrir.",
@@ -780,7 +780,7 @@
       "ingredientes": [
         { "nombre": "Quinoa", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pechuga de pollo", "cantidad": 100, "unidad": "g", "seccion": "Carnicería" },
-        { "nombre": "Manzana", "cantidad": 0.5, "unidad": "ud", "seccion": "Frutería" },
+        { "nombre": "Manzana", "cantidad": 90, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Apio", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Yogur griego ligero", "cantidad": 45, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Nueces peladas", "cantidad": 13, "unidad": "g", "seccion": "Despensa" },
@@ -790,7 +790,7 @@
       "pasos": [
         "Lavar y cocer la quinoa 12 minutos; escurrir y enfriar.",
         "Usar el pollo asado del batch, en dados.",
-        "Mezclar el yogur con una cucharadita de curry suave, sal y limón; unir con la quinoa, el pollo, la manzana y el apio en dados y las nueces."
+        "Mezclar el yogur con 2 g de curry suave (una cucharadita), sal y limón; unir con la quinoa, el pollo, la manzana y el apio en dados y las nueces."
       ],
       "conservacion": "Prepararla el lunes por la noche."
     },
@@ -801,11 +801,11 @@
       "tiempoMin": 40,
       "tecnica": "plancha",
       "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Calabacín", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Tomate", "cantidad": 120, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" }
       ],
@@ -826,13 +826,13 @@
         { "nombre": "Lomos de merluza", "cantidad": 150, "unidad": "g", "seccion": "Pescadería" },
         { "nombre": "Arroz redondo", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Guisantes congelados", "cantidad": 50, "unidad": "g", "seccion": "Congelados" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
         "Cocer el arroz en agua con sal y escurrir.",
-        "En una cazuela, dorar ajo picado en el aceite, añadir una cucharada de harina y medio vaso de caldo o agua, y el perejil picado.",
+        "En una cazuela, dorar ajo picado en el aceite, añadir 10 g de harina (una cucharada) y 125 g de caldo o agua (medio vaso), y el perejil picado.",
         "Poner la merluza y los guisantes y cocer 6-8 minutos moviendo la cazuela para que ligue la salsa."
       ],
       "conservacion": "2 días en nevera; se recalienta bien en el microondas tapada."
@@ -849,9 +849,9 @@
         { "nombre": "Calabacín", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Berenjena", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Yogur natural", "cantidad": 1, "unidad": "ud", "seccion": "Lácteos y huevos" }
+        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" }
       ],
       "pasos": [
         "Asar las verduras troceadas con la mitad del aceite y sal a 200 °C, 25 minutos.",
@@ -870,7 +870,7 @@
         { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Queso rallado", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -879,7 +879,7 @@
         "Guardar en la nevera en un recipiente apto para microondas; al día siguiente, recalentar con el queso rallado por encima."
       ],
       "thermomix": [
-        "La salsa en la Thermomix; la pasta, en un cazo aparte (o en el vaso después de la salsa: 1 l de agua 10 min/100 °C/vel 1, añadir la pasta y cocer el tiempo del paquete/100 °C/giro a la izquierda/vel cuchara).",
+        "La salsa en la Thermomix; la pasta, en un cazo aparte (o en el vaso después de la salsa: 1.000 g de agua (1 l) 10 min/100 °C/vel 1, añadir la pasta y cocer el tiempo del paquete/100 °C/giro a la izquierda/vel cuchara).",
         "Poner en el vaso la cebolla: 4 s/vel 5. Añadir el aceite y sofreír 5 min/120 °C/vel 1.",
         "Añadir el tomate y la sal: 12 min/100 °C/vel 1.",
         "Añadir el jamón en taquitos: 1 min/100 °C/giro a la izquierda/vel cuchara. Mezclar con la pasta."
@@ -899,7 +899,7 @@
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate triturado", "cantidad": 60, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -924,10 +924,10 @@
       "tecnica": "plancha",
       "alMomento": true,
       "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Queso en lonchas", "cantidad": 20, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Tomate", "cantidad": 100, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -949,7 +949,7 @@
         { "nombre": "Pan de molde integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Jamón cocido", "cantidad": 40, "unidad": "g", "seccion": "Charcutería y quesos" },
         { "nombre": "Queso en lonchas", "cantidad": 30, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -965,10 +965,10 @@
       "tiempoMin": 40,
       "tecnica": "plancha",
       "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 2, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" }
@@ -991,7 +991,7 @@
         { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Queso fresco batido", "cantidad": 20, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Rehogar la cebolla en el aceite 5 minutos.",
@@ -1016,7 +1016,7 @@
         { "nombre": "Calabaza", "cantidad": 250, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Rehogar la cebolla en el aceite.",
@@ -1041,7 +1041,7 @@
         { "nombre": "Zanahoria", "cantidad": 220, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Rehogar la cebolla en el aceite.",
@@ -1066,8 +1066,8 @@
         { "nombre": "Puerro", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Cebolla", "cantidad": 30, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Leche semidesnatada", "cantidad": 50, "unidad": "ml", "seccion": "Lácteos y huevos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Leche semidesnatada", "cantidad": 51.5, "unidad": "g", "seccion": "Lácteos y huevos" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Rehogar el puerro y la cebolla en el aceite 8 minutos, sin que se doren.",
@@ -1092,14 +1092,14 @@
         { "nombre": "Judías verdes", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Jamón serrano en taquitos", "cantidad": 15, "unidad": "g", "seccion": "Charcutería y quesos" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" }
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" }
       ],
       "pasos": [
         "Cocer las judías y la patata troceadas en agua con sal 15 minutos y escurrir.",
         "Rehogar ajo laminado y el jamón en el aceite, añadir pimentón y las judías con la patata, y saltear 2 minutos."
       ],
       "thermomix": [
-        "Poner 500 ml de agua con sal en el vaso. Colocar las judías y la patata troceadas en el recipiente Varoma: 25 min/Varoma/vel 1.",
+        "Poner 500 g de agua (500 ml) con sal en el vaso. Colocar las judías y la patata troceadas en el recipiente Varoma: 25 min/Varoma/vel 1.",
         "Vaciar el vaso. Poner el aceite, el ajo laminado y el jamón: 3 min/120 °C/giro a la izquierda/vel cuchara.",
         "Añadir el pimentón, las judías y la patata: 1 min/giro a la izquierda/vel cuchara."
       ],
@@ -1113,9 +1113,9 @@
       "tecnica": "plancha",
       "ingredientes": [
         { "nombre": "Pechuga de pollo en filetes finos", "cantidad": 130, "unidad": "g", "seccion": "Carnicería" },
-        { "nombre": "Huevos", "cantidad": 0.5, "unidad": "ud", "seccion": "Lácteos y huevos" },
+        { "nombre": "Huevos", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
         { "nombre": "Pan rallado", "cantidad": 25, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
@@ -1136,7 +1136,7 @@
         { "nombre": "Lomo adobado en filetes", "cantidad": 120, "unidad": "g", "seccion": "Carnicería" },
         { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -1154,7 +1154,7 @@
         { "nombre": "Chuleta de Sajonia", "cantidad": 150, "unidad": "g", "seccion": "Carnicería" },
         { "nombre": "Lechuga", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Tomate", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 5, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [
@@ -1175,7 +1175,7 @@
         { "nombre": "Cebolla", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Guisantes congelados", "cantidad": 40, "unidad": "g", "seccion": "Congelados" },
         { "nombre": "Tomate triturado", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 10, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
@@ -1195,10 +1195,10 @@
       "tecnica": "horno",
       "ingredientes": [
         { "nombre": "Solomillo de cerdo", "cantidad": 140, "unidad": "g", "seccion": "Carnicería" },
-        { "nombre": "Zumo de naranja con pulpa", "cantidad": 100, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Zumo de naranja con pulpa", "cantidad": 104, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
+        { "nombre": "Aceite de oliva virgen extra", "cantidad": 13.8, "unidad": "g", "seccion": "Despensa" },
         { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
       ],
       "pasos": [

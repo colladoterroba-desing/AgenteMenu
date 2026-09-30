@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { MenuSemana, Receta } from "./menu.js";
+import { normalizarCantidad, type MenuSemana, type Receta } from "./menu.js";
+import { aGramosObligatorio } from "./unidades.js";
 import type { Precio, TablaPrecios } from "./precios.js";
 import type { Despensa, Familia, Objetivo, Producto, Sobra, Ticket } from "./tipos.js";
 
@@ -29,7 +30,8 @@ export class Almacen {
     if (!tabla.tiendas.some((t) => t.id === precio.tienda)) {
       tabla.tiendas.push({ id: precio.tienda });
     }
-    tabla.precios.push(precio);
+    // Los precios se guardan por envase en gramos cuando se puede (p. ej. 12 ud de huevos → 720 g).
+    tabla.precios.push({ ...precio, ...normalizarCantidad(precio.producto, precio.cantidad, precio.unidad) });
     await this.escribir("precios.json", tabla);
     return tabla.precios.length;
   }
@@ -43,7 +45,11 @@ export class Almacen {
   /** Añade la receta o sustituye la que tenga el mismo id. */
   async guardarReceta(receta: Receta): Promise<void> {
     const recetas = (await this.recetas()).filter((r) => r.id !== receta.id);
-    recetas.push(receta);
+    // Todas las cantidades de las recetas van en gramos (data/equivalencias.json).
+    recetas.push({
+      ...receta,
+      ingredientes: receta.ingredientes.map((i) => ({ ...i, cantidad: aGramosObligatorio(i.nombre, i.cantidad, i.unidad), unidad: "g" })),
+    });
     await this.escribir("recetas.json", { recetas });
   }
 
@@ -78,7 +84,7 @@ export class Almacen {
   /** Sustituye el inventario de productos (p. ej. al sincronizarlo desde la web). */
   async guardarProductos(productos: Producto[]): Promise<Despensa> {
     const despensa = await this.despensa();
-    despensa.productos = productos.filter((p) => p.cantidad > 0);
+    despensa.productos = productos.filter((p) => p.cantidad > 0).map((p) => ({ ...p, ...normalizarCantidad(p.nombre, p.cantidad, p.unidad) }));
     await this.escribir("despensa.json", despensa);
     return despensa;
   }
@@ -86,7 +92,8 @@ export class Almacen {
   /** Suma cantidades (negativas para consumir); elimina productos que llegan a 0. */
   async ajustarProductos(cambios: Producto[]): Promise<Despensa> {
     const despensa = await this.despensa();
-    for (const cambio of cambios) {
+    for (const original of cambios) {
+      const cambio = { ...original, ...normalizarCantidad(original.nombre, original.cantidad, original.unidad) };
       const clave = cambio.nombre.trim().toLowerCase();
       const existente = despensa.productos.find(
         (p) => p.nombre.toLowerCase() === clave && p.unidad === cambio.unidad,

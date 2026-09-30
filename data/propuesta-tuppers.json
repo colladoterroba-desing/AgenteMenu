@@ -1,32 +1,34 @@
 {
-  "descripcion": "Propuesta de tuppers de oficina (L-X) en dos semanas alternas. Detalle en docs/propuestas/tuppers-oficina.md",
+  "descripcion": "Propuesta de tuppers de oficina (L-X; RFA también el jueves) en dos semanas alternas. Detalle en docs/propuestas/tuppers-oficina.md",
   "ajusteConObjetivo": {
-    "RFA": "Sin pan, 70 g de pasta/arroz/quinoa y 10 ml de aceite. En L y M (running) se mantiene la fruta.",
+    "RFA": "Sin pan, 70 g de pasta/arroz/quinoa y 9 g de aceite. En L y M (running) se mantiene la fruta.",
     "CCT": "Sin pan ni yogur, y el doble de verdura en el plato."
   },
   "semanas": {
     "A": {
       "RFA": [
-        { "dia": "L", "plato": "Ensalada de pasta integral con pollo asado", "detalle": "Pasta 90 g · pollo 120 g · tomate cherry, maíz, pimiento asado, aceitunas · AOVE 15 ml + plátano", "kcal": 810 },
-        { "dia": "M", "plato": "Ensalada de lentejas con huevo duro", "detalle": "Lentejas cocidas 250 g · 1 huevo · pimiento, cebolleta, tomate · AOVE 15 ml · pan integral 60 g + fruta", "kcal": 800 },
-        { "dia": "X", "plato": "Wraps integrales de pavo y hummus", "detalle": "2 tortillas integrales · pavo 100 g · queso fresco 60 g · hummus 50 g · lechuga y tomate + yogur + fruta", "kcal": 780 }
+        { "dia": "L", "plato": "Ensalada de pasta integral con pollo asado", "detalle": "Pasta 90 g · pollo 120 g · tomate cherry, maíz, pimiento asado, aceitunas · AOVE 14 g + plátano 150 g", "kcal": 810 },
+        { "dia": "M", "plato": "Ensalada de lentejas con huevo duro", "detalle": "Lentejas cocidas 250 g · huevo 60 g · pimiento, cebolleta, tomate · AOVE 14 g · pan integral 60 g + fruta 150 g", "kcal": 800 },
+        { "dia": "X", "plato": "Wraps integrales de pavo y hummus", "detalle": "Tortillas integrales 80 g (2 ud) · pavo 100 g · queso fresco 60 g · hummus 50 g · lechuga y tomate + yogur 125 g + fruta 150 g", "kcal": 780 },
+        { "dia": "J", "plato": "Arroz integral con garbanzos y feta", "detalle": "Arroz 80 g · garbanzos cocidos 150 g · feta 40 g · pepino, tomate, aceitunas · AOVE 9 g + plátano 150 g", "kcal": 795, "cocina": "Miércoles por la noche" }
       ],
       "CCT": [
-        { "dia": "L", "plato": "Garbanzos con espinacas y huevo duro", "detalle": "Garbanzos cocidos 200 g · espinacas · sofrito con AOVE 10 ml · 1 huevo · pan 40 g + fruta", "kcal": 680, "cocina": "Domingo (batch)" },
-        { "dia": "M", "plato": "Albóndigas de pavo en salsa de tomate con cuscús integral", "detalle": "Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 10 ml + fruta", "kcal": 670, "cocina": "Cena del lunes, 1 ración extra" },
-        { "dia": "X", "plato": "Pollo guisado con verduras y arroz integral", "detalle": "Pollo 130 g · arroz 60 g · verduras · AOVE 10 ml + yogur + fruta", "kcal": 700, "cocina": "Cena del martes, 1 ración extra" }
+        { "dia": "L", "plato": "Garbanzos con espinacas y huevo duro", "detalle": "Garbanzos cocidos 200 g · espinacas · sofrito con AOVE 9 g · huevo 60 g · pan 40 g + fruta 150 g", "kcal": 680, "cocina": "Domingo (batch)" },
+        { "dia": "M", "plato": "Albóndigas de pavo en salsa de tomate con cuscús integral", "detalle": "Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 9 g + fruta 150 g", "kcal": 670, "cocina": "Cena del lunes, 1 ración extra" },
+        { "dia": "X", "plato": "Pollo guisado con verduras y arroz integral", "detalle": "Pollo 130 g · arroz 60 g · verduras · AOVE 9 g + yogur 125 g + fruta 150 g", "kcal": 700, "cocina": "Cena del martes, 1 ración extra" }
       ]
     },
     "B": {
       "RFA": [
-        { "dia": "L", "plato": "Arroz integral con garbanzos y feta", "detalle": "Arroz 80 g · garbanzos cocidos 150 g · feta 40 g · pepino, tomate, aceitunas · AOVE 10 ml + plátano", "kcal": 795 },
-        { "dia": "M", "plato": "Quinoa con pollo al curry suave", "detalle": "Quinoa 70 g · pollo 120 g · manzana, apio · yogur griego ligero 50 g · nueces 15 g · pan integral 40 g + fruta", "kcal": 800 },
-        { "dia": "X", "plato": "Tortilla de patata y calabacín con tomate", "detalle": "2 porciones de tortilla · tomate con AOVE 10 ml · pan integral 50 g + yogur + fruta", "kcal": 725 }
+        { "dia": "L", "plato": "Arroz integral con garbanzos y feta", "detalle": "Arroz 80 g · garbanzos cocidos 150 g · feta 40 g · pepino, tomate, aceitunas · AOVE 9 g + plátano 150 g", "kcal": 795 },
+        { "dia": "M", "plato": "Quinoa con pollo al curry suave", "detalle": "Quinoa 70 g · pollo 120 g · manzana, apio · yogur griego ligero 50 g · nueces 15 g · pan integral 40 g + fruta 150 g", "kcal": 800 },
+        { "dia": "X", "plato": "Tortilla de patata y calabacín con tomate", "detalle": "1 ración de tortilla (≈390 g) · tomate con AOVE 9 g · pan integral 50 g + yogur 125 g + fruta 150 g", "kcal": 725 },
+        { "dia": "J", "plato": "Ensalada de pasta integral con pollo asado", "detalle": "Pasta 90 g · pollo 120 g · tomate cherry, maíz, pimiento asado, aceitunas · AOVE 14 g + plátano 150 g", "kcal": 810, "cocina": "Miércoles por la noche" }
       ],
       "CCT": [
-        { "dia": "L", "plato": "Lentejas estofadas con verduras", "detalle": "Lentejas 70 g · zanahoria, pimiento, cebolla · patata 100 g · AOVE 10 ml · pan 40 g + yogur + fruta", "kcal": 705, "cocina": "Domingo (batch)" },
-        { "dia": "M", "plato": "Merluza en salsa verde con arroz y guisantes", "detalle": "Merluza 150 g · arroz 70 g · guisantes 50 g · AOVE 10 ml · pan 40 g + fruta", "kcal": 675, "cocina": "Cena del lunes, 1 ración extra" },
-        { "dia": "X", "plato": "Albóndigas de pavo con tomate y cuscús integral", "detalle": "Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 10 ml + yogur + fruta", "kcal": 670, "cocina": "Domingo (batch, se congelan)" }
+        { "dia": "L", "plato": "Lentejas estofadas con verduras", "detalle": "Lentejas 70 g · zanahoria, pimiento, cebolla · patata 100 g · AOVE 9 g · pan 40 g + yogur 125 g + fruta 150 g", "kcal": 705, "cocina": "Domingo (batch)" },
+        { "dia": "M", "plato": "Merluza en salsa verde con arroz y guisantes", "detalle": "Merluza 150 g · arroz 70 g · guisantes 50 g · AOVE 9 g · pan 40 g + fruta 150 g", "kcal": 675, "cocina": "Cena del lunes, 1 ración extra" },
+        { "dia": "X", "plato": "Albóndigas de pavo con tomate y cuscús integral", "detalle": "Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 9 g + yogur 125 g + fruta 150 g", "kcal": 670, "cocina": "Domingo (batch, se congelan)" }
       ]
     }
   }

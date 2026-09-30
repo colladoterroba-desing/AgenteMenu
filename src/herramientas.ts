@@ -2,7 +2,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
-import { caducidadReserva, componerMenu, listaCompra, SECCIONES, validarMenu, validarPublicacion, type MenuSemana } from "./menu.js";
+import { caducidadReserva, componerMenu, listaCompra, SECCIONES, validarMenu, type MenuSemana } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
 import { costeCesta } from "./precios.js";
 import { DIAS } from "./tipos.js";
@@ -37,7 +37,7 @@ const receta = z.object({
       z.object({
         nombre: z.string(),
         cantidad: z.number().positive().describe("Para una ración de referencia (adulto de 2000 kcal)"),
-        unidad: z.enum(["g", "ml", "ud"]),
+        unidad: z.enum(["g", "kg", "ml", "l", "ud"]).describe("Se guarda en gramos; ud y ml se convierten con data/equivalencias.json"),
         seccion: z.enum(SECCIONES),
         porPersona: z.boolean().optional().describe("true si se compra uno por persona (una dorada, un filete)"),
       }),
@@ -55,6 +55,10 @@ const plato = z.object({
   segundo: z.string().optional().describe("Segundo plato para los mismos comensales"),
   prepara: z.string().optional().describe("Batch, ración extra de otra comida, plancha..."),
   variantes: z.record(z.string(), z.string()).optional().describe("Miembro → receta alternativa"),
+  sobrasDe: z
+    .object({ dia: z.enum(DIAS), comida: z.enum(TIPOS_COMIDA) })
+    .optional()
+    .describe("Si se cocina junto con otra comida (ración extra de una cena, batch): esa comida. Así en la web no se descuenta dos veces"),
 });
 
 function herramienta<S extends z.ZodObject>(h: Herramienta<S>): Herramienta<S> {
@@ -240,13 +244,14 @@ export function crearHerramientas(almacen: Almacen) {
     herramienta({
       nombre: "guardar_menu",
       descripcion:
-        "Guarda el menú de la semana como BORRADOR (cualquier cambio anula la validación anterior). Todas las recetas deben existir (guardar_receta antes). Debe cubrir cada comida de planificar_comensales y cada tupper. Indica quién pide el cambio y qué cambia.",
+        "Guarda el menú de la semana (no hace falta validarlo). Todas las recetas deben existir (guardar_receta antes). Debe cubrir cada comida de planificar_comensales y cada tupper. Indica quién pide el cambio y qué cambia.",
       esquema: z.object({
         autor: z.string().describe("Quién pide o hace el cambio (p. ej. CCT o agente)"),
         fecha,
         descripcionCambio: z.string().describe("Qué se ha cambiado respecto al menú anterior"),
         siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente"),
         semana: z.string(),
+        inicio: fecha.optional().describe("Lunes de esa semana"),
         batch: z.array(z.object({ dia: z.enum(DIAS), tareas: z.array(z.string()) })).optional(),
         dias: z.record(z.enum(DIAS), z.partialRecord(z.enum(TIPOS_COMIDA), plato)),
         tuppers: z.partialRecord(z.enum(DIAS), z.record(z.string(), plato)),
@@ -258,19 +263,8 @@ export function crearHerramientas(almacen: Almacen) {
         const errores = validarMenu(familia, datos as MenuSemana, recetas);
         if (errores.length) throw new Error(`Menú incompleto:\n${errores.join("\n")}`);
         const cambios = [...(anterior?.cambios ?? []), { por: autor, fecha, descripcion: descripcionCambio }];
-        await almacen.guardarMenu({ ...(datos as MenuSemana), estado: "borrador", cambios }, siguiente);
-        return { guardado: true, estado: "borrador", pendienteDe: familia.permisos?.validarMenu ?? [] };
-      },
-    }),
-    herramienta({
-      nombre: "validar_menu",
-      descripcion:
-        "Da por válido el menú guardado y lo marca como publicado. Solo puede hacerlo quien figure en familia.permisos.validarMenu (CCT). Úsala únicamente cuando esa persona lo confirme de forma explícita en la conversación.",
-      esquema: z.object({ por: z.string(), fecha, siguiente: z.boolean().optional().describe("true para la propuesta de la semana siguiente") }),
-      ejecutar: async ({ por, fecha, siguiente }) => {
-        const [familia, menu] = await Promise.all([almacen.familia(), almacen.menu(siguiente)]);
-        await almacen.guardarMenu(validarPublicacion(familia, menu, por, fecha), siguiente);
-        return { validado: true, por, fecha };
+        await almacen.guardarMenu({ ...(datos as MenuSemana), cambios }, siguiente);
+        return { guardado: true };
       },
     }),
     herramienta({
@@ -294,7 +288,7 @@ export function crearHerramientas(almacen: Almacen) {
         tienda: z.string(),
         precio: z.number().positive(),
         cantidad: z.number().positive(),
-        unidad: z.enum(["g", "ml", "ud"]),
+        unidad: z.enum(["g", "kg", "ml", "l", "ud"]).describe("Se guarda en gramos cuando hay equivalencia"),
         granel: z.boolean().optional(),
         fecha,
         fuente: z.enum(["ticket", "web", "manual"]),

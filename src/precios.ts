@@ -1,4 +1,4 @@
-import { SECCIONES, type LineaCompra, type Seccion } from "./menu.js";
+import { normalizarCantidad, SECCIONES, type LineaCompra, type Seccion } from "./menu.js";
 
 /** Precio real de un producto en una tienda, por envase (o por kg/l/ud si se vende a granel). */
 export interface Precio {
@@ -61,8 +61,11 @@ const redondear = (n: number) => Math.round(n * 100) / 100;
 
 /** Precio más reciente de un producto en una tienda. */
 export function buscarPrecio(tabla: TablaPrecios, producto: string, unidad: string, tienda: string): Precio | undefined {
+  // Los precios apuntados en ud o ml se pasan a gramos para compararlos con la lista.
   return tabla.precios
-    .filter((p) => p.tienda === tienda && p.unidad === unidad && normalizar(p.producto) === normalizar(producto))
+    .filter((p) => p.tienda === tienda && normalizar(p.producto) === normalizar(producto))
+    .map((p) => ({ ...p, ...normalizarCantidad(p.producto, p.cantidad, p.unidad) }))
+    .filter((p) => p.unidad === unidad)
     .sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
 }
 

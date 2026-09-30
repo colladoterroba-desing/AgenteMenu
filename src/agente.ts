@@ -6,7 +6,21 @@ import { fileURLToPath } from "node:url";
 import { Almacen } from "./almacen.js";
 import { crearHerramientas } from "./herramientas.js";
 
-const MODELO = "claude-opus-5";
+const MODELO = "claude-opus-5-5";
+
+type Esfuerzo = "low" | "medium" | "high";
+
+/**
+ * Cuánto piensa Claude según la tarea: más para preparar el menú (muchas normas a la vez), menos
+ * para apuntar una sobra o un precio. Se decide al empezar cada petición y no cambia durante ella,
+ * para no perder la caché dentro del turno.
+ */
+export function esfuerzoPara(entrada: string): Esfuerzo {
+  const t = entrada.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (/\bmenu|semana|planific|batch|plan de cocina|tupper|necesidades|objetivo/.test(t)) return "high";
+  if (t.startsWith("/ticket ") || /ticket|compra|habito|gast|precio|cesta|receta/.test(t)) return "medium";
+  return "low";
+}
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const SISTEMA = `Eres AgenteMenú, el asistente de cocina de una familia. Hablas en español de España, con un tono cercano y práctico.
@@ -74,7 +88,7 @@ async function main() {
         ? await mensajeTicket(entrada.slice("/ticket ".length).trim())
         : entrada;
       mensajes.push({ role: "user", content: contenido });
-      await turno(client, herramientas, mensajes);
+      await turno(client, herramientas, mensajes, esfuerzoPara(entrada));
     } catch (e) {
       if (e instanceof Anthropic.AuthenticationError) {
         console.error("Credenciales no válidas: revisa ANTHROPIC_API_KEY en .env");
@@ -98,22 +112,25 @@ async function turno(
   client: Anthropic,
   herramientas: ReturnType<typeof crearHerramientas>,
   mensajes: Anthropic.Beta.BetaMessageParam[],
+  esfuerzo: Esfuerzo,
 ) {
   let reintentosJson = 0;
   while (true) {
     const stream = client.beta.messages.stream({
       model: MODELO,
       max_tokens: 64000,
-      betas: ["server-side-fallback-2026-07-01"],
+      betas: ["server-side-fallback-2026-07-01", "thinking-display-updates-2026-08-18"],
       fallbacks: "default",
-      thinking: { type: "adaptive" },
-      output_config: { effort: "high" },
+      // Las notas que escribe entre herramienta y herramienta llegan como resúmenes de «thinking».
+      thinking: { type: "adaptive", display: "updates" },
+      output_config: { effort: esfuerzo },
       cache_control: { type: "ephemeral" },
       system: SISTEMA,
       tools: herramientas.definiciones,
       messages: mensajes,
     });
     stream.on("text", (delta) => process.stdout.write(delta));
+    stream.on("thinking", (delta) => process.stdout.write(`\x1b[2m${delta}\x1b[0m`));
 
     let mensaje: Anthropic.Beta.BetaMessage;
     try {
@@ -148,4 +165,4 @@ async function turno(
   }
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) main();

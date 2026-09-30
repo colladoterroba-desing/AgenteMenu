@@ -593,3 +593,12 @@ test("sincronizar: la web manda en despensa, reservas, no deseados y perfil, sin
   });
   assert.match(html, /"id":"pollo__1"/);
 });
+
+test("el agente piensa más para el menú y menos para apuntar cosas sueltas", async () => {
+  const { esfuerzoPara } = await import("../src/agente.js");
+  assert.equal(esfuerzoPara("Revisa las necesidades de la familia y prepárame el menú de la semana"), "high");
+  assert.equal(esfuerzoPara("Hazme la lista de la compra y el plan de cocina del domingo"), "high");
+  assert.equal(esfuerzoPara("/ticket tickets/mercadona-27-09.jpg"), "medium");
+  assert.equal(esfuerzoPara("¿En qué gastamos más?"), "medium");
+  assert.equal(esfuerzoPara("Han sobrado 3 raciones de lentejas"), "low");
+});

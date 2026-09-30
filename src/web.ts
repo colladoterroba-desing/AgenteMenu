@@ -553,23 +553,26 @@ function bloqueNoDeseado(r: Receta, familia: Familia): string {
 }
 
 /** Apuntar cuántas raciones se han hecho: lo que no se come esta semana queda en reserva. */
+/**
+ * «Cocinado» de una receta: para qué comidas del menú se ha cocinado y cuántas raciones se han hecho.
+ * Resta los ingredientes de la despensa, esas comidas dejan de contar en la compra y lo que sobra
+ * queda en reserva. El script de la página rellena las comidas (web-cliente.js).
+ */
 function bloqueHecho(r: Receta, raciones: number): string {
-  const medias = (n: number) => Math.round(n * 2) / 2;
   const id = esc(r.id);
   return `<div class="hecho" data-receta="${id}">
     <p class="reserva-receta" hidden></p>
+    <ul class="cocinado-usos" hidden></ul>
     <details class="marcar" data-solo-editable>
-      <summary>Marcar cantidad hecha</summary>
+      <summary>Cocinado</summary>
       <form class="form-hecho">
+        <fieldset class="usos-form"><legend>¿Para qué comidas?</legend></fieldset>
         <div class="fila-form">
-          <div><label for="h-hechas-${id}">Raciones hechas</label><input id="h-hechas-${id}" name="hechas" type="number" inputmode="decimal" min="0.5" step="0.5" required value="${raciones ? Math.ceil(raciones) : ""}"></div>
-          <div><label for="h-comer-${id}">Se comen esta semana</label><input id="h-comer-${id}" name="comer" type="number" inputmode="decimal" min="0" step="0.5" required value="${medias(raciones)}"></div>
-        </div>
-        <div class="fila-form">
-          <div><label for="h-donde-${id}">Lo que sobra va a</label><select id="h-donde-${id}" name="donde"><option value="congelador">Congelador</option><option value="nevera">Nevera</option></select></div>
+          <div><label for="h-hechas-${id}">Raciones hechas</label><input id="h-hechas-${id}" name="hechas" type="number" inputmode="decimal" min="0.1" step="0.01" required value="${raciones ? num(raciones, 2).replace(",", ".") : ""}"></div>
           <div><label for="h-fecha-${id}">Hecho el</label><input id="h-fecha-${id}" name="fecha" type="date" required></div>
         </div>
-        <p class="sub">Reserva = raciones hechas − las que se comen esta semana${raciones ? ` (el menú pide ${num(raciones, 2)} rac.)` : ""}. Se podrá usar otra semana y no se volverá a comprar.</p>
+        <div><label for="h-donde-${id}">Lo que sobra va a</label><select id="h-donde-${id}" name="donde"><option value="nevera">Nevera</option><option value="congelador">Congelador</option></select></div>
+        <p class="sub">Se restan de la despensa los ingredientes de las raciones hechas. Las comidas marcadas dejan de contar en la compra. Si haces más de lo que piden, lo que sobra queda en reserva para otro día y no se vuelve a comprar.</p>
         <button type="submit">Guardar</button>
         <span class="sub estado-form" role="status"></span>
       </form>
@@ -643,7 +646,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
   return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
     .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
     .join("")}</div>
-  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Todas las cantidades van en gramos; entre paréntesis, las unidades o los ml de referencia (equivalencias en <a href="#definiciones">Definiciones</a>). Sal, especias y caldo no se cuentan. Con «Marcar cantidad hecha» apuntas cuántas raciones has cocinado: lo que sobra queda en reserva (nevera o congelador) para otra semana y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Todas las cantidades van en gramos; entre paréntesis, las unidades o los ml de referencia (equivalencias en <a href="#definiciones">Definiciones</a>). Sal, especias y caldo no se cuentan. Con «Cocinado» apuntas para qué comidas del menú has cocinado y cuántas raciones has hecho: se restan los ingredientes de la despensa, esas comidas dejan de contar en la compra y lo que sobra queda en reserva (nevera o congelador) y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
   <div class="recetas">${tarjetas}</div>`;
 }
 
@@ -692,7 +695,7 @@ function seccionDespensa(recetas: Receta[]): string {
     <section class="categoria ancha">
       <h4>Reservas de raciones cocinadas</h4>
       <p class="sub">Lo que has marcado como hecho en Recetas y no se come esta semana. Úsalo antes de la fecha indicada; al comerlo, réstalo aquí.</p>
-      <ul id="reservas" class="inventario reservas"><li class="sub">Sin reservas. Márcalas desde cada receta con «Marcar cantidad hecha».</li></ul>
+      <ul id="reservas" class="inventario reservas"><li class="sub">Sin reservas. Se apuntan desde cada receta con «Cocinado».</li></ul>
     </section>
     <section class="categoria ancha">
       <h4>Lo que pide el menú (lo que queda de semana)</h4>
@@ -1046,6 +1049,13 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .form-hecho input,.form-hecho select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
 .form-hecho button{font:600 .88rem var(--f-body);background:var(--accent);color:var(--surface);border:0;border-radius:999px;padding:7px 14px;cursor:pointer;justify-self:start}
 .form-hecho .sub{margin:0}
+.usos-form{border:0;padding:0;margin:0;display:grid;gap:4px}
+.usos-form legend{font-size:.8rem;color:var(--muted);font-weight:600;padding:0;margin-bottom:2px}
+.usos-form label{display:flex;gap:6px;align-items:center;font-weight:400;color:var(--ink);font-size:.86rem;cursor:pointer}
+.usos-form input{width:auto;accent-color:var(--accent)}
+.cocinado-usos{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:.84rem}
+.cocinado-usos li{background:var(--bien-soft);color:var(--bien);border-radius:6px;padding:4px 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.coc-menu{color:var(--bien);font-weight:600}
 .reservas a{color:var(--ink);font-weight:600}
 .reservas .vence{color:var(--aviso);font-weight:600}
 .aviso-db{background:var(--info-soft);padding:8px 12px;border-radius:6px}
@@ -1503,7 +1513,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. En «Quién ha comido» (tócalo para abrirlo), cada persona: marca la casilla si ha comido lo previsto; con «Anotaciones» apuntas si comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra). Los días que ya han pasado no se muestran.</p>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». En «Quién ha comido» (tócalo para abrirlo), cada persona: marca la casilla si ha comido lo previsto; con «Anotaciones» apuntas si comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra). Los días que ya han pasado no se muestran.</p>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
       <dl class="resumen">

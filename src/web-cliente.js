@@ -524,30 +524,10 @@
         ancla.before(el("div", { class: "plato-real" }, el("span", { class: "motivo", text: "Nota: " + e.nota })));
       }
       caja.replaceChildren();
-      const insts = instancias(c);
-      if (insts.some((i) => i.etiqueta && !i.esDes)) caja.append(el("span", { class: "etq", text: "Cocinado" }));
-      insts.forEach((i) => {
-        const doc = cocinadoDb.get(i.inst);
-        if (doc) cocinados++;
-        if (i.sobras && !doc) {
-          caja.append(el("span", { class: "sobras-txt", text: (i.etiqueta ? i.etiqueta + ": " : "") + "sobras de otra comida" }));
-          return;
-        }
-        const fila = el("div", { class: "coc" + (doc ? " hecho" : "") });
-        const chk = el("input", { type: "checkbox", checked: !!doc, disabled: !editable });
-        const base = i.items[0]?.rac || 1;
-        const rac = el("input", { type: "number", min: "0", step: "0.01", value: String(doc ? doc.raciones : base), disabled: !editable || !!doc, "aria-label": "Raciones" });
-        fila.append(el("label", null, chk, i.esDes ? "Hechos" : (i.etiqueta || "Cocinado")));
-        if (!i.esDes) fila.append(rac, el("span", { class: "quien", text: "rac." }));
-        chk.addEventListener("change", () => {
-          if (chk.checked) {
-            const r = i.esDes ? base : Number(rac.value);
-            if (!(r > 0)) { chk.checked = false; rac.focus(); return; }
-            marcarCocinado(c, i, r / base);
-          } else desmarcarCocinado(c, i);
-        });
-        caja.append(fila);
-      });
+      // Lo cocinado se marca en la receta; aquí solo se indica.
+      const hechos = instancias(c).filter((i) => !i.esDes && cocinadoDb.has(i.inst));
+      cocinados += hechos.length;
+      if (hechos.length) caja.append(el("span", { class: "coc-menu", text: "✓ Cocinado" + (hechos.length > 1 || hechos[0].etiqueta ? ": " + hechos.map((i) => i.etiqueta || "plato").join(", ") : "") }));
       caja.append(filasPersonas(c));
     });
     const rc = document.getElementById("resumen-cocinados"); if (rc) rc.textContent = cocinados;
@@ -768,7 +748,7 @@
     const ul = document.getElementById("reservas");
     if (!ul) return;
     ul.replaceChildren();
-    if (!lista.length) { ul.append(el("li", { class: "sub", text: "Sin reservas. Márcalas desde cada receta con «Marcar cantidad hecha»." })); return; }
+    if (!lista.length) { ul.append(el("li", { class: "sub", text: "Sin reservas. Se apuntan desde cada receta con «Cocinado»." })); return; }
     lista.forEach((x) => {
       const nombre = el(x.receta ? "a" : "span", { class: "producto", text: nombreReserva(x) });
       if (x.receta) nombre.href = "#r-" + x.receta;
@@ -785,18 +765,78 @@
       ul.append(li);
     });
   };
-  document.querySelectorAll('.form-hecho input[name="fecha"]').forEach((i) => { i.value = HOY; });
+  // ================= Cocinado (en cada receta) =================
+  /** Comidas del menú que usan la receta: pendientes (desde hoy) y ya cocinadas. */
+  const usosReceta = (id) => {
+    const out = [];
+    celdas.forEach((c) => {
+      if (c.comida === "desayuno") return;
+      instancias(c).forEach((i) => {
+        if (i.sobras || !i.items.some((it) => it.receta === id)) return;
+        out.push({ c, i, fecha: fechaCelda(c), rac: i.items[0].rac, hecho: cocinadoDb.has(i.inst) });
+      });
+    });
+    return out.sort((x, y) => x.fecha.localeCompare(y.fecha) || x.c.id.localeCompare(y.c.id));
+  };
+  const textoUso = (u) => fechaCorta(u.fecha) + ", " + COMIDA_TXT[u.c.comida].toLowerCase() + (u.i.etiqueta ? " (" + u.i.etiqueta + ")" : "") +
+    (u.i.items.length > 1 ? " con " + u.i.items.filter((it) => it.receta !== u.receta).map((it) => nombreRec(it.receta)).join(", ") : "");
+  const renderCocinadoRecetas = () => {
+    document.querySelectorAll(".hecho[data-receta]").forEach((bloque) => {
+      const id = bloque.dataset.receta, ul = bloque.querySelector(".cocinado-usos");
+      const hechos = usosReceta(id).filter((u) => u.hecho);
+      ul.replaceChildren(...hechos.map((u) => {
+        const doc = cocinadoDb.get(u.i.inst);
+        const li = el("li", null, el("span", { text: "✓ Cocinado: " + textoUso({ ...u, receta: id }) + " · " + fmtRac(doc.raciones) + " rac." }));
+        if (editable) { const d = el("button", { type: "button", class: "enlace", text: "Deshacer" }); d.addEventListener("click", () => desmarcarCocinado(u.c, u.i)); li.append(d); }
+        return li;
+      }));
+      ul.hidden = !hechos.length;
+    });
+  };
+  // La lista de comidas del formulario se rellena al abrirlo (así no se borra mientras se escribe).
+  document.querySelectorAll(".hecho[data-receta] details.marcar").forEach((det) => det.addEventListener("toggle", () => {
+    if (!det.open) return;
+    const id = det.closest(".hecho").dataset.receta, form = det.querySelector("form");
+    const fs = form.querySelector(".usos-form"), hechas = form.querySelector('input[name="hechas"]');
+    form.querySelector('input[name="fecha"]').value = HOY;
+    form.querySelector(".estado-form").textContent = "";
+    const pendientes = usosReceta(id).filter((u) => !u.hecho && u.fecha >= HOY);
+    fs.replaceChildren(el("legend", { text: pendientes.length ? "¿Para qué comidas?" : "No queda ninguna comida del menú con esta receta: lo hecho irá a la reserva." }));
+    const sumar = () => { hechas.value = String(Math.round([...fs.querySelectorAll("input:checked")].reduce((t, x) => t + Number(x.dataset.rac), 0) * 100) / 100 || ""); };
+    pendientes.forEach((u) => {
+      const chk = el("input", { type: "checkbox", checked: u.fecha === HOY });
+      chk.dataset.inst = u.i.inst; chk.dataset.rac = String(u.rac);
+      chk.addEventListener("change", sumar);
+      fs.append(el("label", null, chk, textoUso({ ...u, receta: id }) + " · " + fmtRac(u.rac) + " rac."));
+    });
+    sumar();
+  }));
   document.querySelectorAll(".form-hecho").forEach((formH) => formH.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!db) return;
     const f = new FormData(formH), estado = formH.querySelector(".estado-form");
     const receta = formH.closest(".hecho").dataset.receta;
-    const hechas = Number(f.get("hechas")) || 0, comer = Number(f.get("comer")) || 0;
-    const reserva = Math.max(0, Math.round((hechas - comer) * 10) / 10);
+    const hechas = Math.round((Number(f.get("hechas")) || 0) * 100) / 100;
     const fecha = String(f.get("fecha") || HOY), donde = String(f.get("donde"));
-    await guardarReserva({ id: receta + "__" + Date.now(), receta, hechas, comer, reserva, donde, fecha, caduca: caducaReserva(fecha, donde), semana: ACTUAL });
-    estado.textContent = reserva > 0 ? "Guardado: " + fmtRacTxt(reserva) + " en reserva (" + donde + ")." : "Guardado: se come todo esta semana, no queda reserva.";
+    if (!(hechas > 0)) { estado.textContent = "Escribe cuántas raciones has hecho."; return; }
+    const elegidas = [...formH.querySelectorAll(".usos-form input:checked")].map((x) => usosReceta(receta).find((u) => u.i.inst === x.dataset.inst)).filter((u) => u && !u.hecho);
+    const pide = elegidas.reduce((t, u) => t + u.rac, 0);
+    // Si se ha hecho menos de lo que piden las comidas elegidas, se reparte; si se ha hecho más, lo que sobra va a la reserva.
+    const factor = pide > 0 ? Math.min(1, hechas / pide) : 0;
+    for (const u of elegidas) await marcarCocinado(u.c, u.i, factor);
+    const reserva = Math.max(0, Math.round((hechas - pide) * 100) / 100);
+    if (reserva > 0) {
+      const descontado = {};
+      for (const [k, g] of ingredientesDe([{ receta, rac: reserva, personas: Math.max(1, Math.round(reserva)) }], 1)) {
+        const tengo = tengoDe(k), quita = Math.min(tengo, g); // nunca por debajo de 0
+        if (quita > 0) { descontado[k] = Math.round(quita * 10) / 10; await guardarProducto(despensaActual().get(k)?.nombre || nombreDe.get(k) || k, tengo - quita); }
+      }
+      await guardarReserva({ id: receta + "__" + Date.now(), receta, hechas, comer: Math.round(Math.min(hechas, pide) * 100) / 100, reserva, donde, fecha, caduca: caducaReserva(fecha, donde), semana: ACTUAL, descontado });
+    }
+    await registrar("cocinado", "Cocinado: " + nombreRec(receta) + " · " + fmtRac(hechas) + " rac." + (elegidas.length ? " para " + elegidas.map((u) => textoUso({ ...u, receta })).join("; ") : "") + (reserva > 0 ? ". En reserva: " + fmtRac(reserva) + " rac. (" + donde + ")" : "") + ".");
     formH.closest("details").open = false;
+    aviso(reserva > 0 ? "Guardado: " + fmtRacTxt(reserva) + " en reserva (" + donde + ")." : "Guardado.");
+    renderTodo();
   }));
 
   // ================= No deseados =================
@@ -1197,7 +1237,7 @@
   };
 
   // ================= Arranque =================
-  const renderTodo = () => { renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
+  const renderTodo = () => { renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderCocinadoRecetas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
   const avisoDb = document.getElementById("despensa-aviso");
   const soloLectura = (motivo) => {
     editable = false;

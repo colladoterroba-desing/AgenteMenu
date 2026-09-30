@@ -96,12 +96,14 @@ test("resumen de hábitos de compra", () => {
   assert.equal(resumen.productosMasComprados[0].veces, 2);
 });
 
-test("tuppers de oficina: RFA frío y CCT para recalentar de lunes a miércoles", () => {
+test("tuppers de oficina: RFA frío de lunes a jueves y CCT para recalentar de lunes a miércoles", () => {
   const semana = planificarSemana(familia);
   for (const dia of semana) {
     const tuppers = dia.comidas.find((c) => c.tipo === "comida")!.tuppers;
     if (["L", "M", "X"].includes(dia.dia)) {
       assert.deepEqual(tuppers.map((t) => [t.id, t.tipo]), [["RFA", "frío"], ["CCT", "para recalentar"]]);
+    } else if (dia.dia === "J") {
+      assert.deepEqual(tuppers.map((t) => [t.id, t.tipo]), [["RFA", "frío"]]);
     } else {
       assert.equal(tuppers.length, 0);
     }
@@ -206,34 +208,25 @@ test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entr
     assert.equal(Boolean(almuerzo), !["S", "D"].includes(dia.dia));
     if (almuerzo) assert.deepEqual(almuerzo.platos[0].comensales.map((c) => c.id), ["RFC"]);
   }
-  // 8 galletas al día, 7 días: sin escalar por el factor de ración de AFC.
+  // 8 galletas al día (4 g cada una), 7 días: sin escalar por el factor de ración de AFC.
   const galletas = listaCompra(dias).Despensa.find((l) => l.nombre.startsWith("Galletas"))!;
-  assert.equal(galletas.cantidad, 56);
+  assert.equal(galletas.unidad, "g");
+  assert.equal(galletas.cantidad, 56 * 4);
+  assert.equal(galletas.equivalencia, "56 ud");
 });
 
-test("solo CCT puede validar el menú y cualquier cambio lo devuelve a borrador", async () => {
+test("el menú se guarda sin validación y con las sobras enlazadas a la comida de la que salen", async () => {
   const almacen = await almacenTemporal();
   const { ejecutar } = crearHerramientas(almacen);
-  const noPermitido = await ejecutar("validar_menu", { por: "RFA", fecha: "2026-09-28" });
-  assert.equal(noPermitido.error, true);
-  assert.match(noPermitido.contenido, /Solo CCT/);
-  assert.equal((await almacen.menu()).estado, "borrador");
-
-  const ok = await ejecutar("validar_menu", { por: "CCT", fecha: "2026-09-28" });
-  assert.equal(ok.error, false);
-  const validado = await almacen.menu();
-  assert.equal(validado.estado, "validado");
-  assert.deepEqual(validado.validacion, { por: "CCT", fecha: "2026-09-28" });
-
-  const { estado: _e, validacion: _v, cambios: _c, ...datos } = validado;
-  const cambio = await ejecutar("guardar_menu", {
-    ...datos, autor: "CCT", fecha: "2026-09-29", descripcionCambio: "Cambio la cena del jueves",
-  });
-  assert.equal(cambio.error, false, cambio.contenido);
-  const tras = await almacen.menu();
-  assert.equal(tras.estado, "borrador");
-  assert.equal(tras.validacion, undefined);
+  const { cambios: _c, ...datos } = await almacen.menu();
+  const r = await ejecutar("guardar_menu", { ...datos, autor: "CCT", fecha: "2026-09-29", descripcionCambio: "Cambio la cena del jueves" });
+  assert.equal(r.error, false, r.contenido);
+  const tras = await almacen.menu() as Record<string, unknown> & Awaited<ReturnType<typeof almacen.menu>>;
+  assert.equal(tras.estado, undefined);
   assert.equal(tras.cambios!.at(-1)!.por, "CCT");
+  assert.deepEqual(tras.tuppers.M!.CCT.sobrasDe, { dia: "L", comida: "cena" });
+  const sinValidar = await ejecutar("validar_menu", { por: "CCT", fecha: "2026-09-29" });
+  assert.equal(sinValidar.error, true);
 });
 
 test("normas de la casa: pescado azul solo el jueves a mediodía y nada «al momento» para llevar", async () => {
@@ -351,7 +344,7 @@ test("coste de la cesta: envases enteros, granel, tienda más barata y sin preci
     ({ nombre, unidad, cantidad: comprar, enDespensa: 0, comprar, recetas: [] });
   const lista = {
     "Frutería": [linea("Tomate", "g", 1500)], "Carnicería": [], "Pescadería": [], "Charcutería y quesos": [],
-    "Lácteos y huevos": [linea("Leche semidesnatada", "ml", 3500), linea("Huevos", "ud", 20)],
+    "Lácteos y huevos": [linea("Leche semidesnatada", "g", 3605), linea("Huevos", "g", 1200)],
     "Panadería": [], "Despensa": [], "Congelados": [],
   };
   const p = (producto: string, tienda: string, precio: number, cantidad: number, unidad: string, granel = false) =>
@@ -365,7 +358,7 @@ test("coste de la cesta: envases enteros, granel, tienda más barata y sin preci
   };
   const c = costeCesta(lista, tabla);
   const leche = c.lineas.find((l) => l.nombre === "Leche semidesnatada")!;
-  assert.equal(leche.porTienda.Mercadona.envases, 4); // 3,5 l → 4 bricks
+  assert.equal(leche.porTienda.Mercadona.envases, 4); // 3.605 g (3,5 l) → 4 bricks de 1 l (1.030 g)
   assert.equal(leche.porTienda.Mercadona.coste, 3.6);
   assert.equal(leche.masBarata, "Mercadona");
   assert.equal(c.lineas.find((l) => l.nombre === "Tomate")!.porTienda.Mercadona.coste, 3); // granel: 1,5 kg × 2 €
@@ -381,7 +374,9 @@ test("ingredientes por persona: una dorada por comensal, sin redondear por la ra
   const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dorada = listaCompra(componerMenu(familia, menu, recetas)).Pescadería.find((l) => l.nombre.startsWith("Dorada"))!;
-  assert.equal(dorada.comprar, 4);
+  assert.equal(dorada.unidad, "g");
+  assert.equal(dorada.comprar, 4 * 350);
+  assert.equal(dorada.equivalencia, "4 ud");
 });
 
 test("sin tickets no hay precios: ni estimaciones en los datos ni columna de precios en el PDF", async () => {
@@ -406,4 +401,62 @@ test("Thermomix: las cremas y purés del menú tienen pasos con tiempo, temperat
     assert.ok(r.thermomix?.length, `${r.id} sin pasos de Thermomix`);
     assert.ok(r.thermomix.some((p: string) => /\d+ (min|s)\/.*vel/.test(p)), `${r.id}: formato tiempo/temperatura/velocidad`);
   }
+});
+
+test("equivalencias: ud y ml pasan a gramos, y lo desconocido no se inventa", async () => {
+  const { aGramos, aGramosObligatorio, equivalencia } = await import("../src/unidades.js");
+  assert.equal(aGramos("Huevos", 2, "ud"), 120);
+  assert.equal(aGramos("Leche semidesnatada", 250, "ml"), 257.5);
+  assert.equal(aGramos("Agua", 500, "ml"), 500);
+  assert.equal(aGramos("Cosa rara", 1, "ud"), undefined);
+  assert.throws(() => aGramosObligatorio("Cosa rara", 1, "ud"), /equivalencias/);
+  assert.equal(equivalencia("Huevos", 1320), "22 ud");
+  assert.equal(equivalencia("Aceite de oliva virgen extra", 92), "100 ml");
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const unidades = new Set(recetas.flatMap((r: { ingredientes: { unidad: string }[] }) => r.ingredientes.map((i) => i.unidad)));
+  assert.deepEqual([...unidades], ["g"]);
+});
+
+test("la compra va en gramos y lo que se vende por piezas se redondea a piezas enteras", async () => {
+  const { componerMenu, listaCompra } = await import("../src/menu.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const lista = listaCompra(componerMenu(familia, menu, recetas), { productos: [{ nombre: "Huevos", cantidad: 6, unidad: "ud" }], sobras: [] });
+  const huevos = lista["Lácteos y huevos"].find((l) => l.nombre === "Huevos")!;
+  assert.equal(huevos.unidad, "g");
+  assert.equal(huevos.enDespensa, 360); // 6 ud apuntadas a mano cuentan como 360 g
+  assert.equal(huevos.comprar % 60, 0);
+});
+
+test("guardar una receta en ud o ml la deja en gramos", async () => {
+  const almacen = await almacenTemporal();
+  const { ejecutar } = crearHerramientas(almacen);
+  const r = await ejecutar("guardar_receta", {
+    id: "prueba-huevos", nombre: "Prueba", tipo: "cena", tiempoMin: 5, tecnica: "plancha", pasos: ["Hacer."],
+    ingredientes: [
+      { nombre: "Huevos", cantidad: 2, unidad: "ud", seccion: "Lácteos y huevos" },
+      { nombre: "Aceite de oliva virgen extra", cantidad: 10, unidad: "ml", seccion: "Despensa" },
+    ],
+  });
+  assert.equal(r.error, false, r.contenido);
+  const guardada = (await almacen.recetas()).find((x) => x.id === "prueba-huevos")!;
+  assert.deepEqual(guardada.ingredientes.map((i) => [i.cantidad, i.unidad]), [[120, "g"], [9.2, "g"]]);
+});
+
+test("web: las comidas que salen de otra (sobras) suman sus raciones a la que se cocina", async () => {
+  const { componerMenu } = await import("../src/menu.js");
+  const { celdasCliente, generarHtml } = await import("../src/web.js");
+  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const celdas = celdasCliente("A", componerMenu(familia, menu, recetas));
+  const cenaMartes = celdas.find((c) => c.id === "A-1-cena")!;
+  const comidaMiercoles = celdas.find((c) => c.id === "A-2-comida")!;
+  const tupperCct = comidaMiercoles.tuppers.find((t) => t.quien === "CCT")!;
+  assert.equal(comidaMiercoles.sobras, true);
+  assert.equal(tupperCct.sobras, true);
+  assert.equal(cenaMartes.racCocinar, Math.round((cenaMartes.rac + comidaMiercoles.rac + tupperCct.rac) * 100) / 100);
+  assert.ok(celdas.some((c) => c.id === "A-3-comida" && c.tuppers.some((t) => t.quien === "RFA")));
+  const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, recetas, fecha: "30 de septiembre de 2026" });
+  for (const id of ["diario", "definiciones", "dlg-actualizar", "btn-confirmar-compra"]) assert.match(html, new RegExp(`id="${id}"`));
+  assert.doesNotMatch(html, /Aprobar el menú|Borrador/);
 });

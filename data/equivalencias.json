@@ -1,0 +1,32 @@
+{
+  "nota": "Pesos medios para pasar a gramos lo que se cuenta por unidades o por volumen. Todas las cantidades de recetas, despensa, compra y precios se guardan en gramos. Si en casa algo pesa distinto, se cambia aquí.",
+  "porUnidad": {
+    "Huevos": 60,
+    "Yogur natural": 125,
+    "Yogur líquido natural": 180,
+    "Plátano": 150,
+    "Limón": 100,
+    "Manzana": 180,
+    "Naranjas": 200,
+    "Dorada limpia (ración)": 350,
+    "Base de pizza integral": 200,
+    "Tortillas integrales de trigo": 40,
+    "Tortitas de maíz Hacendado": 7,
+    "Galletas tostadas Animadas Hacendado": 4,
+    "Atún en aceite de oliva (lata)": 80
+  },
+  "densidad": {
+    "Aceite de oliva virgen extra": 0.92,
+    "Leche semidesnatada": 1.03,
+    "Zumo de naranja con pulpa": 1.04
+  },
+  "medidasCaseras": [
+    ["1 vaso de agua o caldo", "250 g"],
+    ["1 vaso de leche", "258 g"],
+    ["1 cucharada de aceite", "12 g (13 ml)"],
+    ["1 cucharada de harina o de cacao", "10-15 g"],
+    ["1 cucharadita de especias (pimentón, curry)", "2 g"],
+    ["1 cucharadita de mostaza", "5 g"],
+    ["1 chorro de leche en el café", "40 g"]
+  ]
+}

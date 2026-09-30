@@ -18,20 +18,28 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - **Identidad de la app.** Nombre, icono y colores del manifiesto.
   - **Relación con OI-01 y OI-02.** Si la app permite editar la configuración, dónde se guardan los datos. Y cómo se actualiza cuando el agente genera un menú nuevo.
 
-- [ ] **OI-24 · Identificar a quien valida el menú.** Decidido: solo CCT puede dar por válido un menú y publicarlo, y puede pedir cambios antes (que lo devuelven a borrador). En la web ya hay botones «Aprobar el menú», «Pedir cambios» y «Retirar la aprobación», visibles solo para la dueña de la página en claude.ai, que se toma como CCT. Si el menú cambia después, la aprobación deja de valer. Pendiente: confirmar que la cuenta dueña es la de CCT, y cómo se identifica en el chat del agente, que hoy se fía de quien escribe.
+- [x] **OI-24 · Identificar a quien valida el menú.** Descartado el 30/09/2026: el menú ya no necesita validación. Se quitan los botones de aprobar y la herramienta `validar_menu`; lo que se come de verdad se apunta en el diario (OI-29).
 
-- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa, las raciones hechas (reservas), los platos no deseados y las aprobaciones o peticiones de cambios del menú que se hacen en la web se guardan en la página; hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
+- [ ] **OI-25 · Sincronizar la web con el repositorio.** La despensa, las raciones hechas (reservas), los platos no deseados, el diario, lo cocinado, los cambios de «Actualizar menú», los comentarios y la actividad que se hacen en la web se guardan en la página (colecciones `despensa`, `hechas`, `no-deseados`, `diario`, `cocinado`, `cambios`, `comentarios` y `eventos`); hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
 
 ## Uso diario del menú
 
 - [x] **OI-26 · Inventario de despensa para actualizar el menú.** Hecho: página Despensa en la web; la compra se descuenta al momento. Queda pendiente copiar el inventario al repositorio (OI-25) y que el agente cambie platos para aprovecharlo.
 - [x] **OI-27 · Marcar platos como no deseados, con el motivo, para futuros menús.** Hecho: en Recetas, por persona o por la familia; el sistema no vuelve a servirlos a quien los marcó. Queda pendiente la sincronización (OI-25).
 - [x] **OI-28 · Mostrar la propuesta de la semana siguiente.** Hecho: pestaña «Semana siguiente» en el menú y PDF propio. Queda pendiente la rotación de semanas (OI-14).
-- [ ] **OI-29 · Registrar cuando no se cumple el menú.** A veces se come otra cosa. Hace falta una opción para marcar una comida como «no se hizo» y apuntar lo que se comió de verdad. Hay que decidir:
+- [x] **OI-29 · Registrar cuando no se cumple el menú.** Hecho el 30/09/2026: botón «Diario» en cada casilla del menú (lo previsto, otro plato del recetario u otra cosa, con nota), página Diario con los cambios sobre el menú ideal, comentarios de la semana y el botón «Actualizar menú», con el que Claude revisa los días que quedan. Lo que no se cocina no se resta de la despensa. Queda pendiente que el agente aprenda de los platos que se saltan (ligado a OI-25). Lo que se planteó:
   - Dónde se marca: en la web, en cada casilla del menú, y quién puede hacerlo.
   - Qué se apunta: el plato real (de las recetas o texto libre) y quién lo comió.
   - Qué pasa con lo que no se cocinó: los ingredientes vuelven a la despensa y se proponen para otro día.
   - Cómo lo usa el agente: aprender qué platos se saltan a menudo, ajustar las cantidades y el seguimiento de calorías de quien tiene objetivo de peso.
+- [x] **OI-33 · Medidas en gramos y página de Definiciones.** Hecho el 30/09/2026: recetas, despensa, compra, precios y tuppers en gramos; equivalencias en `data/equivalencias.json`; página Definiciones con términos, equivalencias, medidas caseras, tamaño de una ración y Thermomix.
+- [ ] **OI-34 · Confirmar las equivalencias a gramos.** Son pesos medios supuestos: base de pizza (200 g), galletas Animadas (4 g), tortitas de maíz (7 g), yogur líquido (180 g), dorada limpia (350 g), tortillas integrales (40 g) y lata de atún (80 g). Pesarlos en casa o mirar el envase y corregir `data/equivalencias.json`.
+- [x] **OI-35 · Marcar lo cocinado y pasar la compra a la despensa.** Hecho el 30/09/2026: casilla «Cocinado» con raciones en cada plato del menú (resta los ingredientes de la despensa; al desmarcar vuelven) y botón fijo «Confirmar compra» en la lista (suma lo marcado a la despensa). Las sobras (`sobrasDe`) se marcan una sola vez, en la comida donde se cocinan.
+- [ ] **OI-36 · Dos formas de apuntar lo cocinado.** «Cocinado» (en el menú) resta ingredientes de la despensa; «Marcar cantidad hecha» (en Recetas) guarda raciones de reserva. Si se cocina de más, hoy hay que usar las dos. Decidir si se unen (por ejemplo, que al marcar «Cocinado» con más raciones de las que pide el menú se ofrezca guardar el resto como reserva).
+- [ ] **OI-37 · «Nadie come aquí».** Si nadie come una comida (por ejemplo, el almuerzo de RFC cuando está de viaje), no hay forma de quitarla del menú: Claude solo puede cambiar el plato o quién come. Falta una opción para dejarla vacía, que tampoco cuente en la compra.
+- [ ] **OI-38 · Revisar también lo que queda de hoy.** «Actualizar menú» solo revisa a partir de mañana. Si un aviso afecta al día de hoy (por ejemplo, alguien no cena), no lo cambia. Decidir si se incluyen las comidas de hoy que aún no se han hecho.
+- [ ] **OI-39 · Motivos de los cambios de Claude.** En la primera prueba, Claude cambió una comida de la semana B diciendo que lo había pedido la familia, sin que hubiera ningún comentario ni plato no deseado que lo pidiera. Ya se le pide que no invente peticiones; conviene revisar sus propuestas antes de aplicarlas y valorar que cite el comentario en que se basa.
+- [ ] **OI-40 · Coste de la cesta al día.** El coste se calcula al generar la página con la lista completa de la semana; no cambia con lo cocinado, la despensa ni las compras confirmadas.
 - [x] **OI-32 · Marcar la cantidad hecha de una receta y guardar la reserva.** Hecho: en cada receta, «Marcar cantidad hecha» (raciones hechas, las que se comen esta semana, nevera o congelador y fecha). Lo que sobra queda en reserva, aparece en Despensa con la fecha límite (nevera 3 días, congelador 3 meses) y se va gastando con «Usar 1 ración». En el repositorio, las reservas con receta se descuentan de la lista de la compra cuando el menú vuelve a poner esa receta, y el agente las gasta primero al preparar la semana siguiente. Queda pendiente la sincronización web → repositorio (OI-25).
 
 ## Personas y hábitos
@@ -59,7 +67,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 ## Lista de la compra y despensa
 
 - [ ] **OI-16 · Cantidades que conviene revisar.** Pan integral: unos 3,5 kg por semana. Resuelto para las doradas: los ingredientes pueden marcarse «por persona» (una dorada por comensal). Falta revisar si hay más casos (huevos, filetes).
-- [ ] **OI-17 · Formatos de compra.** La lista va en g, ml y unidades. Falta pasarla a paquetes, botes y latas (por ejemplo, cuántas galletas Animadas trae un paquete).
+- [ ] **OI-17 · Formatos de compra.** Desde el 30/09/2026 todo va en gramos, con la equivalencia en unidades o ml (`data/equivalencias.json`). Falta pasarla a paquetes, botes y latas (por ejemplo, cuántas galletas Animadas trae un paquete).
 - [ ] **OI-18 · Básicos que no se cuentan.** Sal, especias y caldo no entran en la lista. Decidir si se controlan desde la despensa.
 - [ ] **OI-19 · Inventario inicial de la despensa.** Ya se puede rellenar en la página Despensa de la web. Falta hacer el primer inventario.
 - [ ] **OI-20 · Tickets de compra.** Aún no hay ninguno registrado. Definir cada cuánto se suben y qué análisis se quiere ver (gasto por categoría, productos que se repiten, ahorro).

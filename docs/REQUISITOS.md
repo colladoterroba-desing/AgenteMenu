@@ -21,7 +21,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
   - V, S y D: comen en casa los 4.
   - Todas las cenas: los 4.
 - **Roles en la cocina:** CCT es la cocinera; RFA cocina poco y plancha; RFC y AFC solo hacen plancha.
-- **Tuppers de oficina (L, M y X):** RFA, frío; CCT, para recalentar. Propuesta en [propuestas/tuppers-oficina.md](propuestas/tuppers-oficina.md).
+- **Tuppers de oficina:** RFA, frío, de lunes a jueves (el jueves desde el 30/09/2026); CCT, para recalentar, de lunes a miércoles. Propuesta en [propuestas/tuppers-oficina.md](propuestas/tuppers-oficina.md).
 - **Desayunos habituales (todos los días):** AFC, vaso de leche con 1 cucharada de Nesquik y 8 galletas tostadas Animadas Hacendado. RFC, café solo y almuerzo para el colegio (L-V). CCT, café cortado con tostada de pan, aceite y azúcar (propuesta pendiente, OI-07: pan integral con tomate y queso fresco, sin azúcar). RFA, café cortado con 2 tortitas de maíz Hacendado, jamón york o pavo, aceite, sal y pimienta.
 - **Preferencias:** leche siempre semidesnatada.
 - **Pescado azul:** salmón, atún, anchoas y sardinas solo los jueves a la hora de comer, las semanas que toque (no es obligatorio ponerlo todos los jueves).
@@ -37,7 +37,14 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.
 - **Coste de la cesta:** la familia compra sobre todo en Mercadona y a veces en BM y Casa Elías (Madrid). Hay que valorar el coste de la lista de la compra en cada tienda y proponer la combinación más barata.
-- **Validación del menú:** por el momento solo CCT puede dar por válido un menú y publicarlo. Puede pedir cambios antes de validarlo; cualquier cambio devuelve el menú a borrador.
+- **Sin validación del menú (desde el 30/09/2026):** el menú no hay que aprobarlo. Lo que se come de verdad se apunta en el diario.
+- **Medidas en gramos:** todas las cantidades (recetas, despensa, compra, precios, tuppers) van en gramos. Lo que se cuenta por unidades o se mide en ml se pasa a gramos con [`data/equivalencias.json`](../data/equivalencias.json) y se muestra la equivalencia entre paréntesis («1.320 g (≈22 ud)»). La página **Definiciones** explica los términos y las equivalencias.
+- **Diario de comidas:** en cada casilla del menú se apunta si se comió lo previsto, otro plato del recetario u otra cosa, con una nota; el plato previsto queda tachado. El diario muestra los cambios sobre el menú ideal, lo cocinado y la actividad. Tiene un campo de **comentarios** para avisos de la semana (por ejemplo, «RFC no come esta semana X, J y V»).
+- **Actualizar menú:** un botón pide a Claude que revise los días que quedan (a partir de mañana) con el diario, los comentarios, lo cocinado y la despensa. Puede cambiar platos y quién come en cada comida. Los cambios se proponen y solo se aplican los que se aprueban; cada uno se puede deshacer.
+- **Cocinado:** cada plato, variante y tupper del menú tiene una casilla «Cocinado» con las raciones (se pueden cambiar). Al marcarla se restan de la despensa los ingredientes de esas raciones; al desmarcarla, vuelven. Lo que sale de otra comida (ración extra, batch) se marca una sola vez, en la comida donde se cocina. Los desayunos fijos se marcan como hechos una vez al día.
+- **Compra → despensa:** al marcar productos en la lista de la compra aparece un botón fijo abajo a la derecha, «Confirmar compra», que los suma a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa.
+- **Despensa:** se puede añadir cualquier producto, esté o no en el menú (se suma a lo que hubiera).
+- **Menú:** los días que ya han pasado no se muestran (se pueden ver con «Mostrarlos»).
 
 Los datos están en [`data/familia.json`](../data/familia.json).
 

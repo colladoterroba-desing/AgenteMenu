@@ -1,6 +1,6 @@
 {
   "semana": "B",
-  "estado": "borrador",
+  "inicio": "2026-10-05",
   "cambios": [
     {
       "por": "agente",
@@ -21,6 +21,11 @@
       "por": "usuario",
       "fecha": "2026-09-28",
       "descripcion": "Platos habituales de casa y más huevo: lunes, puré de zanahoria y chuleta de Sajonia (RFC y AFC); martes, puré de calabacín y huevos revueltos; viernes, crema de puerro y sándwich mixto; sábado, judías verdes y pollo empanado; domingo, ternera estofada."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-30",
+      "descripcion": "RFA también lleva tupper frío los jueves: ensalada de pasta integral con pollo asado, preparada el miércoles por la noche."
     }
   ],
   "batch": [
@@ -157,7 +162,11 @@
       },
       "CCT": {
         "receta": "merluza-salsa-verde-arroz",
-        "prepara": "Ración extra de la cena del lunes"
+        "prepara": "Ración extra de la cena del lunes",
+        "sobrasDe": {
+          "dia": "L",
+          "comida": "cena"
+        }
       }
     },
     "X": {
@@ -167,7 +176,17 @@
       },
       "CCT": {
         "receta": "albondigas-pavo-cuscus",
-        "prepara": "Batch del domingo (congeladas)"
+        "prepara": "Batch del domingo (congeladas)",
+        "sobrasDe": {
+          "dia": "X",
+          "comida": "comida"
+        }
+      }
+    },
+    "J": {
+      "RFA": {
+        "receta": "ensalada-pasta-pollo",
+        "prepara": "Miércoles por la noche"
       }
     }
   }

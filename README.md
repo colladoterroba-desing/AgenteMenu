@@ -11,7 +11,7 @@
 - ♻️ **Reaprovecha las sobras** y da prioridad a lo que caduca antes.
 - 🧾 **Aprende de tus tickets de compra** (foto o PDF) para detectar hábitos y proponer mejoras.
 
-Los requisitos completos están en [docs/REQUISITOS.md](docs/REQUISITOS.md) y la propuesta de tuppers para la oficina en [docs/propuestas/tuppers-oficina.md](docs/propuestas/tuppers-oficina.md). Los temas pendientes de definir están en [open-issues.md](open-issues.md).
+Todas las cantidades van en **gramos**; las equivalencias de lo que se cuenta por unidades o por volumen están en [data/equivalencias.json](data/equivalencias.json). Los requisitos completos están en [docs/REQUISITOS.md](docs/REQUISITOS.md) y la propuesta de tuppers para la oficina en [docs/propuestas/tuppers-oficina.md](docs/propuestas/tuppers-oficina.md). Los temas pendientes de definir están en [open-issues.md](open-issues.md).
 
 ## Puesta en marcha
 
@@ -42,7 +42,16 @@ npm run web   # genera salidas/resultados.html
 npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) de esta semana y la siguiente, en salidas/
 ```
 
-La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, Despensa, Tuppers y Configuración. En **Despensa** se apunta lo que hay en casa y la lista de la compra se descuenta al momento; en **Recetas** se puede marcar un plato como no deseado, con el motivo. En **Menú**, la dueña de la página (CCT) tiene botones para aprobar el menú o pedir cambios. Esos datos se guardan en la propia página publicada en claude.ai; para llevarlos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa, los no deseados y las aprobaciones».
+La web tiene las páginas Menú (esta semana y la siguiente), Diario, Recetas, Compra, Despensa, Tuppers, Definiciones y Configuración:
+
+- **Menú:** los días que ya han pasado se ocultan. Cada plato tiene una casilla **Cocinado** con las raciones (al marcarla se restan sus ingredientes de la despensa) y un botón **Diario** para apuntar lo que se comió de verdad. El botón **Actualizar menú** pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa; tú eliges qué cambios se aplican. El menú no necesita validación.
+- **Diario:** comentarios de la semana (por ejemplo, «RFC no come X, J y V»), cambios sobre el menú ideal, lo cocinado y la actividad.
+- **Compra:** lo que falta para lo que queda de semana, en gramos, sin lo que ya hay en casa. Al marcar productos aparece **Confirmar compra** (abajo a la derecha), que los suma a la despensa.
+- **Despensa:** añadir cualquier producto, lo que hay en casa, reservas de raciones cocinadas y lo que pide el menú.
+- **Recetas:** cantidades en gramos con la equivalencia en unidades o ml; marcar la cantidad hecha (reserva) o un plato como no deseado.
+- **Definiciones:** términos de la página, equivalencias a gramos, medidas caseras, tamaño de una ración y Thermomix.
+
+Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios` y `eventos`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa, los no deseados, las reservas y el diario».
 
 `npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 
@@ -54,7 +63,7 @@ La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, D
 | `data/despensa.json` | Productos en casa y sobras |
 | `data/tickets.json` | Tickets de compra registrados |
 | `data/recetas.json` | Recetas con ingredientes por ración de referencia y pasos |
-| `data/menu-semana.json` | Menú de la semana: plato de cada comida, variantes, tuppers y batch |
+| `data/menu-semana.json` | Menú de la semana: plato de cada comida, variantes, tuppers, batch y sobras (`sobrasDe`) |
 | `data/menu-siguiente.json` | Propuesta de menú de la semana siguiente |
 | `src/nutricion.ts` | IMC, metabolismo basal, gasto diario, objetivos y factor de ración |
 | `src/planificacion.ts` | Rejilla semanal de comensales, kcal por comida y quién cocina |
@@ -63,6 +72,9 @@ La web tiene las páginas Menú (esta semana y la siguiente), Recetas, Compra, D
 | `src/herramientas.ts` | Herramientas que usa el agente |
 | `src/agente.ts` | Chat de terminal con Claude |
 | `src/web.ts` | Vista web de los resultados |
+| `src/web-cliente.js` | Script de la página: diario, cocinado, compra, despensa y «Actualizar menú» |
+| `src/unidades.ts` | Paso a gramos con las equivalencias |
+| `data/equivalencias.json` | Gramos por unidad y por ml de cada producto, y medidas caseras |
 | `src/pdf.ts` | PDF del menú y de la lista de la compra |
 | `data/propuesta-tuppers.json` | Rotación de tuppers de oficina |
 | `data/precios.json` | Precios reales por tienda (Mercadona, BM, Elías), cargados desde los tickets |

@@ -1,6 +1,6 @@
 {
   "semana": "A",
-  "estado": "borrador",
+  "inicio": "2026-09-28",
   "cambios": [
     {
       "por": "agente",
@@ -26,6 +26,11 @@
       "por": "usuario",
       "fecha": "2026-09-28",
       "descripcion": "Platos habituales de casa y más huevo: martes, puré de calabaza y lomo adobado (RFC y AFC); miércoles, RFA toma huevos revueltos con jamón y queso; sábado, solomillo a la naranja y tortilla de patata; domingo, crema de puerro y huevos revueltos."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-30",
+      "descripcion": "RFA también lleva tupper frío los jueves: ensalada de arroz integral con garbanzos y feta, preparada el miércoles por la noche."
     }
   ],
   "batch": [
@@ -82,7 +87,11 @@
       },
       "comida": {
         "receta": "pollo-guisado-arroz",
-        "prepara": "Guiso de la cena del martes: recalentar"
+        "prepara": "Guiso de la cena del martes: recalentar",
+        "sobrasDe": {
+          "dia": "M",
+          "comida": "cena"
+        }
       },
       "merienda": {
         "receta": "bocadillo-pavo-queso"
@@ -160,7 +169,11 @@
       },
       "CCT": {
         "receta": "albondigas-pavo-cuscus",
-        "prepara": "Ración extra de la cena del lunes"
+        "prepara": "Ración extra de la cena del lunes",
+        "sobrasDe": {
+          "dia": "L",
+          "comida": "cena"
+        }
       }
     },
     "X": {
@@ -170,7 +183,17 @@
       },
       "CCT": {
         "receta": "pollo-guisado-arroz",
-        "prepara": "Ración extra de la cena del martes"
+        "prepara": "Ración extra de la cena del martes",
+        "sobrasDe": {
+          "dia": "M",
+          "comida": "cena"
+        }
+      }
+    },
+    "J": {
+      "RFA": {
+        "receta": "arroz-garbanzos-feta",
+        "prepara": "Miércoles por la noche"
       }
     }
   }

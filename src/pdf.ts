@@ -30,19 +30,8 @@ body{margin:0;font-family:"Source Sans 3","Segoe UI","DejaVu Sans",Arial,sans-se
 h1{font-size:15pt;margin:0}
 .cab{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:1.5pt solid #3d6a33;padding-bottom:4pt;margin-bottom:6pt}
 .cab p{margin:2pt 0 0;color:#58655d}
-.estado{font-weight:700;padding:2pt 6pt;border-radius:3pt;white-space:nowrap}
-.estado.borrador{background:#fbefd2;color:#8f6200;border:0.75pt solid #8f6200}
-.estado.validado{background:#e1f0e1;color:#2c7a31;border:0.75pt solid #2c7a31}
 .pie{margin-top:6pt;color:#58655d;font-size:7.5pt}
 `;
-
-function estado(familia: Familia, menu: MenuSemana): string {
-  if (menu.estado === "validado" && menu.validacion) {
-    return `<span class="estado validado">Validado por ${esc(menu.validacion.por)} · ${esc(menu.validacion.fecha)}</span>`;
-  }
-  const quien = familia.permisos?.validarMenu?.join(" o ") || "quien tenga permiso";
-  return `<span class="estado borrador">BORRADOR · pendiente de validar por ${esc(quien)}</span>`;
-}
 
 function celda(dia: DiaDelMenu, tipo: string): string {
   const c = dia.comidas.find((x) => x.tipo === tipo);
@@ -92,7 +81,6 @@ tbody th{width:62pt;background:#eef2ec;font-size:9pt}
 </style></head><body>
 <header class="cab">
   <div><h1>Menú · semana ${esc(menu.semana)}</h1><p>${esc(familia.nombre)} · generado el ${esc(fecha)}</p></div>
-  ${estado(familia, menu)}
 </header>
 <table>
   <thead><tr><th style="width:62pt"></th>${dias.map((d) => `<th>${esc(d.nombre)}</th>`).join("")}</tr></thead>
@@ -106,7 +94,9 @@ tbody th{width:62pt;background:#eef2ec;font-size:9pt}
 
 /** Lista de la compra para imprimir en A4 vertical. */
 export function htmlCompraPdf({ familia, menu, recetas, despensa, precios, fecha }: DatosPdf): string {
-  const lista = listaCompra(componerMenu(familia, menu, recetas), despensa);
+  const completa = listaCompra(componerMenu(familia, menu, recetas), despensa);
+  // Lo que ya hay en casa no se imprime.
+  const lista = Object.fromEntries(SECCIONES.map((s) => [s, completa[s].filter((l) => l.comprar > 0)])) as typeof completa;
   const total = SECCIONES.reduce((s, x) => s + lista[x].length, 0);
   // Coste por producto en la tienda más barata con precio real; sin precios, no hay columna.
   const cesta = precios ? costeCesta(lista, precios) : undefined;
@@ -128,14 +118,12 @@ ul{list-style:none;margin:0;padding:0}
 li{display:grid;grid-template-columns:10pt 1fr auto${conPrecios ? " 40pt" : ""};gap:5pt;align-items:baseline;padding:1.9pt 0;border-bottom:0.5pt dotted #c9d2c6}
 .caja{width:8pt;height:8pt;border:0.9pt solid #1c2620;border-radius:1.5pt;display:inline-block;transform:translateY(1pt)}
 .cant{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
-.en-casa{color:#9aa59d;text-decoration:line-through}
 .eur{text-align:right;color:#58655d;font-size:8.5pt;white-space:nowrap;font-variant-numeric:tabular-nums}
 .eur.real{color:#2c7a31;font-weight:700}
 .coste-pdf{margin:0 0 6pt;padding:4pt 8pt;background:#eef2ec;border-radius:3pt;font-size:8.5pt}
 </style></head><body>
 <header class="cab">
   <div><h1>Lista de la compra · semana ${esc(menu.semana)}</h1><p>${esc(familia.nombre)} · ${total} productos · generado el ${esc(fecha)}</p></div>
-  ${estado(familia, menu)}
 </header>
 ${
   cesta && conPrecios
@@ -149,8 +137,8 @@ ${
       (s) => `<section><h2>${esc(s)} <span>${lista[s].length}</span></h2><ul>${lista[s]
         .map(
           (l) =>
-            `<li${l.comprar === 0 ? ' class="en-casa"' : ""}><span class="caja"></span><span>${esc(l.nombre)}</span><span class="cant">${
-              l.comprar === 0 ? "en casa" : cantidad(l.comprar, l.unidad)
+            `<li><span class="caja"></span><span>${esc(l.nombre)}</span><span class="cant">${cantidad(l.comprar, l.unidad)}${
+              l.equivalencia ? ` <small>(≈${esc(l.equivalencia)})</small>` : ""
             }</span>${
               conPrecios
                 ? (() => {
@@ -166,8 +154,8 @@ ${
     )
     .join("")}</div>
 
-<p class="pie">Incluye todo el menú, los tuppers y los desayunos fijos, redondeado hacia arriba${
-    despensa?.productos.length ? " y descontando la despensa" : ""
+<p class="pie">Incluye todo el menú, los tuppers y los desayunos fijos, en gramos y redondeado hacia arriba${
+    despensa?.productos.length ? ", descontando la despensa (lo que ya hay en casa no aparece)" : ""
   }. Sal, especias y caldo no se cuentan.</p>
 </body></html>`;
 }

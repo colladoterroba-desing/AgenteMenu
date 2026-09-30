@@ -55,8 +55,6 @@ export interface Familia {
   roles: Record<string, string>;
   /** Normas de la casa que aplican a todas las recetas (p. ej. tipo de leche). */
   preferencias?: string[];
-  /** Quién puede hacer qué. validarMenu: quién da por válido y publica un menú. */
-  permisos?: { validarMenu: string[] };
   /**
    * Platos marcados como no deseados, con el motivo, para no repetirlos en futuros
    * menús. `por` es un miembro (no se le sirve a él) o "familia" (no se sirve a nadie).

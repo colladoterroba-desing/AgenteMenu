@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,10 +10,11 @@ import {
   REPARTO_LABORABLE,
   tasaMetabolicaBasal,
 } from "./nutricion.js";
-import { componerMenu, listaCompra, menuVisible, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
+import { componerMenu, listaCompra, menuVisible, normalizarCantidad, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
 import { costeCesta, type TablaPrecios } from "./precios.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
+import { densidad, EQUIVALENCIAS, equivalencia, gramosPorUnidad } from "./unidades.js";
 
 interface PlatoTupper {
   dia: Dia;
@@ -32,6 +33,11 @@ export const esc = (s: string | number) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 export const num = (n: number, decimales = 0) =>
   n.toLocaleString("es-ES", { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
+/** Como num, pero con punto de miles también en números de 4 cifras (1.250 g). */
+export const miles = (n: number, decimales = 0) => {
+  const [entero, dec] = n.toFixed(decimales).split(".");
+  return entero.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (dec ? "," + dec : "");
+};
 
 const DEPORTE: Record<string, string> = {
   running: "Running",
@@ -219,49 +225,13 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
   </div>`;
 }
 
-/** Huella del contenido del menú: si cambia, una aprobación anterior deja de valer. */
-export const huellaMenu = (menu: MenuSemana) =>
-  createHash("sha256").update(JSON.stringify({ dias: menu.dias, tuppers: menu.tuppers, batch: menu.batch })).digest("hex").slice(0, 16);
-
-function estadoMenu(familia: Familia, menu: MenuSemana): string {
-  const validadores = familia.permisos?.validarMenu ?? [];
-  const quien = validadores[0] ?? "";
-  const validado = menu.estado === "validado" && menu.validacion;
+/** Historial de cambios del menú (el menú ya no necesita validación). */
+function historialMenu(menu: MenuSemana): string {
   const cambios = (menu.cambios ?? []).slice().reverse();
-  const semana = esc(menu.semana);
-  return `<div class="estado-menu ${validado ? "validado" : "borrador"}" role="status" data-semana="${semana}" data-huella="${huellaMenu(menu)}" data-validado="${validado ? "1" : "0"}">
-    <p class="estado-texto"><strong>${validado ? "Menú validado" : "Borrador"}</strong> <span>${
-      validado
-        ? `por ${esc(menu.validacion!.por)} el ${esc(menu.validacion!.fecha)}.`
-        : `pendiente de que ${esc(validadores.join(" o ") || "alguien con permiso")} lo dé por válido. Hasta entonces no está publicado.`
-    }</span></p>
-    <p class="estado-web sub" hidden></p>
-    ${
-      quien && !validado
-        ? `<div class="aprobacion" data-quien="${esc(quien)}" hidden>
-            <div class="botones-aprobacion">
-              <button type="button" class="btn-aprobar">Aprobar el menú</button>
-              <button type="button" class="btn-cambios secundario">Pedir cambios</button>
-              <button type="button" class="btn-retirar secundario" hidden>Retirar la aprobación</button>
-            </div>
-            <div class="confirmar-aprobacion" hidden>
-              <p>¿Apruebas como ${esc(quien)} el menú de la semana ${semana}? Quedará como publicado.</p>
-              <button type="button" class="btn-confirmar">Sí, aprobar</button>
-              <button type="button" class="btn-cancelar secundario">Cancelar</button>
-            </div>
-            <form class="form-cambios" hidden>
-              <label for="cambios-${semana}">¿Qué hay que cambiar?</label>
-              <textarea id="cambios-${semana}" name="comentario" rows="3" required placeholder="Por ejemplo: el jueves no hay dorada, mejor merluza"></textarea>
-              <div class="botones-aprobacion"><button type="submit">Enviar</button><button type="button" class="btn-cancelar secundario">Cancelar</button></div>
-            </form>
-            <p class="sub estado-form" role="status"></p>
-          </div>`
-        : ""
-    }
-    ${cambios.length ? `<details><summary>Historial de cambios (${cambios.length})</summary><ul>${cambios
-      .map((c) => `<li><span class="mono">${esc(c.fecha)}</span> · <span class="comensal">${esc(c.por)}</span> ${esc(c.descripcion)}</li>`)
-      .join("")}</ul></details>` : ""}
-  </div>`;
+  if (!cambios.length) return "";
+  return `<div class="historial"><details><summary>Historial de cambios (${cambios.length})</summary><ul>${cambios
+    .map((c) => `<li><span class="mono">${esc(c.fecha)}</span> · <span class="comensal">${esc(c.por)}</span> ${esc(c.descripcion)}</li>`)
+    .join("")}</ul></details></div>`;
 }
 
 function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
@@ -293,10 +263,10 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
         ]),
       )}
       ${categoria(
-        "Permisos",
+        "Cambios al menú",
         pares([
-          ["Validar y publicar el menú", (familia.permisos?.validarMenu ?? []).map((id) => `<span class="comensal">${esc(id)}</span>`).join(" ") || `<span class="sub">Nadie</span>`],
-          ["Pedir cambios al menú", `<span class="sub">Cualquiera; el menú vuelve a borrador</span>`],
+          ["Diario", "Cualquiera con acceso de edición apunta lo que se comió de verdad y sus comentarios"],
+          ["Actualizar menú", "Claude revisa los días que quedan con el diario, lo cocinado y la despensa; los cambios se aplican al confirmarlos"],
         ]),
       )}
       ${categoria(
@@ -370,13 +340,20 @@ const comensalesChips = (r: Racion) =>
     .map((c) => `<span class="comensal" title="${esc(`${c.id}: ${num(c.kcal)} kcal`)}">${esc(c.id)}</span>`)
     .join("");
 
-function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
+/** Identificador de una casilla del menú: semana-día(0-6)-comida, p. ej. «A-3-cena». */
+export const idCelda = (semana: string, dia: Dia, tipo: TipoComida) => `${semana}-${DIAS_SEMANA.indexOf(dia)}-${tipo}`;
+
+/** Hueco que rellena el script: casillas «Cocinado» con raciones y botón «Diario». */
+const acciones = (id: string) => `<div class="acciones" data-acciones="${esc(id)}"></div>`;
+
+function celdaMenu(dia: DiaDelMenu, tipo: TipoComida, semana: string): string {
+  const id = idCelda(semana, dia.dia, tipo);
   const c = dia.comidas.find((x) => x.tipo === tipo);
-  if (!c || !c.platos.length) return `<td class="vacia"><span class="sub">—</span></td>`;
+  if (!c || !c.platos.length) return `<td class="vacia" data-celda="${esc(id)}"><span class="sub">—</span></td>`;
   if (tipo === "desayuno" && c.platos.length > 1) {
-    return `<td><ul class="desayunos-dia">${c.platos
+    return `<td data-celda="${esc(id)}"><ul class="desayunos-dia">${c.platos
       .map((p) => `<li>${comensalesChips(p)} <a href="#r-${esc(p.receta.id)}">${esc(p.receta.nombre)}</a></li>`)
-      .join("")}</ul></td>`;
+      .join("")}</ul>${acciones(id)}</td>`;
   }
   const [principal, ...variantes] = c.platos;
   const variantesHtml = variantes
@@ -393,13 +370,14 @@ function celdaMenu(dia: DiaDelMenu, tipo: TipoComida): string {
       </div>`,
     )
     .join("");
-  return `<td>
+  return `<td data-celda="${esc(id)}">
     <a class="plato-menu" href="#r-${esc(principal.receta.id)}">${esc(principal.receta.nombre)}</a>
     ${principal.segundo ? `<a class="plato-menu segundo" href="#r-${esc(principal.segundo.receta.id)}">${esc(principal.segundo.receta.nombre)}</a>` : ""}
     <div class="comensales">${comensalesChips(principal)}<span class="raciones mono" title="Raciones a preparar, contando que 1 ración es la de un adulto de 2.000 kcal">${num(principal.raciones, 2)} rac.</span></div>
     ${variantesHtml}
     ${principal.prepara ? `<p class="prepara">${esc(principal.prepara)}</p>` : ""}
     ${tuppers}
+    ${acciones(id)}
   </td>`;
 }
 
@@ -431,6 +409,7 @@ function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
 }
 
 function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana): string {
+  const semana = menu.semana;
   const batch = (menu.batch ?? [])
     .map(
       (b) => `<aside class="batch">
@@ -445,9 +424,21 @@ function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana): st
     <thead><tr><th scope="col"><span class="sr">Comida</span></th>${visibles
       .map((d) => `<th scope="col">${esc(d.nombre)}</th>`)
       .join("")}</tr></thead>
-    <tbody>${COMIDAS.filter(({ tipo }) => visibles.some((d) => d.comidas.some((c) => c.tipo === tipo))).map(
-      ({ tipo, nombre }) => `<tr><th scope="row">${nombre}</th>${visibles.map((d) => celdaMenu(d, tipo)).join("")}</tr>`,
-    ).join("")}</tbody>
+    <tbody>${COMIDAS.map(({ tipo, nombre }) => {
+      if (visibles.some((d) => d.comidas.some((c) => c.tipo === tipo))) {
+        return `<tr><th scope="row">${nombre}</th>${visibles.map((d) => celdaMenu(d, tipo, semana)).join("")}</tr>`;
+      }
+      // Desayunos fijos ocultos: una fila compacta para marcarlos como hechos (se restan de la despensa).
+      if (tipo === "desayuno" && dias.some((d) => d.comidas.some((c) => c.tipo === "desayuno" && c.platos.length))) {
+        return `<tr><th scope="row">${nombre}</th>${visibles
+          .map((d) => {
+            const id = idCelda(semana, d.dia, "desayuno");
+            return `<td data-celda="${esc(id)}"><a class="plato-menu" href="#configuracion">Desayunos fijos</a><span class="sub des-sub">Cada uno el suyo</span>${acciones(id)}</td>`;
+          })
+          .join("")}</tr>`;
+      }
+      return "";
+    }).join("")}</tbody>
   </table></div>`;
 }
 
@@ -480,12 +471,19 @@ function usosDeRecetas(semanas: { semana: string; dias: DiaDelMenu[] }[]): Map<s
   return usos;
 }
 
+/** Cantidad para mostrar: todo va en gramos (1.250 g); lo que no tiene equivalencia, en su unidad. */
 export const cantidad = (n: number, unidad: string) => {
-  if (unidad === "g" && n >= 1000) return `${num(n / 1000, 2)} kg`;
-  if (unidad === "ml" && n >= 1000) return `${num(n / 1000, 2)} l`;
+  if (unidad === "g") return `${n > 0 && n < 1 ? miles(n, 1) : miles(n)} g`;
   if (unidad === "ud") return `${num(n, n % 1 ? 1 : 0)} ud`;
-  return `${num(n)} ${unidad}`;
+  return `${miles(n)} ${unidad}`;
 };
+
+/** Gramos con la equivalencia en unidades o ml debajo, en pequeño: «120 g (2 ud)». */
+function conEquivalencia(nombre: string, n: number, unidad: string): string {
+  const c = normalizarCantidad(nombre, n, unidad);
+  const eq = c.unidad === "g" ? equivalencia(nombre, c.cantidad) : "";
+  return `${cantidad(Math.round(c.cantidad * 10) / 10, c.unidad)}${eq ? ` <span class="equiv">(${esc(eq)})</span>` : ""}`;
+}
 
 /** Marcas de «no deseado» de una receta: la lista la rellena el script con los datos guardados. */
 function bloqueNoDeseado(r: Receta, familia: Familia): string {
@@ -576,8 +574,8 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
           <tbody>${r.ingredientes
             .map(
               (i) =>
-                `<tr><td>${esc(i.nombre)}</td><td class="num mono">${cantidad(i.cantidad, i.unidad)}</td>${
-                  raciones ? `<td class="num mono">${cantidad(Math.round(i.cantidad * raciones * 10) / 10, i.unidad)}</td>` : ""
+                `<tr><td>${esc(i.nombre)}</td><td class="num mono">${conEquivalencia(i.nombre, i.cantidad, i.unidad)}</td>${
+                  raciones ? `<td class="num mono">${conEquivalencia(i.nombre, Math.round(i.cantidad * raciones * 10) / 10, i.unidad)}</td>` : ""
                 }</tr>`,
             )
             .join("")}</tbody>
@@ -597,101 +595,175 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
   return `<div class="filtros" role="group" aria-label="Filtrar recetas">${filtros
     .map(([id, texto], i) => `<button type="button" data-filtro="${id}" aria-pressed="${i === 0}">${texto}</button>`)
     .join("")}</div>
-  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Sal, especias y caldo no se cuentan. Con «Marcar cantidad hecha» apuntas cuántas raciones has cocinado: lo que sobra queda en reserva (nevera o congelador) para otra semana y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
+  <p class="sub">Cantidades para una ración de referencia (adulto de 2.000 kcal); la última columna es el total de la semana: la ración multiplicada por las raciones de todos los comensales (por ejemplo, 4,10 rac. si comen los cuatro). Todas las cantidades van en gramos; entre paréntesis, las unidades o los ml de referencia (equivalencias en <a href="#definiciones">Definiciones</a>). Sal, especias y caldo no se cuentan. Con «Marcar cantidad hecha» apuntas cuántas raciones has cocinado: lo que sobra queda en reserva (nevera o congelador) para otra semana y aparece en Despensa. Un plato marcado como no deseado no se vuelve a proponer a quien lo marcó.</p>
   <div class="recetas">${tarjetas}</div>`;
 }
 
 const claveProducto = (nombre: string, unidad: string) =>
   `${nombre}|${unidad}`.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-function seccionCompra(lista: Record<Seccion, LineaCompra[]>): string {
-  const bloques = SECCIONES.filter((s) => lista[s].length)
-    .map(
-      (s) => `<section class="pasillo">
-        <h3>${esc(s)} <span class="sub mono">${lista[s].length}</span></h3>
-        <ul>${lista[s]
-          .map((l, i) => {
-            const id = `c-${s.normalize("NFD").replace(/[^a-zA-Z]/g, "").toLowerCase()}-${i}`;
-            const texto = `${l.nombre}: ${cantidad(l.comprar, l.unidad)}`;
-            return `<li${l.comprar === 0 ? ' class="en-casa"' : ""} data-clave="${esc(claveProducto(l.nombre, l.unidad))}" data-nombre="${esc(l.nombre)}" data-necesita="${l.cantidad}" data-unidad="${esc(l.unidad)}">
-              <input type="checkbox" id="${id}" data-texto="${esc(texto)}">
-              <label for="${id}"><span class="producto">${esc(l.nombre)}</span>
-                <span class="cant mono">${l.comprar === 0 ? "en casa" : cantidad(l.comprar, l.unidad)}</span>
-                <span class="para">${esc(l.recetas.length > 3 ? `${l.recetas.slice(0, 2).join(" · ")} y ${l.recetas.length - 2} recetas más` : l.recetas.join(" · "))}<span class="en-despensa">${
-                  l.enDespensa ? ` · en despensa ${cantidad(l.enDespensa, l.unidad)}` : ""
-                }</span></span>
-              </label>
-            </li>`;
-          })
-          .join("")}</ul>
-      </section>`,
-    )
-    .join("");
-  const total = SECCIONES.reduce((s, x) => s + lista[x].length, 0);
+/**
+ * Lista de la compra: la dibuja el script a partir de los datos de la página, porque
+ * cambia con lo que se cocina, el diario, los cambios del menú y la despensa.
+ */
+function seccionCompra(): string {
   return `<div class="compra-acciones">
-    <p class="sub"><span id="compra-marcados">0</span> de ${total} productos en el carro</p>
+    <p class="sub"><span id="compra-marcados">0</span> de <span id="compra-total">0</span> productos en el carro</p>
     <button type="button" id="copiar-lista">Copiar lo que falta</button>
     <button type="button" id="desmarcar" class="secundario">Desmarcar todo</button>
     <span id="copiado" class="sub" role="status"></span>
   </div>
-  <div class="pasillos">${bloques}</div>`;
+  <div class="pasillos" id="pasillos"></div>`;
 }
 
-/** Inventario de despensa: lo que hay en casa de lo que pide el menú, y otros productos. */
-function seccionDespensa(lista: Record<Seccion, LineaCompra[]>, recetas: Receta[]): string {
-  const filas = SECCIONES.filter((s) => lista[s].length)
-    .map(
-      (s) => `<tbody><tr class="grupo-despensa"><th colspan="3">${esc(s)}</th></tr>${lista[s]
-        .map((l) => {
-          const clave = claveProducto(l.nombre, l.unidad);
-          return `<tr data-clave="${esc(clave)}" data-nombre="${esc(l.nombre)}" data-unidad="${esc(l.unidad)}">
-            <td><label for="d-${esc(clave)}">${esc(l.nombre)}</label></td>
-            <td class="num mono">${cantidad(l.cantidad, l.unidad)}</td>
-            <td class="num"><span class="tengo"><input type="number" inputmode="decimal" min="0" step="any" id="d-${esc(clave)}" value="${l.enDespensa || ""}" placeholder="0" data-solo-editable-input> <span class="mono">${esc(l.unidad)}</span></span></td>
-          </tr>`;
-        })
-        .join("")}</tbody>`,
-    )
-    .join("");
-  const nombres = [...new Set(recetas.flatMap((r) => r.ingredientes.map((i) => i.nombre)))].sort((a, b) => a.localeCompare(b, "es"));
+/** Inventario de despensa: añadir productos, lo que hay en casa, reservas y lo que pide el menú. */
+function seccionDespensa(recetas: Receta[]): string {
+  const nombres = [...new Set([...recetas.flatMap((r) => r.ingredientes.map((i) => i.nombre)), ...Object.keys(EQUIVALENCIAS.porUnidad)])]
+    .sort((a, b) => a.localeCompare(b, "es"));
   return `<p class="sub aviso-db" id="despensa-aviso" role="status">Cargando el inventario guardado…</p>
   <div class="despensa-rejilla">
-    <section class="categoria ancha">
-      <h4>Lo que pide el menú de esta semana</h4>
-      <p class="sub">Apunta cuánto tienes de cada cosa. La lista de la compra se descuenta al momento.</p>
-      <div class="scroll"><table class="tabla-despensa">
-        <thead><tr><th>Producto</th><th class="num">Hace falta</th><th class="num">Tengo</th></tr></thead>
-        ${filas}
-      </table></div>
-    </section>
-    <section class="categoria">
-      <h4>Añadir otro producto</h4>
+    <section class="categoria destacada-cat">
+      <h4>Añadir producto</h4>
+      <p class="sub">Cualquier cosa que tengas en casa, esté o no en el menú. Si ya estaba apuntado, se suma a lo que había.</p>
       <form id="form-despensa" class="form-despensa">
         <label for="p-nombre">Producto</label>
         <input id="p-nombre" name="nombre" list="lista-ingredientes" required autocomplete="off" data-solo-editable-input>
         <datalist id="lista-ingredientes">${nombres.map((n) => `<option value="${esc(n)}"></option>`).join("")}</datalist>
         <div class="fila-form">
-          <div><label for="p-cantidad">Cantidad</label><input id="p-cantidad" name="cantidad" type="number" min="0" step="any" required data-solo-editable-input></div>
-          <div><label for="p-unidad">Unidad</label><select id="p-unidad" name="unidad" data-solo-editable-input><option>g</option><option>ml</option><option>ud</option></select></div>
+          <div><label for="p-cantidad">Cantidad (g)</label><input id="p-cantidad" name="cantidad" type="number" inputmode="decimal" min="0" step="any" required data-solo-editable-input></div>
+          <div><label for="p-caducidad">Caduca (opcional)</label><input id="p-caducidad" name="caducidad" type="date" data-solo-editable-input></div>
         </div>
-        <label for="p-caducidad">Caduca (opcional)</label>
-        <input id="p-caducidad" name="caducidad" type="date" data-solo-editable-input>
-        <button type="submit" data-solo-editable-input>Guardar en la despensa</button>
+        <button type="submit" data-solo-editable-input>Añadir a la despensa</button>
         <span class="sub estado-form" role="status"></span>
       </form>
+    </section>
+    <section class="categoria">
+      <h4>En casa ahora</h4>
+      <ul id="inventario" class="inventario"><li class="sub">Sin productos apuntados.</li></ul>
     </section>
     <section class="categoria ancha">
       <h4>Reservas de raciones cocinadas</h4>
       <p class="sub">Lo que has marcado como hecho en Recetas y no se come esta semana. Úsalo antes de la fecha indicada; al comerlo, réstalo aquí.</p>
       <ul id="reservas" class="inventario reservas"><li class="sub">Sin reservas. Márcalas desde cada receta con «Marcar cantidad hecha».</li></ul>
     </section>
-    <section class="categoria">
-      <h4>En casa ahora</h4>
-      <ul id="inventario" class="inventario"><li class="sub">Sin productos apuntados.</li></ul>
+    <section class="categoria ancha">
+      <h4>Lo que pide el menú (lo que queda de semana)</h4>
+      <p class="sub">Apunta cuánto tienes de cada cosa, en gramos (equivalencias en <a href="#definiciones">Definiciones</a>). La lista de la compra se descuenta al momento.</p>
+      <div class="scroll"><table class="tabla-despensa">
+        <thead><tr><th>Producto</th><th class="num">Hace falta</th><th class="num">Tengo</th></tr></thead>
+        <tbody id="tabla-despensa"></tbody>
+      </table></div>
     </section>
   </div>
-  <p class="sub">Para cambiar platos del menú y aprovechar lo que hay, pídeselo a Claude: «actualiza el menú con la despensa».</p>`;
+  <p class="sub">Para cambiar platos del menú y aprovechar lo que hay, usa «Actualizar menú» en el Menú o en el Diario.</p>`;
 }
+
+/** Diario de comidas: comentarios, cambios sobre el menú ideal, lo cocinado y la actividad. */
+function seccionDiario(): string {
+  return `<header class="cab"><h1 id="h-diario">Diario de comidas</h1>
+    <p class="sub">Lo que se ha comido de verdad frente al menú ideal, lo cocinado y los cambios. Para apuntar una comida, pulsa «Diario» en su casilla del menú.</p>
+    <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button></div>
+    <p class="sub">«Actualizar menú» pasa al menú lo apuntado en el diario y pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa. Tú decides qué cambios se aplican.</p></header>
+    <section class="categoria ancha destacada-cat"><h4>Comentarios</h4>
+      <p class="sub">Avisos para la semana, por ejemplo «RFC no come esta semana X, J y V». Claude los tiene en cuenta al actualizar el menú.</p>
+      <form id="form-comentario" class="form-despensa"><label for="comentario-texto">Comentario</label><textarea id="comentario-texto" name="texto" rows="2" maxlength="500" required data-solo-editable-input></textarea><button type="submit" data-solo-editable-input>Añadir comentario</button><span class="sub estado-form" role="status"></span></form>
+      <ul class="actividad" id="diario-comentarios"></ul></section>
+    <section class="categoria ancha"><h4>Cambios sobre el menú ideal</h4><div class="scroll"><table class="tabla-diario"><thead><tr><th>Día</th><th>Comida</th><th>Previsto</th><th>Ahora</th><th>Origen</th><th>Nota</th></tr></thead><tbody id="diario-cambios"></tbody></table></div></section>
+    <section class="categoria ancha"><h4>Lo cocinado</h4><div class="scroll"><table class="tabla-diario"><thead><tr><th>Día</th><th>Comida</th><th>Plato</th><th class="num">Raciones</th></tr></thead><tbody id="diario-cocinado"></tbody></table></div></section>
+    <section class="categoria ancha"><h4>Actividad</h4><ul class="actividad" id="diario-actividad"></ul></section>`;
+}
+
+/** Definiciones: términos, equivalencias a gramos, medidas caseras, ración de referencia y Thermomix. */
+function seccionDefiniciones(): string {
+  const tabla = (cab: string[], filas: string[][]) =>
+    `<div class="scroll"><table class="def-tabla"><thead><tr>${cab.map((c, i) => `<th${i ? ' class="num"' : ""}>${c}</th>`).join("")}</tr></thead><tbody>${filas
+      .map((f) => `<tr>${f.map((c, i) => `<td${i ? ' class="num mono"' : ""}>${c}</td>`).join("")}</tr>`)
+      .join("")}</tbody></table></div>`;
+  const porUnidad = Object.entries(EQUIVALENCIAS.porUnidad).sort(([a], [b]) => a.localeCompare(b, "es"))
+    .map(([n, g]) => [esc(n), "1 ud", `${miles(g)} g`]);
+  const porVolumen = [
+    ...Object.entries(EQUIVALENCIAS.densidad).map(([n, d]) => [esc(n), "100 ml", `${miles(Math.round(100 * d))} g`]),
+    ["Agua o caldo", "100 ml", "100 g"],
+  ];
+  const caseras = (EQUIVALENCIAS.medidasCaseras ?? []).map(([m, g]) => [esc(m), esc(g)]);
+  const racion = [
+    ["Pasta, arroz, cuscús o quinoa (en crudo)", "60-100 g"], ["Legumbre seca (lentejas)", "70 g"], ["Legumbre cocida de bote", "200 g"],
+    ["Carne (pollo, pavo, cerdo, ternera)", "120-150 g"], ["Pescado en lomos o filetes", "130-150 g"], ["Huevos", "120 g (2 huevos)"],
+    ["Pan", "40-80 g"], ["Verdura u hortaliza principal", "150-250 g"], ["Patata", "100-200 g"], ["Ensalada (lechuga)", "50 g"],
+    ["Fruta de postre", "150 g"], ["Aceite de oliva", "9-14 g (10-15 ml)"],
+  ];
+  const terminos: [string, string][] = [
+    ["Ración", "Lo que come en un día un adulto de 2.000 kcal en esa comida. Las cantidades de cada receta son para 1 ración."],
+    ["rac.", "Raciones a preparar. Se suma la de cada comensal según su tamaño de ración. «4,16 rac.» significa: multiplica las cantidades de la receta por 4,16."],
+    ["Tamaño de ración (×)", "Factor de cada persona según su objetivo diario de energía: ×1 son 2.000 kcal."],
+    ["Comensal", "Quién come ese plato (las etiquetas con las iniciales)."],
+    ["Batch del domingo", "Cocinar el domingo varios platos a la vez para dejar hechos los tuppers y algunas comidas de la semana."],
+    ["Tupper frío / para recalentar", "Comida para llevar que se toma fría, o que se calienta en el microondas."],
+    ["Ración extra / sobras", "Se cocina más cantidad en una comida y lo que sobra es otra comida o un tupper. Solo se marca como cocinado una vez."],
+    ["Cocinado", "Casilla de cada plato del menú: al marcarla, los ingredientes de esas raciones se restan de la despensa."],
+    ["Diario", "Lo que se comió de verdad cuando no fue lo previsto, con una nota."],
+    ["Actualizar menú", "Claude revisa los días que quedan con el diario, los comentarios y la despensa, y propone cambios que tú apruebas."],
+    ["Reserva", "Raciones cocinadas que no se comen esta semana y se guardan en la nevera o el congelador."],
+    ["Variante", "Plato distinto para una persona en esa comida."],
+    ["AOVE", "Aceite de oliva virgen extra."],
+    ["Fruta de temporada", "Una pieza de fruta de la época, unos 150 g."],
+    ["Despensa / En casa", "Lo que ya hay en casa. Se descuenta de la lista de la compra; lo que está en casa no sale en la lista."],
+    ["No deseado", "Plato que alguien no quiere. No se le vuelve a proponer."],
+    ["kcal", "Kilocalorías: la energía de la comida."],
+    ["Metabolismo basal", "Energía que gasta el cuerpo en reposo."],
+    ["Gasto diario", "Metabolismo basal más la actividad cotidiana y el deporte."],
+    ["Objetivo diario", "Energía que se planifica para cada persona; si hay objetivo de peso acordado, es algo menor que el gasto."],
+    ["IMC", "Índice de masa corporal: peso (kg) dividido por la altura (m) al cuadrado. En menores se valora con percentiles."],
+  ];
+  const thermomix: [string, string][] = [
+    ["vel 1 … vel 10", "Velocidad de las cuchillas: 1 remueve despacio, 5 pica, 10 tritura."],
+    ["vel cuchara", "La velocidad más lenta, para remover sin romper."],
+    ["Giro a la izquierda", "Las cuchillas giran al revés y no cortan: para guisos con trozos."],
+    ["4 s / 5 min", "Tiempo: segundos (s) o minutos (min)."],
+    ["100 °C, 120 °C", "Temperatura del vaso."],
+    ["Varoma", "Recipiente de arriba para cocinar al vapor; también la temperatura más alta."],
+    ["Cubilete, cestillo", "Tapón de la tapa y cesta interior del vaso."],
+  ];
+  return `<header class="cab"><h1 id="h-def">Definiciones</h1>
+    <p class="sub">Qué significa cada término de la página y cuánto pesa cada cosa. Todas las cantidades van en gramos; las equivalencias son aproximadas y salen de <code>data/equivalencias.json</code>.</p></header>
+    <div class="categorias">
+      ${categoria("Términos", pares(terminos), "ancha")}
+      ${categoria("De unidades a gramos", `<p class="sub">Peso medio de una pieza.</p>${tabla(["Producto", "Medida", "Gramos"], porUnidad)}`)}
+      ${categoria("De mililitros a gramos", `<p class="sub">Los líquidos se pesan: 100 ml no siempre son 100 g.</p>${tabla(["Producto", "Medida", "Gramos"], porVolumen)}`)}
+      ${categoria("Medidas caseras", tabla(["Medida", "Gramos"], caseras))}
+      ${categoria("Tamaño de una ración de referencia", `<p class="sub">Adulto de 2.000 kcal. Pesos en crudo y limpios.</p>${tabla(["Alimento", "1 ración"], racion)}`)}
+      ${categoria("Thermomix", pares(thermomix))}
+    </div>
+    <p class="sub">Si un envase o una pieza pesa distinto en casa, díselo al agente y se cambia la equivalencia.</p>`;
+}
+
+/** Ventanas del diario y de «Actualizar menú», botón fijo de la compra y aviso flotante. */
+const DIALOGOS = `
+<dialog id="dlg-diario" class="dlg">
+  <form method="dialog" id="form-diario">
+    <h3 id="dlg-diario-titulo">Diario</h3>
+    <p class="sub" id="dlg-diario-previsto"></p>
+    <fieldset><legend class="sr">¿Qué se comió?</legend>
+      <label class="opcion"><input type="radio" name="tipo" value="previsto" checked> Lo previsto</label>
+      <label class="opcion"><input type="radio" name="tipo" value="receta"> Otro plato del recetario</label>
+      <select name="receta" id="dlg-diario-receta" aria-label="Plato del recetario"></select>
+      <label class="opcion"><input type="radio" name="tipo" value="texto"> Otra cosa</label>
+      <input type="text" name="texto" id="dlg-diario-texto" aria-label="Qué se comió" placeholder="Por ejemplo: pizza en casa de los abuelos">
+    </fieldset>
+    <label for="dlg-diario-nota">Nota (opcional)</label>
+    <input type="text" name="nota" id="dlg-diario-nota" placeholder="Por ejemplo: no había merluza">
+    <p class="sub estado-form" role="status"></p>
+    <div class="botones-dlg"><button type="submit" value="guardar" class="btn-principal">Guardar</button><button type="submit" value="cancelar" class="secundario" formnovalidate>Cancelar</button></div>
+  </form>
+</dialog>
+<dialog id="dlg-actualizar" class="dlg dlg-ancho">
+  <h3>Actualizar menú</h3>
+  <div id="act-cuerpo"></div>
+  <p class="sub estado-form" id="act-estado" role="status"></p>
+  <div class="botones-dlg" id="act-botones"></div>
+</dialog>
+<button type="button" id="btn-confirmar-compra" class="btn-flotante" hidden>Confirmar compra</button>
+<div id="aviso-flotante" class="aviso-flotante" role="status" hidden></div>`;
 
 function seccionTuppers(propuesta: PropuestaTuppers, familia: Familia): string {
   const tipos = familia.regimen.tupper ?? {};
@@ -843,8 +915,7 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .semana{min-width:980px}
 .semana tbody th{font-family:var(--f-display);font-weight:650;white-space:nowrap}
 .semana tbody tr:last-child td,.semana tbody tr:last-child th{border-bottom:0}
-.semana td{min-width:128px}
-.semana td{min-width:150px}
+.semana td{min-width:172px}
 .plato-menu.segundo{margin-top:3px;padding-top:3px;border-top:1px dotted var(--line)}
 .plato-menu{display:block;font-weight:600;color:var(--ink);text-decoration:none;line-height:1.3}
 .plato-menu:hover,.variante a:hover,.tupper-linea a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
@@ -879,24 +950,6 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .tabla-coste td,.tabla-coste th{padding:5px 8px}
 .tabla-coste .num{text-align:right;white-space:nowrap}
 .tabla-coste td.mejor{font-weight:700;color:var(--bien)}
-.estado-menu{border-radius:10px;padding:12px 16px;display:grid;gap:6px;border:1px solid}
-.estado-menu.borrador{background:var(--aviso-soft);border-color:var(--aviso);color:var(--ink)}
-.estado-menu.validado{background:var(--bien-soft);border-color:var(--bien);color:var(--ink)}
-.estado-menu.borrador strong{color:var(--aviso)}
-.estado-menu.validado strong{color:var(--bien)}
-.aprobacion{display:grid;gap:8px;border-top:1px dashed currentColor;padding-top:8px}
-.botones-aprobacion{display:flex;flex-wrap:wrap;gap:8px}
-.aprobacion button{font:600 .9rem var(--f-body);border-radius:999px;padding:7px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--surface)}
-.aprobacion button.secundario{background:var(--surface);color:var(--ink);border-color:var(--line)}
-.aprobacion button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.aprobacion button:disabled{opacity:.5;cursor:not-allowed}
-.confirmar-aprobacion{display:grid;gap:8px;background:var(--surface);border-radius:8px;padding:10px 12px}
-.confirmar-aprobacion p{margin:0}
-.form-cambios{display:grid;gap:6px}
-.form-cambios label{font-size:.85rem;font-weight:600}
-.form-cambios textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
-.estado-menu summary{cursor:pointer;font-size:.88rem;font-weight:600}
-.estado-menu ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:grid;gap:4px}
 .thermomix{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bien-soft)}
 .thermomix summary{cursor:pointer;font-weight:600;font-size:.9rem;color:var(--bien)}
 .thermomix .pasos{margin-top:8px}
@@ -1023,466 +1076,158 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .detalle{font-size:.86rem;color:var(--muted);margin-top:2px}
 .kcal{font-weight:600;white-space:nowrap}
 .kcal small{font-weight:400;color:var(--muted);font-size:.72rem}
+
+.historial{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+.historial summary{cursor:pointer;font-size:.88rem;font-weight:600}
+.historial ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:grid;gap:4px}
+.barra-acciones{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.btn-principal{font:600 .95rem var(--f-body);background:var(--accent);color:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:8px 18px;cursor:pointer}
+.btn-principal:disabled{opacity:.5;cursor:not-allowed}
+.secundario{font:600 .95rem var(--f-body);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 18px;cursor:pointer}
+.btn-principal:focus-visible,.secundario:focus-visible,.btn-mini:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.enlace-diario{color:var(--accent);font-weight:600}
+.form-despensa textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.aviso-pasados{margin:0}
+.acciones{display:grid;gap:4px;margin-top:8px;padding-top:6px;border-top:1px dashed var(--line);font-size:.76rem}
+.coc{display:flex;flex-wrap:nowrap;align-items:center;gap:4px}
+.coc label{flex:1;min-width:0}
+.coc label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-weight:600}
+.coc input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;margin:0}
+.coc input[type=number]{width:50px;font:inherit;font-family:var(--f-mono);padding:1px 4px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.coc.hecho label{color:var(--bien)}
+.coc .quien{font-weight:400;color:var(--muted)}
+.sobras-txt{color:var(--muted)}
+.btn-mini{font:600 .74rem var(--f-body);background:var(--surface);color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 9px;cursor:pointer;justify-self:start}
+.btn-mini.con-dato{background:var(--accent-soft);border-color:var(--accent)}
+.plato-menu.tachado{text-decoration:line-through;color:var(--muted);font-weight:400}
+.plato-real{margin-top:4px;font-size:.85rem;line-height:1.3;display:grid;gap:2px}
+.plato-real a{font-weight:700;color:var(--ink);text-decoration:none}
+.origen{display:inline-block;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:4px;padding:0 5px;margin-right:4px}
+.origen.diario{background:var(--frio-soft);color:var(--frio)}
+.origen.claude{background:var(--calor-soft);color:var(--calor)}
+.plato-real .motivo{font-size:.74rem;color:var(--muted)}
+.des-sub{display:block;font-size:.74rem}
+.dlg{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:20px;width:min(460px,calc(100vw - 32px));box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.dlg-ancho{width:min(680px,calc(100vw - 32px))}
+.dlg::backdrop{background:rgba(0,0,0,.4)}
+.dlg form,.dlg{display:grid;gap:10px}
+.dlg:not([open]){display:none}
+.dlg fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}
+.dlg .opcion{display:flex;gap:8px;align-items:center;font-weight:600;cursor:pointer}
+.dlg input[type=text],.dlg select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.dlg label{font-size:.9rem}
+.botones-dlg{display:flex;flex-wrap:wrap;gap:8px}
+.propuestas{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:50vh;overflow:auto}
+.propuestas li{border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.9rem}
+.propuestas .motivo{grid-column:2;color:var(--muted);font-size:.84rem}
+.btn-flotante{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:20;font:700 1rem var(--f-body);background:var(--accent);color:var(--surface);border:0;border-radius:999px;padding:14px 22px;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer}
+.btn-flotante:disabled{opacity:.6;cursor:wait}
+.btn-flotante:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.aviso-flotante{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:21;background:var(--ink);color:var(--surface);padding:8px 16px;border-radius:8px;font-size:.9rem;max-width:calc(100vw - 32px)}
+.destacada-cat{border-color:var(--accent);background:var(--accent-soft)}
+.tabla-diario{font-size:.88rem}
+.tabla-diario td,.tabla-diario th{padding:5px 8px}
+.tabla-diario .num{text-align:right}
+.actividad{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.9rem}
+.actividad li{display:grid;grid-template-columns:120px 1fr;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:4px}
+@media (max-width:520px){.actividad li{grid-template-columns:1fr}}
+.equiv{color:var(--muted);font-size:.9em}
+.ingredientes .equiv{display:block;font-size:.78em;line-height:1.2}
+.ingredientes thead .num{white-space:normal}
+.ingredientes thead .mono{display:block}
+.def-tabla td,.def-tabla th{padding:5px 8px}
+.def-tabla .num{text-align:right;white-space:nowrap}
 .pie{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;max-width:75ch}
 @media (max-width:520px){.cifras dd{font-size:1.05rem}.platos li{grid-template-columns:24px 1fr}.platos .kcal{grid-column:2}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 `;
 
-const SCRIPT = `
-(() => {
-  document.querySelectorAll('[role="tablist"]').forEach((lista) => {
-    const tabs = [...lista.querySelectorAll('[role="tab"]')];
-    const activar = (tab) => {
-      tabs.forEach((t) => {
-        const on = t === tab;
-        t.setAttribute("aria-selected", on);
-        t.tabIndex = on ? 0 : -1;
-        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
-      });
-      tab.focus();
-    };
-    tabs.forEach((t, i) => {
-      t.addEventListener("click", () => activar(t));
-      t.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight") activar(tabs[(i + 1) % tabs.length]);
-        if (e.key === "ArrowLeft") activar(tabs[(i - 1 + tabs.length) % tabs.length]);
-      });
-    });
-  });
+/** Una casilla del menú tal como la usa el script de la página. */
+export interface CeldaCliente {
+  id: string;
+  sem: string;
+  /** 0 = lunes … 6 = domingo. */
+  dia: number;
+  comida: TipoComida;
+  /** Recetas del plato principal (primero y segundo). */
+  platos: string[];
+  /** Quién come el plato principal. */
+  quien: string[];
+  rac: number;
+  /** Raciones a cocinar: las suyas más las de las comidas y tuppers que salen de esta (sobras). */
+  racCocinar: number;
+  personas: number;
+  /** Sale de otra comida: no se marca como cocinada aparte. */
+  sobras: boolean;
+  variantes: { quien: string; receta: string; rac: number }[];
+  tuppers: { quien: string; recetas: string[]; rac: number; sobras: boolean }[];
+  /** Desayunos fijos del día (receta, raciones y personas). */
+  desayunos?: { receta: string; rac: number; personas: number }[];
+}
 
-  // Páginas: una vista visible según el #ancla; #r-<id> abre la receta.
-  const vistas = [...document.querySelectorAll("[data-vista]")];
-  const enlaces = [...document.querySelectorAll("[data-pagina]")];
-  const irA = () => {
-    let destino = location.hash.slice(1) || "menu";
-    let receta = null;
-    if (destino.startsWith("r-")) { receta = destino; destino = "recetas"; }
-    if (!vistas.some((v) => v.id === destino)) destino = "menu";
-    vistas.forEach((v) => (v.hidden = v.id !== destino));
-    enlaces.forEach((a) => a.toggleAttribute("aria-current", a.dataset.pagina === destino));
-    const el = receta && document.getElementById(receta);
-    if (el) el.scrollIntoView({ block: "start" }); else window.scrollTo(0, 0);
-  };
-  addEventListener("hashchange", irA);
-  irA();
+const redondear2 = (n: number) => Math.round(n * 100) / 100;
 
-  const tip = document.createElement("div");
-  tip.className = "tip"; tip.hidden = true; document.body.append(tip);
-  const mostrar = (el, x, y) => { tip.textContent = el.dataset.tip; tip.hidden = false;
-    const w = tip.offsetWidth; tip.style.left = Math.min(Math.max(8, x - w / 2), innerWidth - w - 8) + "px"; tip.style.top = (y - 36) + "px"; };
-  document.querySelectorAll("[data-tip]").forEach((el) => {
-    el.addEventListener("pointermove", (e) => mostrar(el, e.clientX, e.clientY));
-    el.addEventListener("pointerleave", () => (tip.hidden = true));
-    el.addEventListener("focus", () => { const r = el.getBoundingClientRect(); mostrar(el, r.left + r.width / 2, r.top); });
-    el.addEventListener("blur", () => (tip.hidden = true));
-  });
+/** Lunes de la semana de una fecha (AAAA-MM-DD). */
+function lunesDe(fecha: Date): string {
+  const d = new Date(Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()));
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+  return d.toISOString().slice(0, 10);
+}
+const sumarDias = (iso: string, dias: number) => {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + dias);
+  return d.toISOString().slice(0, 10);
+};
 
-  const filtros = [...document.querySelectorAll("[data-filtro]")];
-  filtros.forEach((b) => b.addEventListener("click", () => {
-    filtros.forEach((x) => x.setAttribute("aria-pressed", x === b));
-    const f = b.dataset.filtro;
-    document.querySelectorAll(".receta").forEach((r) => {
-      r.hidden = f === "no-deseado" ? r.dataset.nd !== "1" : f !== "todas" && !r.dataset.categorias.split(" ").includes(f);
-    });
-  }));
-  document.querySelectorAll('a[href^="#r-"]').forEach((a) => a.addEventListener("click", () => {
-    const todas = filtros.find((b) => b.dataset.filtro === "todas");
-    if (todas) todas.click();
-  }));
-
-  const CLAVE = "agentemenu-compra-" + document.title;
-  const casillas = [...document.querySelectorAll(".pasillo input[type=checkbox]")];
-  const marcados = document.getElementById("compra-marcados");
-  const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE) || "[]"); } catch { return []; } };
-  const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(casillas.filter((c) => c.checked).map((c) => c.id))); } catch {} };
-  const contar = () => { if (marcados) marcados.textContent = casillas.filter((c) => c.checked).length; };
-  const previos = new Set(leer());
-  casillas.forEach((c) => { c.checked = previos.has(c.id); c.addEventListener("change", () => { guardar(); contar(); }); });
-  contar();
-  document.getElementById("desmarcar")?.addEventListener("click", () => { casillas.forEach((c) => (c.checked = false)); guardar(); contar(); });
-  const aviso = document.getElementById("copiado");
-  document.getElementById("copiar-lista")?.addEventListener("click", () => {
-    const texto = [...document.querySelectorAll(".pasillo")].map((p) => {
-      const lineas = [...p.querySelectorAll("li:not(.en-casa) input")].filter((c) => !c.checked).map((c) => "- " + c.dataset.texto);
-      return lineas.length ? p.querySelector("h3").firstChild.textContent.trim() + "\\n" + lineas.join("\\n") : "";
-    }).filter(Boolean).join("\\n\\n");
-    navigator.clipboard.writeText(texto).then(
-      () => { aviso.textContent = "Lista copiada"; },
-      () => { aviso.textContent = "No se ha podido copiar; selecciona la lista a mano."; },
-    );
-  });
-
-  // ---- Datos guardados: despensa y platos no deseados ----
-  const datos = JSON.parse(document.getElementById("datos-pagina").textContent);
-  const fmtNum = (n, d) => n.toLocaleString("es-ES", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
-  const fmtCant = (n, u) => {
-    if (u === "g" && n >= 1000) return fmtNum(n / 1000, 2) + " kg";
-    if (u === "ml" && n >= 1000) return fmtNum(n / 1000, 2) + " l";
-    if (u === "ud") return fmtNum(n, n % 1 ? 1 : 0) + " ud";
-    return fmtNum(n) + " " + u;
-  };
-  const redondear = (n, u) => {
-    if (n <= 0) return 0;
-    if (u === "g" || u === "ml") { const paso = n > 500 ? 50 : 10; return Math.ceil(n / paso) * paso; }
-    return Math.ceil(n);
-  };
-  const clave = (nombre, unidad) => (nombre + "|" + unidad).normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const hoy = () => new Date().toISOString().slice(0, 10);
-
-  const despensaBase = new Map(datos.despensa.map((p) => [p.clave, p]));
-  let despensaDb = new Map();
-  const ndBase = new Map(datos.noDeseados.map((n) => [n.receta + "__" + n.por, n]));
-  let ndDb = new Map();
-
-  const despensaActual = () => {
-    const todo = new Map(despensaBase);
-    despensaDb.forEach((v, k) => todo.set(k, v));
-    return todo;
-  };
-  const noDeseadosActuales = () => {
-    const todo = new Map(ndBase);
-    ndDb.forEach((v, k) => (v.quitado ? todo.delete(k) : todo.set(k, v)));
-    return [...todo.values()];
-  };
-
-  const renderCompra = () => {
-    const d = despensaActual();
-    document.querySelectorAll(".pasillo li[data-clave]").forEach((li) => {
-      const tengo = Number(d.get(li.dataset.clave)?.cantidad || 0);
-      const u = li.dataset.unidad;
-      const comprar = redondear(Number(li.dataset.necesita) - tengo, u);
-      li.classList.toggle("en-casa", comprar === 0);
-      li.querySelector(".cant").textContent = comprar === 0 ? "en casa" : fmtCant(comprar, u);
-      li.querySelector(".en-despensa").textContent = tengo ? " · en despensa " + fmtCant(tengo, u) : "";
-      li.querySelector("input").dataset.texto = li.dataset.nombre + ": " + fmtCant(comprar, u);
-    });
-  };
-
-  const inventario = document.getElementById("inventario");
-  const renderDespensa = () => {
-    const d = despensaActual();
-    document.querySelectorAll(".tabla-despensa tr[data-clave] input").forEach((input) => {
-      if (document.activeElement === input) return;
-      const c = d.get(input.closest("tr").dataset.clave);
-      input.value = c && c.cantidad ? c.cantidad : "";
-    });
-    if (!inventario) return;
-    const items = [...d.values()].filter((p) => Number(p.cantidad) > 0)
-      .sort((a, b) => (a.caducidad || "9999").localeCompare(b.caducidad || "9999") || a.nombre.localeCompare(b.nombre, "es"));
-    inventario.replaceChildren();
-    if (!items.length) {
-      const li = document.createElement("li"); li.className = "sub"; li.textContent = "Sin productos apuntados."; inventario.append(li); return;
-    }
-    items.forEach((p) => {
-      const li = document.createElement("li");
-      const nombre = document.createElement("span"); nombre.className = "producto"; nombre.textContent = p.nombre;
-      const cant = document.createElement("span"); cant.className = "mono"; cant.textContent = fmtCant(Number(p.cantidad), p.unidad);
-      li.append(nombre, cant);
-      if (p.caducidad) { const cad = document.createElement("span"); cad.className = "sub caduca"; cad.textContent = "caduca " + p.caducidad; li.append(cad); }
-      if (p.nota) { const nota = document.createElement("span"); nota.className = "sub nota-producto"; nota.textContent = p.nota; li.append(nota); }
-      if (db) {
-        const quitar = document.createElement("button"); quitar.type = "button"; quitar.className = "enlace"; quitar.textContent = "Quitar";
-        quitar.addEventListener("click", () => guardarProducto(p.nombre, p.unidad, 0));
-        li.append(quitar);
-      }
-      inventario.append(li);
-    });
-  };
-
-  const renderNoDeseados = () => {
-    const lista = noDeseadosActuales();
-    const porReceta = new Map();
-    lista.forEach((n) => porReceta.set(n.receta, [...(porReceta.get(n.receta) || []), n]));
-    document.querySelectorAll(".no-deseado[data-receta]").forEach((bloque) => {
-      const marcas = porReceta.get(bloque.dataset.receta) || [];
-      const ul = bloque.querySelector(".marcas");
-      ul.replaceChildren();
-      marcas.forEach((n) => {
-        const li = document.createElement("li");
-        const quien = document.createElement("strong"); quien.textContent = "No deseado · " + (n.por === "familia" ? "toda la familia" : n.por);
-        const motivo = document.createElement("span"); motivo.textContent = ": " + n.motivo;
-        li.append(quien, motivo);
-        if (db) {
-          const quitar = document.createElement("button"); quitar.type = "button"; quitar.className = "enlace"; quitar.textContent = "Quitar";
-          quitar.addEventListener("click", () => guardarNoDeseado({ ...n, quitado: true }));
-          li.append(" ", quitar);
-        }
-        ul.append(li);
-      });
-      bloque.closest(".receta").dataset.nd = marcas.length ? "1" : "0";
-    });
-    document.querySelectorAll('.semana a[href^="#r-"]').forEach((a) => {
-      const id = a.getAttribute("href").slice(3);
-      const marcas = porReceta.get(id) || [];
-      let badge = a.nextElementSibling && a.nextElementSibling.classList.contains("badge-nd") ? a.nextElementSibling : null;
-      if (!marcas.length) { if (badge) badge.remove(); return; }
-      if (!badge) { badge = document.createElement("span"); badge.className = "badge-nd"; a.after(badge); }
-      badge.textContent = "No deseado: " + marcas.map((n) => n.por === "familia" ? "familia" : n.por).join(", ");
-      badge.title = marcas.map((n) => n.por + ": " + n.motivo).join(" · ");
-    });
-  };
-
-  // ---- Raciones hechas y reservas ----
-  const reservasBase = new Map((datos.reservas || []).map((x) => [x.id, x]));
-  let reservasDb = new Map();
-  const reservasActuales = () => {
-    const todo = new Map(reservasBase);
-    reservasDb.forEach((v, k) => todo.set(k, v));
-    return [...todo.entries()].map(([id, v]) => ({ ...v, id })).filter((x) => Number(x.reserva) > 0);
-  };
-  const sumarDias = (iso, dias, meses) => {
-    const d = new Date(iso + "T12:00:00Z");
-    if (meses) d.setUTCMonth(d.getUTCMonth() + meses); else d.setUTCDate(d.getUTCDate() + dias);
-    return d.toISOString().slice(0, 10);
-  };
-  const caducaReserva = (fecha, donde) => donde === "congelador" ? sumarDias(fecha, 0, 3) : sumarDias(fecha, 3, 0);
-  const fechaCortaDia = (iso) => { try { return new Date(iso + "T12:00:00Z").toLocaleDateString("es-ES", { day: "numeric", month: "short" }); } catch (e) { return iso; } };
-  const fmtRac = (n) => fmtNum(Number(n), Number(n) % 1 ? 1 : 0) + " rac.";
-  const nombreReserva = (x) => (x.receta && datos.recetas[x.receta]) || x.descripcion || x.receta || "Reserva";
-
-  const renderReservas = () => {
-    const lista = reservasActuales().sort((a, b) => String(a.caduca || "9999").localeCompare(String(b.caduca || "9999")));
-    const porReceta = new Map();
-    lista.forEach((x) => { if (x.receta) porReceta.set(x.receta, [...(porReceta.get(x.receta) || []), x]); });
-    document.querySelectorAll(".hecho[data-receta]").forEach((bloque) => {
-      const suyas = porReceta.get(bloque.dataset.receta) || [];
-      const p = bloque.querySelector(".reserva-receta");
-      const total = suyas.reduce((s, x) => s + Number(x.reserva), 0);
-      p.hidden = !total;
-      p.textContent = total ? "En reserva: " + fmtRac(total) + " · " + suyas.map((x) => (x.donde || "nevera") + (x.caduca ? " hasta el " + fechaCortaDia(x.caduca) : "")).join(" · ") : "";
-      const tarjeta = bloque.closest(".receta");
-      const cats = tarjeta.dataset.categorias.split(" ").filter((c) => c && c !== "reserva");
-      if (total) cats.push("reserva");
-      tarjeta.dataset.categorias = cats.join(" ");
-    });
-    const ul = document.getElementById("reservas");
-    if (!ul) return;
-    ul.replaceChildren();
-    if (!lista.length) {
-      const li = document.createElement("li"); li.className = "sub"; li.textContent = "Sin reservas. Márcalas desde cada receta con «Marcar cantidad hecha»."; ul.append(li); return;
-    }
-    const hoyIso = hoy();
-    lista.forEach((x) => {
-      const li = document.createElement("li");
-      const nombre = document.createElement(x.receta ? "a" : "span"); nombre.className = "producto"; nombre.textContent = nombreReserva(x);
-      if (x.receta) nombre.href = "#r-" + x.receta;
-      const cant = document.createElement("span"); cant.className = "mono"; cant.textContent = fmtRac(x.reserva);
-      li.append(nombre, cant);
-      const det = document.createElement("span"); det.className = "sub nota-producto";
-      det.textContent = (x.donde === "congelador" ? "Congelador" : "Nevera") + (x.fecha ? " · hecho el " + fechaCortaDia(x.fecha) : "") + (x.hechas ? " (" + fmtRac(x.hechas) + " en total)" : "");
-      if (x.caduca) {
-        const vence = document.createElement("span");
-        vence.className = x.caduca <= sumarDias(hoyIso, 1, 0) ? "vence" : "";
-        vence.textContent = " · consumir antes del " + fechaCortaDia(x.caduca);
-        det.append(vence);
-      }
-      li.append(det);
-      if (db) {
-        const usar = document.createElement("button"); usar.type = "button"; usar.className = "enlace"; usar.textContent = "Usar 1 ración";
-        usar.addEventListener("click", () => guardarReserva({ ...x, reserva: Math.max(0, Math.round((Number(x.reserva) - 1) * 10) / 10) }));
-        const agotar = document.createElement("button"); agotar.type = "button"; agotar.className = "enlace"; agotar.textContent = "Ya no queda";
-        agotar.addEventListener("click", () => guardarReserva({ ...x, reserva: 0 }));
-        li.append(usar, agotar);
-      }
-      ul.append(li);
-    });
-  };
-  const guardarReserva = async (x) => {
-    const { id, ...doc } = x;
-    Object.keys(doc).forEach((k) => doc[k] === undefined && delete doc[k]);
-    doc.actualizado = new Date().toISOString();
-    try { await db.doc("hechas/" + id).set(doc); }
-    catch (e) { if (avisoDb) avisoDb.textContent = "No se ha podido guardar la reserva (" + (e && e.code || "error") + ")."; }
-  };
-  document.querySelectorAll('.form-hecho input[name="fecha"]').forEach((i) => { i.value = hoy(); });
-
-  const renderTodo = () => { renderCompra(); renderDespensa(); renderNoDeseados(); renderReservas(); };
-  let db = null;
-  const avisoDb = document.getElementById("despensa-aviso");
-
-  const guardarProducto = async (nombre, unidad, cantidadNueva, caducidad) => {
-    const k = clave(nombre, unidad);
-    const previo = despensaActual().get(k) || {};
-    const doc = { nombre, unidad, cantidad: Number(cantidadNueva) || 0, actualizado: new Date().toISOString() };
-    const cad = caducidad !== undefined ? caducidad : previo.caducidad;
-    if (cad) doc.caducidad = cad;
-    try { await db.doc("despensa/" + k).set(doc); }
-    catch (e) { if (avisoDb) avisoDb.textContent = "No se ha podido guardar (" + (e && e.code || "error") + "). Inténtalo de nuevo."; }
-  };
-  const guardarNoDeseado = async (n) => {
-    const doc = { receta: n.receta, por: n.por, motivo: n.motivo, fecha: n.fecha || hoy() };
-    if (n.quitado) doc.quitado = true;
-    await db.doc("no-deseados/" + n.receta + "__" + n.por).set(doc);
-  };
-
-  const soloLectura = (motivo) => {
-    document.querySelectorAll("[data-solo-editable]").forEach((el) => (el.hidden = true));
-    document.querySelectorAll("[data-solo-editable-input]").forEach((el) => (el.disabled = true));
-    if (avisoDb) avisoDb.textContent = motivo;
-  };
-
-  renderTodo();
-  (async () => {
-    db = window.claude && window.claude.use ? await window.claude.use("db") : null;
-    if (!db) {
-      soloLectura("El inventario y las marcas de «no deseado» solo se pueden editar abriendo esta página en claude.ai. Se muestra lo último sincronizado.");
-      return;
-    }
-    if (avisoDb) avisoDb.textContent = "Los cambios se guardan al momento.";
-    db.collection("despensa").onSnapshot((snap) => {
-      despensaDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
-      renderTodo();
-    }, () => soloLectura("No se puede acceder al inventario guardado ahora mismo."));
-    db.collection("no-deseados").onSnapshot((snap) => {
-      ndDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
-      renderTodo();
-    }, () => {});
-    db.collection("hechas").onSnapshot((snap) => {
-      reservasDb = new Map(snap.docs.map((d) => [d.id, d.data()]));
-      renderTodo();
-    }, () => {});
-    document.querySelectorAll(".form-hecho").forEach((formH) => {
-      formH.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const f = new FormData(formH);
-        const estado = formH.querySelector(".estado-form");
-        const receta = formH.closest(".hecho").dataset.receta;
-        const hechas = Number(f.get("hechas")) || 0;
-        const comer = Number(f.get("comer")) || 0;
-        const reserva = Math.max(0, Math.round((hechas - comer) * 10) / 10);
-        const fecha = String(f.get("fecha") || hoy());
-        const donde = String(f.get("donde"));
-        const doc = { id: receta + "__" + Date.now(), receta, hechas, comer, reserva, donde, fecha, caduca: caducaReserva(fecha, donde), semana: datos.semana };
-        try {
-          await guardarReserva(doc);
-          estado.textContent = reserva > 0
-            ? "Guardado: " + fmtRac(reserva) + " en reserva (" + donde + ")."
-            : "Guardado: se come todo esta semana, no queda reserva.";
-          formH.closest("details").open = false;
-        } catch (err) {
-          estado.textContent = "No se ha podido guardar (" + (err && err.code || "error") + ").";
-        }
-      });
-    });
-
-    document.querySelectorAll(".tabla-despensa tr[data-clave] input").forEach((input) => {
-      input.addEventListener("change", () => {
-        const tr = input.closest("tr");
-        guardarProducto(tr.dataset.nombre, tr.dataset.unidad, input.value);
-      });
-    });
-    const form = document.getElementById("form-despensa");
-    if (form) form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const f = new FormData(form);
-      const estado = form.querySelector(".estado-form");
-      await guardarProducto(String(f.get("nombre")).trim(), String(f.get("unidad")), f.get("cantidad"), String(f.get("caducidad") || "") || undefined);
-      estado.textContent = "Guardado";
-      form.reset();
-    });
-    document.querySelectorAll(".form-nd").forEach((formNd) => {
-      formNd.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const f = new FormData(formNd);
-        const estado = formNd.querySelector(".estado-form");
-        const receta = formNd.closest(".no-deseado").dataset.receta;
-        try {
-          await guardarNoDeseado({ receta, por: String(f.get("por")), motivo: String(f.get("motivo")).trim() });
-          estado.textContent = "Guardado. No se volverá a proponer a " + (f.get("por") === "familia" ? "la familia" : f.get("por")) + ".";
-          formNd.reset();
-          formNd.closest("details").open = false;
-        } catch (err) {
-          estado.textContent = "No se ha podido guardar (" + (err && err.code || "error") + ").";
-        }
-      });
-    });
-
-    // ---- Aprobación del menú (solo la dueña de la página) ----
-    const bloquesEstado = [...document.querySelectorAll(".estado-menu[data-semana]")];
-    const textoOriginal = new Map(bloquesEstado.map((b) => [b, b.querySelector(".estado-texto").innerHTML]));
-    let aprobaciones = new Map();
-    const usuario = window.claude && window.claude.use ? await window.claude.use("user") : null;
-    const esDuena = usuario ? await usuario.isOwner() : false;
-    const fechaCorta = (iso) => { try { return new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "long" }); } catch (e) { return iso; } };
-
-    const renderAprobaciones = () => bloquesEstado.forEach((b) => {
-      const doc = aprobaciones.get("semana-" + b.dataset.semana);
-      const vigente = doc && doc.huella === b.dataset.huella;
-      const texto = b.querySelector(".estado-texto");
-      const web = b.querySelector(".estado-web");
-      const apr = b.querySelector(".aprobacion");
-      const aprobado = vigente && doc.estado === "validado";
-      texto.innerHTML = textoOriginal.get(b);
-      web.hidden = true;
-      if (b.dataset.validado !== "1") b.classList.toggle("validado", Boolean(aprobado));
-      if (b.dataset.validado !== "1") b.classList.toggle("borrador", !aprobado);
-      if (aprobado) {
-        texto.replaceChildren();
-        const fuerte = document.createElement("strong"); fuerte.textContent = "Menú aprobado";
-        texto.append(fuerte, " por " + doc.por + " el " + fechaCorta(doc.fecha) + ". Ya está publicado; los PDF lo reflejarán en la próxima actualización.");
-      } else if (vigente && doc.estado === "cambios") {
-        web.hidden = false;
-        web.textContent = "Cambios pedidos por " + doc.por + " el " + fechaCorta(doc.fecha) + ": " + doc.comentario;
-      } else if (doc && !vigente && doc.estado !== "retirado") {
-        web.hidden = false;
-        web.textContent = "Hubo una " + (doc.estado === "validado" ? "aprobación" : "petición de cambios") + " de una versión anterior de este menú; el menú ha cambiado desde entonces.";
-      }
-      if (apr) {
-        apr.querySelector(".btn-aprobar").hidden = Boolean(aprobado);
-        apr.querySelector(".btn-cambios").hidden = Boolean(aprobado);
-        apr.querySelector(".btn-retirar").hidden = !aprobado;
-      }
-    });
-
-    if (esDuena) {
-      db.collection("aprobaciones").onSnapshot((snap) => {
-        aprobaciones = new Map(snap.docs.map((d) => [d.id, d.data()]));
-        renderAprobaciones();
-      }, () => {});
-      bloquesEstado.forEach((b) => {
-        const apr = b.querySelector(".aprobacion");
-        if (!apr) return;
-        apr.hidden = false;
-        const estado = apr.querySelector(".estado-form");
-        const confirmar = apr.querySelector(".confirmar-aprobacion");
-        const form = apr.querySelector(".form-cambios");
-        const guardar = async (datos, mensaje) => {
-          try {
-            await db.doc("aprobaciones/semana-" + b.dataset.semana).set({
-              ...datos, por: apr.dataset.quien, fecha: new Date().toISOString(), huella: b.dataset.huella,
-            });
-            estado.textContent = mensaje;
-          } catch (e) {
-            estado.textContent = "No se ha podido guardar (" + (e && e.code || "error") + "). Inténtalo de nuevo.";
-          }
-        };
-        apr.querySelector(".btn-aprobar").addEventListener("click", () => { confirmar.hidden = false; form.hidden = true; });
-        apr.querySelector(".btn-confirmar").addEventListener("click", async () => {
-          confirmar.hidden = true;
-          await guardar({ estado: "validado" }, "Menú aprobado.");
+/**
+ * Casillas del menú para el script: platos, comensales, raciones y qué es sobra de qué.
+ * Las raciones de una comida que sale de otra (sobrasDe) se suman a las de esa otra.
+ */
+export function celdasCliente(semana: string, dias: DiaDelMenu[]): CeldaCliente[] {
+  const celdas: CeldaCliente[] = [];
+  const sobras: { destino: string; rac: number; personas: number }[] = [];
+  for (const d of dias) {
+    const dia = DIAS_SEMANA.indexOf(d.dia);
+    for (const c of d.comidas) {
+      if (!c.platos.length) continue;
+      const id = idCelda(semana, d.dia, c.tipo);
+      if (c.tipo === "desayuno") {
+        celdas.push({
+          id, sem: semana, dia, comida: c.tipo, platos: [], quien: c.platos.flatMap((p) => p.comensales.map((x) => x.id)),
+          rac: 1, racCocinar: 1, personas: 0, sobras: false, variantes: [], tuppers: [],
+          desayunos: c.platos.map((p) => ({ receta: p.receta.id, rac: p.raciones, personas: p.comensales.length })),
         });
-        apr.querySelectorAll(".btn-cancelar").forEach((x) => x.addEventListener("click", () => { confirmar.hidden = true; form.hidden = true; }));
-        apr.querySelector(".btn-cambios").addEventListener("click", () => { form.hidden = false; confirmar.hidden = true; form.querySelector("textarea").focus(); });
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const comentario = String(new FormData(form).get("comentario") || "").trim();
-          if (!comentario) return;
-          await guardar({ estado: "cambios", comentario }, "Petición de cambios enviada. El menú sigue en borrador.");
-          form.reset(); form.hidden = true;
-        });
-        apr.querySelector(".btn-retirar").addEventListener("click", () => guardar({ estado: "retirado" }, "Aprobación retirada: el menú vuelve a borrador."));
+        continue;
+      }
+      const [principal, ...variantes] = c.platos;
+      celdas.push({
+        id, sem: semana, dia, comida: c.tipo,
+        platos: [principal.receta.id, ...(principal.segundo ? [principal.segundo.receta.id] : [])],
+        quien: principal.comensales.map((x) => x.id),
+        rac: principal.raciones, racCocinar: principal.raciones, personas: principal.comensales.length,
+        sobras: Boolean(principal.sobrasDe),
+        variantes: variantes.map((v) => ({ quien: v.comensales[0].id, receta: v.receta.id, rac: v.raciones })),
+        tuppers: c.tuppers.map((t) => ({
+          quien: t.para, recetas: [t.receta.id, ...(t.segundo ? [t.segundo.receta.id] : [])], rac: t.raciones, sobras: Boolean(t.sobrasDe),
+        })),
       });
-    } else {
-      // Los demás ven el estado guardado, sin botones.
-      db.collection("aprobaciones").onSnapshot((snap) => {
-        aprobaciones = new Map(snap.docs.map((d) => [d.id, d.data()]));
-        renderAprobaciones();
-      }, () => {});
+      if (principal.sobrasDe) sobras.push({ destino: idCelda(semana, principal.sobrasDe.dia, principal.sobrasDe.comida), rac: principal.raciones, personas: principal.comensales.length });
+      for (const t of c.tuppers) {
+        if (t.sobrasDe) sobras.push({ destino: idCelda(semana, t.sobrasDe.dia, t.sobrasDe.comida), rac: t.raciones, personas: 1 });
+      }
     }
-  })();
-})();
-`;
+  }
+  for (const s of sobras) {
+    const destino = celdas.find((c) => c.id === s.destino);
+    if (!destino) continue;
+    destino.racCocinar = redondear2(destino.racCocinar + s.rac);
+    destino.personas += s.personas;
+  }
+  return celdas;
+}
+
+/** Script de la página (src/web-cliente.js), que se incrusta tal cual. */
+const SCRIPT_CLIENTE = readFileSync(new URL("./web-cliente.js", import.meta.url), "utf8");
 
 export interface DatosWeb {
   familia: Familia;
@@ -1538,7 +1283,7 @@ function seccionCoste(compra: Record<Seccion, LineaCompra[]>, tabla: TablaPrecio
         <p class="sub">${reparto}${opt.sinPrecio ? `. Faltan ${opt.sinPrecio} productos sin precio en ninguna tienda.` : ""}</p>
       </div>
     </div>
-    <p class="sub">Precios reales de los tickets (o apuntados a mano); se usa el más reciente de cada producto y tienda. Se cuentan envases enteros, salvo lo que se vende a granel. No descuenta lo apuntado hoy en la despensa.</p>
+    <p class="sub">Precios reales de los tickets (o apuntados a mano); se usa el más reciente de cada producto y tienda. Se cuentan envases enteros, salvo lo que se vende a granel. Se calcula con la lista completa de la semana al generar la página; no descuenta lo apuntado después en la despensa.</p>
     <details>
       <summary>Ver el coste por producto</summary>
       <div class="scroll"><table class="tabla-coste">
@@ -1555,10 +1300,39 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
   const dias = componerMenu(familia, menu, recetas);
   const diasSiguiente = menuSiguiente ? componerMenu(familia, menuSiguiente, recetas) : undefined;
   const semanas = [{ semana: menu.semana, dias }, ...(menuSiguiente && diasSiguiente ? [{ semana: menuSiguiente.semana, dias: diasSiguiente }] : [])];
+  const hoy = new Date();
+  const inicio = menu.inicio ?? lunesDe(hoy);
   const datosCliente = {
     miembros: familia.miembros.map((m) => m.id),
     recetas: Object.fromEntries(recetas.map((r) => [r.id, r.nombre])),
-    despensa: (despensa?.productos ?? []).map((p) => ({ clave: claveProducto(p.nombre, p.unidad), ...p })),
+    // Ingredientes por ración en gramos: [clave, nombre, gramos, sección, por persona].
+    rec: Object.fromEntries(recetas.map((r) => [r.id, {
+      n: r.nombre, cat: [r.tipo], fija: Boolean(r.racionFija),
+      ing: r.ingredientes.map((i) => {
+        const c = normalizarCantidad(i.nombre, i.cantidad, i.unidad);
+        return [claveProducto(i.nombre, c.unidad), i.nombre, c.cantidad, i.seccion, i.porPersona ? 1 : 0, c.unidad];
+      }),
+    }])),
+    menu: Object.fromEntries(semanas.map(({ semana, dias: d }, i) => [semana, {
+      inicio: i === 0 ? inicio : (menuSiguiente?.inicio ?? sumarDias(inicio, 7)),
+      celdas: celdasCliente(semana, d),
+    }])),
+    semanaActual: menu.semana,
+    ordenPasillos: [...SECCIONES, "Otros"],
+    factores: Object.fromEntries(familia.miembros.map((m) => [m.id, calcularNecesidades(m, familia.objetivos[m.id]).factorRacion])),
+    gud: Object.fromEntries(recetas.flatMap((r) => r.ingredientes).map((i) => [claveProducto(i.nombre, "g"), gramosPorUnidad(i.nombre)]).filter(([, g]) => g)),
+    den: Object.fromEntries(Object.keys(EQUIVALENCIAS.densidad).map((n) => [claveProducto(n, "g"), densidad(n)])),
+    normas: [
+      ...(familia.preferencias ?? []),
+      ...(familia.restricciones ?? []).map((r) => r.motivo),
+      ...(familia.supervision ?? []).map((s) => s.motivo),
+      "Legumbres 2-4 veces por semana", "Pescado 3-4 veces", "Verdura en comida y cena", "Fruta a diario",
+      "Carne roja, 1-2 veces como máximo", "Ultraprocesados, ocasionales",
+    ],
+    despensa: (despensa?.productos ?? []).map((p) => {
+      const c = normalizarCantidad(p.nombre, p.cantidad, p.unidad);
+      return { ...p, ...c, clave: claveProducto(p.nombre, c.unidad) };
+    }),
     noDeseados: familia.noDeseados ?? [],
     semana: menu.semana,
     reservas: (despensa?.sobras ?? []).map((x, i) => ({
@@ -1570,13 +1344,14 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
   const comidas = dias.flatMap((d) => d.comidas);
   const tuppersSemana = comidas.reduce((s, c) => s + c.tuppers.length, 0);
   const recetasUsadas = new Set(comidas.flatMap((c) => [...c.platos, ...c.tuppers].map((p) => p.receta.id))).size;
-  const productos = SECCIONES.reduce((s, x) => s + compra[x].length, 0);
   const paginas = [
     ["menu", "Menú"],
+    ["diario", "Diario"],
     ["recetas", "Recetas"],
     ["compra", "Compra"],
     ["despensa", "Despensa"],
     ["tuppers", "Tuppers"],
+    ["definiciones", "Definiciones"],
     ["configuracion", "Configuración"],
   ];
 
@@ -1600,24 +1375,29 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq">Semana ${esc(menu.semana)} · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento.</p>
+      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Marca «Cocinado» al hacer un plato: sus ingredientes se restan de la despensa. Con «Diario» apuntas lo que se comió de verdad si no fue lo previsto. Los días que ya han pasado no se muestran.</p>
+      <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
       <dl class="resumen">
-        <div><dt>Comidas planificadas</dt><dd>${comidas.length}</dd></div>
+        <div><dt>Platos cocinados</dt><dd id="resumen-cocinados">0</dd></div>
         <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>
         <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
-        <div><dt>Productos a comprar</dt><dd>${productos}</dd></div>
+        <div><dt>Productos a comprar</dt><dd id="resumen-compra">—</dd></div>
       </dl>
     </header>
     ${
       menuSiguiente && diasSiguiente
         ? `<div class="pestanas" role="tablist" aria-label="Semana">
             <button role="tab" id="tab-sem-actual" aria-controls="sem-actual" aria-selected="true" tabindex="0">Esta semana · ${esc(menu.semana)}</button>
-            <button role="tab" id="tab-sem-siguiente" aria-controls="sem-siguiente" aria-selected="false" tabindex="-1">Semana siguiente · ${esc(menuSiguiente.semana)} (propuesta)</button>
+            <button role="tab" id="tab-sem-siguiente" aria-controls="sem-siguiente" aria-selected="false" tabindex="-1">Semana siguiente · ${esc(menuSiguiente.semana)}</button>
           </div>
-          <div role="tabpanel" id="sem-actual" aria-labelledby="tab-sem-actual" class="panel-semana">${estadoMenu(familia, menu)}${seccionMenu(familia, dias, menu)}</div>
-          <div role="tabpanel" id="sem-siguiente" aria-labelledby="tab-sem-siguiente" class="panel-semana" hidden>${estadoMenu(familia, menuSiguiente)}${seccionMenu(familia, diasSiguiente, menuSiguiente)}</div>`
-        : `${estadoMenu(familia, menu)}${seccionMenu(familia, dias, menu)}`
+          <div role="tabpanel" id="sem-actual" aria-labelledby="tab-sem-actual" class="panel-semana">${historialMenu(menu)}${seccionMenu(familia, dias, menu)}</div>
+          <div role="tabpanel" id="sem-siguiente" aria-labelledby="tab-sem-siguiente" class="panel-semana" hidden>${historialMenu(menuSiguiente)}${seccionMenu(familia, diasSiguiente, menuSiguiente)}</div>`
+        : `${historialMenu(menu)}${seccionMenu(familia, dias, menu)}`
     }
+  </section>
+
+  <section class="vista" id="diario" data-vista aria-labelledby="h-diario" hidden>
+    ${seccionDiario()}
   </section>
 
   <section class="vista" id="recetas" data-vista aria-labelledby="h-recetas" hidden>
@@ -1627,21 +1407,25 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 
   <section class="vista" id="compra" data-vista aria-labelledby="h-compra" hidden>
     <header class="cab"><h1 id="h-compra">Lista de la compra</h1>
-    <p class="sub">Suma de los ingredientes de todo el menú y los tuppers, redondeada hacia arriba${despensa?.productos.length ? " y descontando lo que hay en la despensa" : ""}. Marca lo que ya llevas en el carro.</p></header>
-    ${seccionCompra(compra)}
+    <p class="sub">Ingredientes de lo que queda de semana (desde hoy, sin contar lo ya cocinado), en gramos, redondeados hacia arriba y descontando lo que hay en la despensa; lo que ya está en casa no aparece. Entre paréntesis, cuántas unidades o ml son aproximadamente. Marca lo que llevas en el carro y pulsa «Confirmar compra» (abajo a la derecha): se suma a la despensa.</p></header>
+    ${seccionCompra()}
     ${precios ? seccionCoste(compra, precios) : ""}
   </section>
 
   <section class="vista" id="despensa" data-vista aria-labelledby="h-despensa" hidden>
     <header class="cab"><h1 id="h-despensa">Despensa</h1>
     <p class="sub">Inventario de lo que hay en casa. Se guarda en esta página y lo ve quien tenga acceso a ella.</p></header>
-    ${seccionDespensa(compra, recetas)}
+    ${seccionDespensa(recetas)}
   </section>
 
   <section class="vista" id="tuppers" data-vista aria-labelledby="h-tuppers" hidden>
     <header class="cab"><h1 id="h-tuppers">Tuppers de oficina</h1>
     <p class="sub">Rotación de dos semanas. La semana ${esc(menu.semana)} es la que está en el menú. Los tuppers de CCT salen del batch del domingo o de una ración extra de la cena anterior, y ese mismo plato sirve de comida a RFC y AFC.</p></header>
     ${seccionTuppers(propuesta, familia)}
+  </section>
+
+  <section class="vista" id="definiciones" data-vista aria-labelledby="h-def" hidden>
+    ${seccionDefiniciones()}
   </section>
 
   <section class="vista" id="configuracion" data-vista aria-labelledby="h-config" hidden>
@@ -1652,8 +1436,9 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 
   <p class="pie">Cálculos orientativos (Mifflin-St Jeor en adultos, Schofield en menores, deporte por MET). No sustituyen el consejo de un profesional sanitario. Los objetivos de peso solo se aplican cuando se acuerdan.</p>
 </main>
+${DIALOGOS}
 <script type="application/json" id="datos-pagina">${JSON.stringify(datosCliente).replace(/</g, "\\u003c")}</script>
-<script>${SCRIPT}</script>
+<script>${SCRIPT_CLIENTE}</script>
 `;
 }
 

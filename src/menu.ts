@@ -1,5 +1,6 @@
 import { planificarSemana, type TipoComida } from "./planificacion.js";
 import type { Despensa, Dia, Familia } from "./tipos.js";
+import { aGramos, equivalencia, gramosPorUnidad } from "./unidades.js";
 
 export const SECCIONES = [
   "Frutería",
@@ -50,6 +51,11 @@ export interface PlatoMenu {
   prepara?: string;
   /** Miembros que comen otra receta en esa comida (p. ej. RFA cuando hay pescado). */
   variantes?: Record<string, string>;
+  /**
+   * Se cocina junto con otra comida (ración extra de una cena, batch...): son sobras de
+   * esa comida. En la web no se marca como cocinado aparte; sus raciones se suman a las de esa comida.
+   */
+  sobrasDe?: { dia: Dia; comida: TipoComida };
 }
 
 export interface CambioMenu {
@@ -60,9 +66,8 @@ export interface CambioMenu {
 
 export interface MenuSemana {
   semana: string;
-  /** Un menú nuevo o modificado es borrador hasta que lo valida quien tiene permiso. */
-  estado?: "borrador" | "validado";
-  validacion?: { por: string; fecha: string };
+  /** Lunes de la semana (AAAA-MM-DD): la web oculta los días que ya han pasado. */
+  inicio?: string;
   cambios?: CambioMenu[];
   batch?: { dia: Dia; tareas: string[] }[];
   dias: Record<Dia, Partial<Record<TipoComida, PlatoMenu>>>;
@@ -75,6 +80,8 @@ export interface Racion {
   raciones: number;
   prepara?: string;
   nota?: string;
+  /** Sale de otra comida (ración extra, batch): no se cocina aparte. */
+  sobrasDe?: { dia: Dia; comida: TipoComida };
   /** Segundo plato, para los mismos comensales. */
   segundo?: { receta: Receta; raciones: number };
 }
@@ -216,6 +223,7 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
           comensales: principal,
           raciones: raciones(receta(plato.receta), principal),
           prepara: plato.prepara,
+          sobrasDe: plato.sobrasDe,
           segundo: segundo(plato, principal),
         });
         for (const [id, variante] of Object.entries(variantes)) {
@@ -232,6 +240,7 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
           comensales: [t],
           raciones: raciones(receta(tupper.receta), [t]),
           prepara: tupper.prepara,
+          sobrasDe: tupper.sobrasDe,
           segundo: segundo(tupper, [t]),
           para: t.id,
           tipoTupper: t.tipo,
@@ -244,16 +253,27 @@ export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta
 
 export interface LineaCompra {
   nombre: string;
+  /** Siempre «g» salvo productos sin equivalencia en gramos (data/equivalencias.json). */
   unidad: string;
   cantidad: number;
   enDespensa: number;
   comprar: number;
   recetas: string[];
+  /** Equivalencia aproximada de lo que hay que comprar (p. ej. «22 ud»). */
+  equivalencia?: string;
 }
 
-/** Redondea hacia arriba a una cantidad razonable para comprar. */
-function redondearCompra(cantidad: number, unidad: string): number {
-  if (cantidad <= 0) return 0;
+/** Cantidad en gramos si se puede convertir; si no, la deja como está. */
+export function normalizarCantidad(nombre: string, cantidad: number, unidad: string): { cantidad: number; unidad: string } {
+  const g = aGramos(nombre, cantidad, unidad);
+  return g === undefined ? { cantidad, unidad } : { cantidad: g, unidad: "g" };
+}
+
+/** Redondea hacia arriba a una cantidad razonable para comprar (piezas enteras si se venden por unidades). */
+export function redondearCompra(cantidad: number, unidad: string, nombre = ""): number {
+  if (cantidad <= 0.0001) return 0;
+  const porPieza = unidad === "g" ? gramosPorUnidad(nombre) : undefined;
+  if (porPieza) return Math.ceil(cantidad / porPieza - 1e-9) * porPieza;
   if (unidad === "g" || unidad === "ml") {
     const paso = cantidad > 500 ? 50 : 10;
     return Math.ceil(cantidad / paso) * paso;
@@ -261,7 +281,6 @@ function redondearCompra(cantidad: number, unidad: string): number {
   return Math.ceil(cantidad);
 }
 
-/** Suma los ingredientes de todas las raciones de la semana y descuenta la despensa. */
 /** Hasta cuándo aguanta una reserva: nevera 3 días, congelador 3 meses. */
 export function caducidadReserva(fecha: string, ubicacion?: "nevera" | "congelador"): string {
   const d = new Date(`${fecha}T12:00:00Z`);
@@ -279,6 +298,7 @@ export function reservasPorReceta(despensa?: Despensa): Map<string, number> {
   return reservas;
 }
 
+/** Suma los ingredientes de todas las raciones de la semana y descuenta la despensa. */
 export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Seccion, LineaCompra[]> {
   const acumulado = new Map<string, LineaCompra & { seccion: Seccion }>();
   const todas = dias
@@ -295,12 +315,13 @@ export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Sec
     const raciones = pedidas - deReserva;
     if (raciones <= 0) continue;
     for (const ing of receta.ingredientes) {
-      const clave = `${ing.nombre.toLowerCase()}|${ing.unidad}`;
+      const cant = normalizarCantidad(ing.nombre, ing.cantidad, ing.unidad);
+      const clave = `${ing.nombre.toLowerCase()}|${cant.unidad}`;
       const linea = acumulado.get(clave) ?? {
-        nombre: ing.nombre, unidad: ing.unidad, seccion: ing.seccion,
+        nombre: ing.nombre, unidad: cant.unidad, seccion: ing.seccion,
         cantidad: 0, enDespensa: 0, comprar: 0, recetas: [],
       };
-      linea.cantidad += ing.cantidad * (ing.porPersona ? (personas * raciones) / pedidas : raciones);
+      linea.cantidad += cant.cantidad * (ing.porPersona ? (personas * raciones) / pedidas : raciones);
       if (!linea.recetas.includes(receta.nombre)) linea.recetas.push(receta.nombre);
       acumulado.set(clave, linea);
     }
@@ -308,30 +329,22 @@ export function listaCompra(dias: DiaDelMenu[], despensa?: Despensa): Record<Sec
 
   const lista = Object.fromEntries(SECCIONES.map((s) => [s, [] as LineaCompra[]])) as Record<Seccion, LineaCompra[]>;
   for (const { seccion, ...linea } of acumulado.values()) {
-    const enCasa = despensa?.productos.find(
-      (p) => p.nombre.toLowerCase() === linea.nombre.toLowerCase() && p.unidad === linea.unidad,
-    );
-    linea.enDespensa = enCasa?.cantidad ?? 0;
-    linea.comprar = redondearCompra(linea.cantidad - linea.enDespensa, linea.unidad);
+    // Lo que hay en casa, en la misma unidad (los gramos suman aunque se apuntaran en ud o ml).
+    linea.enDespensa = redondear2((despensa?.productos ?? [])
+      .filter((p) => p.nombre.toLowerCase() === linea.nombre.toLowerCase())
+      .map((p) => normalizarCantidad(p.nombre, p.cantidad, p.unidad))
+      .filter((p) => p.unidad === linea.unidad)
+      .reduce((s, p) => s + p.cantidad, 0));
+    linea.comprar = redondearCompra(linea.cantidad - linea.enDespensa, linea.unidad, linea.nombre);
     linea.cantidad = redondear2(linea.cantidad);
+    const eq = linea.unidad === "g" ? equivalencia(linea.nombre, linea.comprar) : "";
+    if (eq) linea.equivalencia = eq;
     lista[seccion].push(linea);
   }
   for (const s of SECCIONES) lista[s].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
   return lista;
 }
 
-
-/** Quién puede validar menús (por defecto, nadie: hay que configurarlo). */
-export const validadoresMenu = (familia: Familia) => familia.permisos?.validarMenu ?? [];
-
-/** Marca el menú como validado. Solo lo permite a quien tenga permiso. */
-export function validarPublicacion(familia: Familia, menu: MenuSemana, por: string, fecha: string): MenuSemana {
-  const validadores = validadoresMenu(familia);
-  if (!validadores.includes(por)) {
-    throw new Error(`Solo ${validadores.join(", ") || "(nadie configurado)"} puede validar y publicar el menú; ${por} no.`);
-  }
-  return { ...menu, estado: "validado", validacion: { por, fecha } };
-}
 
 /**
  * Menú tal como se enseña (web y PDF): quita los desayunos fijos de quien no quiere

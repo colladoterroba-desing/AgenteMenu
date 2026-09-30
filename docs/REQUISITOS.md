@@ -10,7 +10,7 @@ Crear un agente que tenga en cuenta las características, gustos y limitaciones 
 |---|---|---|---|---|---|
 | RFA | 57 | V | 165 cm | 73 kg | Running L y M (1 h 30 min) |
 | CCT | 47 | M | 165 cm | 79 kg | Yoga funcional X (1 h) |
-| RFC | 18 | V | 173 cm | 68 kg | Natación M y J (1 h) |
+| RFC | 18 | V | 173 cm | 76 kg | Natación M y J (1 h) |
 | AFC | 13 | M | 158 cm | 52 kg | Fútbol: entrenamiento X y V (1 h 30 min), partido S (90 min); Ed. física M y J; natación V (30 min) |
 
 - **Alergias:** no detectadas.

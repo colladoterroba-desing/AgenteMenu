@@ -88,13 +88,22 @@ export interface Producto {
   unidad: string;
   categoria?: string;
   caducidad?: string;
+  /** De dónde sale el dato (p. ej. ticket) y si la cantidad está confirmada. */
+  nota?: string;
 }
 
 export interface Sobra {
   descripcion: string;
+  /** Raciones que quedan en reserva. */
   raciones: number;
   fecha: string;
   consumirAntesDe?: string;
+  /** Receta de la que salen: si el menú la vuelve a poner, se descuentan de la compra. */
+  receta?: string;
+  /** Dónde se guardan. */
+  ubicacion?: "nevera" | "congelador";
+  /** Raciones que se hicieron en total ese día (lo que sobró es `raciones`). */
+  hechas?: number;
 }
 
 export interface Despensa {
@@ -114,5 +123,7 @@ export interface Ticket {
   fecha: string;
   tienda: string;
   total: number;
+  /** Número de factura o ticket, para no registrarlo dos veces. */
+  referencia?: string;
   lineas: LineaTicket[];
 }

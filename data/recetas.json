@@ -1195,7 +1195,7 @@
       "tecnica": "horno",
       "ingredientes": [
         { "nombre": "Solomillo de cerdo", "cantidad": 140, "unidad": "g", "seccion": "Carnicería" },
-        { "nombre": "Naranjas", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
+        { "nombre": "Zumo de naranja con pulpa", "cantidad": 100, "unidad": "ml", "seccion": "Despensa" },
         { "nombre": "Cebolla", "cantidad": 40, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Patata", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
         { "nombre": "Aceite de oliva virgen extra", "cantidad": 15, "unidad": "ml", "seccion": "Despensa" },
@@ -1204,7 +1204,7 @@
       "pasos": [
         "Asar las patatas en gajos con la mitad del aceite y sal a 200 °C, 30 minutos.",
         "Dorar el solomillo entero salpimentado en la sartén con el resto del aceite; reservar.",
-        "En la misma sartén pochar la cebolla, añadir el zumo de las naranjas y reducir 5 minutos.",
+        "En la misma sartén pochar la cebolla, añadir el zumo de naranja y reducir 5 minutos.",
         "Volver a poner el solomillo y cocer 8-10 minutos; cortar en medallones y napar con la salsa."
       ]
     }

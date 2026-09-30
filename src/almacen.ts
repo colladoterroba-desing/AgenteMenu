@@ -111,10 +111,14 @@ export class Almacen {
     return despensa;
   }
 
-  async consumirSobra(indice: number): Promise<Despensa> {
+  /** Gasta raciones de una sobra; sin `raciones`, o si se acaban, la quita. */
+  async consumirSobra(indice: number, raciones?: number): Promise<Despensa> {
     const despensa = await this.despensa();
-    if (!despensa.sobras[indice]) throw new Error(`No existe la sobra ${indice}`);
-    despensa.sobras.splice(indice, 1);
+    const sobra = despensa.sobras[indice];
+    if (!sobra) throw new Error(`No existe la sobra ${indice}`);
+    const quedan = raciones === undefined ? 0 : Math.round((sobra.raciones - raciones) * 100) / 100;
+    if (quedan > 0) sobra.raciones = quedan;
+    else despensa.sobras.splice(indice, 1);
     await this.escribir("despensa.json", despensa);
     return despensa;
   }

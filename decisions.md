@@ -21,7 +21,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | Fecha | Decisión | Motivo |
 |---|---|---|
 | 28/09/2026 | **Pescado azul** (salmón, atún, anchoas, sardinas) solo los jueves a mediodía, las semanas que toque (no todos los jueves). | Ese día RFA no come en casa, y RFA no come mucho pescado. |
-| 28/09/2026 | **Por la mañana no se cocina.** Almuerzos y tuppers se preparan la noche anterior o en el batch. La tortilla francesa se hace al momento, no el día antes. | Los almuerzos y tuppers se dejan preparados la noche anterior. Por qué la tortilla francesa se hace al momento: sin anotar. |
+| 28/09/2026 | **Por la mañana no se cocina.** Almuerzos y tuppers se preparan la noche anterior o en el batch. La tortilla francesa se hace al momento, no el día antes. | Los almuerzos y tuppers se dejan preparados la noche anterior. La tortilla francesa se hace al momento porque de un día para otro queda mala. |
 | 28/09/2026 | **Legumbres** solo con un adulto (RFA o CCT) en la mesa, no cuando RFC y AFC comen solos. | Que un adulto supervise cuánto comen. |
 | 28/09/2026 | Los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser **pasta o algo más calórico**. | Les gusta más y es más fácil que se lo terminen. |
 | 28/09/2026 | Leche siempre **semidesnatada**. | Preferencia de la familia. |

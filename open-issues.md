@@ -20,7 +20,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 - [x] **OI-24 · Identificar a quien valida el menú.** Descartado el 30/09/2026: el menú ya no necesita validación. Anotado en `decisions.md`. Se quitan los botones de aprobar y la herramienta `validar_menu`; lo que se come de verdad se apunta en el diario (OI-29).
 
-- [ ] **OI-25 · Sincronizar la web con el repositorio.** En parte hecho el 30/09/2026: se pide «sincroniza» y Claude solo copia los datos; `npm run sincronizar` los une sin IA y regenera la página. Falta decidir si se programa para que ocurra solo (por ejemplo, cada noche) y que los cambios de «Actualizar menú» pasen también al menú del proyecto (hoy se guardan en `data/web/cambios.json`).
+- [ ] **OI-25 · Sincronizar la web con el repositorio.** En parte hecho el 30/09/2026: se pide «sincroniza» y Claude solo copia los datos; `npm run sincronizar` los une sin IA y regenera la página. Desde el 30/09/2026 se hace sola cada noche hacia las 23:30. Falta que los cambios de «Actualizar menú» pasen también al menú del proyecto (hoy se guardan en `data/web/cambios.json`).
   Antes: La despensa, las raciones hechas (reservas), los platos no deseados, el diario, lo cocinado, los cambios de «Actualizar menú», los comentarios y la actividad que se hacen en la web se guardan en la página (colecciones `despensa`, `hechas`, `no-deseados`, `diario`, `cocinado`, `cambios`, `comentarios`, `eventos`, `perfil` y `comido`); hoy hay que pedir a Claude Code que los copie al repositorio (`data/`) para que el agente y los PDF los usen. Decidir si se automatiza (ligado a OI-01 y OI-02).
 
 ## Uso diario del menú

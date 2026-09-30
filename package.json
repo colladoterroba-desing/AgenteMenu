@@ -7,7 +7,8 @@
     "start": "node --env-file-if-exists=.env --import tsx src/agente.ts",
     "typecheck": "tsc",
     "web": "tsx src/web.ts",
-    "pdf": "tsx src/pdf.ts"
+    "pdf": "tsx src/pdf.ts",
+    "sincronizar": "tsx src/sincronizar.ts && tsx src/web.ts"
   },
   "repository": {
     "type": "git",

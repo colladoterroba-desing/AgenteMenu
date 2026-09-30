@@ -1,0 +1,90 @@
+{
+  "2026-09-28-1-comida__AFC": {
+    "celda": "2026-09-28-1-comida",
+    "fecha": "2026-09-30T12:33:49.586Z",
+    "grupo": "muo36wpepfcw",
+    "persona": "AFC",
+    "texto": "En lugar de lomo a la plancha, fueron chuletas de sajonia a la plancha",
+    "tipo": "texto"
+  },
+  "2026-09-28-1-comida__CCT": {
+    "celda": "2026-09-28-1-comida",
+    "fecha": "2026-09-30T12:33:49.586Z",
+    "grupo": "muo36wpepfcw",
+    "persona": "CCT",
+    "texto": "En lugar de lomo a la plancha, fueron chuletas de sajonia a la plancha",
+    "tipo": "texto"
+  },
+  "2026-09-28-1-comida__RFA": {
+    "celda": "2026-09-28-1-comida",
+    "fecha": "2026-09-30T12:33:49.586Z",
+    "grupo": "muo36wpepfcw",
+    "persona": "RFA",
+    "texto": "En lugar de lomo a la plancha, fueron chuletas de sajonia a la plancha",
+    "tipo": "texto"
+  },
+  "2026-09-28-1-comida__RFC": {
+    "celda": "2026-09-28-1-comida",
+    "fecha": "2026-09-30T12:33:49.586Z",
+    "grupo": "muo36wpepfcw",
+    "persona": "RFC",
+    "texto": "En lugar de lomo a la plancha, fueron chuletas de sajonia a la plancha",
+    "tipo": "texto"
+  },
+  "2026-09-28-2-almuerzo__RFC": {
+    "celda": "2026-09-28-2-almuerzo",
+    "fecha": "2026-09-30T12:11:10.488Z",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-2-cena__RFC": {
+    "celda": "2026-09-28-2-cena",
+    "fecha": "2026-09-30T12:11:26.790Z",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-2-comida__AFC": {
+    "celda": "2026-09-28-2-comida",
+    "fecha": "2026-09-30T12:12:08.543Z",
+    "persona": "AFC",
+    "texto": "Macarrones con chorizo y tomate frito",
+    "tipo": "texto"
+  },
+  "2026-09-28-2-comida__CCT": {
+    "celda": "2026-09-28-2-comida",
+    "fecha": "2026-09-30T12:12:11.455Z",
+    "persona": "CCT",
+    "tipo": "previsto"
+  },
+  "2026-09-28-2-comida__RFA": {
+    "celda": "2026-09-28-2-comida",
+    "fecha": "2026-09-30T12:11:51.681Z",
+    "persona": "RFA",
+    "receta": "pure-calabaza",
+    "tipo": "receta"
+  },
+  "2026-09-28-2-comida__RFC": {
+    "celda": "2026-09-28-2-comida",
+    "fecha": "2026-09-30T12:11:15.572Z",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-2-merienda__RFC": {
+    "celda": "2026-09-28-2-merienda",
+    "fecha": "2026-09-30T12:11:19.175Z",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-3-cena__RFC": {
+    "celda": "2026-09-28-3-cena",
+    "fecha": "2026-09-30T12:11:32.129Z",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-3-merienda__RFC": {
+    "celda": "2026-09-28-3-merienda",
+    "fecha": "2026-09-30T12:11:23.079Z",
+    "persona": "RFC",
+    "tipo": "nocome"
+  }
+}

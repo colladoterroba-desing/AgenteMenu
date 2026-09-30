@@ -53,7 +53,7 @@ La web tiene las páginas Menú (esta semana y la siguiente), Diario, Recetas, C
 - **Configuración:** régimen de comidas (en color: en casa, tupper frío, tupper para recalentar y almuerzo), reparto de la energía y una ficha por persona. En la ficha se cambian el peso, el objetivo de peso (con «¿Aceptar?» Sí/No), los gustos y el desayuno; la ficha se recalcula al momento, y el menú y la compra cuando se sincronizan los datos con el proyecto.
 - **Definiciones:** términos de la página, equivalencias a gramos, medidas caseras, tamaño de una ración y Thermomix.
 
-Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios`, `eventos`, `perfil` y `comido`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), pídeselo a Claude Code: «sincroniza la despensa, los no deseados, las reservas, el diario, las anotaciones y los perfiles».
+Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios`, `eventos`, `perfil` y `comido`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), se sincroniza sola cada noche hacia las 23:30 (tarea programada de Claude); también se puede pedir en cualquier momento a Claude Code con «sincroniza». Claude solo copia las colecciones de la página y ejecuta `npm run sincronizar`, que une sin IA la despensa, las reservas, los no deseados y los perfiles con `data/`, guarda una copia de todo lo apuntado en `data/web/` (el agente la lee con `ver_apuntes_web`) y vuelve a generar la página; después Claude la publica. Los pasos están en `.claude/skills/sincronizar/SKILL.md`. Si hay diferencias, manda lo apuntado en la web.
 
 `npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 
@@ -78,6 +78,8 @@ Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Par
 | `src/unidades.ts` | Paso a gramos con las equivalencias |
 | `data/equivalencias.json` | Gramos por unidad y por ml de cada producto, y medidas caseras |
 | `src/pdf.ts` | PDF del menú y de la lista de la compra |
+| `src/sincronizar.ts` | Une lo apuntado en la web con `data/` (`npm run sincronizar`) |
+| `data/web/` | Copia de lo apuntado en la web (diario, anotaciones, cocinado, cambios, comentarios...) |
 | `data/propuesta-tuppers.json` | Rotación de tuppers de oficina |
 | `data/precios.json` | Precios reales por tienda (Mercadona, BM, Elías), cargados desde los tickets |
 | `src/precios.ts` | Coste de la cesta por tienda y combinación más barata |

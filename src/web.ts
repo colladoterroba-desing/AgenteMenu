@@ -655,7 +655,7 @@ function seccionRecetas(recetas: Receta[], semanas: { semana: string; dias: DiaD
   <div class="recetas">${tarjetas}</div>`;
 }
 
-const claveProducto = (nombre: string, unidad: string) =>
+export const claveProducto = (nombre: string, unidad: string) =>
   `${nombre}|${unidad}`.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 /**
@@ -1481,7 +1481,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     noDeseados: familia.noDeseados ?? [],
     semana: menu.semana,
     reservas: (despensa?.sobras ?? []).map((x, i) => ({
-      id: `repo-${i}`, receta: x.receta, descripcion: x.descripcion, reserva: x.raciones, hechas: x.hechas,
+      id: x.id ?? `repo-${i}`, receta: x.receta, descripcion: x.descripcion, reserva: x.raciones, hechas: x.hechas,
       donde: x.ubicacion, fecha: x.fecha, caduca: x.consumirAntesDe,
     })),
   };

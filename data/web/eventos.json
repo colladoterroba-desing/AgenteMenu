@@ -1,0 +1,142 @@
+{
+  "1790764777543-ncteu": {
+    "fecha": "2026-09-30T10:39:37.544Z",
+    "texto": "Compra confirmada (3 productos): Lechuga 360 g, Pimiento verde 130 g, Puerro 130 g.",
+    "tipo": "compra"
+  },
+  "1790764805062-n8a68": {
+    "fecha": "2026-09-30T10:40:05.062Z",
+    "texto": "Compra confirmada (9 productos): Aceite de oliva virgen extra 340 g, Aceitunas 20 g, Azúcar 30 g, Cacao soluble Nesquik 80 g, Copos de avena 90 g, Galletas tostadas Animadas Hacendado 160 g, Jamón cocido 380 g, Queso en lonchas 190 g, Tortitas de maíz Hacendado 91 g.",
+    "tipo": "compra"
+  },
+  "1790764808837-zvo7r": {
+    "fecha": "2026-09-30T10:40:08.837Z",
+    "texto": "Compra confirmada (2 productos): Base de pizza integral 200 g, Pan integral 1.000 g.",
+    "tipo": "compra"
+  },
+  "1790765049253-7w1qh": {
+    "fecha": "2026-09-30T10:44:09.254Z",
+    "texto": "Compra confirmada (1 productos): Huevos 1.140 g.",
+    "tipo": "compra"
+  },
+  "1790765052979-q3g0d": {
+    "fecha": "2026-09-30T10:44:12.979Z",
+    "texto": "Compra confirmada (1 productos): Leche semidesnatada 3.000 g.",
+    "tipo": "compra"
+  },
+  "1790765094451-ghtr1": {
+    "fecha": "2026-09-30T10:44:54.451Z",
+    "texto": "Comentario: Hoy RFA se ha llevado una ración de puré de calabaza para comer",
+    "tipo": "comentario"
+  },
+  "1790765149752-7kga5": {
+    "fecha": "2026-09-30T10:45:49.752Z",
+    "texto": "Menú actualizado con Claude: 1 cambios. Se sustituye el macarrones-tomate-jamon del martes por estar en la lista de no deseados de la familia; el resto de la semana se mantiene porque no hay desviaciones registradas en lo comido hasta hoy.",
+    "tipo": "actualizacion"
+  },
+  "1790765199967-2w82n": {
+    "fecha": "2026-09-30T10:46:39.967Z",
+    "texto": "Desayunos hechos (miércoles, desayuno). Se restan 8 productos de la despensa.",
+    "tipo": "cocinado"
+  },
+  "1790765223958-c6rdp": {
+    "fecha": "2026-09-30T10:47:03.958Z",
+    "texto": "Comentario: RFC esta de viaje M,  J y V de esta semana",
+    "tipo": "comentario"
+  },
+  "1790765312040-cucp8": {
+    "fecha": "2026-09-30T10:48:32.040Z",
+    "texto": "Menú actualizado con Claude: 6 cambios. Se ajustan los comensales del jueves y viernes por el viaje de RFC, y se cambia la comida del viernes por garbanzos con espinacas para cumplir el mínimo semanal de legumbres aprovechando los garbanzos cocidos de la despensa.",
+    "tipo": "actualizacion"
+  },
+  "1790765350000-9vxxz": {
+    "fecha": "2026-09-30T10:49:10.000Z",
+    "texto": "Diario del miércoles (comida): se comió Puré de calabaza.",
+    "tipo": "diario"
+  },
+  "1790767596608-o7ard": {
+    "fecha": "2026-09-30T11:26:36.608Z",
+    "texto": "Cocinado: Huevos revueltos con jamón york y queso · 0,94 rac. (miércoles, cena). Se restan 5 productos de la despensa.",
+    "tipo": "cocinado"
+  },
+  "1790767599178-g1qvx": {
+    "fecha": "2026-09-30T11:26:39.178Z",
+    "texto": "Desmarcado: Huevos revueltos con jamón york y queso. Los ingredientes vuelven a la despensa.",
+    "tipo": "cocinado"
+  },
+  "1790770270769-byprf": {
+    "fecha": "2026-09-30T12:11:10.769Z",
+    "texto": "RFC (miércoles, almuerzo): No come.",
+    "tipo": "comido"
+  },
+  "1790770275873-x7a0u": {
+    "fecha": "2026-09-30T12:11:15.873Z",
+    "texto": "RFC (miércoles, comida): No come.",
+    "tipo": "comido"
+  },
+  "1790770279437-bpcmt": {
+    "fecha": "2026-09-30T12:11:19.438Z",
+    "texto": "RFC (miércoles, merienda): No come.",
+    "tipo": "comido"
+  },
+  "1790770283402-p55hq": {
+    "fecha": "2026-09-30T12:11:23.403Z",
+    "texto": "RFC (jueves, merienda): No come.",
+    "tipo": "comido"
+  },
+  "1790770287059-un7y5": {
+    "fecha": "2026-09-30T12:11:27.059Z",
+    "texto": "RFC (miércoles, cena): No come.",
+    "tipo": "comido"
+  },
+  "1790770292432-hxlv8": {
+    "fecha": "2026-09-30T12:11:32.432Z",
+    "texto": "RFC (jueves, cena): No come.",
+    "tipo": "comido"
+  },
+  "1790770311964-vwps3": {
+    "fecha": "2026-09-30T12:11:51.964Z",
+    "texto": "RFA (miércoles, comida): Comió Puré de calabaza.",
+    "tipo": "comido"
+  },
+  "1790770328839-zkz51": {
+    "fecha": "2026-09-30T12:12:08.839Z",
+    "texto": "AFC (miércoles, comida): Comió Macarrones con chorizo y tomate frito.",
+    "tipo": "comido"
+  },
+  "1790770331799-6zs3z": {
+    "fecha": "2026-09-30T12:12:11.799Z",
+    "texto": "CCT (miércoles, comida): ha comido lo previsto.",
+    "tipo": "comido"
+  },
+  "1790771630639-9jkkz": {
+    "fecha": "2026-09-30T12:33:50.639Z",
+    "texto": "Anotaciones (martes, comida): RFA, CCT, RFC, AFC: comió En lugar de lomo a la plancha, fueron chuletas de sajonia a la plancha.",
+    "tipo": "comido"
+  },
+  "1790771800981-fiu7k": {
+    "fecha": "2026-09-30T12:36:40.981Z",
+    "texto": "Compra confirmada (1 productos): Espinacas frescas 140 g.",
+    "tipo": "compra"
+  },
+  "1790771995982-1j8a2": {
+    "fecha": "2026-09-30T12:39:55.982Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790772179342-rma4t": {
+    "fecha": "2026-09-30T12:42:59.343Z",
+    "texto": "Cocinado: Garbanzos con espinacas y huevo duro · 2,87 rac. para vie, 2 oct, comida.",
+    "tipo": "cocinado"
+  },
+  "1790772180483-jbo86": {
+    "fecha": "2026-09-30T12:43:00.483Z",
+    "texto": "Cocinado: Garbanzos con espinacas y huevo duro · 2,87 rac. (viernes, comida). Se restan 5 productos de la despensa.",
+    "tipo": "cocinado"
+  },
+  "1790772180793-xnpqm": {
+    "fecha": "2026-09-30T12:43:00.793Z",
+    "texto": "Cocinado: Garbanzos con espinacas y huevo duro · 2,87 rac. para vie, 2 oct, comida.",
+    "tipo": "cocinado"
+  }
+}

@@ -18,6 +18,10 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 28/09/2026 | **Platos habituales** de casa con prioridad; el huevo aparece 3-4 veces por semana (en los criterios del menú desde el 30/09/2026); una comida puede llevar primero y segundo. | Son los platos que la familia ya come y sabe hacer. |
 | 28/09/2026 | Un plato se puede marcar como **no deseado** (por persona o por la familia) con el motivo; no se vuelve a proponer a quien lo marcó. | Que el menú aprenda de lo que no gusta. |
 | 28/09/2026 | Los días que ya han pasado no se muestran en el menú (se pueden ver con «Mostrarlos»). | Para ver solo lo que queda de semana. |
+| 01/10/2026 | **«Nadie come aquí»** en «Anotaciones»: marca «no come» a todos los que estaban previstos en esa comida (o en todas las de ese día). No se cocina ni cuenta en la compra. Claude puede proponerlo en «Actualizar menú» y se aplica igual. | Quitar comidas en las que no come nadie, sobre todo los fines de semana (OI-37). |
+| 01/10/2026 | **Motivos de Claude breves:** una frase de 15 palabras como mucho y, si sale de un comentario de la familia, citando sus palabras. | Que se vea de dónde sale cada cambio y no se inventen peticiones (OI-39). |
+| 01/10/2026 | «Actualizar menú» **no** revisa las comidas de hoy. | Decisión de la familia (OI-38). |
+| 01/10/2026 | **La semana siguiente la prepara Claude sola** cada lunes por la mañana, con las normas de la casa y solo recetas del recetario; un programa comprueba las normas antes de guardarla. Se guarda directamente en `main`. | Tener siempre la semana siguiente sin pedirla (OI-14). Completa la rotación de semanas del 30/09/2026, que sigue siendo el lunes. |
 
 ## Normas de la casa
 
@@ -43,6 +47,8 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 30/09/2026 | **Alias en lugar de siglas** en la web y los PDF: CCT = Cristina, RFA = Ricardo, RFC = Ricardo hijo, AFC = Alicia. Los datos siguen usando las siglas por dentro. | Que la página se lea con nombres y no con siglas. |
 | 30/09/2026 | Desde la ficha de cada persona se puede cambiar el **peso** (queda un registro con la fecha), el **objetivo** (peso y/o plazo, con «¿Aceptar?» Sí/No), los **gustos** y el **desayuno**. Se guarda en la página (colección `perfil`). La ficha se recalcula al momento; el menú, las raciones y la compra se ajustan cuando los datos se copian al proyecto y se regenera la página. | Recalcular también el menú y la compra en la página era bastante más trabajo y más fácil que fallara. Es como ya funcionan la despensa y el diario. |
 | 30/09/2026 | El **desayuno** se cambia con **texto libre**. | Preferencia de la familia. Se sabe que un desayuno en texto libre no cuenta en la lista de la compra hasta que Claude lo pase a receta. |
+| 01/10/2026 | **La sincronización de cada noche pasa a receta** los desayunos nuevos escritos en la web (en gramos) y los pone como desayuno de esa persona. Si el texto no está claro, no inventa y lo dice. | Que el desayuno nuevo cuente en la compra (OI-41). Es lo único de la sincronización que usa IA. Cambia en ese punto la decisión «Sincronizar la web sin que la IA haga el trabajo» del 30/09/2026. |
+| 01/10/2026 | Desde la ficha también se cambian el **deporte**, las **comidas en casa** (comida, cena, tupper y almuerzo) y el **papel en la cocina**. Se guarda en la página (`perfil`) y pasa al proyecto al sincronizar (la web manda). La ficha se recalcula al momento; el menú y la compra, al sincronizar. | Completar OI-01 igual que el peso o los gustos. Cambiar el régimen desde la web puede cambiar los días de tupper anotados arriba. |
 | 30/09/2026 | Un objetivo nuevo solo se puede aceptar si: no baja de IMC 18,5, no pasa de 1 kg por semana y no obliga a comer menos que el metabolismo basal. Solo adultos. | Salud: son los límites habituales de una pérdida de peso segura. Los menores no tienen objetivo de peso (su pediatra). Confirmado por la familia el 30/09/2026. |
 
 ## Compra, despensa y cantidades
@@ -56,6 +62,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 30/09/2026 | **Reservas de raciones:** en Despensa sale una sola línea por receta y lugar (nevera o congelador), con la suma; «Usar 1 ración» gasta antes la que caduca antes. Si se vuelve a apuntar lo cocinado de la misma receta, el mismo día y en el mismo sitio, se suma a la reserva que ya había. | Guardar dos veces la misma receta creaba dos líneas (pasó con el pollo guisado del 30/09/2026). |
 | 30/09/2026 | Botón **«Confirmar compra»** en la lista: suma lo marcado a la despensa. La lista solo cuenta lo que queda de semana y no muestra lo que ya está en casa. | No comprar lo que ya hay. |
 | 30/09/2026 | **Pesos estimados en las equivalencias a gramos** (`data/equivalencias.json`), sin pesarlos en casa. Se corrigen si algún día se pesan. | Decisión de la familia (OI-34): el error es pequeño y no merece el trabajo. |
+| 01/10/2026 | **Sin costes en la web ni en el PDF** hasta que haya bastantes tickets; se valorará más adelante. Los precios se siguen guardando. | Con pocos precios el coste no es útil (OI-40). Deja en suspenso la comparación de tiendas del 28/09/2026. |
 | 28/09/2026 | **Precios reales, sin estimaciones.** Se cargan desde los tickets o a mano; el coste solo se muestra cuando hay precios. | Los precios estimados no eran fiables. |
 | 28/09/2026 | Se compara el coste en **Mercadona, BM y Casa Elías** y se propone la combinación más barata. | Son las tiendas donde compra la familia. |
 

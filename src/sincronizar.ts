@@ -6,7 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizarCantidad, type MenuSemana, type PlatoMenu } from "./menu.js";
 import type { TipoComida } from "./planificacion.js";
-import { DIAS, type Despensa, type Familia, type Objetivo, type Producto, type Sobra } from "./tipos.js";
+import { DIAS, type Actividad, type Dia, type Despensa, type Familia, type Objetivo, type Producto, type Sobra } from "./tipos.js";
 import { claveProducto } from "./web.js";
 
 export const COLECCIONES = [
@@ -29,6 +29,7 @@ export async function leerExportado(dir: string): Promise<Exportado> {
   return out;
 }
 
+const dias = (v: unknown): Dia[] => (Array.isArray(v) ? DIAS.filter((d) => v.includes(d)) : []);
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : Number(v) || 0);
 const texto = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 
@@ -39,6 +40,8 @@ const texto = (v: unknown) => (typeof v === "string" && v ? v : undefined);
  * - no-deseados → familia.noDeseados (los quitados se borran).
  * - perfil → peso, gustos y objetivo de cada persona. El desayuno en texto libre no se toca: se avisa para que
  *   Claude lo pase a receta (familia.desayunos[id].desdeTexto guarda de qué texto sale, para no avisar otra vez).
+ *   También el deporte (actividades), el papel en la cocina (roles) y las comidas en casa (régimen: comida, cena,
+ *   tupper y almuerzo de esa persona).
  */
 export function unir(familia: Familia, despensa: Despensa, web: Exportado, recetas: Record<string, string>) {
   const productos = new Map<string, Producto>();
@@ -91,19 +94,47 @@ export function unir(familia: Familia, despensa: Despensa, web: Exportado, recet
     const cambiado = { ...m };
     if (num(d.pesoKg) > 0) cambiado.pesoKg = Math.round(num(d.pesoKg) * 10) / 10;
     if (Array.isArray(d.gustos)) cambiado.gustos = d.gustos.filter((g): g is string => typeof g === "string");
+    if (Array.isArray(d.actividades)) {
+      cambiado.actividades = d.actividades
+        .map((a: Record<string, unknown>): Actividad => ({ deporte: texto(a?.deporte) ?? "", dias: dias(a?.dias), minutos: Math.round(num(a?.minutos)) }))
+        .filter((a) => a.deporte && a.dias.length && a.minutos > 0);
+    }
     const desayuno = d.desayuno as { texto?: string } | undefined;
     if (desayuno?.texto && desayuno.texto !== familia.desayunos?.[m.id]?.desdeTexto) {
       avisos.push(`Desayuno nuevo de ${m.id} (${m.alias ?? m.id}) en texto libre: «${desayuno.texto}». Falta pasarlo a receta (OI-41).`);
     }
     return cambiado;
   });
+  // Comidas en casa y papel en la cocina: la web guarda lo de cada persona; aquí se rehace el régimen de la familia.
+  const regimen = structuredClone(familia.regimen);
+  const roles = { ...familia.roles };
+  for (const m of familia.miembros) {
+    const d = web.perfil[m.id];
+    if (!d) continue;
+    if (typeof d.rol === "string") roles[m.id] = d.rol.trim();
+    const r = d.regimen as Record<string, unknown> | undefined;
+    if (!r || typeof r !== "object") continue;
+    for (const tipo of ["comida", "cena"] as const) {
+      const si = dias(r[tipo]);
+      for (const dia of DIAS) {
+        const quien = regimen[tipo][dia].filter((x) => x !== m.id);
+        regimen[tipo][dia] = si.includes(dia) ? familia.miembros.map((x) => x.id).filter((x) => x === m.id || quien.includes(x)) : quien;
+      }
+    }
+    const t = r.tupper as Record<string, unknown> | null, a = r.almuerzo as Record<string, unknown> | null;
+    const tupper = { ...regimen.tupper }, almuerzo = { ...regimen.almuerzo };
+    delete tupper[m.id]; delete almuerzo[m.id];
+    if (t && dias(t.dias).length) tupper[m.id] = { dias: dias(t.dias), tipo: t.tipo === "para recalentar" ? "para recalentar" : "frío" };
+    if (a && dias(a.dias).length) almuerzo[m.id] = { dias: dias(a.dias), lugar: texto(a.lugar) ?? "colegio" };
+    regimen.tupper = tupper; regimen.almuerzo = almuerzo;
+  }
   const objetivos = { ...familia.objetivos };
   for (const [id, d] of Object.entries(web.perfil)) {
     if (d.objetivo && typeof d.objetivo === "object" && familia.miembros.some((m) => m.id === id)) objetivos[id] = d.objetivo as Objetivo;
   }
 
   return {
-    familia: { ...familia, miembros, objetivos, noDeseados: [...noDeseados.values()] },
+    familia: { ...familia, miembros, objetivos, regimen, roles, noDeseados: [...noDeseados.values()] },
     despensa: {
       ...despensa,
       productos: [...productos.values()].filter((p) => p.cantidad > 0),

@@ -1155,12 +1155,15 @@
   let perfilDb = new Map();
   /** Kcal diarias del deporte por kg de peso (como kcalDeportePorKg en nutricion.ts). */
   const deportePorKg = (acts) => acts.reduce((t, a) => t + ((DEP[a.deporte]?.met ?? K.metPorDefecto) - 1) * (a.minutos / 60) * a.dias.length, 0) / 7;
+  const normReg = (r) => [r.comida, r.cena, r.tupper && [r.tupper.dias, r.tupper.tipo], r.almuerzo && [r.almuerzo.dias, r.almuerzo.lugar]];
   const perfil = (id) => {
     const base = PERF[id], d = perfilDb.get(id) || {};
     const actividades = d.actividades ?? base.actividades ?? [];
     return { ...base, pesoKg: d.pesoKg ?? base.pesoKg, objetivo: d.objetivo ?? base.objetivo, gustos: d.gustos ?? base.gustos,
       actividades, deportePorKg: d.actividades ? deportePorKg(actividades) : base.deportePorKg,
-      rol: d.rol ?? base.rol ?? "", regimen: d.regimen ?? base.regimen, regimenCambiado: !!d.regimen,
+      rol: d.rol ?? base.rol ?? "", regimen: d.regimen ?? base.regimen,
+      // Tras sincronizar, el régimen guardado en la web ya es el del proyecto: solo se avisa si aún es distinto.
+      regimenCambiado: !!d.regimen && JSON.stringify(normReg(d.regimen)) !== JSON.stringify(normReg(base.regimen)),
       // Si el texto ya se pasó a receta (desayunoDesdeTexto), se muestra la receta.
       ...(d.desayuno && d.desayuno.texto !== base.desayunoDesdeTexto ? { desayunoTexto: d.desayuno.texto, desayunoFecha: d.desayuno.fecha } : { desayunoTexto: null, desayunoFecha: null }),
       pesos: d.pesos || [] };

@@ -583,6 +583,19 @@ test("sincronizar: la web manda en despensa, reservas, no deseados y perfil, sin
   assert.equal(cct.pesoKg, 78.5);
   assert.deepEqual(cct.gustos, ["Pasta"]);
   assert.match(r.avisos.join(), /Café con tostada/);
+  // Deporte, papel en la cocina y comidas en casa cambiados en la ficha.
+  const conFicha = { ...web, perfil: { RFA: {
+    actividades: [{ deporte: "caminar", dias: ["S", "D", "Z"], minutos: 45 }, { deporte: "running", dias: [], minutos: 30 }],
+    rol: "cocina los fines de semana",
+    regimen: { comida: ["V", "S"], cena: ["L", "M", "X", "J", "V"], tupper: { dias: ["L", "M"], tipo: "frío" }, almuerzo: null },
+  } } };
+  const f = unir(familia, despensa, conFicha, {}).familia;
+  assert.deepEqual(f.miembros.find((m) => m.id === "RFA")!.actividades, [{ deporte: "caminar", dias: ["S", "D"], minutos: 45 }]);
+  assert.equal(f.roles.RFA, "cocina los fines de semana");
+  assert.deepEqual(f.regimen.tupper!.RFA, { dias: ["L", "M"], tipo: "frío" });
+  assert.ok(!f.regimen.comida.D.includes("RFA") && f.regimen.comida.S.includes("RFA") && !f.regimen.cena.S.includes("RFA"));
+  assert.deepEqual(f.regimen.comida.S, familia.regimen.comida.S, "el orden de la familia se mantiene");
+  assert.deepEqual(f.regimen.tupper!.CCT, familia.regimen.tupper!.CCT, "lo de los demás no cambia");
   // Si el desayuno ya se pasó a receta desde ese mismo texto, no se vuelve a avisar.
   const texto = (web.perfil.CCT.desayuno as { texto: string }).texto;
   const conReceta = { ...familia, desayunos: { ...familia.desayunos, CCT: { receta: "desayuno-cct", desdeTexto: texto } } };
@@ -647,4 +660,13 @@ test("sincronizar: los cambios de «Actualizar menú» pasan al menú y la web l
   assert.deepEqual(datos.menu[menu.inicio].celdas.find((c: { id: string }) => c.id === celda).platos[0], previsto.receta);
   assert.deepEqual(datos.cambios[celda].recetas, [otra]);
   assert.deepEqual(datos.cambios[celda].comensales, ["CCT", "RFA", "AFC"]);
+});
+
+test("preparar la semana siguiente: el lunes después de la semana en curso y la letra contraria", async () => {
+  const { lunesSiguiente, semanaQueFalta } = await import("../src/preparar-semana.js");
+  assert.equal(lunesSiguiente("2026-09-28"), "2026-10-05");
+  assert.equal(lunesSiguiente("2026-12-28"), "2027-01-04");
+  const actual = { semana: "B", inicio: "2026-10-05", dias: {}, tuppers: {} } as unknown as import("../src/menu.js").MenuSemana;
+  assert.deepEqual(semanaQueFalta(actual), { inicio: "2026-10-12", semana: "A" });
+  assert.equal(semanaQueFalta(actual, { ...actual, semana: "A", inicio: "2026-10-12" }), null);
 });

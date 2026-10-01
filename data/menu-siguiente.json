@@ -26,6 +26,11 @@
       "por": "usuario",
       "fecha": "2026-09-30",
       "descripcion": "RFA también lleva tupper frío los jueves: ensalada de pasta integral con pollo asado, preparada el miércoles por la noche."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-10-01",
+      "descripcion": "Nueva norma: no repetir el mismo producto en la comida y la cena del mismo día. Cena del miércoles: contramuslo al horno con patata y calabacín (antes, pavo a la plancha; a mediodía hay albóndigas de pavo)."
     }
   ],
   "batch": [
@@ -99,7 +104,7 @@
         "receta": "tostada-cacahuete-platano"
       },
       "cena": {
-        "receta": "pavo-plancha-verduras"
+        "receta": "pollo-horno-patata"
       }
     },
     "J": {

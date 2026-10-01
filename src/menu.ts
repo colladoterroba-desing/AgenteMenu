@@ -1,4 +1,4 @@
-import { planificarSemana, type TipoComida } from "./planificacion.js";
+import { planificarSemana, type ComidaPlanificada, type TipoComida } from "./planificacion.js";
 import type { Despensa, Dia, Familia } from "./tipos.js";
 import { aGramos, equivalencia, gramosPorUnidad } from "./unidades.js";
 
@@ -177,8 +177,45 @@ export function validarMenu(familia: Familia, menu: MenuSemana, recetas: Receta[
         else comprobar(`${dia.nombre} tupper ${t.id}`, tupper, dia.dia, "comida", true, [t.id]);
       }
     }
+    errores.push(...productoRepetido(menu, dia.dia, dia.nombre, dia.comidas, porId));
   }
   return errores;
+}
+
+/** Producto principal de cada ingrediente: el primero que encaja (los pescados antes que «lomo», por el lomo de salmón). */
+const PRODUCTOS: [string, RegExp][] = [
+  ["merluza", /merluza/], ["lubina", /lubina/], ["salmón", /salmon/], ["atún", /atun/], ["sardinas", /sardina/],
+  ["anchoas", /anchoa/], ["bacalao", /bacalao/], ["gambas", /gamba/],
+  ["pollo", /pollo/], ["pavo", /pavo/], ["ternera", /ternera/], ["jamón", /jamon/], ["cerdo", /cerdo|lomo|sajonia|solomillo/],
+  ["garbanzos", /garbanzo/], ["lentejas", /lenteja/], ["alubias", /alubia/],
+];
+
+const productosDe = (receta: Receta | undefined) =>
+  new Set((receta?.ingredientes ?? []).flatMap((i) => PRODUCTOS.find(([, re]) => re.test(normalizar(i.nombre)))?.[0] ?? []));
+
+/** Lo que come cada persona en una comida: su tupper, su variante o el plato (con el segundo). */
+function recetasDe(menu: MenuSemana, dia: Dia, comida: ComidaPlanificada | undefined, id: string): string[] {
+  const tupper = comida?.tipo === "comida" ? menu.tuppers[dia]?.[id] : undefined;
+  if (tupper) return [tupper.receta, ...(tupper.segundo ? [tupper.segundo] : [])];
+  const plato = comida && menu.dias[dia]?.[comida.tipo];
+  if (!plato || !comida.comensales.some((c) => c.id === id) || (plato.comensales && !plato.comensales.includes(id))) return [];
+  const variante = plato.variantes?.[id];
+  return variante ? [variante] : [plato.receta, ...(plato.segundo ? [plato.segundo] : [])];
+}
+
+/** Nadie come el mismo producto principal (pollo, pavo, merluza...) en la comida y en la cena del mismo día. */
+function productoRepetido(menu: MenuSemana, dia: Dia, nombre: string, comidas: ComidaPlanificada[], porId: Map<string, Receta>): string[] {
+  const comida = comidas.find((c) => c.tipo === "comida");
+  const cena = comidas.find((c) => c.tipo === "cena");
+  const ids = new Set([...(comida?.comensales ?? []), ...(comida?.tuppers ?? []), ...(cena?.comensales ?? [])].map((c) => c.id));
+  const porProducto = new Map<string, string[]>();
+  for (const id of ids) {
+    const deComida = new Set(recetasDe(menu, dia, comida, id).flatMap((r) => [...productosDe(porId.get(r))]));
+    for (const p of new Set(recetasDe(menu, dia, cena, id).flatMap((r) => [...productosDe(porId.get(r))]))) {
+      if (deComida.has(p)) porProducto.set(p, [...(porProducto.get(p) ?? []), id]);
+    }
+  }
+  return [...porProducto].map(([p, quienes]) => `${nombre}: ${quienes.join(", ")} ${quienes.length > 1 ? "comen" : "come"} ${p} en la comida y en la cena`);
 }
 
 /** Une la rejilla de comensales con los platos del menú. */

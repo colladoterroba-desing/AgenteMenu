@@ -1,5 +1,11 @@
 import { normalizarCantidad, SECCIONES, type LineaCompra, type Seccion } from "./menu.js";
 
+/**
+ * La web y los PDF no muestran costes hasta que haya bastantes tickets (OI-40). Los precios se siguen
+ * guardando desde los tickets; para volver a mostrarlos basta con ponerlo a true.
+ */
+export const MOSTRAR_COSTES = false;
+
 /** Precio real de un producto en una tienda, por envase (o por kg/l/ud si se vende a granel). */
 export interface Precio {
   /** Nombre del ingrediente tal como aparece en las recetas. */

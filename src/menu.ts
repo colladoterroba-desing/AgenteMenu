@@ -20,7 +20,7 @@ export interface Ingrediente {
   cantidad: number;
   unidad: string;
   seccion: Seccion;
-  /** Se compra uno por persona (p. ej. una dorada), sin escalar por el tamaño de la ración. */
+  /** Se compra uno por persona (p. ej. una lubina), sin escalar por el tamaño de la ración. */
   porPersona?: boolean;
 }
 

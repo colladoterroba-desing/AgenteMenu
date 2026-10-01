@@ -6,15 +6,19 @@ import type { Miembro, Objetivo } from "./tipos.js";
  */
 
 /** MET aproximados (Compendium of Physical Activities). */
-const MET: Record<string, number> = {
+export const MET: Record<string, number> = {
   running: 9.8,
   yoga_funcional: 4.0,
   natacion: 7.0,
   futbol_entrenamiento: 7.0,
   futbol_partido: 8.0,
   educacion_fisica: 5.0,
+  caminar: 3.5,
+  bicicleta: 7.5,
+  gimnasio: 5.0,
+  padel: 6.0,
 };
-const MET_POR_DEFECTO = 5.0;
+export const MET_POR_DEFECTO = 5.0;
 
 /** Factor de actividad de la vida diaria sin contar el deporte. */
 export const FACTOR_BASE = 1.4;

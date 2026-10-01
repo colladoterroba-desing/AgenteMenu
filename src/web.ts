@@ -10,6 +10,8 @@ import {
   KCAL_POR_KG,
   KCAL_REFERENCIA,
   kcalDeporteDiarias,
+  MET,
+  MET_POR_DEFECTO,
   kcalDeportePorKg,
   PERDIDA_KG_SEMANA,
   PERDIDA_MAXIMA_KG_SEMANA,
@@ -20,7 +22,7 @@ import {
 } from "./nutricion.js";
 import { componerMenu, listaCompra, menuVisible, sinCambios, normalizarCantidad, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
-import { costeCesta, type TablaPrecios } from "./precios.js";
+import { costeCesta, MOSTRAR_COSTES, type TablaPrecios } from "./precios.js";
 import { NOMBRE_DIA, type Despensa, type Dia, type Familia, type Miembro } from "./tipos.js";
 import { densidad, EQUIVALENCIAS, equivalencia, gramosPorUnidad } from "./unidades.js";
 
@@ -54,6 +56,10 @@ const DEPORTE: Record<string, string> = {
   futbol_entrenamiento: "Fútbol (entreno)",
   futbol_partido: "Fútbol (partido)",
   educacion_fisica: "Educación física",
+  caminar: "Caminar",
+  bicicleta: "Bicicleta",
+  gimnasio: "Gimnasio",
+  padel: "Pádel",
 };
 
 export const COMIDAS: { tipo: TipoComida; nombre: string }[] = [
@@ -233,7 +239,10 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
           ["Gasto diario", `${campo("gasto", num(n.gastoDiario))} kcal`],
           ["Objetivo diario", `${campo("kcal", num(n.kcalObjetivo))} kcal`],
           ["Ración", campo("racion", `×${num(n.factorRacion, 2)}`)],
-        ]) + `<p class="etq">Actividad física</p><ul class="lista-deporte">${deportes || "<li>Sin deporte registrado</li>"}</ul>`,
+        ]) +
+          `<p class="etq">Actividad física</p>` +
+          hueco("deporte", `<ul class="lista-deporte">${deportes || "<li>Sin deporte registrado</li>"}</ul>`) +
+          `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="deporte" hidden><button type="button" class="btn-mini">Cambiar deporte</button></div>`,
       )}
       ${categoria(
         "Objetivo de peso",
@@ -256,16 +265,21 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
           ...(desayuno
             ? ([["Desayuno en el menú", desayuno.mostrarEnMenu ? "Se muestra" : `<span class="sub">No se muestra (sí cuenta en la compra)</span>`]] as [string, string][])
             : []),
-          ["Almuerzo", almuerzo ? `Se lo lleva al ${esc(almuerzo.lugar)} · <span class="mono">${almuerzo.dias.join(" ")}</span>` : `<span class="sub">No</span>`],
+          ["En la cocina", hueco("rol", familia.roles[m.id] ? esc(familia.roles[m.id]) : `<span class="sub">Sin indicar</span>`)],
         ]) +
-          `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="alimentacion" hidden><button type="button" class="btn-mini" data-que="gustos">Cambiar gustos</button><button type="button" class="btn-mini" data-que="desayuno">Cambiar desayuno</button></div>`,
+          `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="alimentacion" hidden><button type="button" class="btn-mini" data-que="gustos">Cambiar gustos</button><button type="button" class="btn-mini" data-que="desayuno">Cambiar desayuno</button><button type="button" class="btn-mini" data-que="rol">Cambiar papel en la cocina</button></div>`,
         "doble",
       )}
       ${categoria(
         "Comidas en casa",
-        `<div class="en-casa-fila"><span class="etq">Comida</span>${enCasa("comida")}</div>
+        hueco(
+          "regimen",
+          `<div class="en-casa-fila"><span class="etq">Comida</span>${enCasa("comida")}</div>
          <div class="en-casa-fila"><span class="etq">Cena</span>${enCasa("cena")}</div>
-         <ul class="leyenda-regimen"><li><span class="muestra-dia si"></span>En casa</li>${tupper ? `<li><span class="muestra-dia tupper-dia ${tupper.tipo === "frío" ? "frio" : "calor"}"></span>Tupper ${esc(tupper.tipo)}</li>` : ""}<li><span class="muestra-dia"></span>Fuera</li></ul>`,
+         <ul class="leyenda-regimen"><li><span class="muestra-dia si"></span>En casa</li>${tupper ? `<li><span class="muestra-dia tupper-dia ${tupper.tipo === "frío" ? "frio" : "calor"}"></span>Tupper ${esc(tupper.tipo)}</li>` : ""}<li><span class="muestra-dia"></span>Fuera</li></ul>
+         <p class="sub">Almuerzo: ${almuerzo ? `se lo lleva al ${esc(almuerzo.lugar)} · <span class="mono">${almuerzo.dias.join(" ")}</span>` : "no"}</p>`,
+        ) +
+          `<div class="botones-ficha" data-m="${esc(m.id)}" data-editar="regimen" hidden><button type="button" class="btn-mini">Cambiar comidas en casa</button></div>`,
       )}
     </div>
   </div>`;
@@ -1216,6 +1230,9 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .btn-mini{font:600 .74rem var(--f-body);background:var(--surface);color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 9px;cursor:pointer;justify-self:start}
 .btn-mini.con-dato{background:var(--accent-soft);border-color:var(--accent)}
 .plato-menu.tachado{text-decoration:line-through;color:var(--muted);font-weight:400}
+td.nadie{background:var(--bg);opacity:.75}
+.nadie-come{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+.nadie-come .sub{flex-basis:100%;margin:0}
 .plato-real{margin-top:4px;font-size:.85rem;line-height:1.3;display:grid;gap:2px}
 .plato-real a{font-weight:700;color:var(--ink);text-decoration:none}
 .origen{display:inline-block;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:4px;padding:0 5px;margin-right:4px}
@@ -1483,9 +1500,18 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
         tmbPorKg: tmb.porKg, tmbFija: tmb.fija, deportePorKg: kcalDeportePorKg(m),
         objetivo: familia.objetivos[m.id] ?? null, gustos: m.gustos,
         desayuno: desayuno ? recetas.find((r) => r.id === desayuno.receta)?.nombre ?? desayuno.receta : "",
+        desayunoDesdeTexto: desayuno?.desdeTexto ?? null,
+        actividades: m.actividades, rol: familia.roles[m.id] ?? "",
+        regimen: {
+          comida: DIAS_SEMANA.filter((d) => familia.regimen.comida[d].includes(m.id)),
+          cena: DIAS_SEMANA.filter((d) => familia.regimen.cena[d].includes(m.id)),
+          tupper: familia.regimen.tupper?.[m.id] ?? null,
+          almuerzo: familia.regimen.almuerzo?.[m.id] ?? null,
+        },
       }];
     })),
-    constantes: { factorBase: FACTOR_BASE, kcalReferencia: KCAL_REFERENCIA, kcalPorKg: KCAL_POR_KG, perdidaKgSemana: PERDIDA_KG_SEMANA, perdidaMaxima: PERDIDA_MAXIMA_KG_SEMANA, imcMin: IMC_MIN, imcMax: IMC_MAX },
+    deportes: Object.fromEntries(Object.keys(MET).map((k) => [k, { nombre: DEPORTE[k] ?? k, met: MET[k] }])),
+    constantes: { metPorDefecto: MET_POR_DEFECTO, factorBase: FACTOR_BASE, kcalReferencia: KCAL_REFERENCIA, kcalPorKg: KCAL_POR_KG, perdidaKgSemana: PERDIDA_KG_SEMANA, perdidaMaxima: PERDIDA_MAXIMA_KG_SEMANA, imcMin: IMC_MIN, imcMax: IMC_MAX },
     gud: Object.fromEntries(recetas.flatMap((r) => r.ingredientes).map((i) => [claveProducto(i.nombre, "g"), gramosPorUnidad(i.nombre)]).filter(([, g]) => g)),
     den: Object.fromEntries(Object.keys(EQUIVALENCIAS.densidad).map((n) => [claveProducto(n, "g"), densidad(n)])),
     normas: [
@@ -1577,7 +1603,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab"><h1 id="h-compra">Lista de la compra</h1>
     <p class="sub">Ingredientes de lo que queda de semana (desde hoy, sin contar lo ya cocinado), en gramos, redondeados hacia arriba y descontando lo que hay en la despensa; lo que ya está en casa no aparece. Entre paréntesis, cuántas unidades o ml son aproximadamente. Marca lo que llevas en el carro y pulsa «Confirmar compra» (abajo a la derecha): se suma a la despensa.</p></header>
     ${seccionCompra()}
-    ${precios ? seccionCoste(compra, precios) : ""}
+    ${precios && MOSTRAR_COSTES ? seccionCoste(compra, precios) : ""}
   </section>
 
   <section class="vista" id="despensa" data-vista aria-labelledby="h-despensa" hidden>

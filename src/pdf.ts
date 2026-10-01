@@ -12,7 +12,7 @@ import {
   type MenuSemana,
   type Receta,
 } from "./menu.js";
-import { costeCesta, type TablaPrecios } from "./precios.js";
+import { costeCesta, MOSTRAR_COSTES, type TablaPrecios } from "./precios.js";
 import type { Despensa, Familia } from "./tipos.js";
 import { cantidad, COMIDAS, conAlias, esc, num } from "./web.js";
 
@@ -100,7 +100,7 @@ export function htmlCompraPdf({ familia, menu, recetas, despensa, precios, fecha
   const lista = Object.fromEntries(SECCIONES.map((s) => [s, completa[s].filter((l) => l.comprar > 0)])) as typeof completa;
   const total = SECCIONES.reduce((s, x) => s + lista[x].length, 0);
   // Coste por producto en la tienda más barata con precio real; sin precios, no hay columna.
-  const cesta = precios ? costeCesta(lista, precios) : undefined;
+  const cesta = precios && MOSTRAR_COSTES ? costeCesta(lista, precios) : undefined;
   const conPrecios = Boolean(cesta?.hayPrecios);
   const costeDe = (nombre: string, unidad: string) => {
     const l = cesta?.lineas.find((x) => x.nombre === nombre && x.unidad === unidad);

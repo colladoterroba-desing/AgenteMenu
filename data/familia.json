@@ -183,13 +183,13 @@
       "mostrarEnMenu": false
     },
     "CCT": {
-      "receta": "desayuno-cct-actual",
-      "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-07): pan integral con tomate y queso fresco, sin azúcar (receta desayuno-cct).",
+      "receta": "desayuno-cct",
+      "nota": "Su desayuno de todos los días: café cortado, tostada integral con aceite y tomate, queso fresco y una pieza de fruta, sin azúcar. Aceptado el 30/09/2026 (OI-07).",
       "mostrarEnMenu": false
     },
     "RFA": {
       "receta": "desayuno-rfa",
-      "nota": "Su desayuno de todos los días. Propuesta pendiente (OI-06): añadir fruta en días de running.",
+      "nota": "Su desayuno de todos los días. RFA no aceptó añadir fruta en días de running (30/09/2026, OI-06).",
       "mostrarEnMenu": false
     }
   },

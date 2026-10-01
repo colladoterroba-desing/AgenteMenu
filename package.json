@@ -8,7 +8,8 @@
     "typecheck": "tsc",
     "web": "tsx src/web.ts",
     "pdf": "tsx src/pdf.ts",
-    "sincronizar": "tsx src/sincronizar.ts && tsx src/web.ts"
+    "sincronizar": "tsx src/sincronizar.ts && tsx src/web.ts",
+    "preparar-semana": "tsx src/preparar-semana.ts"
   },
   "repository": {
     "type": "git",

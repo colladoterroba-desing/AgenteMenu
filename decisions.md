@@ -31,6 +31,7 @@ Cuando no se anotó el motivo en su momento, figura «sin anotar».
 | 28/09/2026 | **Por la mañana no se cocina.** Almuerzos y tuppers se preparan la noche anterior o en el batch. La tortilla francesa se hace al momento, no el día antes. | Los almuerzos y tuppers se dejan preparados la noche anterior. La tortilla francesa se hace al momento porque de un día para otro queda mala. |
 | 28/09/2026 | **Legumbres** solo con un adulto (RFA o CCT) en la mesa, no cuando RFC y AFC comen solos. | Que un adulto supervise cuánto comen. |
 | 28/09/2026 | Los días que RFA y CCT no comen en casa, la comida de RFC y AFC puede ser **pasta o algo más calórico**. | Les gusta más y es más fácil que se lo terminen. |
+| 01/10/2026 | **No se repite el mismo producto en la comida y la cena del mismo día** (pollo, pavo, ternera, cerdo, jamón, cada pescado, garbanzos, lentejas, alubias), contando el tupper de cada uno. El programa que comprueba el menú lo rechaza; el huevo no cuenta (va en rebozados y albóndigas). | Petición de la familia: la semana del 05/10/2026 tenía albóndigas de pavo a mediodía y pavo a la plancha en la cena del miércoles. |
 | 28/09/2026 | Leche siempre **semidesnatada**. | Preferencia de la familia. |
 | 30/09/2026 | **Lubina en lugar de dorada.** | Preferencia de la familia (OI-10): RFA come mejor la lubina. |
 | 28/09/2026 | Las recetas de cremas, purés, guisos y salsas incluyen los pasos con **Thermomix**. | Hay Thermomix en casa. |

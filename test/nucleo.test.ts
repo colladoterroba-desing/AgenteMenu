@@ -318,11 +318,25 @@ test("legumbres solo con un adulto delante; pasta para los niños cuando están 
   // Con CCT en casa (jueves) sí valen; y en el tupper de un adulto también.
   const conCct = structuredClone(menu);
   conCct.dias.J.comida = { receta: "lentejas-estofadas" };
+  conCct.dias.J.cena = { receta: "tortilla-patata" };
   assert.deepEqual(validarMenu(familia, conCct, recetas), []);
   // El almuerzo de RFC en el colegio tampoco puede llevar legumbres.
   const almuerzo = structuredClone(menu);
   almuerzo.dias.M.almuerzo = { receta: "arroz-garbanzos-feta" };
   assert.ok(validarMenu(familia, almuerzo, recetas).some((e) => /Martes almuerzo/.test(e)));
+});
+
+test("no se repite el mismo producto en la comida y la cena del mismo día", async () => {
+  const { validarMenu } = await import("../src/menu.js");
+  const siguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  // Miércoles: albóndigas de pavo a mediodía (y en el tupper de CCT); RFA lleva tortilla.
+  const pavo = structuredClone(siguiente);
+  pavo.dias.X.cena = { receta: "pavo-plancha-verduras" };
+  assert.deepEqual(validarMenu(familia, pavo, recetas), ["Miércoles: RFC, AFC, CCT comen pavo en la comida y en la cena"]);
+  // Con una variante para quien repetiría, ya no cuenta para esa persona.
+  pavo.dias.X.cena.variantes = { CCT: "tortilla-patata" };
+  assert.deepEqual(validarMenu(familia, pavo, recetas), ["Miércoles: RFC, AFC comen pavo en la comida y en la cena"]);
 });
 
 test("primero y segundo: el segundo lo comen los mismos y entra en la compra", async () => {

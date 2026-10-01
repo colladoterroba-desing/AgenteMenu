@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 202,
+      "cantidad": 178,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -26,13 +26,13 @@
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 250,
+      "cantidad": 172.6,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Lentejas pardinas",
-      "cantidad": 1000,
+      "cantidad": 440,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -86,7 +86,7 @@
     },
     {
       "nombre": "Zanahoria",
-      "cantidad": 1000,
+      "cantidad": 600,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -110,13 +110,13 @@
     },
     {
       "nombre": "Pan de barra",
-      "cantidad": 450,
+      "cantidad": 400,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 2 baguettes, peso supuesto"
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 1084.3,
+      "cantidad": 661.1,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -134,7 +134,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 304.4,
+      "cantidad": 215.7,
       "unidad": "g"
     },
     {
@@ -144,22 +144,22 @@
     },
     {
       "nombre": "Azúcar",
-      "cantidad": 25,
+      "cantidad": 20,
       "unidad": "g"
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 65,
+      "cantidad": 50,
       "unidad": "g"
     },
     {
       "nombre": "Copos de avena",
-      "cantidad": 90,
+      "cantidad": 67.6,
       "unidad": "g"
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 128,
+      "cantidad": 96,
       "unidad": "g"
     },
     {
@@ -174,17 +174,7 @@
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 2660.1,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Patata",
-      "cantidad": 350,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Pimiento verde",
-      "cantidad": 130,
+      "cantidad": 2320.2,
       "unidad": "g"
     },
     {
@@ -194,7 +184,17 @@
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 77,
+      "cantidad": 63,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Carne estofada con verdura",
+      "cantidad": 400,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Hamburguesa de ternera",
+      "cantidad": 180,
       "unidad": "g"
     }
   ],
@@ -238,6 +238,26 @@
       "receta": "solomillo-naranja",
       "ubicacion": "congelador",
       "hechas": 12
+    },
+    {
+      "id": "lentejas-estofadas__1790856608738",
+      "descripcion": "Lentejas estofadas con verduras",
+      "raciones": 1.13,
+      "fecha": "2026-10-01",
+      "consumirAntesDe": "2026-10-04",
+      "receta": "lentejas-estofadas",
+      "ubicacion": "nevera",
+      "hechas": 4
+    },
+    {
+      "id": "lentejas-estofadas__1790856610894",
+      "descripcion": "Lentejas estofadas con verduras",
+      "raciones": 4,
+      "fecha": "2026-10-01",
+      "consumirAntesDe": "2027-01-01",
+      "receta": "lentejas-estofadas",
+      "ubicacion": "congelador",
+      "hechas": 4
     }
   ]
 }

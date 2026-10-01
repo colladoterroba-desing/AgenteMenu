@@ -99,9 +99,42 @@
     "persona": "RFC",
     "tipo": "nocome"
   },
+  "2026-09-28-3-comida__AFC": {
+    "celda": "2026-09-28-3-comida",
+    "fecha": "2026-10-01T12:11:20.321Z",
+    "grupo": "muphtu9tj4x8",
+    "persona": "AFC",
+    "receta": "lentejas-estofadas",
+    "tipo": "receta"
+  },
+  "2026-09-28-3-comida__CCT": {
+    "celda": "2026-09-28-3-comida",
+    "fecha": "2026-10-01T12:11:20.321Z",
+    "grupo": "muphtu9tj4x8",
+    "persona": "CCT",
+    "receta": "lentejas-estofadas",
+    "tipo": "receta"
+  },
+  "2026-09-28-3-merienda__CCT": {
+    "celda": "2026-09-28-3-merienda",
+    "fecha": "2026-10-01T15:33:02.722Z",
+    "grupo": "mupp18rq9bh8",
+    "persona": "CCT",
+    "texto": "Queso fresco y manzana",
+    "tipo": "texto"
+  },
+  "2026-09-28-3-merienda__RFA": {
+    "celda": "2026-09-28-3-merienda",
+    "fecha": "2026-10-01T15:33:02.722Z",
+    "grupo": "mupp18rq9bh8",
+    "persona": "RFA",
+    "texto": "Queso fresco y manzana",
+    "tipo": "texto"
+  },
   "2026-09-28-3-merienda__RFC": {
     "celda": "2026-09-28-3-merienda",
-    "fecha": "2026-09-30T12:11:23.079Z",
+    "fecha": "2026-10-01T15:33:02.722Z",
+    "grupo": "mupp18jmw0oa",
     "persona": "RFC",
     "tipo": "nocome"
   }

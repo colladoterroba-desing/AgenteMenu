@@ -32,6 +32,42 @@
     "reserva": 1,
     "semana": "A"
   },
+  "lentejas-estofadas__1790856608738": {
+    "actualizado": "2026-10-01T12:10:08.739Z",
+    "caduca": "2026-10-04",
+    "comer": 2.87,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 10.4,
+      "lentejas-pardinas-g": 79.1,
+      "pan-integral-g": 45.2,
+      "patata-g": 63,
+      "pimiento-verde-g": 15.2,
+      "zanahoria-g": 56.5
+    },
+    "donde": "nevera",
+    "fecha": "2026-10-01",
+    "hechas": 4,
+    "receta": "lentejas-estofadas",
+    "reserva": 1.13,
+    "semana": "2026-09-28"
+  },
+  "lentejas-estofadas__1790856610894": {
+    "actualizado": "2026-10-01T12:10:10.894Z",
+    "caduca": "2027-01-01",
+    "comer": 0,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 36.8,
+      "lentejas-pardinas-g": 280,
+      "pan-integral-g": 160,
+      "zanahoria-g": 200
+    },
+    "donde": "congelador",
+    "fecha": "2026-10-01",
+    "hechas": 4,
+    "receta": "lentejas-estofadas",
+    "reserva": 4,
+    "semana": "2026-09-28"
+  },
   "pollo-guisado-arroz__1790764872272": {
     "actualizado": "2026-09-30T11:00:00.000Z",
     "caduca": "2026-12-30",

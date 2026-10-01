@@ -158,5 +158,50 @@
     "fecha": "2026-09-30T20:00:17.745Z",
     "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
     "tipo": "cocinado"
+  },
+  "1790856506091-yyr1z": {
+    "fecha": "2026-10-01T12:08:26.091Z",
+    "texto": "Añadido a la despensa: Hamburguesa de ternera 180 g.",
+    "tipo": "despensa"
+  },
+  "1790856537483-aeqk6": {
+    "fecha": "2026-10-01T12:08:57.484Z",
+    "texto": "Añadido a la despensa: Carne estofada con verdura 400 g.",
+    "tipo": "despensa"
+  },
+  "1790856606079-i4pa1": {
+    "fecha": "2026-10-01T12:10:06.079Z",
+    "texto": "Cocinado: Lentejas estofadas con verduras · 2,87 rac. (jueves, cena). Se restan 6 productos de la despensa.",
+    "tipo": "cocinado"
+  },
+  "1790856609377-33hw5": {
+    "fecha": "2026-10-01T12:10:09.377Z",
+    "texto": "Cocinado: Lentejas estofadas con verduras · 4,00 rac. para jue, 1 oct, cena. En reserva: 1,13 rac. (nevera).",
+    "tipo": "cocinado"
+  },
+  "1790856611427-uqe0a": {
+    "fecha": "2026-10-01T12:10:11.428Z",
+    "texto": "Cocinado: Lentejas estofadas con verduras · 4,00 rac.. En reserva: 4,00 rac. (congelador).",
+    "tipo": "cocinado"
+  },
+  "1790856681136-o8eld": {
+    "fecha": "2026-10-01T12:11:21.137Z",
+    "texto": "Anotaciones (jueves, comida): CCT, AFC: comió Lentejas estofadas con verduras.",
+    "tipo": "comido"
+  },
+  "1790856686977-skyx2": {
+    "fecha": "2026-10-01T12:11:26.977Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790868783914-fyxzm": {
+    "fecha": "2026-10-01T15:33:03.914Z",
+    "texto": "Anotaciones (jueves, merienda): RFC: no come; RFA, CCT: comió Queso fresco y manzana.",
+    "tipo": "comido"
+  },
+  "1790887343324-mkwjg": {
+    "fecha": "2026-10-01T20:42:23.325Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
   }
 }

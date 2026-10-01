@@ -138,5 +138,25 @@
     "fecha": "2026-09-30T12:43:00.793Z",
     "texto": "Cocinado: Garbanzos con espinacas y huevo duro · 2,87 rac. para vie, 2 oct, comida.",
     "tipo": "cocinado"
+  },
+  "1790798003121-sp27s": {
+    "fecha": "2026-09-30T19:53:23.121Z",
+    "texto": "Anotaciones (miércoles, cena): RFA, CCT, AFC: comió Revuelto de huevos con jamón.",
+    "tipo": "comido"
+  },
+  "1790798005253-uk4z6": {
+    "fecha": "2026-09-30T19:53:25.253Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790798416159-a58rx": {
+    "fecha": "2026-09-30T20:00:16.159Z",
+    "texto": "Anotaciones (miércoles, cena): CCT, AFC: comió Revuelto de huevos con jamón; RFA: comió Lentejas estofadas con verduras.",
+    "tipo": "comido"
+  },
+  "1790798417745-h0iud": {
+    "fecha": "2026-09-30T20:00:17.745Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
   }
 }

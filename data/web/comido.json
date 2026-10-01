@@ -37,11 +37,29 @@
     "persona": "RFC",
     "tipo": "nocome"
   },
-  "2026-09-28-2-cena__RFC": {
+  "2026-09-28-2-cena__AFC": {
     "celda": "2026-09-28-2-cena",
-    "fecha": "2026-09-30T12:11:26.790Z",
-    "persona": "RFC",
-    "tipo": "nocome"
+    "fecha": "2026-09-30T20:00:14.919Z",
+    "grupo": "muoj50ef9ggk",
+    "persona": "AFC",
+    "texto": "Revuelto de huevos con jamón",
+    "tipo": "texto"
+  },
+  "2026-09-28-2-cena__CCT": {
+    "celda": "2026-09-28-2-cena",
+    "fecha": "2026-09-30T20:00:14.919Z",
+    "grupo": "muoj50ef9ggk",
+    "persona": "CCT",
+    "texto": "Revuelto de huevos con jamón",
+    "tipo": "texto"
+  },
+  "2026-09-28-2-cena__RFA": {
+    "celda": "2026-09-28-2-cena",
+    "fecha": "2026-09-30T20:00:14.919Z",
+    "grupo": "muoj510sunnq",
+    "persona": "RFA",
+    "receta": "lentejas-estofadas",
+    "tipo": "receta"
   },
   "2026-09-28-2-comida__AFC": {
     "celda": "2026-09-28-2-comida",

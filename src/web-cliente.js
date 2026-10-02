@@ -145,7 +145,7 @@
   let db = null;
   let editable = false;
   const despensaBase = new Map(datos.despensa.map((p) => [p.clave, p]));
-  let despensaDb = new Map(), ndDb = new Map(), diarioDb = new Map(), cambiosDb = new Map(), cocinadoDb = new Map(), reservasDb = new Map(), comidoDb = new Map();
+  let extrasDb = new Map(), despensaDb = new Map(), ndDb = new Map(), diarioDb = new Map(), cambiosDb = new Map(), cocinadoDb = new Map(), reservasDb = new Map(), comidoDb = new Map();
   let eventos = [], comentarios = [];
   const ndBase = new Map(datos.noDeseados.map((n) => [n.receta + "__" + n.por, n]));
   const reservasBase = new Map((datos.reservas || []).map((x) => [x.id, x]));
@@ -707,17 +707,19 @@
   const paraSemana = (p) => p.esta && p.prox
     ? "Esta semana " + fmtCant(p.esta, p.unidad) + " · próxima " + fmtCant(p.prox, p.unidad)
     : p.esta ? "Esta semana" : "Próxima semana";
+  /** Lo añadido a mano (fuera del menú): sin gramos, con una cantidad en texto si se quiere. */
+  const extrasLista = () => [...extrasDb.entries()].map(([id, x]) => ({ k: "x-" + id, id, extra: true, nombre: x.nombre, cantidad: x.cantidad || "", pasillo: datos.ordenPasillos.includes(x.pasillo) ? x.pasillo : "Otros" }));
   const renderCompra = () => {
     // Lo que hay en casa se gasta antes en esta semana; lo que sobre, en la próxima.
     listaCompra = [...necesidades(true).entries()].map(([k, x]) => {
       const tengo = tengoDe(k);
       const esta = redondear(x.g - tengo, k), prox = redondear(x.gProx - Math.max(0, tengo - x.g), k);
       return { k, nombre: x.nombre, unidad: x.unidad, g: x.g + x.gProx, tengo, esta, prox, comprar: esta + prox, recetas: [...new Set([...(esta ? x.recetas : []), ...(prox ? x.recetasProx : [])])], pasillo: x.seccion || "Otros" };
-    }).sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+    }).filter((p) => p.comprar > 0).concat(extrasLista()).sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
     const cont = document.getElementById("pasillos");
     const porPasillo = new Map();
     // Lo que ya está en casa no se muestra.
-    listaCompra.filter((p) => p.comprar > 0).forEach((p) => porPasillo.set(p.pasillo, [...(porPasillo.get(p.pasillo) || []), p]));
+    listaCompra.forEach((p) => porPasillo.set(p.pasillo, [...(porPasillo.get(p.pasillo) || []), p]));
     cont.replaceChildren();
     datos.ordenPasillos.filter((n) => porPasillo.has(n)).forEach((n) => {
       const items = porPasillo.get(n);
@@ -726,6 +728,17 @@
         const id = "c-" + p.k;
         const chk = el("input", { type: "checkbox", id, checked: marcas.has(p.k) });
         chk.addEventListener("change", () => { chk.checked ? marcas.add(p.k) : marcas.delete(p.k); guardarMarcas(); actualizarBotonCompra(); });
+        if (p.extra) {
+          const quitar = el("button", { type: "button", class: "quitar-extra", text: "×", title: "Quitar de la lista", "aria-label": "Quitar " + p.nombre + " de la lista", hidden: !editable });
+          quitar.addEventListener("click", async () => {
+            try { await db.doc("extras/" + p.id).delete(); marcas.delete(p.k); guardarMarcas(); } catch (e) { aviso("No se ha podido quitar."); }
+          });
+          ul.append(el("li", null, chk, el("label", { htmlFor: id },
+            el("span", { class: "producto", text: p.nombre }),
+            el("span", { class: "cant mono", text: p.cantidad }),
+            el("span", { class: "semana-compra extra", text: "Añadido" })), quitar));
+          return;
+        }
         const para = p.recetas.slice(0, 2).join(" · ") + (p.recetas.length > 2 ? " y " + (p.recetas.length - 2) + " recetas más" : "");
         ul.append(el("li", null, chk, el("label", { htmlFor: id },
           el("span", { class: "producto", text: p.nombre }),
@@ -736,12 +749,12 @@
       cont.append(el("section", { class: "pasillo" }, el("h3", null, n + " ", el("span", { class: "sub mono", text: String(items.length) })), ul));
     });
     if (!porPasillo.size) cont.append(el("p", { class: "sub", text: "No hace falta comprar nada: lo que queda de esta semana y la próxima ya está en casa." }));
-    const pendientes = listaCompra.filter((p) => p.comprar > 0).length;
+    const pendientes = listaCompra.length;
     document.getElementById("compra-total").textContent = pendientes;
     const rc = document.getElementById("resumen-compra"); if (rc) rc.textContent = pendientes;
     actualizarBotonCompra();
   };
-  const marcadosCompra = () => listaCompra.filter((p) => p.comprar > 0 && marcas.has(p.k));
+  const marcadosCompra = () => listaCompra.filter((p) => marcas.has(p.k));
   const btnCompra = document.getElementById("btn-confirmar-compra");
   const actualizarBotonCompra = () => {
     const n = marcadosCompra().length;
@@ -753,22 +766,39 @@
   btnCompra.addEventListener("click", async () => {
     const items = marcadosCompra();
     if (!items.length || !db) return;
+    const delMenu = items.filter((p) => !p.extra), extras = items.filter((p) => p.extra);
     btnCompra.disabled = true;
     try {
-      for (const p of items) { await guardarProducto(p.nombre, tengoDe(p.k) + p.comprar, undefined, p.unidad); marcas.delete(p.k); }
+      // Lo del menú se suma a la despensa; lo añadido a mano solo se quita de la lista.
+      for (const p of delMenu) { await guardarProducto(p.nombre, tengoDe(p.k) + p.comprar, undefined, p.unidad); marcas.delete(p.k); }
+      for (const p of extras) { await db.doc("extras/" + p.id).delete(); marcas.delete(p.k); }
       guardarMarcas();
-      await registrar("compra", "Compra confirmada (" + items.length + " productos): " + items.map((p) => p.nombre + " " + fmtCant(p.comprar, p.unidad)).join(", ") + ".");
-      aviso(items.length + " productos añadidos a la despensa.");
+      await registrar("compra", "Compra confirmada (" + items.length + " productos): " + items.map((p) => p.extra ? p.nombre + (p.cantidad ? " " + p.cantidad : "") : p.nombre + " " + fmtCant(p.comprar, p.unidad)).join(", ") + ".");
+      aviso(delMenu.length ? delMenu.length + " productos añadidos a la despensa" + (extras.length ? " y " + extras.length + " quitados de la lista." : ".") : extras.length + " productos quitados de la lista.");
     } catch (e) { aviso("No se ha podido guardar la compra (" + (e && e.code || "error") + ")."); }
     btnCompra.disabled = false; renderTodo();
   });
   document.getElementById("desmarcar")?.addEventListener("click", () => { marcas.clear(); guardarMarcas(); renderCompra(); });
   document.getElementById("copiar-lista")?.addEventListener("click", () => {
     const porPasillo = new Map();
-    listaCompra.filter((p) => p.comprar > 0 && !marcas.has(p.k)).forEach((p) => porPasillo.set(p.pasillo, [...(porPasillo.get(p.pasillo) || []), "- " + p.nombre + ": " + fmtCant(p.comprar, p.unidad) + equivalencia(p.k, p.comprar) + " (" + paraSemana(p).toLowerCase() + ")"]));
+    listaCompra.filter((p) => !marcas.has(p.k)).forEach((p) => porPasillo.set(p.pasillo, [...(porPasillo.get(p.pasillo) || []),
+      p.extra ? "- " + p.nombre + (p.cantidad ? ": " + p.cantidad : "") : "- " + p.nombre + ": " + fmtCant(p.comprar, p.unidad) + equivalencia(p.k, p.comprar) + " (" + paraSemana(p).toLowerCase() + ")"]));
     const texto = datos.ordenPasillos.filter((n) => porPasillo.has(n)).map((n) => n + "\n" + porPasillo.get(n).join("\n")).join("\n\n");
     const av = document.getElementById("copiado");
     navigator.clipboard.writeText(texto).then(() => (av.textContent = "Lista copiada"), () => (av.textContent = "No se ha podido copiar; selecciona la lista a mano."));
+  });
+  const formExtra = document.getElementById("form-extra");
+  formExtra.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = new FormData(formExtra), estado = formExtra.querySelector(".estado-form");
+    const nombre = String(f.get("nombre")).trim().slice(0, 80);
+    if (!nombre || !db) { estado.textContent = "Pon qué hay que comprar."; return; }
+    const doc = { nombre, cantidad: String(f.get("cantidad") || "").trim().slice(0, 40), pasillo: String(f.get("pasillo") || "Otros"), fecha: new Date().toISOString() };
+    try {
+      await db.doc("extras/" + Date.now() + "-" + Math.random().toString(36).slice(2, 7)).set(doc);
+      estado.textContent = "Añadido a la lista: " + nombre + ".";
+      const pasillo = formExtra.pasillo.value; formExtra.reset(); formExtra.pasillo.value = pasillo; formExtra.nombre.focus();
+    } catch (err) { estado.textContent = "No se ha podido guardar (" + (err && err.code || "error") + ")."; }
   });
 
   // ================= Despensa =================
@@ -1526,6 +1556,7 @@
     sub("cocinado", (m) => (cocinadoDb = m));
     sub("perfil", (m) => (perfilDb = m));
     sub("comido", (m) => (comidoDb = m));
+    sub("extras", (m) => (extrasDb = m));
     db.collection("comentarios").onSnapshot((snap) => { comentarios = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((x, y) => String(y.fecha).localeCompare(String(x.fecha))); renderComentarios(); }, () => {});
     db.collection("eventos").orderBy("fecha", "desc").limit(100).onSnapshot((snap) => { eventos = snap.docs.map((d) => d.data()); renderDiario(); }, () => {});
     sample = await window.claude.use("sample");

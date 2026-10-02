@@ -44,7 +44,7 @@
       "queso-fresco-g": 77.4
     },
     "etiqueta": "",
-    "fecha": "2026-10-01T15:33:09.305Z",
+    "fecha": "2026-10-01T22:14:56.038Z",
     "raciones": 1.29,
     "recetas": [
       "almuerzo-bocadillo-queso-fresco"
@@ -72,35 +72,37 @@
     "celda": "2026-09-28-3-desayuno",
     "descontado": {
       "aceite-de-oliva-virgen-extra-g": 9.2,
-      "azucar-g": 5,
       "cacao-soluble-nesquik-g": 15,
       "cafe-molido-g": 24,
       "galletas-tostadas-animadas-hacendado-g": 32,
       "leche-semidesnatada-g": 339.9,
-      "pan-de-barra-g": 50,
+      "pan-integral-g": 50,
+      "queso-fresco-g": 30,
       "tortitas-de-maiz-hacendado-g": 14
     },
     "etiqueta": "Desayunos",
-    "fecha": "2026-10-01T15:33:07.535Z",
+    "fecha": "2026-10-01T22:14:54.364Z",
     "raciones": 1,
     "recetas": [
       "desayuno-rfa",
-      "desayuno-cct-actual",
+      "desayuno-cct",
       "cafe-solo",
       "desayuno-afc"
     ]
   },
-  "2026-09-28-3-merienda~p0": {
+  "2026-09-28-4-almuerzo~p0": {
     "auto": true,
-    "celda": "2026-09-28-3-merienda",
+    "celda": "2026-09-28-4-almuerzo",
     "descontado": {
-      "copos-de-avena-g": 22.4
+      "aceite-de-oliva-virgen-extra-g": 5.9,
+      "jamon-serrano-en-lonchas-g": 51.6,
+      "pan-integral-g": 103.2
     },
     "etiqueta": "",
-    "fecha": "2026-10-01T20:42:22.796Z",
-    "raciones": 1.12,
+    "fecha": "2026-10-01T22:12:10.610Z",
+    "raciones": 1.29,
     "recetas": [
-      "yogur-fruta-frutos-secos"
+      "almuerzo-bocadillo-serrano"
     ]
   },
   "2026-09-28-4-comida~p0": {
@@ -117,6 +119,43 @@
     "raciones": 2.87,
     "recetas": [
       "garbanzos-espinacas"
+    ]
+  },
+  "2026-09-28-4-desayuno~des": {
+    "auto": true,
+    "celda": "2026-09-28-4-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "queso-fresco-g": 30,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-01T22:12:09.529Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-09-28-4-merienda~p0": {
+    "auto": true,
+    "celda": "2026-09-28-4-merienda",
+    "descontado": {
+      "leche-semidesnatada-g": 739,
+      "pan-integral-g": 172.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-01T22:12:11.830Z",
+    "raciones": 2.87,
+    "recetas": [
+      "tostada-cacahuete-platano"
     ]
   }
 }

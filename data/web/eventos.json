@@ -203,5 +203,40 @@
     "fecha": "2026-10-01T20:42:23.325Z",
     "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
     "tipo": "cocinado"
+  },
+  "1790892732246-4etxc": {
+    "fecha": "2026-10-01T22:12:12.246Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790892816100-i8uvp": {
+    "fecha": "2026-10-01T22:13:36.100Z",
+    "texto": "Anotaciones (jueves, merienda): CCT: comió Queso fresco y manzana; RFC: no come; AFC: comió Sándwich de nocilla; RFA: comió Frutos secos.",
+    "tipo": "comido"
+  },
+  "1790892820993-n7a0h": {
+    "fecha": "2026-10-01T22:13:40.993Z",
+    "texto": "Se restan solas de la despensa 2 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790892891230-0daqp": {
+    "fecha": "2026-10-01T22:14:51.230Z",
+    "texto": "Anotaciones (jueves, cena): RFA, RFC: comió Pollo guisado con verduras y arroz integral; AFC: comió Revuelto de huevos con jamón York; CCT: comió Croquetas y ensalada de tomate.",
+    "tipo": "comido"
+  },
+  "1790892896495-lbb4d": {
+    "fecha": "2026-10-01T22:14:56.495Z",
+    "texto": "Se restan solas de la despensa 2 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790893800678-qg7du": {
+    "fecha": "2026-10-01T22:30:00.678Z",
+    "texto": "Añadido a la despensa: Brócoli 500 g.",
+    "tipo": "despensa"
+  },
+  "1790893833580-y37ci": {
+    "fecha": "2026-10-01T22:30:33.580Z",
+    "texto": "Añadido a la despensa: Brócoli 500 g.",
+    "tipo": "despensa"
   }
 }

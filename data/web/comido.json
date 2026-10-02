@@ -93,11 +93,37 @@
     "persona": "RFC",
     "tipo": "nocome"
   },
+  "2026-09-28-3-cena__AFC": {
+    "celda": "2026-09-28-3-cena",
+    "fecha": "2026-10-01T22:14:49.522Z",
+    "grupo": "muq3dy1159uu",
+    "persona": "AFC",
+    "texto": "Revuelto de huevos con jamón York",
+    "tipo": "texto"
+  },
+  "2026-09-28-3-cena__CCT": {
+    "celda": "2026-09-28-3-cena",
+    "fecha": "2026-10-01T22:14:49.522Z",
+    "grupo": "muq3dygnxrtv",
+    "persona": "CCT",
+    "texto": "Croquetas y ensalada de tomate",
+    "tipo": "texto"
+  },
+  "2026-09-28-3-cena__RFA": {
+    "celda": "2026-09-28-3-cena",
+    "fecha": "2026-10-01T22:14:49.522Z",
+    "grupo": "muq3dxgza21v",
+    "persona": "RFA",
+    "receta": "pollo-guisado-arroz",
+    "tipo": "receta"
+  },
   "2026-09-28-3-cena__RFC": {
     "celda": "2026-09-28-3-cena",
-    "fecha": "2026-09-30T12:11:32.129Z",
+    "fecha": "2026-10-01T22:14:49.522Z",
+    "grupo": "muq3dxgza21v",
     "persona": "RFC",
-    "tipo": "nocome"
+    "receta": "pollo-guisado-arroz",
+    "tipo": "receta"
   },
   "2026-09-28-3-comida__AFC": {
     "celda": "2026-09-28-3-comida",
@@ -115,26 +141,34 @@
     "receta": "lentejas-estofadas",
     "tipo": "receta"
   },
+  "2026-09-28-3-merienda__AFC": {
+    "celda": "2026-09-28-3-merienda",
+    "fecha": "2026-10-01T22:13:34.459Z",
+    "grupo": "muq3cc6p5gdn",
+    "persona": "AFC",
+    "texto": "Sándwich de nocilla",
+    "tipo": "texto"
+  },
   "2026-09-28-3-merienda__CCT": {
     "celda": "2026-09-28-3-merienda",
-    "fecha": "2026-10-01T15:33:02.722Z",
-    "grupo": "mupp18rq9bh8",
+    "fecha": "2026-10-01T22:13:34.459Z",
+    "grupo": "muq3cbjvny06",
     "persona": "CCT",
     "texto": "Queso fresco y manzana",
     "tipo": "texto"
   },
   "2026-09-28-3-merienda__RFA": {
     "celda": "2026-09-28-3-merienda",
-    "fecha": "2026-10-01T15:33:02.722Z",
-    "grupo": "mupp18rq9bh8",
+    "fecha": "2026-10-01T22:13:34.459Z",
+    "grupo": "muq3cci48pqf",
     "persona": "RFA",
-    "texto": "Queso fresco y manzana",
+    "texto": "Frutos secos",
     "tipo": "texto"
   },
   "2026-09-28-3-merienda__RFC": {
     "celda": "2026-09-28-3-merienda",
-    "fecha": "2026-10-01T15:33:02.722Z",
-    "grupo": "mupp18jmw0oa",
+    "fecha": "2026-10-01T22:13:34.459Z",
+    "grupo": "muq3cbz1iap8",
     "persona": "RFC",
     "tipo": "nocome"
   }

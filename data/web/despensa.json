@@ -1,7 +1,7 @@
 {
   "aceite-de-oliva-virgen-extra-g": {
-    "actualizado": "2026-10-01T15:33:08.927Z",
-    "cantidad": 215.7,
+    "actualizado": "2026-10-01T22:14:55.601Z",
+    "cantidad": 200.6,
     "nombre": "Aceite de oliva virgen extra",
     "unidad": "g"
   },
@@ -12,8 +12,8 @@
     "unidad": "g"
   },
   "azucar-g": {
-    "actualizado": "2026-10-01T15:33:06.410Z",
-    "cantidad": 20,
+    "actualizado": "2026-10-01T22:13:29.139Z",
+    "cantidad": 25,
     "nombre": "Azúcar",
     "unidad": "g"
   },
@@ -24,16 +24,31 @@
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar · 2 ud",
     "unidad": "g"
   },
+  "brocoli-g": {
+    "actualizado": "2026-10-01T22:30:32.999Z",
+    "caducidad": "2026-10-02",
+    "cantidad": 500,
+    "nombre": "Brócoli",
+    "nota": "Ticket Mercadona 28/09 · peso del ticket",
+    "unidad": "g"
+  },
   "cacao-soluble-nesquik-g": {
-    "actualizado": "2026-10-01T15:33:06.710Z",
-    "cantidad": 50,
+    "actualizado": "2026-10-01T22:14:53.684Z",
+    "cantidad": 35,
     "nombre": "Cacao soluble Nesquik",
     "unidad": "g"
   },
   "cafe-molido-g": {
-    "actualizado": "2026-10-01T15:33:04.448Z",
-    "cantidad": 178,
+    "actualizado": "2026-10-01T22:14:51.657Z",
+    "cantidad": 154,
     "nombre": "Café molido",
+    "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
+  "calabaza-g": {
+    "actualizado": "2026-10-01T22:29:27.432Z",
+    "cantidad": 0,
+    "nombre": "Calabaza",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
   },
@@ -44,8 +59,8 @@
     "unidad": "g"
   },
   "copos-de-avena-g": {
-    "actualizado": "2026-10-01T20:42:19.799Z",
-    "cantidad": 67.6,
+    "actualizado": "2026-10-01T22:13:32.069Z",
+    "cantidad": 90,
     "nombre": "Copos de avena",
     "unidad": "g"
   },
@@ -57,8 +72,8 @@
     "unidad": "g"
   },
   "galletas-tostadas-animadas-hacendado-g": {
-    "actualizado": "2026-10-01T15:33:07.196Z",
-    "cantidad": 96,
+    "actualizado": "2026-10-01T22:14:54.047Z",
+    "cantidad": 64,
     "nombre": "Galletas tostadas Animadas Hacendado",
     "unidad": "g"
   },
@@ -87,9 +102,16 @@
     "nombre": "Jamón cocido",
     "unidad": "g"
   },
+  "jamon-serrano-en-lonchas-g": {
+    "actualizado": "2026-10-01T22:12:10.085Z",
+    "cantidad": 148.4,
+    "nombre": "Jamón serrano en lonchas",
+    "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
   "leche-semidesnatada-g": {
-    "actualizado": "2026-10-01T15:33:04.835Z",
-    "cantidad": 2320.2,
+    "actualizado": "2026-10-01T22:14:52.099Z",
+    "cantidad": 1241.3,
     "nombre": "Leche semidesnatada",
     "unidad": "g"
   },
@@ -108,22 +130,22 @@
     "unidad": "g"
   },
   "pan-de-barra-g": {
-    "actualizado": "2026-10-01T15:33:06.065Z",
-    "cantidad": 400,
+    "actualizado": "2026-10-01T22:13:30.940Z",
+    "cantidad": 450,
     "nombre": "Pan de barra",
     "nota": "Ticket Mercadona 28/09 · 2 baguettes, peso supuesto",
     "unidad": "g"
   },
   "pan-integral-g": {
-    "actualizado": "2026-10-01T15:33:07.985Z",
-    "cantidad": 661.1,
+    "actualizado": "2026-10-01T22:14:54.812Z",
+    "cantidad": 285.7,
     "nombre": "Pan integral",
     "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto",
     "unidad": "g"
   },
   "patata-g": {
-    "actualizado": "2026-10-01T12:10:07.826Z",
-    "cantidad": 0,
+    "actualizado": "2026-10-01T22:31:51.185Z",
+    "cantidad": 200,
     "nombre": "Patata",
     "unidad": "g"
   },
@@ -147,15 +169,15 @@
     "unidad": "g"
   },
   "queso-fresco-g": {
-    "actualizado": "2026-10-01T15:33:08.457Z",
-    "cantidad": 172.6,
+    "actualizado": "2026-10-01T22:14:55.187Z",
+    "cantidad": 112.6,
     "nombre": "Queso fresco",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
   },
   "tortitas-de-maiz-hacendado-g": {
-    "actualizado": "2026-10-01T15:33:05.181Z",
-    "cantidad": 63,
+    "actualizado": "2026-10-01T22:14:52.372Z",
+    "cantidad": 49,
     "nombre": "Tortitas de maíz Hacendado",
     "unidad": "g"
   },

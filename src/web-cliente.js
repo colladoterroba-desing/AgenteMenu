@@ -251,28 +251,38 @@
     return m;
   };
 
-  /** Lo que falta para lo que queda de la semana actual (desde hoy), sin lo cocinado y gastando antes las reservas. */
-  const necesidades = () => {
+  /**
+   * Lo que piden los platos que quedan de la semana actual (desde hoy) y, con conProxima, los de la próxima
+   * (en gProx), sin lo cocinado. Las reservas se gastan por orden de fecha y antes la que caduca antes;
+   * una reserva no cuenta para un día posterior a su caducidad.
+   */
+  const necesidades = (conProxima = false) => {
     const nec = new Map();
-    const reserva = new Map();
-    reservasActuales().forEach((x) => { if (x.receta) reserva.set(x.receta, (reserva.get(x.receta) || 0) + Number(x.reserva)); });
-    MENU[ACTUAL].celdas.slice().sort((a, b) => a.dia - b.dia).forEach((c) => {
-      if (fechaCelda(c) < HOY) return;
+    const reservas = reservasActuales().filter((x) => x.receta)
+      .map((x) => ({ receta: x.receta, quedan: Number(x.reserva), caduca: x.caduca || "9999-12-31" }))
+      .sort((a, b) => a.caduca.localeCompare(b.caduca));
+    const semanas = [ACTUAL, ...(conProxima && PROXIMA ? [PROXIMA] : [])];
+    semanas.forEach((sem) => MENU[sem].celdas.slice().sort((a, b) => a.dia - b.dia).forEach((c) => {
+      const fecha = fechaCelda(c);
+      if (fecha < HOY) return;
       instancias(c).forEach((i) => {
         if (i.sobras || cocinadoDb.has(i.inst)) return;
         i.items.forEach((it) => {
-          const deReserva = Math.min(reserva.get(it.receta) || 0, it.rac);
-          if (deReserva > 0) reserva.set(it.receta, reserva.get(it.receta) - deReserva);
-          const rac = it.rac - deReserva;
+          let rac = it.rac;
+          reservas.filter((x) => x.receta === it.receta && x.caduca >= fecha).forEach((x) => {
+            const usa = Math.min(x.quedan, rac);
+            x.quedan -= usa; rac -= usa;
+          });
           if (rac <= 0) return;
           (REC[it.receta]?.ing || []).forEach((ing) => {
             const [k, n, , seccion, , unidad] = ing;
-            const x = nec.get(k) || { nombre: n, g: 0, recetas: new Set(), seccion, unidad };
-            x.g += cantidadIng(ing, it, rac); x.recetas.add(nombreRec(it.receta)); nec.set(k, x);
+            const x = nec.get(k) || { nombre: n, g: 0, gProx: 0, recetas: new Set(), recetasProx: new Set(), seccion, unidad };
+            const esta = sem === ACTUAL;
+            x[esta ? "g" : "gProx"] += cantidadIng(ing, it, rac); x[esta ? "recetas" : "recetasProx"].add(nombreRec(it.receta)); nec.set(k, x);
           });
         });
       });
-    });
+    }));
     return nec;
   };
 
@@ -693,10 +703,16 @@
   let marcas = (() => { try { return new Set(JSON.parse(localStorage.getItem(CLAVE_LS) || "[]")); } catch { return new Set(); } })();
   const guardarMarcas = () => { try { localStorage.setItem(CLAVE_LS, JSON.stringify([...marcas])); } catch {} };
   let listaCompra = [];
+  /** Para qué semana es cada producto: esta, la próxima o las dos (con lo de cada una). */
+  const paraSemana = (p) => p.esta && p.prox
+    ? "Esta semana " + fmtCant(p.esta, p.unidad) + " · próxima " + fmtCant(p.prox, p.unidad)
+    : p.esta ? "Esta semana" : "Próxima semana";
   const renderCompra = () => {
-    listaCompra = [...necesidades().entries()].map(([k, x]) => {
+    // Lo que hay en casa se gasta antes en esta semana; lo que sobre, en la próxima.
+    listaCompra = [...necesidades(true).entries()].map(([k, x]) => {
       const tengo = tengoDe(k);
-      return { k, nombre: x.nombre, unidad: x.unidad, g: x.g, tengo, comprar: redondear(x.g - tengo, k), recetas: [...x.recetas], pasillo: x.seccion || "Otros" };
+      const esta = redondear(x.g - tengo, k), prox = redondear(x.gProx - Math.max(0, tengo - x.g), k);
+      return { k, nombre: x.nombre, unidad: x.unidad, g: x.g + x.gProx, tengo, esta, prox, comprar: esta + prox, recetas: [...new Set([...(esta ? x.recetas : []), ...(prox ? x.recetasProx : [])])], pasillo: x.seccion || "Otros" };
     }).sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
     const cont = document.getElementById("pasillos");
     const porPasillo = new Map();
@@ -714,11 +730,12 @@
         ul.append(el("li", null, chk, el("label", { htmlFor: id },
           el("span", { class: "producto", text: p.nombre }),
           el("span", { class: "cant mono", text: fmtCant(p.comprar, p.unidad) + equivalencia(p.k, p.comprar) }),
+          el("span", { class: "semana-compra " + (p.esta ? (p.prox ? "dos" : "esta") : "prox"), text: paraSemana(p) }),
           el("span", { class: "para", text: para + (p.tengo ? " · en despensa " + fmtCant(p.tengo, p.unidad) : "") }))));
       });
       cont.append(el("section", { class: "pasillo" }, el("h3", null, n + " ", el("span", { class: "sub mono", text: String(items.length) })), ul));
     });
-    if (!porPasillo.size) cont.append(el("p", { class: "sub", text: "No hace falta comprar nada: lo que queda de semana ya está en casa." }));
+    if (!porPasillo.size) cont.append(el("p", { class: "sub", text: "No hace falta comprar nada: lo que queda de esta semana y la próxima ya está en casa." }));
     const pendientes = listaCompra.filter((p) => p.comprar > 0).length;
     document.getElementById("compra-total").textContent = pendientes;
     const rc = document.getElementById("resumen-compra"); if (rc) rc.textContent = pendientes;
@@ -748,7 +765,7 @@
   document.getElementById("desmarcar")?.addEventListener("click", () => { marcas.clear(); guardarMarcas(); renderCompra(); });
   document.getElementById("copiar-lista")?.addEventListener("click", () => {
     const porPasillo = new Map();
-    listaCompra.filter((p) => p.comprar > 0 && !marcas.has(p.k)).forEach((p) => porPasillo.set(p.pasillo, [...(porPasillo.get(p.pasillo) || []), "- " + p.nombre + ": " + fmtCant(p.comprar, p.unidad) + equivalencia(p.k, p.comprar)]));
+    listaCompra.filter((p) => p.comprar > 0 && !marcas.has(p.k)).forEach((p) => porPasillo.set(p.pasillo, [...(porPasillo.get(p.pasillo) || []), "- " + p.nombre + ": " + fmtCant(p.comprar, p.unidad) + equivalencia(p.k, p.comprar) + " (" + paraSemana(p).toLowerCase() + ")"]));
     const texto = datos.ordenPasillos.filter((n) => porPasillo.has(n)).map((n) => n + "\n" + porPasillo.get(n).join("\n")).join("\n\n");
     const av = document.getElementById("copiado");
     navigator.clipboard.writeText(texto).then(() => (av.textContent = "Lista copiada"), () => (av.textContent = "No se ha podido copiar; selecciona la lista a mano."));

@@ -1188,6 +1188,8 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .producto{font-weight:600;font-size:.92rem}
 .cant{font-size:.88rem;white-space:nowrap}
 .para{grid-column:1 / -1;font-size:.74rem;color:var(--muted);line-height:1.3}
+.semana-compra{grid-column:1 / -1;justify-self:start;font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
+.semana-compra.prox{border-style:dashed;color:var(--muted)}
 .pasillo input:checked + label .producto,.pasillo input:checked + label .cant{text-decoration:line-through;color:var(--muted)}
 .en-casa .cant{color:var(--bien)}
 .pestanas{display:flex;gap:4px;border-bottom:1px solid var(--line)}
@@ -1601,7 +1603,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 
   <section class="vista" id="compra" data-vista aria-labelledby="h-compra" hidden>
     <header class="cab"><h1 id="h-compra">Lista de la compra</h1>
-    <p class="sub">Ingredientes de lo que queda de semana (desde hoy, sin contar lo ya cocinado), en gramos, redondeados hacia arriba y descontando lo que hay en la despensa; lo que ya está en casa no aparece. Entre paréntesis, cuántas unidades o ml son aproximadamente. Marca lo que llevas en el carro y pulsa «Confirmar compra» (abajo a la derecha): se suma a la despensa.</p></header>
+    <p class="sub">Ingredientes de lo que queda de esta semana (desde hoy) y de toda la próxima, sin contar lo ya cocinado ni lo que sale de las raciones en reserva; cada producto dice si es para esta semana, para la próxima o para las dos (lo que hay en casa se gasta antes en esta semana). Las cantidades van en gramos, redondeadas hacia arriba y descontando lo que hay en la despensa; lo que ya está en casa no aparece. Entre paréntesis, cuántas unidades o ml son aproximadamente. Marca lo que llevas en el carro y pulsa «Confirmar compra» (abajo a la derecha): se suma a la despensa.</p></header>
     ${seccionCompra()}
     ${precios && MOSTRAR_COSTES ? seccionCoste(compra, precios) : ""}
   </section>

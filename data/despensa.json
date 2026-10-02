@@ -110,7 +110,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 285.7,
+      "cantidad": 334.3,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -169,7 +169,7 @@
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 1241.3,
+      "cantidad": 1450,
       "unidad": "g"
     },
     {
@@ -195,6 +195,11 @@
     {
       "nombre": "Patata",
       "cantidad": 200,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Huevos (docena)",
+      "cantidad": 600,
       "unidad": "g"
     }
   ],

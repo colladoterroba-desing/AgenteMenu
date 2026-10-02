@@ -238,5 +238,30 @@
     "fecha": "2026-10-01T22:30:33.580Z",
     "texto": "Añadido a la despensa: Brócoli 500 g.",
     "tipo": "despensa"
+  },
+  "1790932046825-cofn7": {
+    "fecha": "2026-10-02T09:07:26.825Z",
+    "texto": "Añadido a la despensa: Huevos (docena) 600 g.",
+    "tipo": "despensa"
+  },
+  "1790955122733-ozhet": {
+    "fecha": "2026-10-02T15:32:02.734Z",
+    "texto": "Anotaciones (viernes, merienda): CCT: comió Sándwich de nocilla.",
+    "tipo": "comido"
+  },
+  "1790955130455-5d3w6": {
+    "fecha": "2026-10-02T15:32:10.455Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1790955155638-ov9o8": {
+    "fecha": "2026-10-02T15:32:35.639Z",
+    "texto": "Anotaciones (viernes, comida): RFC: comió Pollo guisado con verduras y arroz integral.",
+    "tipo": "comido"
+  },
+  "1790955162021-i7sps": {
+    "fecha": "2026-10-02T15:32:42.021Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
   }
 }

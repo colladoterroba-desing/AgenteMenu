@@ -171,5 +171,21 @@
     "grupo": "muq3cbz1iap8",
     "persona": "RFC",
     "tipo": "nocome"
+  },
+  "2026-09-28-4-comida__RFC": {
+    "celda": "2026-09-28-4-comida",
+    "fecha": "2026-10-02T15:32:35.031Z",
+    "grupo": "mur4ghuf26cu",
+    "persona": "RFC",
+    "receta": "pollo-guisado-arroz",
+    "tipo": "receta"
+  },
+  "2026-09-28-4-merienda__CCT": {
+    "celda": "2026-09-28-4-merienda",
+    "fecha": "2026-10-02T15:32:02.456Z",
+    "grupo": "mur4fspkij7o",
+    "persona": "CCT",
+    "texto": "Sándwich de nocilla",
+    "tipo": "texto"
   }
 }

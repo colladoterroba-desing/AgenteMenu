@@ -99,7 +99,7 @@
       "pan-integral-g": 103.2
     },
     "etiqueta": "",
-    "fecha": "2026-10-01T22:12:10.610Z",
+    "fecha": "2026-10-02T15:32:40.446Z",
     "raciones": 1.29,
     "recetas": [
       "almuerzo-bocadillo-serrano"
@@ -135,7 +135,7 @@
       "tortitas-de-maiz-hacendado-g": 14
     },
     "etiqueta": "Desayunos",
-    "fecha": "2026-10-01T22:12:09.529Z",
+    "fecha": "2026-10-02T15:32:38.841Z",
     "raciones": 1,
     "recetas": [
       "desayuno-rfa",
@@ -148,12 +148,12 @@
     "auto": true,
     "celda": "2026-09-28-4-merienda",
     "descontado": {
-      "leche-semidesnatada-g": 739,
-      "pan-integral-g": 172.2
+      "leche-semidesnatada-g": 530.5,
+      "pan-integral-g": 123.6
     },
     "etiqueta": "",
-    "fecha": "2026-10-01T22:12:11.830Z",
-    "raciones": 2.87,
+    "fecha": "2026-10-02T15:32:41.636Z",
+    "raciones": 2.06,
     "recetas": [
       "tostada-cacahuete-platano"
     ]

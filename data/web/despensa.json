@@ -1,14 +1,38 @@
 {
   "aceite-de-oliva-virgen-extra-g": {
-    "actualizado": "2026-10-02T15:32:40.143Z",
-    "cantidad": 200.6,
+    "actualizado": "2026-10-03T18:30:19.652Z",
+    "cantidad": 983.4,
     "nombre": "Aceite de oliva virgen extra",
     "unidad": "g"
   },
   "aceitunas-g": {
-    "actualizado": "2026-09-30T10:40:02.783Z",
-    "cantidad": 20,
+    "actualizado": "2026-10-03T18:30:20.136Z",
+    "cantidad": 30,
     "nombre": "Aceitunas",
+    "unidad": "g"
+  },
+  "almendras-g": {
+    "actualizado": "2026-10-03T18:30:20.645Z",
+    "cantidad": 210,
+    "nombre": "Almendras",
+    "unidad": "g"
+  },
+  "alubias-blancas-cocidas-bote-g": {
+    "actualizado": "2026-10-03T18:30:21.291Z",
+    "cantidad": 850,
+    "nombre": "Alubias blancas cocidas (bote)",
+    "unidad": "g"
+  },
+  "arroz-integral-g": {
+    "actualizado": "2026-10-03T18:30:21.941Z",
+    "cantidad": 70,
+    "nombre": "Arroz integral",
+    "unidad": "g"
+  },
+  "arroz-redondo-g": {
+    "actualizado": "2026-10-03T18:30:22.643Z",
+    "cantidad": 400,
+    "nombre": "Arroz redondo",
     "unidad": "g"
   },
   "azucar-g": {
@@ -33,16 +57,22 @@
     "unidad": "g"
   },
   "cacao-soluble-nesquik-g": {
-    "actualizado": "2026-10-02T15:32:38.206Z",
-    "cantidad": 35,
+    "actualizado": "2026-10-03T18:30:23.214Z",
+    "cantidad": 120,
     "nombre": "Cacao soluble Nesquik",
     "unidad": "g"
   },
   "cafe-molido-g": {
-    "actualizado": "2026-10-02T15:32:35.992Z",
-    "cantidad": 154,
+    "actualizado": "2026-10-03T18:30:23.914Z",
+    "cantidad": 200,
     "nombre": "Café molido",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
+  "calabacin-g": {
+    "actualizado": "2026-10-03T17:44:00.392Z",
+    "cantidad": 1900,
+    "nombre": "Calabacín",
     "unidad": "g"
   },
   "calabaza-g": {
@@ -58,10 +88,48 @@
     "nombre": "Carne estofada con verdura",
     "unidad": "g"
   },
+  "carne-picada-de-pavo-g": {
+    "actualizado": "2026-10-03T18:30:24.868Z",
+    "cantidad": 420,
+    "nombre": "Carne picada de pavo",
+    "unidad": "g"
+  },
+  "cebolla-g": {
+    "actualizado": "2026-10-03T17:44:01.001Z",
+    "cantidad": 1910,
+    "nombre": "Cebolla",
+    "unidad": "g"
+  },
+  "champinones-g": {
+    "actualizado": "2026-10-03T17:44:01.540Z",
+    "cantidad": 420,
+    "nombre": "Champiñones",
+    "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
+  "chuleta-de-sajonia-g": {
+    "actualizado": "2026-10-03T18:30:26.167Z",
+    "cantidad": 370,
+    "nombre": "Chuleta de Sajonia",
+    "unidad": "g"
+  },
+  "contramuslos-de-pollo-deshuesados-g": {
+    "actualizado": "2026-10-03T13:49:32.525Z",
+    "cantidad": 880,
+    "nombre": "Contramuslos de pollo deshuesados",
+    "nota": "Ticket Mercadona 28/09 · 2 bandejas, peso supuesto",
+    "unidad": "g"
+  },
   "copos-de-avena-g": {
-    "actualizado": "2026-10-01T22:13:32.069Z",
-    "cantidad": 90,
+    "actualizado": "2026-10-03T18:30:26.774Z",
+    "cantidad": 170,
     "nombre": "Copos de avena",
+    "unidad": "g"
+  },
+  "crema-de-cacahuete-100-g": {
+    "actualizado": "2026-10-03T18:30:27.770Z",
+    "cantidad": 90,
+    "nombre": "Crema de cacahuete 100 %",
     "unidad": "g"
   },
   "espinacas-frescas-g": {
@@ -71,17 +139,35 @@
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
   },
+  "fruta-de-temporada-g": {
+    "actualizado": "2026-10-03T17:44:02.159Z",
+    "cantidad": 9400,
+    "nombre": "Fruta de temporada",
+    "unidad": "g"
+  },
   "galletas-tostadas-animadas-hacendado-g": {
-    "actualizado": "2026-10-02T15:32:38.542Z",
-    "cantidad": 64,
+    "actualizado": "2026-10-03T18:30:28.694Z",
+    "cantidad": 256,
     "nombre": "Galletas tostadas Animadas Hacendado",
     "unidad": "g"
   },
+  "gambas-peladas-congeladas-g": {
+    "actualizado": "2026-10-03T18:30:29.388Z",
+    "cantidad": 250,
+    "nombre": "Gambas peladas congeladas",
+    "unidad": "g"
+  },
   "garbanzos-cocidos-bote-g": {
-    "actualizado": "2026-09-30T12:42:58.478Z",
-    "cantidad": 0,
+    "actualizado": "2026-10-03T18:30:41.202Z",
+    "cantidad": 130,
     "nombre": "Garbanzos cocidos (bote)",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
+  "guisantes-congelados-g": {
+    "actualizado": "2026-10-03T18:30:43.735Z",
+    "cantidad": 370,
+    "nombre": "Guisantes congelados",
     "unidad": "g"
   },
   "hamburguesa-de-ternera-g": {
@@ -97,14 +183,14 @@
     "unidad": "g"
   },
   "huevos-g": {
-    "actualizado": "2026-09-30T12:42:59.146Z",
-    "cantidad": 967.8,
+    "actualizado": "2026-10-03T18:30:44.664Z",
+    "cantidad": 2947.8,
     "nombre": "Huevos",
     "unidad": "g"
   },
   "jamon-cocido-g": {
-    "actualizado": "2026-09-30T11:26:37.810Z",
-    "cantidad": 380,
+    "actualizado": "2026-10-03T18:30:45.184Z",
+    "cantidad": 500,
     "nombre": "Jamón cocido",
     "unidad": "g"
   },
@@ -115,24 +201,60 @@
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
   },
+  "jamon-serrano-en-taquitos-g": {
+    "actualizado": "2026-10-03T18:30:48.334Z",
+    "cantidad": 70,
+    "nombre": "Jamón serrano en taquitos",
+    "unidad": "g"
+  },
+  "judias-verdes-g": {
+    "actualizado": "2026-10-03T17:44:02.693Z",
+    "cantidad": 950,
+    "nombre": "Judías verdes",
+    "unidad": "g"
+  },
   "leche-semidesnatada-g": {
-    "actualizado": "2026-10-02T15:32:41.065Z",
-    "cantidad": 1450,
+    "actualizado": "2026-10-03T18:30:53.315Z",
+    "cantidad": 4260.1,
     "nombre": "Leche semidesnatada",
     "unidad": "g"
   },
   "lechuga-g": {
-    "actualizado": "2026-09-30T10:39:36.675Z",
-    "cantidad": 660,
+    "actualizado": "2026-10-03T17:44:03.348Z",
+    "cantidad": 910,
     "nombre": "Lechuga",
     "nota": "Ticket Mercadona 28/09 · 1 lechuga hoja de roble, peso supuesto",
     "unidad": "g"
   },
   "lentejas-pardinas-g": {
-    "actualizado": "2026-10-01T12:10:08.660Z",
-    "cantidad": 440,
+    "actualizado": "2026-10-03T13:49:21.716Z",
+    "cantidad": 160,
     "nombre": "Lentejas pardinas",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
+  "limon-g": {
+    "actualizado": "2026-10-03T17:44:04.108Z",
+    "cantidad": 400,
+    "nombre": "Limón",
+    "unidad": "g"
+  },
+  "maiz-dulce-lata-g": {
+    "actualizado": "2026-10-03T18:30:54.231Z",
+    "cantidad": 30,
+    "nombre": "Maíz dulce (lata)",
+    "unidad": "g"
+  },
+  "manzana-g": {
+    "actualizado": "2026-10-03T17:44:04.678Z",
+    "cantidad": 180,
+    "nombre": "Manzana",
+    "unidad": "g"
+  },
+  "nueces-peladas-g": {
+    "actualizado": "2026-10-03T18:30:54.758Z",
+    "cantidad": 20,
+    "nombre": "Nueces peladas",
     "unidad": "g"
   },
   "pan-de-barra-g": {
@@ -142,56 +264,167 @@
     "nota": "Ticket Mercadona 28/09 · 2 baguettes, peso supuesto",
     "unidad": "g"
   },
+  "pan-de-molde-integral-g": {
+    "actualizado": "2026-10-03T18:30:55.226Z",
+    "cantidad": 700,
+    "nombre": "Pan de molde integral",
+    "unidad": "g"
+  },
   "pan-integral-g": {
-    "actualizado": "2026-10-02T15:32:40.703Z",
-    "cantidad": 334.3,
+    "actualizado": "2026-10-03T18:30:55.774Z",
+    "cantidad": 3134.3,
     "nombre": "Pan integral",
     "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto",
     "unidad": "g"
   },
+  "pan-rallado-g": {
+    "actualizado": "2026-10-03T18:30:56.361Z",
+    "cantidad": 140,
+    "nombre": "Pan rallado",
+    "unidad": "g"
+  },
+  "pasta-integral-corta-g": {
+    "actualizado": "2026-10-03T18:30:57.175Z",
+    "cantidad": 80,
+    "nombre": "Pasta integral corta",
+    "unidad": "g"
+  },
   "patata-g": {
-    "actualizado": "2026-10-01T22:31:51.185Z",
-    "cantidad": 200,
+    "actualizado": "2026-10-03T17:44:05.197Z",
+    "cantidad": 6200,
     "nombre": "Patata",
     "unidad": "g"
   },
+  "pechuga-de-pavo-en-lonchas-g": {
+    "actualizado": "2026-10-03T18:30:57.878Z",
+    "cantidad": 840,
+    "nombre": "Pechuga de pavo en lonchas",
+    "unidad": "g"
+  },
+  "pechuga-de-pollo-en-filetes-finos-g": {
+    "actualizado": "2026-10-03T18:30:59.119Z",
+    "cantidad": 550,
+    "nombre": "Pechuga de pollo en filetes finos",
+    "unidad": "g"
+  },
+  "pechuga-de-pollo-g": {
+    "actualizado": "2026-10-03T18:30:58.420Z",
+    "cantidad": 280,
+    "nombre": "Pechuga de pollo",
+    "unidad": "g"
+  },
+  "pepino-g": {
+    "actualizado": "2026-10-03T17:44:05.863Z",
+    "cantidad": 80,
+    "nombre": "Pepino",
+    "unidad": "g"
+  },
+  "pimiento-asado-bote-g": {
+    "actualizado": "2026-10-03T18:30:59.905Z",
+    "cantidad": 40,
+    "nombre": "Pimiento asado (bote)",
+    "unidad": "g"
+  },
+  "pimiento-rojo-g": {
+    "actualizado": "2026-10-03T13:49:32.964Z",
+    "cantidad": 316,
+    "nombre": "Pimiento rojo",
+    "nota": "Ticket Mercadona 28/09 · peso del ticket",
+    "unidad": "g"
+  },
   "pimiento-verde-g": {
-    "actualizado": "2026-10-01T12:10:07.420Z",
-    "cantidad": 0,
+    "actualizado": "2026-10-03T17:44:06.919Z",
+    "cantidad": 170,
     "nombre": "Pimiento verde",
     "unidad": "g"
   },
   "puerro-g": {
-    "actualizado": "2026-09-30T10:39:37.277Z",
-    "cantidad": 630,
+    "actualizado": "2026-10-03T17:44:07.983Z",
+    "cantidad": 1280,
     "nombre": "Puerro",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
   },
   "queso-en-lonchas-g": {
-    "actualizado": "2026-09-30T20:00:16.916Z",
-    "cantidad": 132.6,
+    "actualizado": "2026-10-03T18:31:00.416Z",
+    "cantidad": 542.6,
     "nombre": "Queso en lonchas",
     "unidad": "g"
   },
+  "queso-fresco-batido-g": {
+    "actualizado": "2026-10-03T18:31:01.348Z",
+    "cantidad": 90,
+    "nombre": "Queso fresco batido",
+    "unidad": "g"
+  },
   "queso-fresco-g": {
-    "actualizado": "2026-10-02T15:32:37.890Z",
-    "cantidad": 112.6,
+    "actualizado": "2026-10-03T18:31:00.952Z",
+    "cantidad": 402.6,
     "nombre": "Queso fresco",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
   },
+  "quinoa-g": {
+    "actualizado": "2026-10-03T18:31:01.939Z",
+    "cantidad": 60,
+    "nombre": "Quinoa",
+    "unidad": "g"
+  },
+  "solomillo-de-cerdo-g": {
+    "actualizado": "2026-10-03T13:50:24.542Z",
+    "cantidad": 1817.6,
+    "nombre": "Solomillo de cerdo",
+    "nota": "Ticket Mercadona 28/09 · 4 bandejas (19,30 €), peso estimado a unos 8 €/kg",
+    "unidad": "g"
+  },
+  "tomate-g": {
+    "actualizado": "2026-10-03T17:44:08.884Z",
+    "cantidad": 4100,
+    "nombre": "Tomate",
+    "unidad": "g"
+  },
+  "tomate-triturado-g": {
+    "actualizado": "2026-10-03T18:31:20.134Z",
+    "cantidad": 950,
+    "nombre": "Tomate triturado",
+    "unidad": "g"
+  },
   "tortitas-de-maiz-hacendado-g": {
-    "actualizado": "2026-10-02T15:32:36.659Z",
-    "cantidad": 49,
+    "actualizado": "2026-10-03T18:31:02.427Z",
+    "cantidad": 133,
     "nombre": "Tortitas de maíz Hacendado",
     "unidad": "g"
   },
+  "yogur-griego-ligero-g": {
+    "actualizado": "2026-10-03T18:31:02.785Z",
+    "cantidad": 50,
+    "nombre": "Yogur griego ligero",
+    "unidad": "g"
+  },
+  "yogur-liquido-natural-g": {
+    "actualizado": "2026-10-03T18:31:03.212Z",
+    "cantidad": 360,
+    "nombre": "Yogur líquido natural",
+    "unidad": "g"
+  },
+  "yogur-natural-g": {
+    "actualizado": "2026-10-03T18:31:03.867Z",
+    "cantidad": 1750,
+    "nombre": "Yogur natural",
+    "unidad": "g"
+  },
   "zanahoria-g": {
-    "actualizado": "2026-10-01T12:10:09.113Z",
-    "cantidad": 600,
+    "actualizado": "2026-10-03T17:44:09.674Z",
+    "cantidad": 1200,
     "nombre": "Zanahoria",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
+    "unidad": "g"
+  },
+  "zumo-de-naranja-con-pulpa-g": {
+    "actualizado": "2026-10-03T13:50:24.996Z",
+    "cantidad": 1647.4,
+    "nombre": "Zumo de naranja con pulpa",
+    "nota": "Ticket Mercadona 28/09 · 2 bricks de 1 l, sin confirmar · 2000 ml",
     "unidad": "g"
   }
 }

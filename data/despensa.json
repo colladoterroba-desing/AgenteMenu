@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 154,
+      "cantidad": 200,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -14,31 +14,31 @@
     },
     {
       "nombre": "Zumo de naranja con pulpa",
-      "cantidad": 2080,
+      "cantidad": 1647.4,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 2 bricks de 1 l, sin confirmar · 2000 ml"
     },
     {
       "nombre": "Contramuslos de pollo deshuesados",
-      "cantidad": 1000,
+      "cantidad": 880,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 2 bandejas, peso supuesto"
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 112.6,
+      "cantidad": 402.6,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Lentejas pardinas",
-      "cantidad": 440,
+      "cantidad": 160,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Solomillo de cerdo",
-      "cantidad": 2400,
+      "cantidad": 1817.6,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 4 bandejas (19,30 €), peso estimado a unos 8 €/kg"
     },
@@ -68,25 +68,25 @@
     },
     {
       "nombre": "Puerro",
-      "cantidad": 630,
+      "cantidad": 1280,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Champiñones",
-      "cantidad": 250,
+      "cantidad": 420,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Lechuga",
-      "cantidad": 660,
+      "cantidad": 910,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 1 lechuga hoja de roble, peso supuesto"
     },
     {
       "nombre": "Zanahoria",
-      "cantidad": 600,
+      "cantidad": 1200,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -110,13 +110,13 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 334.3,
+      "cantidad": 3134.3,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
     {
       "nombre": "Pimiento rojo",
-      "cantidad": 366,
+      "cantidad": 316,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · peso del ticket"
     },
@@ -129,12 +129,12 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 200.6,
+      "cantidad": 983.4,
       "unidad": "g"
     },
     {
       "nombre": "Aceitunas",
-      "cantidad": 20,
+      "cantidad": 30,
       "unidad": "g"
     },
     {
@@ -144,42 +144,42 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 35,
+      "cantidad": 120,
       "unidad": "g"
     },
     {
       "nombre": "Copos de avena",
-      "cantidad": 90,
+      "cantidad": 170,
       "unidad": "g"
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 64,
+      "cantidad": 256,
       "unidad": "g"
     },
     {
       "nombre": "Huevos",
-      "cantidad": 967.8,
+      "cantidad": 2947.8,
       "unidad": "g"
     },
     {
       "nombre": "Jamón cocido",
-      "cantidad": 380,
+      "cantidad": 500,
       "unidad": "g"
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 1450,
+      "cantidad": 4260.1,
       "unidad": "g"
     },
     {
       "nombre": "Queso en lonchas",
-      "cantidad": 132.6,
+      "cantidad": 542.6,
       "unidad": "g"
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 49,
+      "cantidad": 133,
       "unidad": "g"
     },
     {
@@ -194,12 +194,188 @@
     },
     {
       "nombre": "Patata",
-      "cantidad": 200,
+      "cantidad": 6200,
       "unidad": "g"
     },
     {
       "nombre": "Huevos (docena)",
       "cantidad": 600,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Almendras",
+      "cantidad": 210,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Alubias blancas cocidas (bote)",
+      "cantidad": 850,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Arroz integral",
+      "cantidad": 70,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Arroz redondo",
+      "cantidad": 400,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Calabacín",
+      "cantidad": 1900,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Carne picada de pavo",
+      "cantidad": 420,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Cebolla",
+      "cantidad": 1910,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Chuleta de Sajonia",
+      "cantidad": 370,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Crema de cacahuete 100 %",
+      "cantidad": 90,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Fruta de temporada",
+      "cantidad": 9400,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Gambas peladas congeladas",
+      "cantidad": 250,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Garbanzos cocidos (bote)",
+      "cantidad": 130,
+      "unidad": "g",
+      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
+    },
+    {
+      "nombre": "Guisantes congelados",
+      "cantidad": 370,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Jamón serrano en taquitos",
+      "cantidad": 70,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Judías verdes",
+      "cantidad": 950,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Limón",
+      "cantidad": 400,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Maíz dulce (lata)",
+      "cantidad": 30,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Manzana",
+      "cantidad": 180,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Nueces peladas",
+      "cantidad": 20,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pan de molde integral",
+      "cantidad": 700,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pan rallado",
+      "cantidad": 140,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pasta integral corta",
+      "cantidad": 80,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pechuga de pavo en lonchas",
+      "cantidad": 840,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pechuga de pollo en filetes finos",
+      "cantidad": 550,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pechuga de pollo",
+      "cantidad": 280,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pepino",
+      "cantidad": 80,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pimiento asado (bote)",
+      "cantidad": 40,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Pimiento verde",
+      "cantidad": 170,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Queso fresco batido",
+      "cantidad": 90,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Quinoa",
+      "cantidad": 60,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Tomate",
+      "cantidad": 4100,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Tomate triturado",
+      "cantidad": 950,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Yogur griego ligero",
+      "cantidad": 50,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Yogur líquido natural",
+      "cantidad": 360,
+      "unidad": "g"
+    },
+    {
+      "nombre": "Yogur natural",
+      "cantidad": 1750,
       "unidad": "g"
     }
   ],
@@ -253,6 +429,26 @@
       "receta": "lentejas-estofadas",
       "ubicacion": "congelador",
       "hechas": 4
+    },
+    {
+      "id": "lentejas-estofadas__1791035363186",
+      "descripcion": "Lentejas estofadas con verduras",
+      "raciones": 4,
+      "fecha": "2026-10-03",
+      "consumirAntesDe": "2027-01-03",
+      "receta": "lentejas-estofadas",
+      "ubicacion": "congelador",
+      "hechas": 4
+    },
+    {
+      "id": "paella-pollo-verduras__1791035373571",
+      "descripcion": "Paella de pollo y verduras",
+      "raciones": 1,
+      "fecha": "2026-10-03",
+      "consumirAntesDe": "2027-01-03",
+      "receta": "paella-pollo-verduras",
+      "ubicacion": "congelador",
+      "hechas": 1
     }
   ]
 }

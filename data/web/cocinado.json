@@ -157,5 +157,42 @@
     "recetas": [
       "tostada-cacahuete-platano"
     ]
+  },
+  "2026-09-28-5-comida~p0": {
+    "celda": "2026-09-28-5-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 57.4,
+      "solomillo-de-cerdo-g": 582.4,
+      "zumo-de-naranja-con-pulpa-g": 432.6
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-03T13:50:25.747Z",
+    "raciones": 4.16,
+    "recetas": [
+      "solomillo-naranja"
+    ]
+  },
+  "2026-09-28-5-desayuno~des": {
+    "auto": true,
+    "celda": "2026-09-28-5-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "queso-fresco-g": 30,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-03T13:48:35.772Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
   }
 }

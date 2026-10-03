@@ -263,5 +263,45 @@
     "fecha": "2026-10-02T15:32:42.021Z",
     "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
     "tipo": "cocinado"
+  },
+  "1791035316307-b5v5b": {
+    "fecha": "2026-10-03T13:48:36.307Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791035363600-9hmwi": {
+    "fecha": "2026-10-03T13:49:23.600Z",
+    "texto": "Cocinado: Lentejas estofadas con verduras · 4,00 rac.. En reserva: 4,00 rac. (congelador).",
+    "tipo": "cocinado"
+  },
+  "1791035374199-fopic": {
+    "fecha": "2026-10-03T13:49:34.199Z",
+    "texto": "Cocinado: Paella de pollo y verduras · 1,00 rac.. En reserva: 1,00 rac. (congelador).",
+    "tipo": "cocinado"
+  },
+  "1791035426207-v3zkq": {
+    "fecha": "2026-10-03T13:50:26.207Z",
+    "texto": "Cocinado: Solomillo de cerdo a la naranja con patatas al horno · 4,16 rac. (sábado, comida). Se restan 3 productos de la despensa.",
+    "tipo": "cocinado"
+  },
+  "1791035426597-yeu3e": {
+    "fecha": "2026-10-03T13:50:26.597Z",
+    "texto": "Cocinado: Solomillo de cerdo a la naranja con patatas al horno · 4,16 rac. para sáb, 3 oct, comida.",
+    "tipo": "cocinado"
+  },
+  "1791049450168-8g3km": {
+    "fecha": "2026-10-03T17:44:10.168Z",
+    "texto": "Compra confirmada (14 productos): Calabacín 1.900 g, Cebolla 1.910 g, Champiñones 170 g, Fruta de temporada 9.400 g, Judías verdes 950 g, Lechuga 250 g, Limón 400 g, Manzana 180 g, Patata 6.200 g, Pepino 80 g, Pimiento verde 170 g, Puerro 650 g, Tomate 4.100 g, Zanahoria 800 g.",
+    "tipo": "compra"
+  },
+  "1791052266172-8vdvu": {
+    "fecha": "2026-10-03T18:31:06.172Z",
+    "texto": "Compra confirmada (42 productos): Aceite de oliva virgen extra 900 g, Aceitunas 10 g, Almendras 210 g, Alubias blancas cocidas (bote) 850 g, Arroz integral 70 g, Arroz redondo 400 g, Cacao soluble Nesquik 100 g, Café 1 paquete, Café molido 70 g, Carne picada de pavo 420 g, Chuleta de Sajonia 370 g, Copos de avena 80 g, Crema de cacahuete 100 % 90 g, Galletas Animadas 2 paquetes, Galletas tostadas Animadas Hacendado 224 g, Gambas peladas congeladas 250 g, Garbanzos cocidos (bote) 130 g, Guisantes congelados 370 g, Huevos 1.980 g, Jamón cocido 120 g, Jamón serrano en taquitos 70 g, Leche semidesnatada 3.150 g, Lejía, Maíz dulce (lata) 30 g, Nueces peladas 20 g, Pan de molde integral 700 g, Pan integral 3.010 g, Pan rallado 140 g, Pasta integral corta 80 g, Pechuga de pavo en lonchas 840 g, Pechuga de pollo 280 g, Pechuga de pollo en filetes finos 550 g, Pimentón, Pimiento asado (bote) 40 g, Queso en lonchas 410 g, Queso fresco 320 g, Queso fresco batido 90 g, Quinoa 60 g, Tortitas de maíz Hacendado 98 g, Yogur griego ligero 50 g, Yogur líquido natural 360 g, Yogur natural 1.750 g.",
+    "tipo": "compra"
+  },
+  "1791052280674-f4yq1": {
+    "fecha": "2026-10-03T18:31:20.674Z",
+    "texto": "Compra confirmada (1 productos): Tomate triturado 950 g.",
+    "tipo": "compra"
   }
 }

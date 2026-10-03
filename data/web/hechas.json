@@ -68,6 +68,40 @@
     "reserva": 4,
     "semana": "2026-09-28"
   },
+  "lentejas-estofadas__1791035363186": {
+    "actualizado": "2026-10-03T13:49:23.187Z",
+    "caduca": "2027-01-03",
+    "comer": 0,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 36.8,
+      "lentejas-pardinas-g": 280,
+      "pan-integral-g": 160,
+      "patata-g": 200,
+      "zanahoria-g": 200
+    },
+    "donde": "congelador",
+    "fecha": "2026-10-03",
+    "hechas": 4,
+    "receta": "lentejas-estofadas",
+    "reserva": 4,
+    "semana": "2026-09-28"
+  },
+  "paella-pollo-verduras__1791035373571": {
+    "actualizado": "2026-10-03T13:49:33.571Z",
+    "caduca": "2027-01-03",
+    "comer": 0,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 13.8,
+      "contramuslos-de-pollo-deshuesados-g": 120,
+      "pimiento-rojo-g": 50
+    },
+    "donde": "congelador",
+    "fecha": "2026-10-03",
+    "hechas": 1,
+    "receta": "paella-pollo-verduras",
+    "reserva": 1,
+    "semana": "2026-09-28"
+  },
   "pollo-guisado-arroz__1790764872272": {
     "actualizado": "2026-09-30T11:00:00.000Z",
     "caduca": "2026-12-30",

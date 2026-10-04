@@ -2,13 +2,13 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 200,
+      "cantidad": 176,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Cuscús integral",
-      "cantidad": 500,
+      "cantidad": 260,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar · se compró cuscús normal"
     },
@@ -26,7 +26,7 @@
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 402.6,
+      "cantidad": 372.6,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -85,12 +85,6 @@
       "nota": "Ticket Mercadona 28/09 · 1 lechuga hoja de roble, peso supuesto"
     },
     {
-      "nombre": "Zanahoria",
-      "cantidad": 1200,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
-    },
-    {
       "nombre": "Base de pizza integral",
       "cantidad": 600,
       "unidad": "g",
@@ -110,7 +104,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 3134.3,
+      "cantidad": 3084.3,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -129,7 +123,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 983.4,
+      "cantidad": 808.6,
       "unidad": "g"
     },
     {
@@ -144,7 +138,7 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 120,
+      "cantidad": 105,
       "unidad": "g"
     },
     {
@@ -154,12 +148,12 @@
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 256,
+      "cantidad": 224,
       "unidad": "g"
     },
     {
       "nombre": "Huevos",
-      "cantidad": 2947.8,
+      "cantidad": 2887.8,
       "unidad": "g"
     },
     {
@@ -169,7 +163,7 @@
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 4260.1,
+      "cantidad": 3920.2,
       "unidad": "g"
     },
     {
@@ -179,7 +173,7 @@
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 133,
+      "cantidad": 119,
       "unidad": "g"
     },
     {
@@ -194,7 +188,7 @@
     },
     {
       "nombre": "Patata",
-      "cantidad": 6200,
+      "cantidad": 5360,
       "unidad": "g"
     },
     {
@@ -223,18 +217,8 @@
       "unidad": "g"
     },
     {
-      "nombre": "Calabacín",
-      "cantidad": 1900,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Carne picada de pavo",
-      "cantidad": 420,
-      "unidad": "g"
-    },
-    {
       "nombre": "Cebolla",
-      "cantidad": 1910,
+      "cantidad": 1190,
       "unidad": "g"
     },
     {
@@ -249,7 +233,7 @@
     },
     {
       "nombre": "Fruta de temporada",
-      "cantidad": 9400,
+      "cantidad": 8500,
       "unidad": "g"
     },
     {
@@ -305,7 +289,7 @@
     },
     {
       "nombre": "Pan rallado",
-      "cantidad": 140,
+      "cantidad": 100,
       "unidad": "g"
     },
     {
@@ -315,7 +299,7 @@
     },
     {
       "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 840,
+      "cantidad": 760,
       "unidad": "g"
     },
     {
@@ -344,23 +328,18 @@
       "unidad": "g"
     },
     {
-      "nombre": "Queso fresco batido",
-      "cantidad": 90,
-      "unidad": "g"
-    },
-    {
       "nombre": "Quinoa",
       "cantidad": 60,
       "unidad": "g"
     },
     {
       "nombre": "Tomate",
-      "cantidad": 4100,
+      "cantidad": 4000,
       "unidad": "g"
     },
     {
       "nombre": "Tomate triturado",
-      "cantidad": 950,
+      "cantidad": 470,
       "unidad": "g"
     },
     {
@@ -449,6 +428,36 @@
       "receta": "paella-pollo-verduras",
       "ubicacion": "congelador",
       "hechas": 1
+    },
+    {
+      "id": "albondigas-pavo-cuscus__1791066457104",
+      "descripcion": "Albóndigas de pavo en salsa de tomate con cuscús integral",
+      "raciones": 4,
+      "fecha": "2026-10-03",
+      "consumirAntesDe": "2026-10-06",
+      "receta": "albondigas-pavo-cuscus",
+      "ubicacion": "nevera",
+      "hechas": 4
+    },
+    {
+      "id": "pure-calabacin__1791066429068",
+      "descripcion": "Puré de calabacín",
+      "raciones": 8,
+      "fecha": "2026-10-03",
+      "consumirAntesDe": "2026-10-06",
+      "receta": "pure-calabacin",
+      "ubicacion": "nevera",
+      "hechas": 8
+    },
+    {
+      "id": "pure-zanahoria__1791066559897",
+      "descripcion": "Puré de zanahoria",
+      "raciones": 6,
+      "fecha": "2026-10-03",
+      "consumirAntesDe": "2026-10-06",
+      "receta": "pure-zanahoria",
+      "ubicacion": "nevera",
+      "hechas": 6
     }
   ]
 }

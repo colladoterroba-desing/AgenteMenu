@@ -303,5 +303,55 @@
     "fecha": "2026-10-03T18:31:20.674Z",
     "texto": "Compra confirmada (1 productos): Tomate triturado 950 g.",
     "tipo": "compra"
+  },
+  "1791066429426-9djf6": {
+    "fecha": "2026-10-03T22:27:09.426Z",
+    "texto": "Cocinado: Puré de calabacín · 8,00 rac.. En reserva: 8,00 rac. (nevera).",
+    "tipo": "cocinado"
+  },
+  "1791066457487-riuzy": {
+    "fecha": "2026-10-03T22:27:37.487Z",
+    "texto": "Cocinado: Albóndigas de pavo en salsa de tomate con cuscús integral · 4,00 rac.. En reserva: 4,00 rac. (nevera).",
+    "tipo": "cocinado"
+  },
+  "1791066524251-uiwik": {
+    "fecha": "2026-10-03T22:28:44.251Z",
+    "texto": "Anotaciones (sábado, cena): RFC: no come; RFA, CCT, AFC: comió Tortilla de calabacín.",
+    "tipo": "comido"
+  },
+  "1791066528140-bsco7": {
+    "fecha": "2026-10-03T22:28:48.140Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791066536672-qt0mf": {
+    "fecha": "2026-10-03T22:28:56.672Z",
+    "texto": "Anotaciones (sábado, comida): RFC: no come.",
+    "tipo": "comido"
+  },
+  "1791066539907-3kuac": {
+    "fecha": "2026-10-03T22:28:59.907Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791066560152-2rhib": {
+    "fecha": "2026-10-03T22:29:20.152Z",
+    "texto": "Cocinado: Puré de zanahoria · 6,00 rac.. En reserva: 6,00 rac. (nevera).",
+    "tipo": "cocinado"
+  },
+  "1791122663594-fc1n5": {
+    "fecha": "2026-10-04T14:04:23.594Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791141917639-ifhwb": {
+    "fecha": "2026-10-04T19:25:17.639Z",
+    "texto": "Anotaciones (domingo, comida): RFA, CCT, RFC, AFC: comió Espagueti a la boloñesa.",
+    "tipo": "comido"
+  },
+  "1791141921699-8ugfr": {
+    "fecha": "2026-10-04T19:25:21.699Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
   }
 }

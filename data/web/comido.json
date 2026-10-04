@@ -187,5 +187,75 @@
     "persona": "CCT",
     "texto": "Sándwich de nocilla",
     "tipo": "texto"
+  },
+  "2026-09-28-5-cena__AFC": {
+    "celda": "2026-09-28-5-cena",
+    "fecha": "2026-10-03T22:28:43.112Z",
+    "grupo": "musyri6z9jji",
+    "persona": "AFC",
+    "texto": "Tortilla de calabacín",
+    "tipo": "texto"
+  },
+  "2026-09-28-5-cena__CCT": {
+    "celda": "2026-09-28-5-cena",
+    "fecha": "2026-10-03T22:28:43.112Z",
+    "grupo": "musyri6z9jji",
+    "persona": "CCT",
+    "texto": "Tortilla de calabacín",
+    "tipo": "texto"
+  },
+  "2026-09-28-5-cena__RFA": {
+    "celda": "2026-09-28-5-cena",
+    "fecha": "2026-10-03T22:28:43.112Z",
+    "grupo": "musyri6z9jji",
+    "persona": "RFA",
+    "texto": "Tortilla de calabacín",
+    "tipo": "texto"
+  },
+  "2026-09-28-5-cena__RFC": {
+    "celda": "2026-09-28-5-cena",
+    "fecha": "2026-10-03T22:28:43.112Z",
+    "grupo": "musyri08o51y",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-5-comida__RFC": {
+    "celda": "2026-09-28-5-comida",
+    "fecha": "2026-10-03T22:28:56.409Z",
+    "grupo": "musyrs9l15c1",
+    "persona": "RFC",
+    "tipo": "nocome"
+  },
+  "2026-09-28-6-comida__AFC": {
+    "celda": "2026-09-28-6-comida",
+    "fecha": "2026-10-04T19:25:16.207Z",
+    "grupo": "muu7nfovlucn",
+    "persona": "AFC",
+    "texto": "Espagueti a la boloñesa",
+    "tipo": "texto"
+  },
+  "2026-09-28-6-comida__CCT": {
+    "celda": "2026-09-28-6-comida",
+    "fecha": "2026-10-04T19:25:16.207Z",
+    "grupo": "muu7nfovlucn",
+    "persona": "CCT",
+    "texto": "Espagueti a la boloñesa",
+    "tipo": "texto"
+  },
+  "2026-09-28-6-comida__RFA": {
+    "celda": "2026-09-28-6-comida",
+    "fecha": "2026-10-04T19:25:16.207Z",
+    "grupo": "muu7nfovlucn",
+    "persona": "RFA",
+    "texto": "Espagueti a la boloñesa",
+    "tipo": "texto"
+  },
+  "2026-09-28-6-comida__RFC": {
+    "celda": "2026-09-28-6-comida",
+    "fecha": "2026-10-04T19:25:16.207Z",
+    "grupo": "muu7nfovlucn",
+    "persona": "RFC",
+    "texto": "Espagueti a la boloñesa",
+    "tipo": "texto"
   }
 }

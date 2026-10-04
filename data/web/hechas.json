@@ -1,4 +1,25 @@
 {
+  "albondigas-pavo-cuscus__1791066457104": {
+    "actualizado": "2026-10-03T22:27:37.104Z",
+    "caduca": "2026-10-06",
+    "comer": 0,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 36.8,
+      "carne-picada-de-pavo-g": 420,
+      "cebolla-g": 160,
+      "cuscus-integral-g": 240,
+      "fruta-de-temporada-g": 600,
+      "huevos-g": 60,
+      "pan-rallado-g": 40,
+      "tomate-triturado-g": 480
+    },
+    "donde": "nevera",
+    "fecha": "2026-10-03",
+    "hechas": 4,
+    "receta": "albondigas-pavo-cuscus",
+    "reserva": 4,
+    "semana": "2026-09-28"
+  },
   "espaguetis-bolonesa__1790764660435": {
     "actualizado": "2026-09-30T10:37:40.435Z",
     "caduca": "2026-12-30",
@@ -113,6 +134,24 @@
     "reserva": 3,
     "semana": "A"
   },
+  "pure-calabacin__1791066429068": {
+    "actualizado": "2026-10-03T22:27:09.068Z",
+    "caduca": "2026-10-06",
+    "comer": 0,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 73.6,
+      "calabacin-g": 1900,
+      "cebolla-g": 320,
+      "patata-g": 480,
+      "queso-fresco-batido-g": 90
+    },
+    "donde": "nevera",
+    "fecha": "2026-10-03",
+    "hechas": 8,
+    "receta": "pure-calabacin",
+    "reserva": 8,
+    "semana": "2026-09-28"
+  },
   "pure-calabaza__1790764728521": {
     "actualizado": "2026-09-30T10:38:48.521Z",
     "caduca": "2026-12-30",
@@ -123,6 +162,23 @@
     "receta": "pure-calabaza",
     "reserva": 0,
     "semana": "A"
+  },
+  "pure-zanahoria__1791066559897": {
+    "actualizado": "2026-10-03T22:29:19.897Z",
+    "caduca": "2026-10-06",
+    "comer": 0,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 55.2,
+      "cebolla-g": 240,
+      "patata-g": 360,
+      "zanahoria-g": 1200
+    },
+    "donde": "nevera",
+    "fecha": "2026-10-03",
+    "hechas": 6,
+    "receta": "pure-zanahoria",
+    "reserva": 6,
+    "semana": "2026-09-28"
   },
   "solomillo-naranja__1790764756681": {
     "actualizado": "2026-09-30T10:39:16.681Z",

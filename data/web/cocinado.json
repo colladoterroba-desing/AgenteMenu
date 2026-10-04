@@ -179,14 +179,43 @@
       "aceite-de-oliva-virgen-extra-g": 9.2,
       "cacao-soluble-nesquik-g": 15,
       "cafe-molido-g": 24,
+      "fruta-de-temporada-g": 150,
       "galletas-tostadas-animadas-hacendado-g": 32,
       "leche-semidesnatada-g": 339.9,
       "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
       "queso-fresco-g": 30,
+      "tomate-g": 50,
       "tortitas-de-maiz-hacendado-g": 14
     },
     "etiqueta": "Desayunos",
-    "fecha": "2026-10-03T13:48:35.772Z",
+    "fecha": "2026-10-03T22:28:59.669Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-09-28-6-desayuno~des": {
+    "auto": true,
+    "celda": "2026-09-28-6-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "fruta-de-temporada-g": 150,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
+      "queso-fresco-g": 30,
+      "tomate-g": 50,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-04T19:25:21.421Z",
     "raciones": 1,
     "recetas": [
       "desayuno-rfa",

@@ -180,6 +180,22 @@
     "reserva": 6,
     "semana": "2026-09-28"
   },
+  "pure-zanahoria__1791218256191": {
+    "actualizado": "2026-10-05T16:37:36.191Z",
+    "caduca": "2026-10-08",
+    "comer": 2.41,
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 14.6,
+      "cebolla-g": 63.6,
+      "patata-g": 95.4
+    },
+    "donde": "nevera",
+    "fecha": "2026-10-05",
+    "hechas": 4,
+    "receta": "pure-zanahoria",
+    "reserva": 1.59,
+    "semana": "2026-10-05"
+  },
   "solomillo-naranja__1790764756681": {
     "actualizado": "2026-09-30T10:39:16.681Z",
     "caduca": "2026-12-30",

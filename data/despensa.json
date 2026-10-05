@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 176,
+      "cantidad": 152,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -26,7 +26,7 @@
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 372.6,
+      "cantidad": 342.6,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -104,7 +104,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 3084.3,
+      "cantidad": 2639.9,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -123,7 +123,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 808.6,
+      "cantidad": 756.7,
       "unidad": "g"
     },
     {
@@ -138,7 +138,7 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 105,
+      "cantidad": 90,
       "unidad": "g"
     },
     {
@@ -148,7 +148,7 @@
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 224,
+      "cantidad": 192,
       "unidad": "g"
     },
     {
@@ -163,17 +163,17 @@
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 3920.2,
+      "cantidad": 3580.3,
       "unidad": "g"
     },
     {
       "nombre": "Queso en lonchas",
-      "cantidad": 542.6,
+      "cantidad": 459.4,
       "unidad": "g"
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 119,
+      "cantidad": 105,
       "unidad": "g"
     },
     {
@@ -188,7 +188,7 @@
     },
     {
       "nombre": "Patata",
-      "cantidad": 5360,
+      "cantidad": 5120,
       "unidad": "g"
     },
     {
@@ -218,7 +218,7 @@
     },
     {
       "nombre": "Cebolla",
-      "cantidad": 1190,
+      "cantidad": 1030,
       "unidad": "g"
     },
     {
@@ -233,7 +233,7 @@
     },
     {
       "nombre": "Fruta de temporada",
-      "cantidad": 8500,
+      "cantidad": 7532.5,
       "unidad": "g"
     },
     {
@@ -299,7 +299,7 @@
     },
     {
       "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 760,
+      "cantidad": 553.6,
       "unidad": "g"
     },
     {
@@ -309,7 +309,7 @@
     },
     {
       "nombre": "Pechuga de pollo",
-      "cantidad": 280,
+      "cantidad": 189.7,
       "unidad": "g"
     },
     {
@@ -334,7 +334,7 @@
     },
     {
       "nombre": "Tomate",
-      "cantidad": 4000,
+      "cantidad": 3898.4,
       "unidad": "g"
     },
     {
@@ -458,6 +458,16 @@
       "receta": "pure-zanahoria",
       "ubicacion": "nevera",
       "hechas": 6
+    },
+    {
+      "id": "pure-zanahoria__1791218256191",
+      "descripcion": "Puré de zanahoria",
+      "raciones": 1.59,
+      "fecha": "2026-10-05",
+      "consumirAntesDe": "2026-10-08",
+      "receta": "pure-zanahoria",
+      "ubicacion": "nevera",
+      "hechas": 4
     }
   ]
 }

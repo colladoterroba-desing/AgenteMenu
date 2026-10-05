@@ -353,5 +353,20 @@
     "fecha": "2026-10-04T19:25:21.699Z",
     "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
     "tipo": "cocinado"
+  },
+  "1791184172173-9s6mj": {
+    "fecha": "2026-10-05T07:09:32.174Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791218254981-roct9": {
+    "fecha": "2026-10-05T16:37:34.981Z",
+    "texto": "Cocinado: Puré de zanahoria · 2,41 rac. (lunes, comida). Se restan 3 productos de la despensa.",
+    "tipo": "cocinado"
+  },
+  "1791218256764-wvknx": {
+    "fecha": "2026-10-05T16:37:36.764Z",
+    "texto": "Cocinado: Puré de zanahoria · 4,00 rac. para lun, 5 oct, comida (Puré zanahoria). En reserva: 1,59 rac. (nevera).",
+    "tipo": "cocinado"
   }
 }

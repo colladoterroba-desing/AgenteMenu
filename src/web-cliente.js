@@ -570,8 +570,7 @@
     const resumen = el("div", { class: "resumen-anot" }, el("p", { class: "etq", text: "Ya anotado" }));
     if (nadieCome(c)) resumen.append(el("span", null, el("strong", { text: "Nadie come aquí" })));
     else if (existentes.length) existentes.forEach((x) => resumen.append(el("span", null, el("strong", { text: x.personas.join(", ") + ": " }), resumenAnot(x.doc, x.docs))));
-    else resumen.append(el("span", { class: "sub", text: "Nada: se da por hecho que se comió lo previsto." }));
-    document.getElementById("dlg-anot-cuerpo").replaceChildren(resumen, sugerencias,
+    document.getElementById("dlg-anot-cuerpo").replaceChildren(...(nadieCome(c) || existentes.length ? [resumen] : []), sugerencias,
       el("p", { class: "sub", text: "Previsto: " + (c.comida === "desayuno" ? "desayunos fijos" : e.recetas.map(nombreRec).join(" + ")) + (comen.length ? ". Comen: " + comen.join(", ") : "") + ". Solo apunta lo que no salió como estaba previsto." }),
       lista, el("div", { class: "mas-anot" }, mas));
     const guardar = el("button", { type: "button", class: "btn-principal", text: "Guardar" });

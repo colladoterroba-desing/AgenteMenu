@@ -50,6 +50,13 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - **Coste y mantenimiento.** Cuánto cuesta y quién lo mantiene si algo falla.
   - **Relación con otros temas.** OI-23 (PWA y alojamiento), OI-25 (sincronización) y OI-02 (actualización de la página).
 
+- [ ] **OI-44 · Recetas habituales y favoritas.** Añadido el 05/10/2026. Cuando alguien come «otra cosa» y escribe algo que no está en el recetario, se guarda como texto y se sugiere la próxima vez, pero ese texto no entra en la lista de la compra ni en la despensa, ni se pasa a receta. Planteado, nada decidido. Hay que definir:
+  - **Qué es «habitual» y qué es «favorita».** Si lo habitual sale de lo que más se repite en las anotaciones (por ejemplo, el mismo texto escrito varias veces) y lo favorito lo marca la familia a mano, o si es una sola lista.
+  - **Qué se hace con los textos que se repiten.** Proponer pasarlos a receta (con gramos y pasos, como ya se hace con los desayunos nuevos) o dejarlos solo como sugerencia.
+  - **Uso en el menú.** Si las habituales y favoritas tienen prioridad al preparar la semana (hoy hay una norma de «platos habituales» del 28/09/2026) y si se pueden marcar desde la página de Recetas.
+  - **Uso en las anotaciones.** Si las favoritas salen primero en las sugerencias de «Otra cosa».
+  - **Relación con otros temas.** OI-27 (platos no deseados, que es lo contrario), OI-41 (desayuno en texto libre pasado a receta) y OI-15 (valor nutricional).
+
 ## Personas y hábitos
 
 - [x] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** Confirmado el 30/09/2026: es **RFC**.

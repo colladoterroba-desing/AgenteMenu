@@ -60,10 +60,21 @@
         "receta": "bocadillo-pavo-queso"
       },
       "cena": {
-        "receta": "merluza-salsa-verde-arroz",
-        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes",
+        "receta": "pure-calabacin",
+        "segundo": "huevos-revueltos-jamon-queso",
         "variantes": {
           "RFA": "tortilla-francesa-brocoli"
+        },
+        "cambio": {
+          "antes": {
+            "receta": "merluza-salsa-verde-arroz",
+            "prepara": "Hacer 1 ración extra para el tupper de CCT del martes",
+            "variantes": {
+              "RFA": "tortilla-francesa-brocoli"
+            }
+          },
+          "motivo": "Intercambio con la cena del martes",
+          "fecha": "2026-10-05"
         }
       }
     },
@@ -87,8 +98,15 @@
         "receta": "yogur-fruta-frutos-secos"
       },
       "cena": {
-        "receta": "pure-calabacin",
-        "segundo": "huevos-revueltos-jamon-queso"
+        "receta": "merluza-salsa-verde-arroz",
+        "cambio": {
+          "antes": {
+            "receta": "pure-calabacin",
+            "segundo": "huevos-revueltos-jamon-queso"
+          },
+          "motivo": "Intercambio con la cena del lunes",
+          "fecha": "2026-10-05"
+        }
       }
     },
     "X": {

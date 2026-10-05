@@ -378,5 +378,15 @@
     "fecha": "2026-10-05T17:37:07.342Z",
     "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
     "tipo": "cocinado"
+  },
+  "1791225017752-felqe": {
+    "fecha": "2026-10-05T18:30:17.752Z",
+    "texto": "Intercambiadas: cena del lunes (Lunes 5 oct) y cena del martes (Martes 6 oct).",
+    "tipo": "actualizacion"
+  },
+  "1791225092974-c9d6r": {
+    "fecha": "2026-10-05T18:31:32.974Z",
+    "texto": "Cocinado: Puré de zanahoria · 6,00 rac.. En reserva: 6,00 rac. (nevera).",
+    "tipo": "cocinado"
   }
 }

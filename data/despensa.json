@@ -123,7 +123,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 756.7,
+      "cantidad": 701.5,
       "unidad": "g"
     },
     {
@@ -188,7 +188,7 @@
     },
     {
       "nombre": "Patata",
-      "cantidad": 5120,
+      "cantidad": 4760,
       "unidad": "g"
     },
     {
@@ -218,7 +218,7 @@
     },
     {
       "nombre": "Cebolla",
-      "cantidad": 1030,
+      "cantidad": 790,
       "unidad": "g"
     },
     {
@@ -462,12 +462,12 @@
     {
       "id": "pure-zanahoria__1791218256191",
       "descripcion": "Puré de zanahoria",
-      "raciones": 1.59,
+      "raciones": 7.59,
       "fecha": "2026-10-05",
       "consumirAntesDe": "2026-10-08",
       "receta": "pure-zanahoria",
       "ubicacion": "nevera",
-      "hechas": 4
+      "hechas": 10
     }
   ]
 }

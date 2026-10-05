@@ -7,6 +7,15 @@
   ],
   "precios": [
     {"producto": "Pimiento rojo", "tienda": "Mercadona", "precio": 2.5, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-09-28", "fuente": "ticket", "nota": "Ticket 4286-016-542883"},
-    {"producto": "Brócoli", "tienda": "Mercadona", "precio": 2.7, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-09-28", "fuente": "ticket", "nota": "Ticket 4286-016-542883"}
+    {"producto": "Brócoli", "tienda": "Mercadona", "precio": 2.7, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-09-28", "fuente": "ticket", "nota": "Ticket 4286-016-542883"},
+    {"producto": "Zanahoria", "tienda": "Elías", "precio": 1.59, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Pepino", "tienda": "Elías", "precio": 1.99, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Calabacín", "tienda": "Elías", "precio": 0.99, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Cebolla", "tienda": "Elías", "precio": 1.99, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Kiwi", "tienda": "Elías", "precio": 5.95, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Pimiento verde", "tienda": "Elías", "precio": 3.95, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Judía verde", "tienda": "Elías", "precio": 6.95, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Limón", "tienda": "Elías", "precio": 2.45, "cantidad": 1000, "unidad": "g", "granel": true, "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026"},
+    {"producto": "Patata", "tienda": "Elías", "precio": 3.99, "cantidad": 3000, "unidad": "g", "fecha": "2026-10-03", "fuente": "ticket", "nota": "Ticket Casa Elías 03/10/2026, bolsa de 3 kg"}
   ]
 }

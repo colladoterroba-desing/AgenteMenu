@@ -115,7 +115,7 @@ test("tuppers de oficina: RFA frío de lunes a jueves y CCT para recalentar de l
 
 test("el menú de ejemplo usa recetas existentes y cubre todas las comidas y tuppers", async () => {
   const { validarMenu } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   assert.deepEqual(validarMenu(familia, menu, recetas), []);
 });
@@ -123,7 +123,7 @@ test("el menú de ejemplo usa recetas existentes y cubre todas las comidas y tup
 test("las variantes sacan al comensal del plato principal y la compra suma todas las raciones", async () => {
   const { componerMenu, listaCompra, sinCambios } = await import("../src/menu.js");
   // El menú tal como se preparó, sin los cambios de «Actualizar menú» que llegan al sincronizar.
-  const menu = sinCambios(JSON.parse(await readFile("data/menu-semana.json", "utf8")));
+  const menu = sinCambios(JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8")));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   const cenaMiercoles = dias[2].comidas.find((c) => c.tipo === "cena")!;
@@ -144,7 +144,7 @@ test("las variantes sacan al comensal del plato principal y la compra suma todas
 
 test("la despensa se descuenta de la lista de la compra", async () => {
   const { componerMenu, listaCompra } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   const sin = listaCompra(dias).Despensa.find((l) => l.nombre === "Lentejas pardinas")!;
@@ -157,7 +157,7 @@ test("la despensa se descuenta de la lista de la compra", async () => {
 
 test("las raciones en reserva de una receta no se vuelven a comprar", async () => {
   const { componerMenu, listaCompra, caducidadReserva } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   const plato = dias.flatMap((d) => d.comidas.flatMap((c) => c.platos))
@@ -199,7 +199,7 @@ test("la leche de todas las recetas es semidesnatada", async () => {
 
 test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entre semana", async () => {
   const { componerMenu, listaCompra } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   for (const dia of dias) {
@@ -235,7 +235,7 @@ test("el menú se guarda sin validación y con las sobras enlazadas a la comida 
 
 test("normas de la casa: pescado azul solo el jueves a mediodía y nada «al momento» para llevar", async () => {
   const { validarMenu } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
 
   const salmonEnCena = structuredClone(menu);
@@ -259,7 +259,7 @@ test("normas de la casa: pescado azul solo el jueves a mediodía y nada «al mom
 test("los desayunos fijos ocultos no salen en el menú pero sí en la compra; PDF en su orientación", async () => {
   const { componerMenu, listaCompra, menuVisible } = await import("../src/menu.js");
   const { htmlMenuPdf, htmlCompraPdf } = await import("../src/pdf.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   assert.ok(menuVisible(familia, dias).every((d) => !d.comidas.some((c) => c.tipo === "desayuno")));
@@ -290,8 +290,8 @@ test("objetivos de peso aceptados: las raciones de RFA y CCT usan las kcal del o
 
 test("platos no deseados: no se sirven a quien los marcó (o a nadie si es la familia)", async () => {
   const { validarMenu } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
-  const siguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
+  const siguiente = JSON.parse(await readFile("test/fixtures/menu-siguiente.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   assert.deepEqual(validarMenu(familia, siguiente, recetas), []);
 
@@ -310,7 +310,7 @@ test("platos no deseados: no se sirven a quien los marcó (o a nadie si es la fa
 
 test("legumbres solo con un adulto delante; pasta para los niños cuando están solos", async () => {
   const { validarMenu } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const solos = structuredClone(menu);
   solos.dias.L.comida = { receta: "garbanzos-espinacas" };
@@ -328,7 +328,7 @@ test("legumbres solo con un adulto delante; pasta para los niños cuando están 
 
 test("no se repite el mismo producto en la comida y la cena del mismo día", async () => {
   const { validarMenu } = await import("../src/menu.js");
-  const siguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const siguiente = JSON.parse(await readFile("test/fixtures/menu-siguiente.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   // Miércoles: albóndigas de pavo a mediodía (y en el tupper de CCT); RFA lleva tortilla.
   const pavo = structuredClone(siguiente);
@@ -341,7 +341,7 @@ test("no se repite el mismo producto en la comida y la cena del mismo día", asy
 
 test("primero y segundo: el segundo lo comen los mismos y entra en la compra", async () => {
   const { componerMenu, listaCompra } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const dias = componerMenu(familia, menu, recetas);
   const martes = dias[1].comidas.find((c) => c.tipo === "comida")!.platos[0];
@@ -389,7 +389,7 @@ test("coste de la cesta: envases enteros, granel, tienda más barata y sin preci
 
 test("ingredientes por persona: una lubina por comensal, sin redondear por la ración", async () => {
   const { componerMenu, listaCompra } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const lubina = listaCompra(componerMenu(familia, menu, recetas)).Pescadería.find((l) => l.nombre.startsWith("Lubina"))!;
   assert.equal(lubina.unidad, "g");
@@ -403,7 +403,7 @@ test("sin tickets no hay precios: ni estimaciones en los datos ni columna de pre
   const { htmlCompraPdf } = await import("../src/pdf.js");
   const precios = JSON.parse(await readFile("data/precios.json", "utf8"));
   assert.ok(precios.precios.every((p: { fuente: string }) => p.fuente !== "estimado"));
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const vacia = { ...precios, precios: [] };
   assert.equal(costeCesta(listaCompra(componerMenu(familia, menu, recetas)), vacia).hayPrecios, false);
@@ -437,7 +437,7 @@ test("equivalencias: ud y ml pasan a gramos, y lo desconocido no se inventa", as
 
 test("la compra va en gramos y lo que se vende por piezas se redondea a piezas enteras", async () => {
   const { componerMenu, listaCompra } = await import("../src/menu.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const lista = listaCompra(componerMenu(familia, menu, recetas), { productos: [{ nombre: "Huevos", cantidad: 6, unidad: "ud" }], sobras: [] });
   const huevos = lista["Lácteos y huevos"].find((l) => l.nombre === "Huevos")!;
@@ -464,7 +464,7 @@ test("guardar una receta en ud o ml la deja en gramos", async () => {
 test("web: las comidas que salen de otra (sobras) suman sus raciones a la que se cocina", async () => {
   const { componerMenu } = await import("../src/menu.js");
   const { celdasCliente, generarHtml } = await import("../src/web.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const celdas = celdasCliente("A", componerMenu(familia, menu, recetas));
   const cenaMartes = celdas.find((c) => c.id === "A-1-cena")!;
@@ -481,7 +481,7 @@ test("web: las comidas que salen de otra (sobras) suman sus raciones a la que se
 
 test("web: alias en lugar de siglas, página Normas y fichas editables", async () => {
   const { conAlias, generarHtml } = await import("../src/web.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   // El alias cambia el texto visible, pero no ids, clases, valores ni scripts.
   const trozo = conAlias(`<p id="cfg-RFA" title="RFA: 500 kcal">RFA y RFC</p><option value="CCT">CCT</option><script>const x = "AFC";</script>`, familia);
@@ -523,8 +523,8 @@ test("rotación de semanas: el lunes de la semana siguiente, su menú pasa a ser
 
 test("web: las casillas se identifican por el lunes de su semana", async () => {
   const { generarHtml } = await import("../src/web.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
-  const menuSiguiente = JSON.parse(await readFile("data/menu-siguiente.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
+  const menuSiguiente = JSON.parse(await readFile("test/fixtures/menu-siguiente.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, menuSiguiente, recetas, fecha: "30 de septiembre de 2026" });
   assert.match(html, new RegExp(`data-celda="${menu.inicio}-0-comida"`));
@@ -626,7 +626,7 @@ test("sincronizar: la web manda en despensa, reservas, no deseados y perfil, sin
   const html = generarHtml({
     familia: r.familia, despensa: r.despensa,
     propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")),
-    menu: JSON.parse(await readFile("data/menu-semana.json", "utf8")),
+    menu: JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8")),
     recetas: JSON.parse(await readFile("data/recetas.json", "utf8")).recetas, fecha: "30 de septiembre de 2026",
   });
   assert.match(html, /"id":"pollo__1"/);
@@ -645,7 +645,7 @@ test("sincronizar: los cambios de «Actualizar menú» pasan al menú y la web l
   const { aplicarCambios } = await import("../src/sincronizar.js");
   const { componerMenu, sinCambios } = await import("../src/menu.js");
   const { generarHtml } = await import("../src/web.js");
-  const menu = JSON.parse(await readFile("data/menu-semana.json", "utf8"));
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
   const nombres = Object.fromEntries(recetas.map((r: { id: string; nombre: string }) => [r.id, r.nombre]));
   const previsto = menu.dias.L.cena;

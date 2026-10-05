@@ -257,5 +257,29 @@
     "persona": "RFC",
     "texto": "Espagueti a la boloñesa",
     "tipo": "texto"
+  },
+  "2026-10-05-0-comida__AFC": {
+    "celda": "2026-10-05-0-comida",
+    "fecha": "2026-10-05T17:36:57.785Z",
+    "grupo": "muvj8055c8vu",
+    "persona": "AFC",
+    "texto": "Espagueti a la boloñesa",
+    "tipo": "texto"
+  },
+  "2026-10-05-0-comida__CCT": {
+    "celda": "2026-10-05-0-comida",
+    "fecha": "2026-10-05T17:36:57.785Z",
+    "grupo": "muvj80kvdw6t",
+    "persona": "CCT",
+    "texto": "Ensalada de pollo con lechuga, queso, frutos secos y tomate cherry",
+    "tipo": "texto"
+  },
+  "2026-10-05-0-comida__RFC": {
+    "celda": "2026-10-05-0-comida",
+    "fecha": "2026-10-05T17:36:57.785Z",
+    "grupo": "muvj8055c8vu",
+    "persona": "RFC",
+    "texto": "Espagueti a la boloñesa",
+    "tipo": "texto"
   }
 }

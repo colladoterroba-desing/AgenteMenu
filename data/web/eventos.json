@@ -368,5 +368,15 @@
     "fecha": "2026-10-05T16:37:36.764Z",
     "texto": "Cocinado: Puré de zanahoria · 4,00 rac. para lun, 5 oct, comida (Puré zanahoria). En reserva: 1,59 rac. (nevera).",
     "tipo": "cocinado"
+  },
+  "1791221818656-qiofy": {
+    "fecha": "2026-10-05T17:36:58.656Z",
+    "texto": "Anotaciones (lunes, comida): RFC, AFC: comió Espagueti a la boloñesa; CCT: comió Ensalada de pollo con lechuga, queso, frutos secos y tomate cherry.",
+    "tipo": "comido"
+  },
+  "1791221827342-3bxy2": {
+    "fecha": "2026-10-05T17:37:07.342Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
   }
 }

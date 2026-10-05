@@ -857,6 +857,11 @@ const DIALOGOS = `
   <p class="sub estado-form" id="act-estado" role="status"></p>
   <div class="botones-dlg" id="act-botones"></div>
 </dialog>
+<dialog id="dlg-mover" class="dlg">
+  <h3>Intercambiar comidas</h3>
+  <div id="dlg-mover-cuerpo" class="cuerpo-dlg"></div>
+  <div class="botones-dlg" id="dlg-mover-botones"></div>
+</dialog>
 <dialog id="dlg-anot" class="dlg">
   <h3 id="dlg-anot-titulo">Anotaciones</h3>
   <div id="dlg-anot-cuerpo" class="cuerpo-dlg"></div>
@@ -1029,6 +1034,12 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .como-se-lee summary{cursor:pointer;color:var(--accent);font-size:.88rem;font-weight:600}
 .col-dia.hoy .dia-etq{color:var(--accent)}
 .celda{padding:8px 12px 10px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-content:start;min-width:0}
+.celda{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.celda.arrastrando{opacity:.4}
+.celda.destino{outline:3px dashed var(--accent);outline-offset:-3px;background:var(--accent-soft)}
+.fantasma-mover{position:fixed;left:0;top:0;z-index:50;max-width:240px;background:var(--surface);border:2px solid var(--accent);border-radius:10px;padding:8px 10px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:.85rem;line-height:1.3;pointer-events:none}
+body.arrastrando-comida{cursor:grabbing}
+.avisos-mover{margin:0;padding-left:1.1em;display:grid;gap:3px;font-size:.88rem;color:var(--calor)}
 .celda-etq{font:600 .66rem var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px}
 .leyenda-semanas{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.8rem;color:var(--muted);margin:10px 0 0}
 .leyenda-semanas .muestra{display:inline-block;width:26px;height:14px;border-radius:4px;border:2px solid var(--accent);margin-left:6px}
@@ -1630,7 +1641,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
       <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
       <h1 id="h-menu">Menú</h1>
       <details class="como-se-lee"><summary>Cómo se lee el menú</summary>
-        <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». Si no se apunta nada, se da por hecho que cada uno comió lo previsto. Con «Anotaciones» apuntas quién comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra); puede haber varias en la misma comida. Se ven los días desde hoy hasta el domingo de la próxima semana; el marco de cada columna dice a qué semana pertenece. Los días que ya han pasado no se muestran. Los desayunos fijos y el batch del domingo están en Recetas; el detalle de los cambios de Claude, en Diario.</p>
+        <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». Si no se apunta nada, se da por hecho que cada uno comió lo previsto. Para cambiar una comida de día, arrástrala sobre otro día (en el móvil, mantén pulsada la casilla y arrastra): se intercambian las dos y antes de aplicarlo se avisa de lo que afecta. Con «Anotaciones» apuntas quién comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra); puede haber varias en la misma comida. Se ven los días desde hoy hasta el domingo de la próxima semana; el marco de cada columna dice a qué semana pertenece. Los días que ya han pasado no se muestran. Los desayunos fijos y el batch del domingo están en Recetas; el detalle de los cambios de Claude, en Diario.</p>
       </details>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>

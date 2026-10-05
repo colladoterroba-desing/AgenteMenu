@@ -646,6 +646,158 @@
   };
   ocultarPasados();
 
+  // ================= Intercambiar comidas arrastrando =================
+  // Ratón: se arrastra la casilla. Móvil: pulsación larga y arrastrar. Se suelta sobre otro día y, tras confirmar,
+  // las dos comidas del mismo tipo intercambian el plato. Se guarda como dos cambios (colección «cambios»),
+  // igual que los de «Actualizar menú»: pasan al menú del proyecto al sincronizar. Quién come en cada día no se mueve.
+  const dlgM = document.getElementById("dlg-mover");
+  const nombreCelda = (c) => COMIDA_TXT[c.comida].toLowerCase() + " del " + DIAS[c.dia].toLowerCase();
+  const etiquetaDia = (c) => DIAS[c.dia] + " " + fechaCorta(fechaCelda(c)).split(" ").slice(1).join(" ");
+  const motivoNoMovible = (c) => {
+    if (!c || c.comida === "desayuno" || !c.platos || !c.platos.length) return "Esa comida no se puede mover.";
+    if (fechaCelda(c) < HOY) return "Ese día ya ha pasado.";
+    if (diarioDb.has(c.id)) return "La " + nombreCelda(c) + " tiene una nota en el Diario: quítala antes de moverla.";
+    if ([...cocinadoDb.entries()].some(([k, v]) => k.startsWith(c.id + "~") && !v.auto)) return "La " + nombreCelda(c) + " ya está marcada como cocinada: deshazlo en la receta antes de moverla.";
+    return "";
+  };
+  const avisosMover = (a, b) => {
+    const out = new Set();
+    [a, b].forEach((c) => {
+      celdas.forEach((o) => {
+        if (o.sobrasDe === c.id) out.add("La " + nombreCelda(o) + " se cocina junto con la " + nombreCelda(c) + " (sobras) y se queda con su plato.");
+        o.tuppers.forEach((t) => { if (t.sobrasDe === c.id) out.add("El tupper de " + t.quien + " del " + DIAS[o.dia].toLowerCase() + " sale de la " + nombreCelda(c) + " y se queda como estaba."); });
+      });
+      if (c.sobrasDe) out.add("La " + nombreCelda(c) + " son sobras de otra comida: al moverla deja de coincidir con ella.");
+      if ((c.variantes || []).length) out.add("Las variantes por persona de la " + nombreCelda(c) + " (" + c.variantes.map((v) => v.quien).join(", ") + ") se quedan en su día.");
+    });
+    return [...out];
+  };
+  /** Deja la casilla con ese plato; si coincide con el previsto (y sin cambio de comensales), quita el cambio. */
+  const ponerCambio = async (c, recetas, comensales, motivo) => {
+    if (recetas.join() === c.platos.join() && !comensales) {
+      if (cambiosBase.has(c.id)) { const doc = { celda: c.id, quitado: true, fecha: new Date().toISOString() }; await db.doc("cambios/" + c.id).set(doc); cambiosDb.set(c.id, doc); }
+      else if (cambiosDb.has(c.id)) { await db.doc("cambios/" + c.id).delete(); cambiosDb.delete(c.id); }
+      return;
+    }
+    const doc = { celda: c.id, recetas, motivo, fecha: new Date().toISOString(), ...(comensales ? { comensales } : {}) };
+    await db.doc("cambios/" + c.id).set(doc); cambiosDb.set(c.id, doc);
+  };
+  const intercambiar = async (a, b) => {
+    const ea = efectivo(a), eb = efectivo(b);
+    ocupado = true;
+    try {
+      await ponerCambio(a, eb.recetas, ea.comensales, "Intercambio con la " + nombreCelda(b));
+      await ponerCambio(b, ea.recetas, eb.comensales, "Intercambio con la " + nombreCelda(a));
+      await registrar("actualizacion", "Intercambiadas: " + nombreCelda(a) + " (" + etiquetaDia(a) + ") y " + nombreCelda(b) + " (" + etiquetaDia(b) + ").");
+      aviso("Comidas intercambiadas.");
+    } catch (e) { aviso("No se ha podido guardar el intercambio por completo: revisa las dos comidas."); }
+    ocupado = false; renderTodo();
+  };
+  const confirmarIntercambio = (a, b) => {
+    const ea = efectivo(a), eb = efectivo(b);
+    const nom = (e) => e.recetas.map(nombreRec).join(" + ");
+    if (nom(ea) === nom(eb)) { aviso("Las dos comidas ya tienen el mismo plato."); return; }
+    const linea = (x, e, y) => el("p", null, el("strong", { text: etiquetaDia(x) + " · " + COMIDA_TXT[x.comida] + ": " }), nom(e), " → pasa al " + etiquetaDia(y));
+    const avisos = avisosMover(a, b);
+    document.getElementById("dlg-mover-cuerpo").replaceChildren(
+      linea(a, ea, b), linea(b, eb, a),
+      ...(avisos.length ? [el("ul", { class: "avisos-mover" }, avisos.map((t) => el("li", { text: t })))] : []),
+      el("p", { class: "sub", text: "En un cambio a mano no se comprueban las normas de la casa (por ejemplo, el pescado azul solo los jueves). Quién come cada día no cambia." }));
+    const ok = el("button", { type: "button", class: "btn-principal", text: "Intercambiar" });
+    ok.addEventListener("click", async () => { ok.disabled = true; dlgM.close(); await intercambiar(a, b); });
+    const no = el("button", { type: "button", class: "secundario", text: "Cancelar" }); no.addEventListener("click", () => dlgM.close());
+    document.getElementById("dlg-mover-botones").replaceChildren(ok, no);
+    dlgM.showModal();
+  };
+
+  (() => {
+    const cont = document.querySelector(".semana-scroll");
+    if (!cont) return;
+    let ses = null, raf = 0, suprimirClic = false;
+    const interactivo = (t) => t.closest && t.closest("button, input, select, textarea, summary, label");
+    const celdaDe = (t) => (t.closest ? t.closest(".celda[data-celda]") : null);
+    // Solo importa la columna bajo el dedo: la casilla del mismo tipo de esa columna es el destino.
+    const destinoEn = (x, y, tipo) => {
+      const r = cont.getBoundingClientRect();
+      const yy = Math.min(Math.max(y, Math.max(r.top, 0) + 5), Math.min(r.bottom, innerHeight) - 5);
+      const col = document.elementsFromPoint(x, yy).find((n) => n.classList && n.classList.contains("col-dia"));
+      return col ? col.querySelector('.celda[data-celda$="-' + tipo + '"]') : null;
+    };
+    const mover = (x, y) => {
+      ses.x = x; ses.y = y;
+      ses.fantasma.style.transform = "translate(" + (x + 12) + "px," + (y + 12) + "px)";
+      const d = destinoEn(x, y, ses.c.comida), dc = d && d !== ses.celda ? d : null;
+      if (dc !== ses.destino) { if (ses.destino) ses.destino.classList.remove("destino"); if (dc) dc.classList.add("destino"); ses.destino = dc; }
+    };
+    const autoscroll = () => {
+      if (!ses) return;
+      const r = cont.getBoundingClientRect(), borde = 56;
+      const dx = ses.x < Math.max(r.left, 0) + borde ? -16 : ses.x > Math.min(r.right, innerWidth) - borde ? 16 : 0;
+      if (dx) { cont.scrollLeft += dx; mover(ses.x, ses.y); }
+      raf = requestAnimationFrame(autoscroll);
+    };
+    const empezar = (celda, x, y) => {
+      const c = celdas.get(celda.dataset.celda);
+      if (!editable || ocupado || !c || c.comida === "desayuno" || !c.platos.length) return false;
+      const fantasma = el("div", { class: "fantasma-mover" }, el("strong", { text: COMIDA_TXT[c.comida] + ": " }), efectivo(c).recetas.map(nombreRec).join(" + "));
+      document.body.append(fantasma);
+      document.body.classList.add("arrastrando-comida");
+      celda.classList.add("arrastrando");
+      cont.style.scrollSnapType = "none"; // sin imán mientras se arrastra
+      ses = { c, celda, fantasma, destino: null, x, y };
+      mover(x, y);
+      raf = requestAnimationFrame(autoscroll);
+      return true;
+    };
+    const terminar = (aceptar) => {
+      if (!ses) return;
+      const s = ses; ses = null; cancelAnimationFrame(raf);
+      s.fantasma.remove(); s.celda.classList.remove("arrastrando"); if (s.destino) s.destino.classList.remove("destino");
+      document.body.classList.remove("arrastrando-comida");
+      cont.style.scrollSnapType = "";
+      suprimirClic = true; setTimeout(() => (suprimirClic = false), 60);
+      if (!aceptar || !s.destino) return;
+      const b = celdas.get(s.destino.dataset.celda);
+      const fallo = motivoNoMovible(s.c) || motivoNoMovible(b);
+      if (fallo) { aviso(fallo); return; }
+      confirmarIntercambio(s.c, b);
+    };
+    // Ratón
+    let raton = null;
+    cont.addEventListener("mousedown", (e) => {
+      if (e.button !== 0 || ses) return;
+      const celda = celdaDe(e.target);
+      if (celda && !interactivo(e.target)) raton = { celda, x: e.clientX, y: e.clientY };
+    });
+    document.addEventListener("mousemove", (e) => {
+      if (ses) { e.preventDefault(); mover(e.clientX, e.clientY); return; }
+      if (raton && Math.hypot(e.clientX - raton.x, e.clientY - raton.y) > 6) { const r = raton; raton = null; empezar(r.celda, e.clientX, e.clientY); }
+    });
+    document.addEventListener("mouseup", () => { raton = null; terminar(true); });
+    cont.addEventListener("click", (e) => { if (suprimirClic) { e.preventDefault(); e.stopPropagation(); } }, true);
+    cont.addEventListener("dragstart", (e) => e.preventDefault());
+    // Táctil: pulsación larga y arrastrar; si el dedo se mueve antes, es el desplazamiento normal.
+    let toque = null;
+    cont.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1 || ses) return;
+      const t = e.touches[0], celda = celdaDe(e.target);
+      if (!celda || interactivo(e.target)) return;
+      toque = { x: t.clientX, y: t.clientY, activo: false };
+      const mio = toque;
+      mio.timer = setTimeout(() => { if (toque === mio && empezar(celda, mio.x, mio.y)) { mio.activo = true; if (navigator.vibrate) navigator.vibrate(20); } }, 450);
+    }, { passive: true });
+    document.addEventListener("touchmove", (e) => {
+      if (!toque) return;
+      const t = e.touches[0];
+      if (toque.activo) { e.preventDefault(); toque.x = t.clientX; toque.y = t.clientY; mover(t.clientX, t.clientY); return; }
+      if (Math.hypot(t.clientX - toque.x, t.clientY - toque.y) > 10) { clearTimeout(toque.timer); toque = null; }
+    }, { passive: false });
+    const finToque = (aceptar) => { if (!toque) return; clearTimeout(toque.timer); const activo = toque.activo; toque = null; if (activo) terminar(aceptar); };
+    document.addEventListener("touchend", () => finToque(true));
+    document.addEventListener("touchcancel", () => finToque(false));
+    cont.addEventListener("contextmenu", (e) => { if (toque || ses) e.preventDefault(); });
+  })();
+
   // ================= Diálogo del diario =================
   const dlgD = document.getElementById("dlg-diario");
   const formD = document.getElementById("form-diario");

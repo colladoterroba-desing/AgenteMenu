@@ -475,7 +475,7 @@ test("web: las comidas que salen de otra (sobras) suman sus raciones a la que se
   assert.equal(cenaMartes.racCocinar, Math.round((cenaMartes.rac + comidaMiercoles.rac + tupperCct.rac) * 100) / 100);
   assert.ok(celdas.some((c) => c.id === "A-3-comida" && c.tuppers.some((t) => t.quien === "RFA")));
   const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, recetas, fecha: "30 de septiembre de 2026" });
-  for (const id of ["diario", "definiciones", "dlg-actualizar", "btn-confirmar-compra"]) assert.match(html, new RegExp(`id="${id}"`));
+  for (const id of ["diario", "definiciones", "dlg-actualizar", "btn-confirmar-compra", "dlg-mover"]) assert.match(html, new RegExp(`id="${id}"`));
   assert.doesNotMatch(html, /Aprobar el menú|Borrador/);
 });
 

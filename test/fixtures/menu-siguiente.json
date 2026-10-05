@@ -1,0 +1,205 @@
+{
+  "semana": "B",
+  "inicio": "2026-10-05",
+  "cambios": [
+    {
+      "por": "agente",
+      "fecha": "2026-09-28",
+      "descripcion": "Propuesta de la semana siguiente (B), con la rotación de tuppers B y las normas de la casa"
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Nueva norma: los días que los mayores no comen en casa, los niños pueden comer pasta o algo más calórico. Comida de RFC y AFC del martes: macarrones con tomate, jamón york y queso (antes, merluza recalentada)."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Legumbres solo con un adulto delante. Comida de RFC y AFC del lunes: lomo a la plancha con arroz integral (antes, lentejas); las lentejas quedan para el tupper de CCT."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Platos habituales de casa y más huevo: lunes, puré de zanahoria y chuleta de Sajonia (RFC y AFC); martes, puré de calabacín y huevos revueltos; viernes, crema de puerro y sándwich mixto; sábado, judías verdes y pollo empanado; domingo, ternera estofada."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-30",
+      "descripcion": "RFA también lleva tupper frío los jueves: ensalada de pasta integral con pollo asado, preparada el miércoles por la noche."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-10-01",
+      "descripcion": "Nueva norma: no repetir el mismo producto en la comida y la cena del mismo día. Cena del miércoles: contramuslo al horno con patata y calabacín (antes, pavo a la plancha; a mediodía hay albóndigas de pavo)."
+    }
+  ],
+  "batch": [
+    {
+      "dia": "D",
+      "tareas": [
+        "Lentejas estofadas para el tupper de CCT del lunes, unos 45 min, en la Thermomix (una tanda detrás de otra; lo demás, en el fuego o el horno a la vez).",
+        "Albóndigas de pavo con cuscús para la comida del miércoles (RFC y AFC) y el tupper de CCT; congelar y sacar el martes por la noche, 40 min.",
+        "Ensalada de arroz integral con garbanzos y feta para el tupper frío de RFA del lunes, 30 min.",
+        "Asar pechuga de pollo para la quinoa de RFA del martes y el bocadillo de RFC del lunes, 20 min.",
+        "Puré de zanahoria para la comida del lunes (RFC y AFC), 30 min, en la Thermomix (una tanda detrás de otra; lo demás, en el fuego o el horno a la vez)."
+      ]
+    }
+  ],
+  "dias": {
+    "L": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-pollo",
+        "prepara": "Domingo por la noche, con el pollo asado del batch"
+      },
+      "comida": {
+        "receta": "pure-zanahoria",
+        "segundo": "chuleta-sajonia-plancha",
+        "prepara": "Puré del batch del domingo: recalentar; la chuleta, a la plancha"
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "merluza-salsa-verde-arroz",
+        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes",
+        "variantes": {
+          "RFA": "tortilla-francesa-brocoli"
+        }
+      }
+    },
+    "M": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Lunes por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "paella-pollo-verduras",
+        "cambio": {
+          "antes": {
+            "receta": "macarrones-tomate-jamon",
+            "prepara": "Lunes por la noche, con la cena: recalentar"
+          },
+          "motivo": "La familia indicó que no le gusta macarrones-tomate-jamon (noDeseados); se cambia por paella de pollo y verduras aprovechando los contramuslos de pollo deshuesados de la despensa (1000 g).",
+          "fecha": "2026-09-30"
+        }
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "pure-calabacin",
+        "segundo": "huevos-revueltos-jamon-queso"
+      }
+    },
+    "X": {
+      "almuerzo": {
+        "receta": "almuerzo-yogur-frutos-secos",
+        "prepara": "Martes por la noche: dejarlo junto en la nevera"
+      },
+      "comida": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Batch del domingo (congeladas): recalentar"
+      },
+      "merienda": {
+        "receta": "tostada-cacahuete-platano"
+      },
+      "cena": {
+        "receta": "pollo-horno-patata"
+      }
+    },
+    "J": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Miércoles por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "lubina-horno"
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "revuelto-setas-gambas"
+      }
+    },
+    "V": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Jueves por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "alubias-estofadas"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "crema-puerro",
+        "segundo": "sandwich-mixto"
+      }
+    },
+    "S": {
+      "comida": {
+        "receta": "judias-verdes-rehogadas",
+        "segundo": "pollo-empanado"
+      },
+      "cena": {
+        "receta": "tortilla-patata-calabacin"
+      }
+    },
+    "D": {
+      "comida": {
+        "receta": "ternera-estofada"
+      },
+      "cena": {
+        "receta": "crema-calabaza-sandwich"
+      }
+    }
+  },
+  "tuppers": {
+    "L": {
+      "RFA": {
+        "receta": "arroz-garbanzos-feta",
+        "prepara": "Batch del domingo"
+      },
+      "CCT": {
+        "receta": "lentejas-estofadas",
+        "prepara": "Batch del domingo"
+      }
+    },
+    "M": {
+      "RFA": {
+        "receta": "quinoa-pollo-curry",
+        "prepara": "Lunes por la noche, con el pollo del batch"
+      },
+      "CCT": {
+        "receta": "merluza-salsa-verde-arroz",
+        "prepara": "Ración extra de la cena del lunes",
+        "sobrasDe": {
+          "dia": "L",
+          "comida": "cena"
+        }
+      }
+    },
+    "X": {
+      "RFA": {
+        "receta": "tortilla-patata-calabacin",
+        "prepara": "Martes por la noche (se toma fría)"
+      },
+      "CCT": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Batch del domingo (congeladas)",
+        "sobrasDe": {
+          "dia": "X",
+          "comida": "comida"
+        }
+      }
+    },
+    "J": {
+      "RFA": {
+        "receta": "ensalada-pasta-pollo",
+        "prepara": "Miércoles por la noche"
+      }
+    }
+  }
+}

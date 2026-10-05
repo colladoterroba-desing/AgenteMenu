@@ -107,13 +107,13 @@
   const PROXIMA = SEMANAS.find((k) => k > ACTUAL) || null;
   (() => {
     const avisoSem = document.getElementById("aviso-semanas");
-    const tabs = [...document.querySelectorAll('[role="tab"][data-sem]')];
-    const etiqueta = (t, txt) => { t.firstChild.textContent = txt + " · " + MENU[t.dataset.sem].letra + " "; };
-    tabs.forEach((t) => {
-      const k = t.dataset.sem;
-      if (k < ACTUAL) { t.hidden = true; t.setAttribute("aria-selected", "false"); t.tabIndex = -1; document.getElementById(t.getAttribute("aria-controls")).hidden = true; }
-      else if (k === ACTUAL) { etiqueta(t, "Semana en curso"); t.setAttribute("aria-selected", "true"); t.tabIndex = 0; document.getElementById(t.getAttribute("aria-controls")).hidden = false; }
-      else etiqueta(t, "Próxima semana");
+    // Cada columna de día lleva el marco de su semana (continuo: en curso; discontinuo: próxima).
+    document.querySelectorAll(".col-dia[data-sem]").forEach((d) => {
+      const k = d.dataset.sem;
+      d.classList.add(k <= ACTUAL ? "sem-en-curso" : "sem-proxima");
+      const esHoy = d.dataset.fecha === HOY;
+      d.classList.toggle("hoy", esHoy);
+      d.querySelector(".dia-etq").textContent = esHoy ? "Hoy" : "Semana " + MENU[k].letra;
     });
     const etq = document.getElementById("etq-semana");
     if (etq && ACTUAL !== datos.semanaActual) { const dm = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("es-ES", { day: "numeric", month: "short" }); };
@@ -474,6 +474,13 @@
     const refrescarQuien = () => bloques.forEach((b) => b.chks.forEach(([p, chk]) => {
       chk.disabled = !chk.checked && bloques.some((o) => o !== b && o.chks.some(([q, k]) => q === p && k.checked));
     }));
+    // «Otra cosa»: sugerencias con las recetas y lo que ya se escribió antes. Si lo escrito es una receta, se guarda como receta.
+    const norm = (t) => String(t).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+    const recetaPorNombre = (t) => { const n = norm(t); return n ? (Object.entries(REC).find(([, r]) => norm(r.n) === n) || [])[0] : undefined; };
+    const previos = [...new Set([...comidoDb.values()].filter((d) => d.tipo === "texto" && d.texto).map((d) => String(d.texto).trim()))].filter((t) => !recetaPorNombre(t));
+    const sugerencias = el("datalist", { id: "sug-anot" }, [...Object.values(REC).map((r) => r.n).sort((u, v) => u.localeCompare(v)), ...previos.sort((u, v) => u.localeCompare(v))].map((t) => el("option", { value: t })));
+    // Con una sola anotación no hace falta numerarla ni ofrecer «Quitar».
+    const refrescarLista = () => { lista.classList.toggle("una-anot", bloques.length <= 1); bloques.forEach((b, i) => { b.caja.querySelector("legend").textContent = "Anotación " + (i + 1); }); };
     const despensaOpc = (previo) => {
       const t = despensaActual(), claves = new Set([...t.keys()].filter((k) => Number(t.get(k).cantidad) > 0 || previo?.[k]));
       return [...claves].map((k) => [k, t.get(k)?.nombre || nombreDe.get(k) || k, Number(t.get(k)?.cantidad || 0) + Number(previo?.[k] || 0)]).sort((x, y) => x[1].localeCompare(y[1]));
@@ -481,23 +488,26 @@
     const nuevoBloque = (x) => {
       const a = x?.doc || {}, n = bloques.length + 1;
       const quien = el("div", { class: "quien-anot" });
-      const chks = datos.miembros.map((p) => {
+      const chks = [...datos.miembros].sort((u, v) => Number(previstoPara(c, v)) - Number(previstoPara(c, u))).map((p) => {
         const chk = el("input", { type: "checkbox", checked: !!x?.personas.includes(p) });
         chk.addEventListener("change", refrescarQuien);
-        quien.append(el("label", { class: "chip-quien" }, chk, el("span", { class: "comensal" + (previstoPara(c, p) ? "" : " no-previsto"), text: p })));
+        const tup = c.tuppers.find((t) => t.quien === p);
+        const color = !previstoPara(c, p) ? " no-previsto" : tup ? (tup.frio ? " tupper-frio" : " tupper-calor") : "";
+        quien.append(el("label", { class: "chip-quien", title: !previstoPara(c, p) ? "No estaba previsto" : tup ? (tup.frio ? "Tupper frío" : "Tupper para recalentar") : "Come en casa" }, chk, el("span", { class: "comensal" + color, text: p })));
         return [p, chk];
       });
+      const todos = el("button", { type: "button", class: "btn-mini", text: "Todos los previstos", title: "Marca a todos los que estaban previstos en esta comida" });
+      todos.addEventListener("click", () => { chks.forEach(([p, chk]) => { if (previstoPara(c, p) && !chk.disabled) chk.checked = true; }); refrescarQuien(); });
+      quien.append(todos);
       const nombre = "anot-tipo-" + nuevoGrupo();
       const radio = (valor, texto) => { const r = el("input", { type: "radio", name: nombre, value: valor }); r.checked = (a.tipo || "nocome") === valor; return [r, el("label", { class: "opcion" }, r, texto)]; };
       const [rNo, lNo] = radio("nocome", "No come");
-      const [rTxt, lTxt] = radio("texto", "Otra cosa");
-      const inTxt = el("input", { type: "text", value: a.texto || "", placeholder: "Por ejemplo: macarrones con chorizo y tomate frito", "aria-label": "Qué comió" });
-      const [rRec, lRec] = radio("receta", "Otro plato del recetario");
-      const selRec = el("select", { "aria-label": "Plato del recetario" }, Object.entries(REC).sort((u, v) => u[1].n.localeCompare(v[1].n)).map(([id, r]) => el("option", { value: id, text: r.n })));
-      if (a.receta) selRec.value = a.receta;
-      const [rPrev, lPrev] = radio("previsto", "Lo previsto (para añadir una nota o a alguien que no estaba previsto)");
+      const [rTxt, lTxt] = radio("texto", "Otra cosa"); if (a.tipo === "receta") { rTxt.checked = true; }
+      const inTxt = el("input", { type: "text", value: a.tipo === "receta" ? nombreRec(a.receta) : (a.texto || ""), placeholder: "Escribe y elige una receta, o apunta otra cosa", "aria-label": "Qué comió", autocomplete: "off" }); inTxt.setAttribute("list", "sug-anot"); // «list» es de solo lectura: se pone como atributo
+      const [rPrev, lPrev] = radio("previsto", "Lo previsto");
       const todoDia = el("input", { type: "checkbox" });
       const lTodo = el("label", { class: "opcion sub" }, todoDia, "Tampoco las demás comidas de ese día");
+      const ayuda = el("p", { class: "sub ayuda-anot" });
       const nota = el("input", { type: "text", value: a.nota || "", placeholder: "Opcional" });
       const filasDesp = el("div", { class: "cuerpo-dlg" });
       const filaGasto = (k = "", g = "") => {
@@ -516,29 +526,36 @@
       const selRes = el("select", { "aria-label": "Ración en reserva" }, el("option", { value: "", text: "Ninguna" }),
         [...(prevRes ? [prevRes] : []), ...reservasActuales().filter((r) => r.id !== a.reserva)].map((r) => el("option", { value: r.id, text: (r.receta ? nombreRec(r.receta) : r.descripcion || "Reserva") + " (" + fmtNum(Number(r.reserva) + (r.id === a.reserva ? 1 : 0), 1) + " rac.)" })));
       selRes.value = a.reserva || "";
-      const tipo = () => [rNo, rTxt, rRec, rPrev].find((r) => r.checked).value;
-      const actualizar = () => { lTodo.hidden = tipo() !== "nocome"; };
-      [rNo, rTxt, rRec, rPrev].forEach((r) => r.addEventListener("change", actualizar));
-      selRec.addEventListener("focus", () => { rRec.checked = true; actualizar(); });
-      inTxt.addEventListener("input", () => { rTxt.checked = true; actualizar(); });
+      const tipo = () => [rNo, rTxt, rPrev].find((r) => r.checked).value;
+      // Solo se ve el campo del tipo elegido.
+      const AYUDAS = { nocome: "", texto: "Elige una receta de la lista o escribe lo que comió: lo escrito se guarda y la próxima vez se sugiere.", previsto: "Comió lo previsto: sirve para añadir una nota o a alguien que no estaba previsto." };
+      const actualizar = () => {
+        const t = tipo();
+        lTodo.hidden = t !== "nocome"; inTxt.hidden = t !== "texto";
+        ayuda.textContent = AYUDAS[t]; ayuda.hidden = !AYUDAS[t];
+      };
+      [rNo, rTxt, rPrev].forEach((r) => r.addEventListener("change", () => { actualizar(); if (tipo() === "texto") inTxt.focus(); }));
       actualizar();
       const quitarBloque = el("button", { type: "button", class: "btn-mini", text: "Quitar esta anotación" });
       const caja = el("fieldset", { class: "bloque-anot" }, el("legend", { text: "Anotación " + n }),
-        el("p", { class: "etq", text: "¿A quién se refiere?" }), quien,
-        lNo, lTodo, lTxt, inTxt, lRec, selRec, lPrev,
-        el("label", { class: "bloque" }, "Nota", nota),
-        el("details", { class: "gasto", open: !!(a.descontado || a.reserva) }, el("summary", { text: "Gastado de la despensa" }),
+        el("p", { class: "etq", text: "1. ¿A quién se refiere?" }), quien,
+        el("p", { class: "etq", text: "2. ¿Qué pasó?" }),
+        el("div", { class: "segmento" }, lNo, lTxt, lPrev),
+        ayuda, lTodo, inTxt,
+        el("details", { class: "gasto", open: !!(a.nota || a.descontado || a.reserva) }, el("summary", { text: "Más detalles (nota, gastado de la despensa)" }),
+          el("label", { class: "bloque" }, "Nota (opcional)", nota),
+          el("p", { class: "etq", text: "Gastado de la despensa" }),
           el("p", { class: "sub", text: "Si comió algo que ya había en casa, elige qué y cuánto: se resta de la despensa." }),
           filasDesp, el("div", null, masBtn), el("label", { class: "bloque" }, "Ración en reserva", selRes)),
         quitarBloque);
       const b = { caja, chks, leer: () => ({
         personas: chks.filter(([, k]) => k.checked).map(([p]) => p),
-        nuevo: { tipo: tipo(), nota: nota.value.trim().slice(0, 200), ...(tipo() === "receta" ? { receta: selRec.value } : {}), ...(tipo() === "texto" ? { texto: inTxt.value.trim().slice(0, 200) } : {}) },
+        nuevo: { tipo: tipo() === "texto" && recetaPorNombre(inTxt.value) ? "receta" : tipo(), nota: nota.value.trim().slice(0, 200), ...(tipo() === "texto" && recetaPorNombre(inTxt.value) ? { receta: recetaPorNombre(inTxt.value) } : {}), ...(tipo() === "texto" && !recetaPorNombre(inTxt.value) ? { texto: inTxt.value.trim().slice(0, 200) } : {}) },
         usos: [...filasDesp.querySelectorAll(".fila-gasto")].map((f) => ({ k: f.querySelector("select").value, g: Number(f.querySelector("input").value) })).filter((u) => u.k && u.g > 0),
         reserva: selRes.value, todoElDia: todoDia.checked, inTxt,
       }) };
-      quitarBloque.addEventListener("click", () => { bloques.splice(bloques.indexOf(b), 1); caja.remove(); refrescarQuien(); });
-      bloques.push(b); lista.append(caja); refrescarQuien();
+      quitarBloque.addEventListener("click", () => { bloques.splice(bloques.indexOf(b), 1); caja.remove(); refrescarQuien(); refrescarLista(); });
+      bloques.push(b); lista.append(caja); refrescarQuien(); refrescarLista();
     };
     const existentes = anotacionesDe(c);
     existentes.forEach((x) => nuevoBloque(x));
@@ -549,23 +566,13 @@
     const e = efectivo(c);
     const comen = [...new Set([...(e.comensales || c.quien), ...(c.variantes || []).map((v) => v.quien), ...c.tuppers.map((t) => t.quien)])];
     document.getElementById("dlg-anot-titulo").textContent = "Anotaciones · " + DIAS[c.dia] + ", " + COMIDA_TXT[c.comida].toLowerCase();
-    const nadie = el("div", { class: "nadie-come" });
-    if (previstosEn(c).length) {
-      const bNadie = (texto, todo) => {
-        const b = el("button", { type: "button", class: "secundario", text: texto });
-        b.addEventListener("click", async () => {
-          b.disabled = true;
-          if (await marcarNadie(c, todo)) { dlgN.close(); aviso(todo ? "Nadie come en todo el día." : "Nadie come aquí."); }
-          b.disabled = false;
-        });
-        return b;
-      };
-      nadie.append(bNadie("Nadie come aquí", false), bNadie("Nadie come en todo el día", true),
-        el("p", { class: "sub", text: "Quita esta comida (o todas las de ese día) de lo que se cocina y de la lista de la compra." }));
-    }
-    document.getElementById("dlg-anot-cuerpo").replaceChildren(nadie,
-      el("p", { class: "sub", text: "Previsto: " + (c.comida === "desayuno" ? "desayunos fijos" : e.recetas.map(nombreRec).join(" + ")) + (comen.length ? ". Comen: " + comen.join(", ") : "") + ". Si no se apunta nada, se da por hecho que cada uno comió lo previsto." }),
-      lista, el("div", null, mas));
+    // Resumen de lo que ya está anotado en esta comida.
+    const resumen = el("div", { class: "resumen-anot" }, el("p", { class: "etq", text: "Ya anotado" }));
+    if (nadieCome(c)) resumen.append(el("span", null, el("strong", { text: "Nadie come aquí" })));
+    else if (existentes.length) existentes.forEach((x) => resumen.append(el("span", null, el("strong", { text: x.personas.join(", ") + ": " }), resumenAnot(x.doc, x.docs))));
+    document.getElementById("dlg-anot-cuerpo").replaceChildren(...(nadieCome(c) || existentes.length ? [resumen] : []), sugerencias,
+      el("p", { class: "sub", text: "Previsto: " + (c.comida === "desayuno" ? "desayunos fijos" : e.recetas.map(nombreRec).join(" + ")) + (comen.length ? ". Comen: " + comen.join(", ") : "") + ". Solo apunta lo que no salió como estaba previsto." }),
+      lista, el("div", { class: "mas-anot" }, mas));
     const guardar = el("button", { type: "button", class: "btn-principal", text: "Guardar" });
     guardar.addEventListener("click", async () => {
       const leidos = bloques.map((b) => b.leer());
@@ -587,37 +594,25 @@
     document.querySelectorAll("[data-acciones]").forEach((caja) => {
       const c = celdas.get(caja.dataset.acciones);
       if (!c) return;
-      const td = caja.closest("td");
+      const td = caja.closest("[data-celda]");
       const e = efectivo(c);
-      // Si el cambio deja el mismo plato (p. ej. solo cambia quién come), no se tacha ni se repite.
+      // Los cambios (de Claude o del diario) no se señalan en el menú: la casilla enseña el plato que se va a comer.
+      // El detalle de cada cambio está en el Diario.
       const mismoPlato = e.origen !== "menu" && e.recetas.length > 0 && e.recetas.join() === c.platos.join();
+      const cambiado = e.origen !== "menu" && !mismoPlato;
       const vacia = nadieCome(c);
       td.classList.toggle("nadie", vacia);
-      td.querySelectorAll(":scope > .plato-menu").forEach((a) => a.classList.toggle("tachado", vacia || (e.origen !== "menu" && !mismoPlato)));
+      td.querySelectorAll(":scope > .plato-menu").forEach((a) => a.classList.toggle("oculto", cambiado));
       td.querySelector(":scope > .plato-real")?.remove();
       const ancla = td.querySelector(":scope > .comensales, :scope > .des-sub, :scope > .desayunos-dia") || caja;
-      if (e.origen !== "menu") {
+      if (cambiado) {
         const real = el("div", { class: "plato-real" });
-        const etq = el("span", { class: "origen " + e.origen, text: e.origen === "diario" ? "Diario" : "Claude" });
-        if (mismoPlato) real.append(el("div", null, etq, el("span", { class: "motivo", text: "Mismo plato" })));
-        else if (e.recetas.length) e.recetas.forEach((r, n) => real.append(el("div", null, n ? null : etq, el("a", { href: "#r-" + r, text: nombreRec(r) }))));
-        else real.append(el("div", null, etq, el("strong", { text: e.texto })));
+        if (e.recetas.length) e.recetas.forEach((r) => real.append(el("a", { class: "plato-menu", href: "#r-" + r, text: nombreRec(r) })));
+        else real.append(el("strong", { text: e.texto }));
         if (e.comensales) real.append(el("span", { class: "motivo", text: "Comen: " + e.comensales.join(", ") + " (" + fmtRac(e.rac) + " rac.)" }));
-        const txt = [e.motivo, e.nota].filter(Boolean).join(" · ");
-        if (txt) real.append(el("span", { class: "motivo", text: txt }));
-        if (e.origen === "claude" && editable) {
-          const b = el("button", { type: "button", class: "btn-mini", text: "Volver al plato previsto" });
-          b.addEventListener("click", async () => {
-            try {
-              // Si el cambio ya está en el proyecto, se deja constancia de que se deshizo; si no, basta con borrarlo.
-              if (cambiosBase.has(c.id)) { const doc = { celda: c.id, quitado: true, fecha: new Date().toISOString() }; await db.doc("cambios/" + c.id).set(doc); cambiosDb.set(c.id, doc); }
-              else { await db.doc("cambios/" + c.id).delete(); cambiosDb.delete(c.id); }
-              await registrar("actualizacion", "Deshecho el cambio de Claude del " + DIAS[c.dia].toLowerCase() + " (" + COMIDA_TXT[c.comida].toLowerCase() + ")."); renderTodo(); }
-            catch (err) { aviso("No se ha podido guardar."); }
-          });
-          real.append(b);
-        }
         ancla.before(real);
+      } else if (e.origen !== "menu" && e.comensales) {
+        ancla.before(el("div", { class: "plato-real" }, el("span", { class: "motivo", text: "Comen: " + e.comensales.join(", ") + " (" + fmtRac(e.rac) + " rac.)" })));
       } else if (e.nota) {
         ancla.before(el("div", { class: "plato-real" }, el("span", { class: "motivo", text: "Nota: " + e.nota })));
       }
@@ -634,26 +629,20 @@
   // Días que ya han pasado: ocultos, con un enlace para verlos.
   let verPasados = false;
   const ocultarPasados = () => {
-    document.querySelectorAll("table.semana").forEach((t) => {
-      const fila = [...t.querySelectorAll("tbody tr")].find((tr) => tr.querySelector("td[data-celda]"));
-      if (!fila) return;
-      const pasados = [...fila.querySelectorAll("td[data-celda]")].map((td) => {
-        const [, sem, dia] = /^(.+)-(\d)-[a-z]+$/.exec(td.dataset.celda);
-        return fechaCelda({ sem, dia: Number(dia) }) < HOY;
-      });
-      t.querySelectorAll("tr").forEach((tr) => [...tr.children].slice(1).forEach((cel, i) => (cel.hidden = !verPasados && pasados[i])));
-      const n = pasados.filter(Boolean).length;
-      const cont = t.closest(".semana-scroll");
-      let nota = cont.previousElementSibling;
-      if (!nota || !nota.classList.contains("aviso-pasados")) {
-        if (!n) return;
-        nota = el("p", { class: "sub aviso-pasados" });
-        cont.before(nota);
-      }
-      const b = el("button", { type: "button", class: "enlace", text: verPasados ? "Ocultarlos" : "Mostrarlos" });
-      b.addEventListener("click", () => { verPasados = !verPasados; ocultarPasados(); });
-      nota.replaceChildren(verPasados ? "Se muestran también los días que ya han pasado. " : (n === 7 ? "Esta semana ya ha pasado entera. " : "Se ocultan los días que ya han pasado. "), b);
-    });
+    const cont = document.querySelector(".semana-scroll");
+    if (!cont) return;
+    const dias = [...cont.querySelectorAll(".col-dia")];
+    let n = 0;
+    dias.forEach((d) => { const pasado = d.dataset.fecha < HOY; if (pasado) n++; d.hidden = !verPasados && pasado; });
+    let nota = cont.previousElementSibling;
+    if (!nota || !nota.classList.contains("aviso-pasados")) {
+      if (!n) return;
+      nota = el("p", { class: "sub aviso-pasados" });
+      cont.before(nota);
+    }
+    const b = el("button", { type: "button", class: "enlace", text: verPasados ? "Ocultarlos" : "Mostrarlos" });
+    b.addEventListener("click", () => { verPasados = !verPasados; ocultarPasados(); });
+    nota.replaceChildren(verPasados ? "Se muestran también los días que ya han pasado. " : (n === dias.length ? "Todos los días del menú ya han pasado. " : "Se ocultan los días que ya han pasado. "), b);
   };
   ocultarPasados();
 

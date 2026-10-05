@@ -32,7 +32,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 - [x] **OI-34 · Confirmar las equivalencias a gramos.** Decidido el 30/09/2026: se usan los pesos estimados de `data/equivalencias.json` (base de pizza 200 g, galletas Animadas 4 g, tortitas de maíz 7 g, yogur líquido 180 g, lubina limpia 350 g, tortillas integrales 40 g, lata de atún 80 g). Se corrigen si algún día se pesan.
 - [x] **OI-35 · Marcar lo cocinado y pasar la compra a la despensa.** Hecho el 30/09/2026: casilla «Cocinado» con raciones en cada plato del menú (resta los ingredientes de la despensa; al desmarcar vuelven) y botón fijo «Confirmar compra» en la lista (suma lo marcado a la despensa). Las sobras (`sobrasDe`) se marcan una sola vez, en la comida donde se cocinan.
 - [x] **OI-36 · Dos formas de apuntar lo cocinado.** Resuelto el 30/09/2026: una sola, «Cocinado» en cada receta (comidas del menú para las que se cocina + raciones hechas; lo que sobra va a la reserva). El menú ya no tiene casillas de cocinado.
-- [x] **OI-37 · «Nadie come aquí».** Hecho el 01/10/2026: en «Anotaciones» de cada comida, botones «Nadie come aquí» y «Nadie come en todo el día» (útil para los fines de semana). Esas comidas no se cocinan ni cuentan en la compra. Claude también puede proponerlo en «Actualizar menú».
+- [x] **OI-37 · «Nadie come aquí».** Hecho el 01/10/2026: en «Anotaciones» de cada comida, botones «Nadie come aquí» y «Nadie come en todo el día» (desde el 05/10/2026 se hace con «No come», «Todos los previstos» y «Tampoco las demás comidas de ese día») (útil para los fines de semana). Esas comidas no se cocinan ni cuentan en la compra. Claude también puede proponerlo en «Actualizar menú».
 - [x] **OI-38 · Revisar también lo que queda de hoy.** Descartado el 01/10/2026: «Actualizar menú» sigue revisando solo desde mañana.
 - [x] **OI-42 · Apuntar qué ha comido cada persona.** Hecho el 30/09/2026: sin anotación se da por comido lo previsto; cada comida tiene un botón «Anotaciones» con una o varias anotaciones, cada una con sus personas (no come, otra cosa, otro plato o nota; lo gastado de la despensa o de una reserva se resta). Quien no come lo previsto se descuenta de las raciones y de la compra. Queda pendiente la sincronización con el proyecto (OI-25).
 - [x] **OI-39 · Motivos de los cambios de Claude.** Hecho el 01/10/2026: Claude explica cada cambio en una frase corta (15 palabras como mucho) y, si sale de un comentario de la familia, cita sus palabras. La familia sigue eligiendo qué cambios se aplican.
@@ -49,6 +49,13 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
   - **Quién habla.** Si el asistente distingue a cada persona o es uno para toda la casa (afecta a las anotaciones por persona).
   - **Coste y mantenimiento.** Cuánto cuesta y quién lo mantiene si algo falla.
   - **Relación con otros temas.** OI-23 (PWA y alojamiento), OI-25 (sincronización) y OI-02 (actualización de la página).
+
+- [ ] **OI-44 · Recetas habituales y favoritas.** Añadido el 05/10/2026. Cuando alguien come «otra cosa» y escribe algo que no está en el recetario, se guarda como texto y se sugiere la próxima vez, pero ese texto no entra en la lista de la compra ni en la despensa, ni se pasa a receta. Planteado, nada decidido. Hay que definir:
+  - **Qué es «habitual» y qué es «favorita».** Si lo habitual sale de lo que más se repite en las anotaciones (por ejemplo, el mismo texto escrito varias veces) y lo favorito lo marca la familia a mano, o si es una sola lista.
+  - **Qué se hace con los textos que se repiten.** Proponer pasarlos a receta (con gramos y pasos, como ya se hace con los desayunos nuevos) o dejarlos solo como sugerencia.
+  - **Uso en el menú.** Si las habituales y favoritas tienen prioridad al preparar la semana (hoy hay una norma de «platos habituales» del 28/09/2026) y si se pueden marcar desde la página de Recetas.
+  - **Uso en las anotaciones.** Si las favoritas salen primero en las sugerencias de «Otra cosa».
+  - **Relación con otros temas.** OI-27 (platos no deseados, que es lo contrario), OI-41 (desayuno en texto libre pasado a receta) y OI-15 (valor nutricional).
 
 ## Personas y hábitos
 

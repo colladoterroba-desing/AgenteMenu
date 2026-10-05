@@ -1,0 +1,271 @@
+{
+  "semana": "A",
+  "inicio": "2026-09-28",
+  "cambios": [
+    {
+      "por": "agente",
+      "fecha": "2026-09-28",
+      "descripcion": "Menú de ejemplo de la semana A con desayunos habituales, almuerzo de RFC y tuppers"
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Almuerzo de RFC de lunes y jueves: el bocadillo de tortilla francesa se cambia por bocadillos que se preparan la noche anterior (pollo asado del batch y jamón serrano). Por las mañanas no se cocina."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Salmón, atún, anchoas y sardinas solo el jueves a mediodía: el salmón pasa a la comida del jueves; fuera los bocadillos de atún (martes y viernes: jamón serrano; jueves: queso fresco); cena del lunes: albóndigas de pavo (también tupper de CCT del martes); cena del miércoles: merluza; cena del jueves: lentejas."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Legumbres solo con un adulto delante. Comida de RFC y AFC del lunes: macarrones con tomate, jamón york y queso (antes, garbanzos); los garbanzos quedan para el tupper de CCT."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-28",
+      "descripcion": "Platos habituales de casa y más huevo: martes, puré de calabaza y lomo adobado (RFC y AFC); miércoles, RFA toma huevos revueltos con jamón y queso; sábado, solomillo a la naranja y tortilla de patata; domingo, crema de puerro y huevos revueltos."
+    },
+    {
+      "por": "usuario",
+      "fecha": "2026-09-30",
+      "descripcion": "RFA también lleva tupper frío los jueves: ensalada de arroz integral con garbanzos y feta, preparada el miércoles por la noche."
+    }
+  ],
+  "batch": [
+    {
+      "dia": "D",
+      "tareas": [
+        "Garbanzos con espinacas para el tupper de CCT del lunes, unos 35 min, en la Thermomix (una tanda detrás de otra; lo demás, en el fuego o el horno a la vez).",
+        "Puré de calabaza para la comida del martes (RFC y AFC), 30 min, en la Thermomix (una tanda detrás de otra; lo demás, en el fuego o el horno a la vez).",
+        "Asar pechuga de pollo para la ensalada de pasta del tupper de RFA y el bocadillo de RFC del lunes, 20 min.",
+        "Cocer 4 huevos duros para la semana."
+      ]
+    }
+  ],
+  "dias": {
+    "L": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-pollo",
+        "prepara": "Domingo por la noche, con el pollo asado del batch"
+      },
+      "comida": {
+        "receta": "macarrones-tomate-jamon",
+        "prepara": "Domingo por la noche, con la cena: recalentar"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes"
+      }
+    },
+    "M": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Lunes por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "pure-calabaza",
+        "segundo": "lomo-adobado-plancha",
+        "prepara": "Puré del batch del domingo: recalentar; el lomo, a la plancha"
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "pollo-guisado-arroz",
+        "prepara": "Hacer 3 raciones extra: tupper de CCT y comida de RFC y AFC del miércoles"
+      }
+    },
+    "X": {
+      "almuerzo": {
+        "receta": "almuerzo-yogur-frutos-secos",
+        "prepara": "Martes por la noche: dejarlo junto en la nevera"
+      },
+      "comida": {
+        "receta": "pollo-guisado-arroz",
+        "prepara": "Guiso de la cena del martes: recalentar",
+        "sobrasDe": {
+          "dia": "M",
+          "comida": "cena"
+        }
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "merluza-plancha-brocoli",
+        "variantes": {
+          "RFA": "huevos-revueltos-jamon-queso"
+        }
+      }
+    },
+    "J": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Miércoles por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "salmon-horno-patata",
+        "comensales": [
+          "AFC",
+          "CCT"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "salmon-horno-patata"
+          },
+          "motivo": "RFC de viaje el jueves, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "yogur-fruta-frutos-secos"
+          },
+          "motivo": "RFC de viaje el jueves, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
+      },
+      "cena": {
+        "receta": "lentejas-estofadas",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "lentejas-estofadas"
+          },
+          "motivo": "RFC de viaje el jueves, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
+      }
+    },
+    "V": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Jueves por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "garbanzos-espinacas",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "espaguetis-bolonesa"
+          },
+          "motivo": "RFC de viaje el viernes; además la semana solo tenía 1 legumbre (lentejas del jueves), por debajo de las 2-4 recomendadas, y hay garbanzos cocidos en la despensa (400 g)",
+          "fecha": "2026-09-30"
+        }
+      },
+      "merienda": {
+        "receta": "tostada-cacahuete-platano",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "tostada-cacahuete-platano"
+          },
+          "motivo": "RFC de viaje el viernes, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
+      },
+      "cena": {
+        "receta": "pizza-casera-verduras",
+        "comensales": [
+          "RFA",
+          "CCT",
+          "AFC"
+        ],
+        "cambio": {
+          "antes": {
+            "receta": "pizza-casera-verduras"
+          },
+          "motivo": "RFC de viaje el viernes, se retira de comensales",
+          "fecha": "2026-09-30"
+        }
+      }
+    },
+    "S": {
+      "comida": {
+        "receta": "solomillo-naranja"
+      },
+      "cena": {
+        "receta": "tortilla-patata"
+      }
+    },
+    "D": {
+      "comida": {
+        "receta": "lubina-horno"
+      },
+      "cena": {
+        "receta": "crema-puerro",
+        "segundo": "huevos-revueltos-jamon-queso"
+      }
+    }
+  },
+  "tuppers": {
+    "L": {
+      "RFA": {
+        "receta": "ensalada-pasta-pollo",
+        "prepara": "Batch del domingo"
+      },
+      "CCT": {
+        "receta": "garbanzos-espinacas",
+        "prepara": "Batch del domingo"
+      }
+    },
+    "M": {
+      "RFA": {
+        "receta": "ensalada-lentejas-huevo",
+        "prepara": "Lunes por la noche"
+      },
+      "CCT": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Ración extra de la cena del lunes",
+        "sobrasDe": {
+          "dia": "L",
+          "comida": "cena"
+        }
+      }
+    },
+    "X": {
+      "RFA": {
+        "receta": "wraps-pavo-hummus",
+        "prepara": "Martes por la noche"
+      },
+      "CCT": {
+        "receta": "pollo-guisado-arroz",
+        "prepara": "Ración extra de la cena del martes",
+        "sobrasDe": {
+          "dia": "M",
+          "comida": "cena"
+        }
+      }
+    },
+    "J": {
+      "RFA": {
+        "receta": "arroz-garbanzos-feta",
+        "prepara": "Miércoles por la noche"
+      }
+    }
+  }
+}

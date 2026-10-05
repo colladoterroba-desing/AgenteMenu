@@ -285,15 +285,6 @@ function fichaPersona(m: Miembro, familia: Familia, recetas: Map<string, Receta>
   </div>`;
 }
 
-/** Historial de cambios del menú (el menú ya no necesita validación). */
-function historialMenu(menu: MenuSemana): string {
-  const cambios = (menu.cambios ?? []).slice().reverse();
-  if (!cambios.length) return "";
-  return `<div class="historial"><details><summary>Historial de cambios (${cambios.length})</summary><ul>${cambios
-    .map((c) => `<li><span class="mono">${esc(c.fecha)}</span> · <span class="comensal">${esc(c.por)}</span> ${esc(c.descripcion)}</li>`)
-    .join("")}</ul></details></div>`;
-}
-
 /** Régimen de comidas por día, con un color para quien come en casa, quien lleva tupper y quien lleva almuerzo. */
 function tablaRegimen(familia: Familia): string {
   const tuppers = familia.regimen.tupper ?? {};
@@ -407,14 +398,22 @@ export const idCelda = (semana: string, dia: Dia, tipo: TipoComida) => `${semana
 /** Hueco que rellena el script: casillas «Cocinado» con raciones y botón «Diario». */
 const acciones = (id: string) => `<div class="acciones" data-acciones="${esc(id)}"></div>`;
 
+/** Casilla de una comida dentro de la columna de un día; lleva su nombre («Comida») porque en el móvil no hay columna de títulos. */
+const celdaHtml = (id: string, tipo: TipoComida, contenido: string, clase = "") =>
+  `<div class="celda${clase ? ` ${clase}` : ""}" data-celda="${esc(id)}"><span class="celda-etq">${esc(COMIDAS.find((x) => x.tipo === tipo)!.nombre)}</span>${contenido}</div>`;
+
 function celdaMenu(dia: DiaDelMenu, tipo: TipoComida, semana: string): string {
   const id = idCelda(semana, dia.dia, tipo);
   const c = dia.comidas.find((x) => x.tipo === tipo);
-  if (!c || !c.platos.length) return `<td class="vacia" data-celda="${esc(id)}"><span class="sub">—</span></td>`;
+  if (!c || !c.platos.length) return celdaHtml(id, tipo, `<span class="sub">—</span>`, "vacia");
   if (tipo === "desayuno" && c.platos.length > 1) {
-    return `<td data-celda="${esc(id)}"><ul class="desayunos-dia">${c.platos
-      .map((p) => `<li>${comensalesChips(p)} <a href="#r-${esc(p.receta.id)}">${esc(p.receta.nombre)}</a></li>`)
-      .join("")}</ul>${acciones(id)}</td>`;
+    return celdaHtml(
+      id,
+      tipo,
+      `<ul class="desayunos-dia">${c.platos
+        .map((p) => `<li>${comensalesChips(p)} <a href="#r-${esc(p.receta.id)}">${esc(p.receta.nombre)}</a></li>`)
+        .join("")}</ul>${acciones(id)}`,
+    );
   }
   const [principal, ...variantes] = c.platos;
   const variantesHtml = variantes
@@ -431,15 +430,17 @@ function celdaMenu(dia: DiaDelMenu, tipo: TipoComida, semana: string): string {
       </div>`,
     )
     .join("");
-  return `<td data-celda="${esc(id)}">
-    <a class="plato-menu" href="#r-${esc(principal.receta.id)}">${esc(principal.receta.nombre)}</a>
+  return celdaHtml(
+    id,
+    tipo,
+    `<a class="plato-menu" href="#r-${esc(principal.receta.id)}">${esc(principal.receta.nombre)}</a>
     ${principal.segundo ? `<a class="plato-menu segundo" href="#r-${esc(principal.segundo.receta.id)}">${esc(principal.segundo.receta.nombre)}</a>` : ""}
     <div class="comensales">${comensalesChips(principal)}<span class="raciones mono" title="Raciones a preparar, contando que 1 ración es la de un adulto de 2.000 kcal">${num(principal.raciones, 2)} rac.</span></div>
     ${variantesHtml}
     ${principal.prepara ? `<p class="prepara">${esc(principal.prepara)}</p>` : ""}
     ${tuppers}
-    ${acciones(id)}
-  </td>`;
+    ${acciones(id)}`,
+  );
 }
 
 function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
@@ -469,39 +470,53 @@ function desayunosHabituales(familia: Familia, dias: DiaDelMenu[]): string {
   </aside>`;
 }
 
-/** Menú de una semana; `clave` (el lunes de la semana) identifica sus casillas. */
-function seccionMenu(familia: Familia, dias: DiaDelMenu[], menu: MenuSemana, clave: string): string {
-  const semana = clave;
-  const batch = (menu.batch ?? [])
-    .map(
-      (b) => `<aside class="batch">
-        <h3>Batch del ${esc(NOMBRE_DIA[b.dia].toLowerCase())}</h3>
+/** Desayunos fijos y batch del domingo de cada semana: van en la página Recetas, no en lo primero que se ve del menú. */
+function avisosCocina(familia: Familia, semanas: { menu: MenuSemana; dias: DiaDelMenu[]; clave: string; etiqueta: string }[]): string {
+  const batch = semanas
+    .flatMap(({ menu, clave, etiqueta }) =>
+      (menu.batch ?? []).map(
+        (b) => `<aside class="batch">
+        <h3>Batch del ${esc(NOMBRE_DIA[b.dia].toLowerCase())} · ${esc(etiqueta)} <span class="sub">${rangoSemana(clave)}</span></h3>
         <ul>${b.tareas.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
       </aside>`,
+      ),
     )
     .join("");
-  const visibles = menuVisible(familia, dias);
-  return `<div class="avisos-menu">${desayunosHabituales(familia, dias)}${batch}</div>
-  <div class="scroll semana-scroll"><table class="semana">
-    <thead><tr><th scope="col"><span class="sr">Comida</span></th>${visibles
-      .map((d) => `<th scope="col">${esc(d.nombre)}</th>`)
-      .join("")}</tr></thead>
-    <tbody>${COMIDAS.map(({ tipo, nombre }) => {
-      if (visibles.some((d) => d.comidas.some((c) => c.tipo === tipo))) {
-        return `<tr><th scope="row">${nombre}</th>${visibles.map((d) => celdaMenu(d, tipo, semana)).join("")}</tr>`;
-      }
-      // Desayunos fijos ocultos: una fila compacta para marcarlos como hechos (se restan de la despensa).
-      if (tipo === "desayuno" && dias.some((d) => d.comidas.some((c) => c.tipo === "desayuno" && c.platos.length))) {
-        return `<tr><th scope="row">${nombre}</th>${visibles
-          .map((d) => {
-            const id = idCelda(semana, d.dia, "desayuno");
-            return `<td data-celda="${esc(id)}"><a class="plato-menu" href="#configuracion">Desayunos fijos</a><span class="sub des-sub">Cada uno el suyo</span>${acciones(id)}</td>`;
-          })
-          .join("")}</tr>`;
-      }
-      return "";
-    }).join("")}</tbody>
-  </table></div>`;
+  return `<div class="avisos-menu">${desayunosHabituales(familia, semanas[0].dias)}${batch}</div>`;
+}
+
+/**
+ * Menú de los días que quedan: una columna por día, desde hoy hasta el domingo de la próxima semana.
+ * El marco de cada columna indica su semana. Cada semana se identifica por su lunes (`clave`).
+ */
+function seccionMenu(familia: Familia, semanas: { dias: DiaDelMenu[]; clave: string }[]): string {
+  const visibles = semanas.map((w) => ({ ...w, dias: menuVisible(familia, w.dias) }));
+  const hayDesayunoFijo = semanas.some((w) => w.dias.some((d) => d.comidas.some((c) => c.tipo === "desayuno" && c.platos.length)));
+  // Las filas que no tiene ningún día no se dibujan; los desayunos ocultos quedan en una sola casilla compacta.
+  const filas = COMIDAS.filter(
+    ({ tipo }) => visibles.some((w) => w.dias.some((d) => d.comidas.some((c) => c.tipo === tipo))) || (tipo === "desayuno" && hayDesayunoFijo),
+  );
+  const columna = (d: DiaDelMenu, clave: string) => {
+    const fecha = sumarDias(clave, DIAS_SEMANA.indexOf(d.dia));
+    const corta = new Date(`${fecha}T12:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
+    const casillas = filas
+      .map(({ tipo }) => {
+        if (d.comidas.some((c) => c.tipo === tipo)) return celdaMenu(d, tipo, clave);
+        if (tipo === "desayuno") {
+          const id = idCelda(clave, d.dia, "desayuno");
+          return celdaHtml(id, tipo, `<a class="plato-menu" href="#recetas">Desayunos fijos</a><span class="sub des-sub">Cada uno el suyo</span>${acciones(id)}`);
+        }
+        return celdaHtml(idCelda(clave, d.dia, tipo), tipo, `<span class="sub">—</span>`, "vacia");
+      })
+      .join("");
+    return `<section class="col-dia" data-sem="${esc(clave)}" data-fecha="${esc(fecha)}" aria-label="${esc(`${d.nombre} ${corta}`)}">
+      <h3 class="dia-cab"><span class="dia-nombre">${esc(d.nombre)}</span> <span class="dia-fecha">${esc(corta)}</span><span class="dia-etq"></span></h3>
+      ${casillas}
+    </section>`;
+  };
+  return `<div class="semana semana-scroll" style="--filas:${filas.length + 1}" tabindex="0" aria-label="Menú día a día (desliza para ver más días)">${visibles
+    .flatMap((w) => w.dias.map((d) => columna(d, w.clave)))
+    .join("")}</div>`;
 }
 
 interface UsoReceta {
@@ -1004,11 +1019,21 @@ p{margin:0}
 table{border-collapse:collapse;width:100%;font-size:.9rem}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
-.semana-scroll{background:var(--surface);border:1px solid var(--line);border-radius:10px}
-.semana{min-width:980px}
-.semana tbody th{font-family:var(--f-display);font-weight:650;white-space:nowrap}
-.semana tbody tr:last-child td,.semana tbody tr:last-child th{border-bottom:0}
-.semana td{min-width:172px}
+.semana-scroll{display:grid;grid-auto-flow:column;grid-auto-columns:220px;grid-template-rows:repeat(var(--filas,6),auto);gap:12px;overflow-x:auto;padding:4px 4px 12px;scroll-snap-type:x proximity;scroll-padding-left:4px}
+.col-dia{display:grid;grid-row:span var(--filas,6);grid-template-rows:subgrid;row-gap:0;background:var(--surface);border:2px solid var(--accent);border-radius:12px;scroll-snap-align:start;overflow:hidden}
+.col-dia.sem-proxima{border:2px dashed var(--muted)}
+.dia-cab{font:650 1rem var(--f-display);padding:8px 12px;background:var(--accent-soft);display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.col-dia.sem-proxima .dia-cab{background:var(--bg)}
+.dia-fecha{font:400 .82rem var(--f-body);color:var(--muted)}
+.dia-etq{flex-basis:100%;font:600 .64rem var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);line-height:1}
+.como-se-lee summary{cursor:pointer;color:var(--accent);font-size:.88rem;font-weight:600}
+.col-dia.hoy .dia-etq{color:var(--accent)}
+.celda{padding:8px 12px 10px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-content:start;min-width:0}
+.celda-etq{font:600 .66rem var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px}
+.leyenda-semanas{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.8rem;color:var(--muted);margin:10px 0 0}
+.leyenda-semanas .muestra{display:inline-block;width:26px;height:14px;border-radius:4px;border:2px solid var(--accent);margin-left:6px}
+.leyenda-semanas .muestra.sem-proxima{border:2px dashed var(--muted)}
+@media (max-width:640px){.semana-scroll{grid-auto-columns:100%;scroll-snap-type:x mandatory;gap:8px;padding:4px 0 12px}.col-dia{scroll-snap-stop:always}}
 .plato-menu.segundo{margin-top:3px;padding-top:3px;border-top:1px dotted var(--line)}
 .plato-menu{display:block;font-weight:600;color:var(--ink);text-decoration:none;line-height:1.3}
 .plato-menu:hover,.variante a:hover,.tupper-linea a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
@@ -1088,7 +1113,6 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .reservas a{color:var(--ink);font-weight:600}
 .reservas .vence{color:var(--aviso);font-weight:600}
 .aviso-db{background:var(--info-soft);padding:8px 12px;border-radius:6px}
-.panel-semana{display:grid;gap:16px;padding-top:12px}
 .barra{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
 .barra-dentro{max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px);display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
 .marca{font:700 1.05rem var(--f-display);display:flex;gap:8px;align-items:baseline}
@@ -1149,6 +1173,15 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .comio-nota strong{color:var(--ink)}
 .bloque-anot{border:1px solid var(--line)!important;border-radius:8px;padding:10px 12px!important;display:grid;gap:6px}
 .bloque-anot legend{font-weight:700;font-size:.85rem;padding:0 4px}
+.una-anot .bloque-anot{border:0!important;padding:0!important}
+.una-anot .bloque-anot legend,.una-anot .bloque-anot > .btn-mini{display:none}
+.segmento{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.segmento .opcion{position:relative;justify-content:center;border:1px solid var(--line);border-radius:8px;padding:9px 6px;font-size:.9rem}
+.segmento .opcion input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.segmento .opcion:has(input:checked){background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.segmento .opcion:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.ayuda-anot{margin:0}
+.mas-anot{margin-top:2px}
 .quien-anot{display:flex;flex-wrap:wrap;gap:6px 12px}
 .chip-quien{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
 .chip-quien input{accent-color:var(--accent)}
@@ -1246,8 +1279,8 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .sobras-txt{color:var(--muted)}
 .btn-mini{font:600 .74rem var(--f-body);background:var(--surface);color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 9px;cursor:pointer;justify-self:start}
 .btn-mini.con-dato{background:var(--accent-soft);border-color:var(--accent)}
-.plato-menu.tachado{text-decoration:line-through;color:var(--muted);font-weight:400}
-td.nadie{background:var(--bg);opacity:.75}
+.plato-menu.oculto{display:none}
+.celda.nadie{background:var(--bg);opacity:.75}
 .nadie-come{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
 .nadie-come .sub{flex-basis:100%;margin:0}
 .plato-real{margin-top:4px;font-size:.85rem;line-height:1.3;display:grid;gap:2px}
@@ -1584,27 +1617,21 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
   <section class="vista" id="menu" data-vista aria-labelledby="h-menu">
     <header class="cab">
       <span class="etq"><span id="etq-semana">Semana ${esc(menu.semana)} · ${rangoSemana(inicio)}</span> · generado el ${esc(fecha)}</span>
-      <h1 id="h-menu">Menú de la semana</h1>
-      <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». Si no se apunta nada, se da por hecho que cada uno comió lo previsto. Con «Anotaciones» apuntas quién comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra); puede haber varias en la misma comida. Los días que ya han pasado no se muestran.</p>
+      <h1 id="h-menu">Menú</h1>
+      <details class="como-se-lee"><summary>Cómo se lee el menú</summary>
+        <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». Si no se apunta nada, se da por hecho que cada uno comió lo previsto. Con «Anotaciones» apuntas quién comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra); puede haber varias en la misma comida. Se ven los días desde hoy hasta el domingo de la próxima semana; el marco de cada columna dice a qué semana pertenece. Los días que ya han pasado no se muestran. Los desayunos fijos y el batch del domingo están en Recetas; el detalle de los cambios de Claude, en Diario.</p>
+      </details>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
       <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
-      <dl class="resumen">
+    </header>
+    <p class="leyenda-semanas" id="leyenda-semanas"><span class="muestra sem-en-curso"></span> Semana en curso <span class="muestra sem-proxima"></span> Próxima semana</p>
+    ${seccionMenu(familia, semanas.map(({ dias: d, clave }) => ({ dias: d, clave })))}
+    <dl class="resumen" aria-label="Resumen de la semana en curso">
         <div><dt>Platos cocinados</dt><dd id="resumen-cocinados">0</dd></div>
         <div><dt>Tuppers</dt><dd>${tuppersSemana}</dd></div>
         <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
         <div><dt>Productos a comprar</dt><dd id="resumen-compra">—</dd></div>
       </dl>
-    </header>
-    ${
-      menuSiguiente && diasSiguiente
-        ? `<div class="pestanas" role="tablist" aria-label="Semana">
-            <button role="tab" id="tab-sem-actual" aria-controls="sem-actual" aria-selected="true" tabindex="0" data-sem="${esc(inicio)}">Semana en curso · ${esc(menu.semana)} <span class="rango">${rangoSemana(inicio)}</span></button>
-            <button role="tab" id="tab-sem-siguiente" aria-controls="sem-siguiente" aria-selected="false" tabindex="-1" data-sem="${esc(inicioSiguiente)}">Próxima semana · ${esc(menuSiguiente.semana)} <span class="rango">${rangoSemana(inicioSiguiente)}</span></button>
-          </div>
-          <div role="tabpanel" id="sem-actual" aria-labelledby="tab-sem-actual" class="panel-semana">${historialMenu(menu)}${seccionMenu(familia, dias, menu, inicio)}</div>
-          <div role="tabpanel" id="sem-siguiente" aria-labelledby="tab-sem-siguiente" class="panel-semana" hidden>${historialMenu(menuSiguiente)}${seccionMenu(familia, diasSiguiente, menuSiguiente, inicioSiguiente)}</div>`
-        : `${historialMenu(menu)}${seccionMenu(familia, dias, menu, inicio)}`
-    }
   </section>
 
   <section class="vista" id="diario" data-vista aria-labelledby="h-diario" hidden>
@@ -1613,6 +1640,10 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 
   <section class="vista" id="recetas" data-vista aria-labelledby="h-recetas" hidden>
     <header class="cab"><h1 id="h-recetas">Recetas</h1></header>
+    ${avisosCocina(familia, [
+      { menu, dias, clave: inicio, etiqueta: "semana en curso" },
+      ...(menuSiguiente && diasSiguiente ? [{ menu: menuSiguiente, dias: diasSiguiente, clave: inicioSiguiente, etiqueta: "próxima semana" }] : []),
+    ])}
     ${seccionRecetas(recetas, semanas, familia)}
   </section>
 

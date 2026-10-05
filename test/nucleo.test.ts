@@ -530,8 +530,14 @@ test("web: las casillas se identifican por el lunes de su semana", async () => {
   assert.match(html, new RegExp(`data-celda="${menu.inicio}-0-comida"`));
   assert.match(html, new RegExp(`data-celda="${menuSiguiente.inicio}-0-comida"`));
   assert.doesNotMatch(html, /data-celda="[AB]-/);
-  assert.match(html, /Semana en curso · A/);
-  assert.match(html, /Próxima semana · B/);
+  // Un solo menú continuo: una columna por día de las dos semanas, sin pestañas, con la semana de cada una.
+  assert.match(html, new RegExp(`<section class="col-dia" data-sem="${menu.inicio}" data-fecha="${menu.inicio}"`));
+  assert.match(html, new RegExp(`<section class="col-dia" data-sem="${menuSiguiente.inicio}"`));
+  assert.equal((html.match(/<section class="col-dia" /g) ?? []).length, 14);
+  assert.doesNotMatch(html, /role="tab"[^>]*data-sem/);
+  // Los cambios ya no se listan en el menú, y el batch y los desayunos van en Recetas.
+  assert.doesNotMatch(html, /class="historial"/);
+  assert.ok(html.indexOf('id="recetas"') < html.indexOf('<aside class="batch">'));
 });
 
 test("la despensa nunca queda en negativo: gastar más de lo apuntado la deja a 0", async () => {

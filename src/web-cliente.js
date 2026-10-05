@@ -474,6 +474,11 @@
     const refrescarQuien = () => bloques.forEach((b) => b.chks.forEach(([p, chk]) => {
       chk.disabled = !chk.checked && bloques.some((o) => o !== b && o.chks.some(([q, k]) => q === p && k.checked));
     }));
+    // «Otra cosa»: sugerencias con las recetas y lo que ya se escribió antes. Si lo escrito es una receta, se guarda como receta.
+    const norm = (t) => String(t).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+    const recetaPorNombre = (t) => { const n = norm(t); return n ? (Object.entries(REC).find(([, r]) => norm(r.n) === n) || [])[0] : undefined; };
+    const previos = [...new Set([...comidoDb.values()].filter((d) => d.tipo === "texto" && d.texto).map((d) => String(d.texto).trim()))].filter((t) => !recetaPorNombre(t));
+    const sugerencias = el("datalist", { id: "sug-anot" }, [...Object.values(REC).map((r) => r.n).sort((u, v) => u.localeCompare(v)), ...previos.sort((u, v) => u.localeCompare(v))].map((t) => el("option", { value: t })));
     // Con una sola anotación no hace falta numerarla ni ofrecer «Quitar».
     const refrescarLista = () => { lista.classList.toggle("una-anot", bloques.length <= 1); bloques.forEach((b, i) => { b.caja.querySelector("legend").textContent = "Anotación " + (i + 1); }); };
     const despensaOpc = (previo) => {
@@ -486,17 +491,19 @@
       const chks = [...datos.miembros].sort((u, v) => Number(previstoPara(c, v)) - Number(previstoPara(c, u))).map((p) => {
         const chk = el("input", { type: "checkbox", checked: !!x?.personas.includes(p) });
         chk.addEventListener("change", refrescarQuien);
-        quien.append(el("label", { class: "chip-quien" }, chk, el("span", { class: "comensal" + (previstoPara(c, p) ? "" : " no-previsto"), text: p })));
+        const tup = c.tuppers.find((t) => t.quien === p);
+        const color = !previstoPara(c, p) ? " no-previsto" : tup ? (tup.frio ? " tupper-frio" : " tupper-calor") : "";
+        quien.append(el("label", { class: "chip-quien", title: !previstoPara(c, p) ? "No estaba previsto" : tup ? (tup.frio ? "Tupper frío" : "Tupper para recalentar") : "Come en casa" }, chk, el("span", { class: "comensal" + color, text: p })));
         return [p, chk];
       });
+      const todos = el("button", { type: "button", class: "btn-mini", text: "Todos los previstos", title: "Marca a todos los que estaban previstos en esta comida" });
+      todos.addEventListener("click", () => { chks.forEach(([p, chk]) => { if (previstoPara(c, p) && !chk.disabled) chk.checked = true; }); refrescarQuien(); });
+      quien.append(todos);
       const nombre = "anot-tipo-" + nuevoGrupo();
       const radio = (valor, texto) => { const r = el("input", { type: "radio", name: nombre, value: valor }); r.checked = (a.tipo || "nocome") === valor; return [r, el("label", { class: "opcion" }, r, texto)]; };
       const [rNo, lNo] = radio("nocome", "No come");
-      const [rTxt, lTxt] = radio("texto", "Otra cosa");
-      const inTxt = el("input", { type: "text", value: a.texto || "", placeholder: "Por ejemplo: macarrones con chorizo y tomate frito", "aria-label": "Qué comió" });
-      const [rRec, lRec] = radio("receta", "Otro plato");
-      const selRec = el("select", { "aria-label": "Plato del recetario" }, Object.entries(REC).sort((u, v) => u[1].n.localeCompare(v[1].n)).map(([id, r]) => el("option", { value: id, text: r.n })));
-      if (a.receta) selRec.value = a.receta;
+      const [rTxt, lTxt] = radio("texto", "Otra cosa"); if (a.tipo === "receta") { rTxt.checked = true; }
+      const inTxt = el("input", { type: "text", value: a.tipo === "receta" ? nombreRec(a.receta) : (a.texto || ""), placeholder: "Escribe y elige una receta, o apunta otra cosa", "aria-label": "Qué comió", autocomplete: "off" }); inTxt.setAttribute("list", "sug-anot"); // «list» es de solo lectura: se pone como atributo
       const [rPrev, lPrev] = radio("previsto", "Lo previsto");
       const todoDia = el("input", { type: "checkbox" });
       const lTodo = el("label", { class: "opcion sub" }, todoDia, "Tampoco las demás comidas de ese día");
@@ -519,22 +526,22 @@
       const selRes = el("select", { "aria-label": "Ración en reserva" }, el("option", { value: "", text: "Ninguna" }),
         [...(prevRes ? [prevRes] : []), ...reservasActuales().filter((r) => r.id !== a.reserva)].map((r) => el("option", { value: r.id, text: (r.receta ? nombreRec(r.receta) : r.descripcion || "Reserva") + " (" + fmtNum(Number(r.reserva) + (r.id === a.reserva ? 1 : 0), 1) + " rac.)" })));
       selRes.value = a.reserva || "";
-      const tipo = () => [rNo, rTxt, rRec, rPrev].find((r) => r.checked).value;
+      const tipo = () => [rNo, rTxt, rPrev].find((r) => r.checked).value;
       // Solo se ve el campo del tipo elegido.
-      const AYUDAS = { nocome: "", texto: "Escribe qué comió.", receta: "Elige el plato del recetario que comió.", previsto: "Comió lo previsto: sirve para añadir una nota o a alguien que no estaba previsto." };
+      const AYUDAS = { nocome: "", texto: "Elige una receta de la lista o escribe lo que comió: lo escrito se guarda y la próxima vez se sugiere.", previsto: "Comió lo previsto: sirve para añadir una nota o a alguien que no estaba previsto." };
       const actualizar = () => {
         const t = tipo();
-        lTodo.hidden = t !== "nocome"; inTxt.hidden = t !== "texto"; selRec.hidden = t !== "receta";
+        lTodo.hidden = t !== "nocome"; inTxt.hidden = t !== "texto";
         ayuda.textContent = AYUDAS[t]; ayuda.hidden = !AYUDAS[t];
       };
-      [rNo, rTxt, rRec, rPrev].forEach((r) => r.addEventListener("change", () => { actualizar(); if (tipo() === "texto") inTxt.focus(); }));
+      [rNo, rTxt, rPrev].forEach((r) => r.addEventListener("change", () => { actualizar(); if (tipo() === "texto") inTxt.focus(); }));
       actualizar();
       const quitarBloque = el("button", { type: "button", class: "btn-mini", text: "Quitar esta anotación" });
       const caja = el("fieldset", { class: "bloque-anot" }, el("legend", { text: "Anotación " + n }),
         el("p", { class: "etq", text: "1. ¿A quién se refiere?" }), quien,
         el("p", { class: "etq", text: "2. ¿Qué pasó?" }),
-        el("div", { class: "segmento" }, lNo, lTxt, lRec, lPrev),
-        ayuda, lTodo, inTxt, selRec,
+        el("div", { class: "segmento" }, lNo, lTxt, lPrev),
+        ayuda, lTodo, inTxt,
         el("details", { class: "gasto", open: !!(a.nota || a.descontado || a.reserva) }, el("summary", { text: "Más detalles (nota, gastado de la despensa)" }),
           el("label", { class: "bloque" }, "Nota (opcional)", nota),
           el("p", { class: "etq", text: "Gastado de la despensa" }),
@@ -543,7 +550,7 @@
         quitarBloque);
       const b = { caja, chks, leer: () => ({
         personas: chks.filter(([, k]) => k.checked).map(([p]) => p),
-        nuevo: { tipo: tipo(), nota: nota.value.trim().slice(0, 200), ...(tipo() === "receta" ? { receta: selRec.value } : {}), ...(tipo() === "texto" ? { texto: inTxt.value.trim().slice(0, 200) } : {}) },
+        nuevo: { tipo: tipo() === "texto" && recetaPorNombre(inTxt.value) ? "receta" : tipo(), nota: nota.value.trim().slice(0, 200), ...(tipo() === "texto" && recetaPorNombre(inTxt.value) ? { receta: recetaPorNombre(inTxt.value) } : {}), ...(tipo() === "texto" && !recetaPorNombre(inTxt.value) ? { texto: inTxt.value.trim().slice(0, 200) } : {}) },
         usos: [...filasDesp.querySelectorAll(".fila-gasto")].map((f) => ({ k: f.querySelector("select").value, g: Number(f.querySelector("input").value) })).filter((u) => u.k && u.g > 0),
         reserva: selRes.value, todoElDia: todoDia.checked, inTxt,
       }) };
@@ -559,20 +566,12 @@
     const e = efectivo(c);
     const comen = [...new Set([...(e.comensales || c.quien), ...(c.variantes || []).map((v) => v.quien), ...c.tuppers.map((t) => t.quien)])];
     document.getElementById("dlg-anot-titulo").textContent = "Anotaciones · " + DIAS[c.dia] + ", " + COMIDA_TXT[c.comida].toLowerCase();
-    const nadie = el("div", { class: "nadie-come" });
-    if (previstosEn(c).length) {
-      const bNadie = (texto, todo) => {
-        const b = el("button", { type: "button", class: "secundario", text: texto });
-        b.addEventListener("click", async () => {
-          b.disabled = true;
-          if (await marcarNadie(c, todo)) { dlgN.close(); aviso(todo ? "Nadie come en todo el día." : "Nadie come aquí."); }
-          b.disabled = false;
-        });
-        return b;
-      };
-      nadie.append(bNadie("Nadie come aquí", false), bNadie("Nadie come en todo el día", true));
-    }
-    document.getElementById("dlg-anot-cuerpo").replaceChildren(nadie,
+    // Resumen de lo que ya está anotado en esta comida.
+    const resumen = el("div", { class: "resumen-anot" }, el("p", { class: "etq", text: "Ya anotado" }));
+    if (nadieCome(c)) resumen.append(el("span", null, el("strong", { text: "Nadie come aquí" })));
+    else if (existentes.length) existentes.forEach((x) => resumen.append(el("span", null, el("strong", { text: x.personas.join(", ") + ": " }), resumenAnot(x.doc, x.docs))));
+    else resumen.append(el("span", { class: "sub", text: "Nada: se da por hecho que se comió lo previsto." }));
+    document.getElementById("dlg-anot-cuerpo").replaceChildren(resumen, sugerencias,
       el("p", { class: "sub", text: "Previsto: " + (c.comida === "desayuno" ? "desayunos fijos" : e.recetas.map(nombreRec).join(" + ")) + (comen.length ? ". Comen: " + comen.join(", ") : "") + ". Solo apunta lo que no salió como estaba previsto." }),
       lista, el("div", { class: "mas-anot" }, mas));
     const guardar = el("button", { type: "button", class: "btn-principal", text: "Guardar" });

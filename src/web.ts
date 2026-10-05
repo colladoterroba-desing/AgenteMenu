@@ -1175,7 +1175,7 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .bloque-anot legend{font-weight:700;font-size:.85rem;padding:0 4px}
 .una-anot .bloque-anot{border:0!important;padding:0!important}
 .una-anot .bloque-anot legend,.una-anot .bloque-anot > .btn-mini{display:none}
-.segmento{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.segmento{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .segmento .opcion{position:relative;justify-content:center;border:1px solid var(--line);border-radius:8px;padding:9px 6px;font-size:.9rem}
 .segmento .opcion input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
 .segmento .opcion:has(input:checked){background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
@@ -1183,9 +1183,20 @@ button.enlace{background:none;border:0;color:var(--accent);font:600 .82rem var(-
 .ayuda-anot{margin:0}
 .mas-anot{margin-top:2px}
 .quien-anot{display:flex;flex-wrap:wrap;gap:6px 12px}
-.chip-quien{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
-.chip-quien input{accent-color:var(--accent)}
-.chip-quien input:disabled + .comensal{opacity:.4}
+.chip-quien{position:relative;display:inline-flex;cursor:pointer}
+.chip-quien input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.chip-quien .comensal{font-size:.85rem;padding:5px 13px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);opacity:.8}
+.chip-quien .comensal.no-previsto{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--muted);border:0}
+.chip-quien input:checked + .comensal{opacity:1;background:var(--accent);color:var(--surface);box-shadow:none}
+.chip-quien input:checked + .comensal::before{content:"✓ "}
+.chip-quien input:checked + .comensal.tupper-frio{background:var(--frio)}
+.chip-quien input:checked + .comensal.tupper-calor{background:var(--calor)}
+.chip-quien input:focus-visible + .comensal{outline:2px solid var(--accent);outline-offset:2px}
+.chip-quien input:disabled + .comensal{opacity:.35}
+.quien-anot{align-items:center}
+.resumen-anot{background:var(--bg);border-radius:8px;padding:8px 12px;display:grid;gap:3px;font-size:.88rem}
+.resumen-anot .etq{margin:0}
+.resumen-anot span{line-height:1.3}
 .comensal.no-previsto{background:transparent;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
 .dlg .btn-mini{justify-self:start}
 .fila-gasto{display:grid;grid-template-columns:1fr 80px auto;gap:6px;align-items:center}
@@ -1347,7 +1358,7 @@ export interface CeldaCliente {
   /** Casilla donde se cocina, si sale de otra comida. */
   sobrasDe?: string;
   variantes: { quien: string; receta: string; rac: number }[];
-  tuppers: { quien: string; recetas: string[]; rac: number; sobras: boolean; sobrasDe?: string }[];
+  tuppers: { quien: string; recetas: string[]; rac: number; sobras: boolean; frio: boolean; sobrasDe?: string }[];
   /** Desayunos fijos del día (receta, raciones, personas y quién los toma). */
   desayunos?: { receta: string; rac: number; personas: number; quien: string[] }[];
 }
@@ -1402,7 +1413,7 @@ export function celdasCliente(semana: string, dias: DiaDelMenu[]): CeldaCliente[
         ...(principal.sobrasDe ? { sobrasDe: idCelda(semana, principal.sobrasDe.dia, principal.sobrasDe.comida) } : {}),
         variantes: variantes.map((v) => ({ quien: v.comensales[0].id, receta: v.receta.id, rac: v.raciones })),
         tuppers: c.tuppers.map((t) => ({
-          quien: t.para, recetas: [t.receta.id, ...(t.segundo ? [t.segundo.receta.id] : [])], rac: t.raciones, sobras: Boolean(t.sobrasDe),
+          quien: t.para, recetas: [t.receta.id, ...(t.segundo ? [t.segundo.receta.id] : [])], rac: t.raciones, sobras: Boolean(t.sobrasDe), frio: t.tipoTupper === "frío",
           ...(t.sobrasDe ? { sobrasDe: idCelda(semana, t.sobrasDe.dia, t.sobrasDe.comida) } : {}),
         })),
       });

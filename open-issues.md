@@ -40,6 +40,16 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 - [x] **OI-32 · Marcar la cantidad hecha de una receta y guardar la reserva.** Hecho: en cada receta, «Marcar cantidad hecha» (raciones hechas, las que se comen esta semana, nevera o congelador y fecha). Lo que sobra queda en reserva, aparece en Despensa con la fecha límite (nevera 3 días, congelador 3 meses) y se va gastando con «Usar 1 ración». En el repositorio, las reservas con receta se descuentan de la lista de la compra cuando el menú vuelve a poner esa receta, y el agente las gasta primero al preparar la semana siguiente. Queda pendiente la sincronización web → repositorio (OI-25).
 - [x] **OI-41 · Desayuno en texto libre.** Hecho el 01/10/2026: la sincronización de cada noche pasa a receta los desayunos nuevos escritos en la web (con cantidades en gramos) y los pone como desayuno de esa persona.
 
+- [ ] **OI-43 · Asistente de voz (Alexa o similar).** Añadido el 05/10/2026. Planificar un asistente de voz para usar el menú sin tocar el móvil (por ejemplo, con las manos ocupadas en la cocina). Está solo planteado, nada decidido. Hay que definir:
+  - **Qué se le pide.** Ideas: «¿qué hay de comer hoy?», «¿qué cenamos?», leer los pasos de una receta, «añade leche a la lista de la compra», «¿qué hay en la despensa?», «he cocinado el pollo guisado».
+  - **Qué asistente.** Alexa, Google Assistant o Siri; cuál hay en casa y en qué aparatos (altavoz, móvil).
+  - **Solo preguntar o también apuntar.** Leer el menú y la lista es lo más sencillo; apuntar cosas (cocinado, despensa, lista) obliga a que la voz escriba en la web, y hoy lo apuntado en la web solo se copia al proyecto cada noche (OI-25).
+  - **Dónde vive.** La página actual es privada y no se puede consultar desde fuera; un asistente necesita un servicio en internet que le conteste. Va ligado a OI-23 (alojamiento y privacidad).
+  - **Privacidad.** El menú y las fichas incluyen datos de salud de la familia, también de una menor. El asistente no debería leer en voz alta pesos ni objetivos.
+  - **Quién habla.** Si el asistente distingue a cada persona o es uno para toda la casa (afecta a las anotaciones por persona).
+  - **Coste y mantenimiento.** Cuánto cuesta y quién lo mantiene si algo falla.
+  - **Relación con otros temas.** OI-23 (PWA y alojamiento), OI-25 (sincronización) y OI-02 (actualización de la página).
+
 ## Personas y hábitos
 
 - [x] **OI-04 · Confirmar quién toma «café solo + almuerzo para el colegio».** Confirmado el 30/09/2026: es **RFC**.

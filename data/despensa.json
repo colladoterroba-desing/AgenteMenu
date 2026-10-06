@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 152,
+      "cantidad": 128,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -26,7 +26,7 @@
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 342.6,
+      "cantidad": 235.2,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -104,7 +104,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 2639.9,
+      "cantidad": 2486.7,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -123,7 +123,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 701.5,
+      "cantidad": 686.4,
       "unidad": "g"
     },
     {
@@ -138,17 +138,17 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 90,
+      "cantidad": 75,
       "unidad": "g"
     },
     {
       "nombre": "Copos de avena",
-      "cantidad": 170,
+      "cantidad": 86.8,
       "unidad": "g"
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 192,
+      "cantidad": 160,
       "unidad": "g"
     },
     {
@@ -163,7 +163,7 @@
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 3580.3,
+      "cantidad": 3240.4,
       "unidad": "g"
     },
     {
@@ -173,7 +173,7 @@
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 105,
+      "cantidad": 91,
       "unidad": "g"
     },
     {
@@ -198,7 +198,7 @@
     },
     {
       "nombre": "Almendras",
-      "cantidad": 210,
+      "cantidad": 126.8,
       "unidad": "g"
     },
     {
@@ -233,7 +233,7 @@
     },
     {
       "nombre": "Fruta de temporada",
-      "cantidad": 7532.5,
+      "cantidad": 6565,
       "unidad": "g"
     },
     {
@@ -299,7 +299,7 @@
     },
     {
       "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 553.6,
+      "cantidad": 513.6,
       "unidad": "g"
     },
     {
@@ -334,7 +334,7 @@
     },
     {
       "nombre": "Tomate",
-      "cantidad": 3898.4,
+      "cantidad": 3796.8,
       "unidad": "g"
     },
     {
@@ -354,7 +354,7 @@
     },
     {
       "nombre": "Yogur natural",
-      "cantidad": 1750,
+      "cantidad": 1230,
       "unidad": "g"
     }
   ],

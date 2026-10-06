@@ -37,9 +37,16 @@
         "prepara": "Lunes por la noche, sin cocinar"
       },
       "comida": {
-        "receta": "pure-calabaza",
-        "segundo": "lomo-adobado-plancha",
-        "prepara": "Puré del batch del domingo: recalentar; el lomo, a la plancha"
+        "receta": "albondigas-pavo-cuscus",
+        "cambio": {
+          "antes": {
+            "receta": "pure-calabaza",
+            "segundo": "lomo-adobado-plancha",
+            "prepara": "Puré del batch del domingo: recalentar; el lomo, a la plancha"
+          },
+          "motivo": "Intercambio con la comida del miércoles",
+          "fecha": "2026-10-06"
+        }
       },
       "merienda": {
         "receta": "bocadillo-pavo-queso"

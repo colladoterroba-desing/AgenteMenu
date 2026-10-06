@@ -281,5 +281,29 @@
     "persona": "RFC",
     "texto": "Espagueti a la boloñesa",
     "tipo": "texto"
+  },
+  "2026-10-05-1-comida__AFC": {
+    "celda": "2026-10-05-1-comida",
+    "fecha": "2026-10-06T16:30:20.130Z",
+    "grupo": "muwwa676svfv",
+    "persona": "AFC",
+    "receta": "albondigas-pavo-cuscus",
+    "tipo": "receta"
+  },
+  "2026-10-05-1-comida__CCT": {
+    "celda": "2026-10-05-1-comida",
+    "fecha": "2026-10-06T16:30:20.130Z",
+    "grupo": "muwwa6kt6iul",
+    "persona": "CCT",
+    "receta": "judias-verdes-rehogadas",
+    "tipo": "receta"
+  },
+  "2026-10-05-1-comida__RFC": {
+    "celda": "2026-10-05-1-comida",
+    "fecha": "2026-10-06T16:30:20.130Z",
+    "grupo": "muwwa676svfv",
+    "persona": "RFC",
+    "receta": "albondigas-pavo-cuscus",
+    "tipo": "receta"
   }
 }

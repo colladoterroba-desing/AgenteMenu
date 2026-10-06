@@ -388,5 +388,25 @@
     "fecha": "2026-10-05T18:31:32.974Z",
     "texto": "Cocinado: Puré de zanahoria · 6,00 rac.. En reserva: 6,00 rac. (nevera).",
     "tipo": "cocinado"
+  },
+  "1791295127551-xkgj6": {
+    "fecha": "2026-10-06T13:58:47.552Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791304220885-5c02i": {
+    "fecha": "2026-10-06T16:30:20.885Z",
+    "texto": "Anotaciones (martes, comida): RFC, AFC: comió Albóndigas de pavo en salsa de tomate con cuscús integral; CCT: comió Judías verdes rehogadas con patata.",
+    "tipo": "comido"
+  },
+  "1791304226733-37vga": {
+    "fecha": "2026-10-06T16:30:26.733Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791304280311-nk9m4": {
+    "fecha": "2026-10-06T16:31:20.311Z",
+    "texto": "Intercambiadas: comida del martes (Martes 13 oct) y comida del miércoles (Miércoles 7 oct).",
+    "tipo": "actualizacion"
   }
 }

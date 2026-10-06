@@ -115,8 +115,16 @@
         "prepara": "Martes por la noche: dejarlo junto en la nevera"
       },
       "comida": {
-        "receta": "albondigas-pavo-cuscus",
-        "prepara": "Batch del domingo (congeladas): recalentar"
+        "receta": "pure-calabaza",
+        "segundo": "lomo-adobado-plancha",
+        "cambio": {
+          "antes": {
+            "receta": "albondigas-pavo-cuscus",
+            "prepara": "Batch del domingo (congeladas): recalentar"
+          },
+          "motivo": "Intercambio con la comida del martes",
+          "fecha": "2026-10-06"
+        }
       },
       "merienda": {
         "receta": "tostada-cacahuete-platano"

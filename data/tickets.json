@@ -36,6 +36,39 @@
         {"producto": "PIMIENTO ROJO", "cantidad": 0.366, "unidad": "kg", "precio": 0.92, "categoria": "verdura"},
         {"producto": "BROCOLI", "cantidad": 0.876, "unidad": "kg", "precio": 2.37, "categoria": "verdura"}
       ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "tienda": "Mercadona",
+      "total": 13.15,
+      "referencia": "Factura simplificada 3944-025-173060",
+      "lineas": [
+        {"producto": "TOALLITA INTIMA", "cantidad": 1, "unidad": "ud", "precio": 1.3, "categoria": "limpieza"},
+        {"producto": "TOAL. INT. MONODOSIS", "cantidad": 1, "unidad": "ud", "precio": 1.0, "categoria": "limpieza"},
+        {"producto": "ENSALADA POLLO QUESO", "cantidad": 1, "unidad": "ud", "precio": 4.0, "categoria": "otros"},
+        {"producto": "COTTONLIKE S/ALAS", "cantidad": 1, "unidad": "ud", "precio": 3.9, "categoria": "limpieza"},
+        {"producto": "REGAÑA", "cantidad": 2, "unidad": "ud", "precio": 2.1, "categoria": "snacks"},
+        {"producto": "MAXI HAMBURGUESA", "cantidad": 1, "unidad": "ud", "precio": 0.85, "categoria": "pan"},
+        {"producto": "PARKING", "cantidad": 1, "unidad": "ud", "precio": 0.0, "categoria": "otros"}
+      ]
+    },
+    {
+      "fecha": "2026-10-03",
+      "tienda": "Elías",
+      "total": 28.29,
+      "referencia": "Casa Elías (Ferjama) 03/10/2026, sin número de factura",
+      "lineas": [
+        {"producto": "ZANAHORIAS GRANEL", "cantidad": 1.385, "unidad": "kg", "precio": 2.2, "categoria": "verdura"},
+        {"producto": "PEPINOS", "cantidad": 0.42, "unidad": "kg", "precio": 0.84, "categoria": "verdura"},
+        {"producto": "CALABACIN GRANEL", "cantidad": 2.025, "unidad": "kg", "precio": 2.0, "categoria": "verdura"},
+        {"producto": "PATATAS 3 kg DENI", "cantidad": 1, "unidad": "ud", "precio": 3.99, "categoria": "verdura"},
+        {"producto": "CEBOLLA GRANEL", "cantidad": 1.505, "unidad": "kg", "precio": 2.99, "categoria": "verdura"},
+        {"producto": "KIWIS SELECCION", "cantidad": 0.62, "unidad": "kg", "precio": 3.69, "categoria": "fruta"},
+        {"producto": "PIMIENTOS VERDES", "cantidad": 0.33, "unidad": "kg", "precio": 1.3, "categoria": "verdura"},
+        {"producto": "JUDIAS VERDES", "cantidad": 1.03, "unidad": "kg", "precio": 7.16, "categoria": "verdura"},
+        {"producto": "PEPINILLOS AGRIDUL", "cantidad": 1, "unidad": "ud", "precio": 1.79, "categoria": "otros"},
+        {"producto": "LIMON GRANEL", "cantidad": 0.95, "unidad": "kg", "precio": 2.33, "categoria": "fruta"}
+      ]
     }
   ]
 }

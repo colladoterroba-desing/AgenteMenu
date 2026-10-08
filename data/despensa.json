@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 128,
+      "cantidad": 80,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -26,7 +26,7 @@
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 235.2,
+      "cantidad": 175.2,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -56,7 +56,7 @@
     },
     {
       "nombre": "Jamón serrano en lonchas",
-      "cantidad": 148.4,
+      "cantidad": 96.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -104,7 +104,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 2486.7,
+      "cantidad": 1742.7,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -123,7 +123,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 686.4,
+      "cantidad": 662.1,
       "unidad": "g"
     },
     {
@@ -138,7 +138,7 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 75,
+      "cantidad": 45,
       "unidad": "g"
     },
     {
@@ -148,7 +148,7 @@
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 160,
+      "cantidad": 96,
       "unidad": "g"
     },
     {
@@ -163,17 +163,17 @@
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 3240.4,
+      "cantidad": 1489.4,
       "unidad": "g"
     },
     {
       "nombre": "Queso en lonchas",
-      "cantidad": 459.4,
+      "cantidad": 376.2,
       "unidad": "g"
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 91,
+      "cantidad": 44.9,
       "unidad": "g"
     },
     {
@@ -198,7 +198,7 @@
     },
     {
       "nombre": "Almendras",
-      "cantidad": 126.8,
+      "cantidad": 88.1,
       "unidad": "g"
     },
     {
@@ -228,12 +228,12 @@
     },
     {
       "nombre": "Crema de cacahuete 100 %",
-      "cantidad": 90,
+      "cantidad": 6.8,
       "unidad": "g"
     },
     {
       "nombre": "Fruta de temporada",
-      "cantidad": 6565,
+      "cantidad": 5447.5,
       "unidad": "g"
     },
     {
@@ -299,7 +299,7 @@
     },
     {
       "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 513.6,
+      "cantidad": 267.2,
       "unidad": "g"
     },
     {
@@ -334,7 +334,7 @@
     },
     {
       "nombre": "Tomate",
-      "cantidad": 3796.8,
+      "cantidad": 3645.2,
       "unidad": "g"
     },
     {
@@ -349,7 +349,7 @@
     },
     {
       "nombre": "Yogur líquido natural",
-      "cantidad": 360,
+      "cantidad": 127.8,
       "unidad": "g"
     },
     {

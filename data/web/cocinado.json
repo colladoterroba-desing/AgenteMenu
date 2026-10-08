@@ -355,5 +355,120 @@
     "recetas": [
       "yogur-fruta-frutos-secos"
     ]
+  },
+  "2026-10-05-2-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-05-2-almuerzo",
+    "descontado": {
+      "almendras-g": 38.7,
+      "tortitas-de-maiz-hacendado-g": 18.1,
+      "yogur-liquido-natural-g": 232.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-08T10:34:40.825Z",
+    "raciones": 1.29,
+    "recetas": [
+      "almuerzo-yogur-frutos-secos"
+    ]
+  },
+  "2026-10-05-2-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-05-2-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "fruta-de-temporada-g": 150,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
+      "queso-fresco-g": 30,
+      "tomate-g": 50,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-08T10:34:39.179Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-05-2-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-05-2-merienda",
+    "descontado": {
+      "crema-de-cacahuete-100-g": 83.2,
+      "leche-semidesnatada-g": 1071.2,
+      "pan-integral-g": 249.6
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-08T10:34:42.159Z",
+    "raciones": 4.16,
+    "recetas": [
+      "tostada-cacahuete-platano"
+    ]
+  },
+  "2026-10-05-3-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-05-3-almuerzo",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 5.9,
+      "fruta-de-temporada-g": 193.5,
+      "jamon-serrano-en-lonchas-g": 51.6,
+      "pan-integral-g": 103.2,
+      "tomate-g": 51.6
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-08T10:34:48.770Z",
+    "raciones": 1.29,
+    "recetas": [
+      "almuerzo-bocadillo-serrano"
+    ]
+  },
+  "2026-10-05-3-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-05-3-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "fruta-de-temporada-g": 150,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
+      "queso-fresco-g": 30,
+      "tomate-g": 50,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-08T10:34:46.691Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-05-3-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-05-3-merienda",
+    "descontado": {
+      "fruta-de-temporada-g": 624,
+      "pan-integral-g": 291.2,
+      "pechuga-de-pavo-en-lonchas-g": 166.4,
+      "queso-en-lonchas-g": 83.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-08T10:34:50.495Z",
+    "raciones": 4.16,
+    "recetas": [
+      "bocadillo-pavo-queso"
+    ]
   }
 }

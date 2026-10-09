@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 80,
+      "cantidad": 56,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -20,13 +20,13 @@
     },
     {
       "nombre": "Contramuslos de pollo deshuesados",
-      "cantidad": 880,
+      "cantidad": 256,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 2 bandejas, peso supuesto"
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 175.2,
+      "cantidad": 67.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -74,13 +74,13 @@
     },
     {
       "nombre": "Champiñones",
-      "cantidad": 420,
+      "cantidad": 4,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Lechuga",
-      "cantidad": 910,
+      "cantidad": 628.5,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 1 lechuga hoja de roble, peso supuesto"
     },
@@ -104,7 +104,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 1742.7,
+      "cantidad": 978.2,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -115,20 +115,13 @@
       "nota": "Ticket Mercadona 28/09 · peso del ticket"
     },
     {
-      "nombre": "Brócoli",
-      "cantidad": 500,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · peso del ticket",
-      "caducidad": "2026-10-02"
-    },
-    {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 662.1,
+      "cantidad": 390.6,
       "unidad": "g"
     },
     {
       "nombre": "Aceitunas",
-      "cantidad": 30,
+      "cantidad": 1.8,
       "unidad": "g"
     },
     {
@@ -138,42 +131,37 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 45,
+      "cantidad": 30,
       "unidad": "g"
     },
     {
       "nombre": "Copos de avena",
-      "cantidad": 86.8,
+      "cantidad": 3.6,
       "unidad": "g"
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 96,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Huevos",
-      "cantidad": 2887.8,
+      "cantidad": 64,
       "unidad": "g"
     },
     {
       "nombre": "Jamón cocido",
-      "cantidad": 500,
+      "cantidad": 371.2,
       "unidad": "g"
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 1489.4,
+      "cantidad": 1149.5,
       "unidad": "g"
     },
     {
       "nombre": "Queso en lonchas",
-      "cantidad": 376.2,
+      "cantidad": 311.8,
       "unidad": "g"
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 44.9,
+      "cantidad": 30.9,
       "unidad": "g"
     },
     {
@@ -188,17 +176,12 @@
     },
     {
       "nombre": "Patata",
-      "cantidad": 4760,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Huevos (docena)",
-      "cantidad": 600,
+      "cantidad": 1332.8,
       "unidad": "g"
     },
     {
       "nombre": "Almendras",
-      "cantidad": 88.1,
+      "cantidad": 4.9,
       "unidad": "g"
     },
     {
@@ -208,17 +191,17 @@
     },
     {
       "nombre": "Arroz integral",
-      "cantidad": 70,
+      "cantidad": 4.2,
       "unidad": "g"
     },
     {
       "nombre": "Arroz redondo",
-      "cantidad": 400,
+      "cantidad": 108.8,
       "unidad": "g"
     },
     {
       "nombre": "Cebolla",
-      "cantidad": 790,
+      "cantidad": 358,
       "unidad": "g"
     },
     {
@@ -233,53 +216,48 @@
     },
     {
       "nombre": "Fruta de temporada",
-      "cantidad": 5447.5,
+      "cantidad": 3353.5,
       "unidad": "g"
     },
     {
       "nombre": "Gambas peladas congeladas",
-      "cantidad": 250,
+      "cantidad": 0.4,
       "unidad": "g"
     },
     {
       "nombre": "Garbanzos cocidos (bote)",
-      "cantidad": 130,
+      "cantidad": 7.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Guisantes congelados",
-      "cantidad": 370,
+      "cantidad": 162,
       "unidad": "g"
     },
     {
       "nombre": "Jamón serrano en taquitos",
-      "cantidad": 70,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Judías verdes",
-      "cantidad": 950,
+      "cantidad": 57.9,
       "unidad": "g"
     },
     {
       "nombre": "Limón",
-      "cantidad": 400,
+      "cantidad": 319.5,
       "unidad": "g"
     },
     {
       "nombre": "Maíz dulce (lata)",
-      "cantidad": 30,
+      "cantidad": 1.8,
       "unidad": "g"
     },
     {
       "nombre": "Manzana",
-      "cantidad": 180,
+      "cantidad": 95.4,
       "unidad": "g"
     },
     {
       "nombre": "Nueces peladas",
-      "cantidad": 20,
+      "cantidad": 7.8,
       "unidad": "g"
     },
     {
@@ -294,12 +272,12 @@
     },
     {
       "nombre": "Pasta integral corta",
-      "cantidad": 80,
+      "cantidad": 9.5,
       "unidad": "g"
     },
     {
       "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 267.2,
+      "cantidad": 227.2,
       "unidad": "g"
     },
     {
@@ -309,17 +287,17 @@
     },
     {
       "nombre": "Pechuga de pollo",
-      "cantidad": 189.7,
+      "cantidad": 1.7,
       "unidad": "g"
     },
     {
       "nombre": "Pepino",
-      "cantidad": 80,
+      "cantidad": 4.8,
       "unidad": "g"
     },
     {
       "nombre": "Pimiento asado (bote)",
-      "cantidad": 40,
+      "cantidad": 2.4,
       "unidad": "g"
     },
     {
@@ -329,12 +307,12 @@
     },
     {
       "nombre": "Quinoa",
-      "cantidad": 60,
+      "cantidad": 3.6,
       "unidad": "g"
     },
     {
       "nombre": "Tomate",
-      "cantidad": 3645.2,
+      "cantidad": 2007.4,
       "unidad": "g"
     },
     {
@@ -344,7 +322,7 @@
     },
     {
       "nombre": "Yogur griego ligero",
-      "cantidad": 50,
+      "cantidad": 7.7,
       "unidad": "g"
     },
     {
@@ -354,8 +332,14 @@
     },
     {
       "nombre": "Yogur natural",
-      "cantidad": 1230,
+      "cantidad": 72.5,
       "unidad": "g"
+    },
+    {
+      "nombre": "Lomo de salmón",
+      "cantidad": 780,
+      "unidad": "g",
+      "nota": "6 raciones en el congelador"
     }
   ],
   "sobras": [
@@ -430,19 +414,9 @@
       "hechas": 1
     },
     {
-      "id": "albondigas-pavo-cuscus__1791066457104",
-      "descripcion": "Albóndigas de pavo en salsa de tomate con cuscús integral",
-      "raciones": 4,
-      "fecha": "2026-10-03",
-      "consumirAntesDe": "2026-10-06",
-      "receta": "albondigas-pavo-cuscus",
-      "ubicacion": "nevera",
-      "hechas": 4
-    },
-    {
       "id": "pure-calabacin__1791066429068",
       "descripcion": "Puré de calabacín",
-      "raciones": 8,
+      "raciones": 1,
       "fecha": "2026-10-03",
       "consumirAntesDe": "2026-10-06",
       "receta": "pure-calabacin",
@@ -450,24 +424,53 @@
       "hechas": 8
     },
     {
-      "id": "pure-zanahoria__1791066559897",
-      "descripcion": "Puré de zanahoria",
-      "raciones": 6,
-      "fecha": "2026-10-03",
-      "consumirAntesDe": "2026-10-06",
-      "receta": "pure-zanahoria",
-      "ubicacion": "nevera",
-      "hechas": 6
-    },
-    {
       "id": "pure-zanahoria__1791218256191",
       "descripcion": "Puré de zanahoria",
-      "raciones": 7.59,
+      "raciones": 1,
       "fecha": "2026-10-05",
       "consumirAntesDe": "2026-10-08",
       "receta": "pure-zanahoria",
       "ubicacion": "nevera",
       "hechas": 10
+    },
+    {
+      "id": "brocoli__1791563400001",
+      "descripcion": "Brócoli cocinado",
+      "raciones": 2,
+      "fecha": "2026-10-09",
+      "consumirAntesDe": "2026-10-12",
+      "ubicacion": "nevera",
+      "hechas": 2
+    },
+    {
+      "id": "judias-verdes-rehogadas__1791563400000",
+      "descripcion": "Judías verdes rehogadas con patata",
+      "raciones": 3,
+      "fecha": "2026-10-09",
+      "consumirAntesDe": "2026-10-12",
+      "receta": "judias-verdes-rehogadas",
+      "ubicacion": "nevera",
+      "hechas": 3
+    },
+    {
+      "id": "pure-calabacin__1791562500001",
+      "descripcion": "Puré de calabacín",
+      "raciones": 3,
+      "fecha": "2026-10-09",
+      "consumirAntesDe": "2027-01-09",
+      "receta": "pure-calabacin",
+      "ubicacion": "congelador",
+      "hechas": 3
+    },
+    {
+      "id": "pure-zanahoria__1791562500000",
+      "descripcion": "Puré de zanahoria",
+      "raciones": 3,
+      "fecha": "2026-10-09",
+      "consumirAntesDe": "2027-01-09",
+      "receta": "pure-zanahoria",
+      "ubicacion": "congelador",
+      "hechas": 3
     }
   ]
 }

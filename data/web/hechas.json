@@ -1,6 +1,6 @@
 {
   "albondigas-pavo-cuscus__1791066457104": {
-    "actualizado": "2026-10-03T22:27:37.104Z",
+    "actualizado": "2026-10-09T14:10:00.000Z",
     "caduca": "2026-10-06",
     "comer": 0,
     "descontado": {
@@ -17,8 +17,20 @@
     "fecha": "2026-10-03",
     "hechas": 4,
     "receta": "albondigas-pavo-cuscus",
-    "reserva": 4,
+    "reserva": 0,
     "semana": "2026-09-28"
+  },
+  "brocoli__1791563400001": {
+    "actualizado": "2026-10-09T14:10:00.000Z",
+    "caduca": "2026-10-12",
+    "comer": 0,
+    "descontado": {},
+    "descripcion": "Brócoli cocinado",
+    "donde": "nevera",
+    "fecha": "2026-10-09",
+    "hechas": 2,
+    "reserva": 2,
+    "semana": "2026-10-05"
   },
   "espaguetis-bolonesa__1790764660435": {
     "actualizado": "2026-09-30T10:37:40.435Z",
@@ -41,6 +53,19 @@
     "receta": "garbanzos-espinacas",
     "reserva": 0,
     "semana": "A"
+  },
+  "judias-verdes-rehogadas__1791563400000": {
+    "actualizado": "2026-10-09T14:10:00.000Z",
+    "caduca": "2026-10-12",
+    "comer": 0,
+    "descontado": {},
+    "descripcion": "Judías verdes rehogadas con patata",
+    "donde": "nevera",
+    "fecha": "2026-10-09",
+    "hechas": 3,
+    "receta": "judias-verdes-rehogadas",
+    "reserva": 3,
+    "semana": "2026-10-05"
   },
   "lentejas-estofadas__1790764636764": {
     "actualizado": "2026-09-30T10:37:16.764Z",
@@ -135,7 +160,7 @@
     "semana": "A"
   },
   "pure-calabacin__1791066429068": {
-    "actualizado": "2026-10-03T22:27:09.068Z",
+    "actualizado": "2026-10-09T14:10:00.000Z",
     "caduca": "2026-10-06",
     "comer": 0,
     "descontado": {
@@ -149,8 +174,21 @@
     "fecha": "2026-10-03",
     "hechas": 8,
     "receta": "pure-calabacin",
-    "reserva": 8,
+    "reserva": 1,
     "semana": "2026-09-28"
+  },
+  "pure-calabacin__1791562500001": {
+    "actualizado": "2026-10-09T13:55:00.000Z",
+    "caduca": "2027-01-09",
+    "comer": 0,
+    "descontado": {},
+    "descripcion": "Puré de calabacín",
+    "donde": "congelador",
+    "fecha": "2026-10-09",
+    "hechas": 3,
+    "receta": "pure-calabacin",
+    "reserva": 3,
+    "semana": "2026-10-05"
   },
   "pure-calabaza__1790764728521": {
     "actualizado": "2026-09-30T10:38:48.521Z",
@@ -164,7 +202,7 @@
     "semana": "A"
   },
   "pure-zanahoria__1791066559897": {
-    "actualizado": "2026-10-03T22:29:19.897Z",
+    "actualizado": "2026-10-09T14:10:00.000Z",
     "caduca": "2026-10-06",
     "comer": 0,
     "descontado": {
@@ -177,11 +215,11 @@
     "fecha": "2026-10-03",
     "hechas": 6,
     "receta": "pure-zanahoria",
-    "reserva": 6,
+    "reserva": 0,
     "semana": "2026-09-28"
   },
   "pure-zanahoria__1791218256191": {
-    "actualizado": "2026-10-05T18:31:32.475Z",
+    "actualizado": "2026-10-09T14:10:00.000Z",
     "caduca": "2026-10-08",
     "comer": 2.41,
     "descontado": {
@@ -193,7 +231,20 @@
     "fecha": "2026-10-05",
     "hechas": 10,
     "receta": "pure-zanahoria",
-    "reserva": 7.59,
+    "reserva": 1,
+    "semana": "2026-10-05"
+  },
+  "pure-zanahoria__1791562500000": {
+    "actualizado": "2026-10-09T13:55:00.000Z",
+    "caduca": "2027-01-09",
+    "comer": 0,
+    "descontado": {},
+    "descripcion": "Puré de zanahoria",
+    "donde": "congelador",
+    "fecha": "2026-10-09",
+    "hechas": 3,
+    "receta": "pure-zanahoria",
+    "reserva": 3,
     "semana": "2026-10-05"
   },
   "solomillo-naranja__1790764756681": {

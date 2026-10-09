@@ -413,5 +413,45 @@
     "fecha": "2026-10-08T10:34:50.745Z",
     "texto": "Se restan solas de la despensa 6 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
     "tipo": "cocinado"
+  },
+  "1791542190708-ktwcm": {
+    "fecha": "2026-10-09T10:36:30.708Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791555117050-3eujg": {
+    "fecha": "2026-10-09T14:11:57.050Z",
+    "texto": "Anotaciones (viernes, comida): RFA, RFC, AFC: no come.",
+    "tipo": "comido"
+  },
+  "1791555130010-o81d6": {
+    "fecha": "2026-10-09T14:12:10.010Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791561900000-7hesn": {
+    "fecha": "2026-10-09T13:45:00.000Z",
+    "texto": "Se dan por hechas 14 comidas sin marcar (del lunes 5 a la comida del viernes 9), teniendo en cuenta las anotaciones: se restan sus ingredientes de la despensa (el puré de calabacín del lunes y las albóndigas del martes salen de las raciones en reserva).",
+    "tipo": "cocinado"
+  },
+  "1791561901000-epw5z": {
+    "fecha": "2026-10-09T13:45:01.000Z",
+    "texto": "Despensa corregida con lo que hay en casa: huevos 0, patata 1 kg, cebolla 1 ud (≈150 g) y lomo de salmón 6 raciones en el congelador (≈780 g).",
+    "tipo": "despensa"
+  },
+  "1791562500002-rsv3p": {
+    "fecha": "2026-10-09T13:55:00.000Z",
+    "texto": "Apuntadas en el congelador las raciones que hay en casa: 3 de puré de zanahoria y 3 de puré de calabacín.",
+    "tipo": "despensa"
+  },
+  "1791563400002-nev9q": {
+    "fecha": "2026-10-09T14:10:00.000Z",
+    "texto": "Nevera revisada: queda 1 ración de puré de calabacín y 1 de puré de zanahoria, ya no hay albóndigas, y hay 3 raciones de judías verdes rehogadas y 2 de brócoli cocinado.",
+    "tipo": "despensa"
+  },
+  "1791563460000-crd0x": {
+    "fecha": "2026-10-09T14:11:00.000Z",
+    "texto": "Despensa corregida: ya no quedan judías verdes ni brócoli sin cocinar.",
+    "tipo": "despensa"
   }
 }

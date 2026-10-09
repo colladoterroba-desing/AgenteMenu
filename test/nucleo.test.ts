@@ -690,3 +690,106 @@ test("preparar la semana siguiente: el lunes después de la semana en curso y la
   assert.deepEqual(semanaQueFalta(actual), { inicio: "2026-10-12", semana: "A" });
   assert.equal(semanaQueFalta(actual, { ...actual, semana: "A", inicio: "2026-10-12" }), null);
 });
+
+/**
+ * Ejecuta el script de la página sin navegador: un DOM de mentira que acepta cualquier cosa y una base de datos
+ * en memoria. Devuelve lo que la página expone para las pruebas.
+ */
+function paginaSinNavegador(html: string, hoy: string, colecciones: Record<string, Map<string, any>>) {
+  const json = html.match(/<script type="application\/json" id="datos-pagina">(.*?)<\/script>/s)![1];
+  let js = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((s) => s.includes("pendientesDeRestar"))!;
+  js = js.replace("const HOY = isoLocal(new Date());", `const HOY = ${JSON.stringify(hoy)};`);
+  const fin = js.lastIndexOf("})();");
+  js = js.slice(0, fin) + `
+  globalThis.__pagina = {
+    cargar(c, base) { despensaDb = c.despensa; cocinadoDb = c.cocinado; comidoDb = c.comido; reservasDb = c.hechas; db = base; editable = true;
+      ["despensa", "cocinado", "comido", "hechas"].forEach((x) => cargadas.add(x)); },
+    pendientesDeRestar, restarSolas, tengoDe, celdas, factorDe,
+  };
+` + js.slice(fin);
+  const falso = (): any => {
+    const guardado = new Map<PropertyKey, unknown>();
+    return new Proxy(function () {}, {
+      get(_t, k) {
+        if (guardado.has(k)) return guardado.get(k);
+        if (k === Symbol.toPrimitive) return () => "";
+        if (k === Symbol.iterator) return function* () {};
+        if (typeof k === "symbol" || k === "then") return undefined;
+        if (k === "querySelectorAll" || k === "getElementsByTagName") return () => [];
+        if (k === "querySelector" || k === "closest") return () => null;
+        if (k === "value" || k === "textContent" || k === "innerHTML") return "";
+        if (k === "checked" || k === "open") return false;
+        if (k === "length") return 0;
+        if (k === "children" || k === "options") return [];
+        const v = k === "dataset" ? {} : falso(); guardado.set(k, v); return v;
+      },
+      set(_t, k, v) { guardado.set(k, v); return true; },
+      has: () => true, apply: () => falso(), construct: () => falso(),
+    });
+  };
+  const g = globalThis as any, dom = falso();
+  g.document = new Proxy({}, { get: (_t, k) => k === "getElementById" ? (id: string) => (id === "datos-pagina" ? { textContent: json } : falso())
+    : k === "querySelectorAll" ? () => [] : k === "querySelector" ? () => null : k === "createElement" || k === "createTextNode" ? () => falso() : dom[k] });
+  Object.assign(g, { window: g, claude: undefined, scrollTo() {}, localStorage: { getItem: () => null, setItem() {} }, location: { hash: "" },
+    history: { replaceState() {} }, matchMedia: () => ({ matches: false, addEventListener() {} }), requestAnimationFrame: (f: () => void) => setTimeout(f, 0) });
+  for (const k of ["addEventListener", "removeEventListener"]) g[k] = () => {};
+  process.on("unhandledRejection", () => {});
+  new Function(js)();
+  const base = {
+    doc: (ruta: string) => { const [col, id] = ruta.split("/"); const m = colecciones[col] ?? (colecciones[col] = new Map());
+      return { set: async (v: unknown) => void m.set(id, v), delete: async () => void m.delete(id) }; },
+    collection: () => ({ onSnapshot() {}, orderBy() { return this; }, limit() { return this; } }),
+  };
+  g.__pagina.cargar(colecciones, base);
+  return g.__pagina;
+}
+
+test("web: las comidas cocinadas sin marcar se dan por hechas al día siguiente, con las reservas y las anotaciones", async () => {
+  const { generarHtml } = await import("../src/web.js");
+  const menu = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
+  const { recetas } = JSON.parse(await readFile("data/recetas.json", "utf8"));
+  const html = generarHtml({ familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu, recetas, fecha: "30 de septiembre de 2026" });
+  const datos = JSON.parse(html.match(/<script type="application\/json" id="datos-pagina">(.*?)<\/script>/s)![1]);
+  // Hoy es viernes 2/10. Despensa con mucho de todo; lentejas en la nevera para la cena del jueves; Ricardo hijo no
+  // cenó el miércoles; Alicia comió puré de calabaza el jueves sin apuntar de dónde (queda media ración en la nevera).
+  const despensa = new Map<string, any>();
+  for (const r of Object.values(datos.rec) as any[]) for (const [k, nombre] of r.ing) despensa.set(k, { nombre, unidad: "g", cantidad: 100000 });
+  const hechas = new Map<string, any>([
+    ["lentejas-estofadas__1", { receta: "lentejas-estofadas", reserva: 10, donde: "nevera", fecha: "2026-09-30", caduca: "2026-10-03" }],
+    ["pure-calabaza__1", { receta: "pure-calabaza", reserva: 0.5, donde: "nevera", fecha: "2026-09-30", caduca: "2026-10-03" }]]);
+  const comido = new Map<string, any>([
+    ["2026-09-28-2-cena__RFC", { celda: "2026-09-28-2-cena", persona: "RFC", tipo: "nocome", grupo: "g1" }],
+    ["2026-09-28-3-comida__AFC", { celda: "2026-09-28-3-comida", persona: "AFC", tipo: "receta", receta: "pure-calabaza", grupo: "g2" }]]);
+  const col = { despensa, hechas, comido, cocinado: new Map<string, any>(), eventos: new Map<string, any>() };
+  const p = paginaSinNavegador(html, "2026-10-02", col);
+
+  const { comidas, anots } = p.pendientesDeRestar();
+  // Lo cocinado se da por hecho solo en los días pasados; de hoy solo se restan las recetas sin cocinar.
+  assert.ok(comidas.some((x: any) => x.c.id === "2026-09-28-3-cena" && x.porHecho));
+  assert.ok(comidas.every((x: any) => x.f < "2026-10-02" || !x.porHecho));
+  assert.deepEqual(anots.map((x: any) => x.c.id + "__" + x.p), ["2026-09-28-3-comida__AFC"]);
+  await p.restarSolas();
+
+  // La cena del jueves (lentejas) sale de la reserva de la nevera: baja la reserva y no se toca la despensa.
+  const cenaJueves = col.cocinado.get("2026-09-28-3-cena~p0");
+  assert.ok(cenaJueves.porHecho && cenaJueves.auto);
+  assert.equal(cenaJueves.reservas["lentejas-estofadas__1"], cenaJueves.raciones);
+  assert.equal(Object.keys(cenaJueves.descontado).length, 0);
+  assert.equal(hechas.get("lentejas-estofadas__1").reserva, Math.round((10 - cenaJueves.raciones) * 100) / 100);
+  // La cena del miércoles se resta de la despensa sin la ración de Ricardo hijo.
+  const cenaMiercoles = col.cocinado.get("2026-09-28-2-cena~p0");
+  assert.equal(cenaMiercoles.raciones, Math.round((p.celdas.get("2026-09-28-2-cena").racCocinar - p.factorDe("RFC")) * 100) / 100);
+  assert.ok(Object.keys(cenaMiercoles.descontado).length > 0);
+  // La comida del miércoles son sobras de la cena del martes: se cuenta allí, no aquí.
+  assert.equal(col.cocinado.has("2026-09-28-2-comida~p0"), false);
+  // El puré de Alicia: media ración de la reserva y el resto de la despensa.
+  const alicia = comido.get("2026-09-28-3-comida__AFC");
+  assert.ok(alicia.gastoAuto);
+  assert.equal(alicia.reservas["pure-calabaza__1"], 0.5);
+  assert.ok(Object.keys(alicia.descontado).length > 0);
+  // Nada se resta dos veces.
+  const antes = JSON.stringify([...despensa]);
+  await p.restarSolas();
+  assert.deepEqual(p.pendientesDeRestar(), { comidas: [], anots: [] });
+  assert.equal(JSON.stringify([...despensa]), antes);
+});

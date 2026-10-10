@@ -2,7 +2,7 @@
   "productos": [
     {
       "nombre": "Café molido",
-      "cantidad": 56,
+      "cantidad": 32,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -26,7 +26,7 @@
     },
     {
       "nombre": "Queso fresco",
-      "cantidad": 67.8,
+      "cantidad": 37.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -68,7 +68,7 @@
     },
     {
       "nombre": "Puerro",
-      "cantidad": 1280,
+      "cantidad": 656,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -104,7 +104,7 @@
     },
     {
       "nombre": "Pan integral",
-      "cantidad": 978.2,
+      "cantidad": 895.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
     },
@@ -116,7 +116,7 @@
     },
     {
       "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 390.6,
+      "cantidad": 316.5,
       "unidad": "g"
     },
     {
@@ -131,7 +131,7 @@
     },
     {
       "nombre": "Cacao soluble Nesquik",
-      "cantidad": 30,
+      "cantidad": 15,
       "unidad": "g"
     },
     {
@@ -141,27 +141,27 @@
     },
     {
       "nombre": "Galletas tostadas Animadas Hacendado",
-      "cantidad": 64,
+      "cantidad": 32,
       "unidad": "g"
     },
     {
       "nombre": "Jamón cocido",
-      "cantidad": 371.2,
+      "cantidad": 204.8,
       "unidad": "g"
     },
     {
       "nombre": "Leche semidesnatada",
-      "cantidad": 1149.5,
+      "cantidad": 595.4,
       "unidad": "g"
     },
     {
       "nombre": "Queso en lonchas",
-      "cantidad": 311.8,
+      "cantidad": 187,
       "unidad": "g"
     },
     {
       "nombre": "Tortitas de maíz Hacendado",
-      "cantidad": 30.9,
+      "cantidad": 16.9,
       "unidad": "g"
     },
     {
@@ -176,7 +176,7 @@
     },
     {
       "nombre": "Patata",
-      "cantidad": 1332.8,
+      "cantidad": 852,
       "unidad": "g"
     },
     {
@@ -186,7 +186,7 @@
     },
     {
       "nombre": "Alubias blancas cocidas (bote)",
-      "cantidad": 850,
+      "cantidad": 688,
       "unidad": "g"
     },
     {
@@ -201,7 +201,7 @@
     },
     {
       "nombre": "Cebolla",
-      "cantidad": 358,
+      "cantidad": 192.7,
       "unidad": "g"
     },
     {
@@ -216,7 +216,7 @@
     },
     {
       "nombre": "Fruta de temporada",
-      "cantidad": 3353.5,
+      "cantidad": 2458,
       "unidad": "g"
     },
     {
@@ -262,7 +262,7 @@
     },
     {
       "nombre": "Pan de molde integral",
-      "cantidad": 700,
+      "cantidad": 367.2,
       "unidad": "g"
     },
     {
@@ -277,7 +277,7 @@
     },
     {
       "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 227.2,
+      "cantidad": 187.2,
       "unidad": "g"
     },
     {
@@ -302,7 +302,7 @@
     },
     {
       "nombre": "Pimiento verde",
-      "cantidad": 170,
+      "cantidad": 137.6,
       "unidad": "g"
     },
     {
@@ -312,12 +312,12 @@
     },
     {
       "nombre": "Tomate",
-      "cantidad": 2007.4,
+      "cantidad": 1957.4,
       "unidad": "g"
     },
     {
       "nombre": "Tomate triturado",
-      "cantidad": 470,
+      "cantidad": 421.4,
       "unidad": "g"
     },
     {

@@ -736,6 +736,63 @@
       "almuerzo-bocadillo-queso-fresco"
     ]
   },
+  "2026-10-05-4-cena~p0": {
+    "auto": true,
+    "celda": "2026-10-05-4-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 38.3,
+      "cebolla-g": 124.8,
+      "leche-semidesnatada-g": 214.2,
+      "patata-g": 416,
+      "puerro-g": 624
+    },
+    "etiqueta": "Crema puerro",
+    "fecha": "2026-10-10T11:01:34.521Z",
+    "porHecho": true,
+    "raciones": 4.16,
+    "recetas": [
+      "crema-puerro"
+    ]
+  },
+  "2026-10-05-4-cena~p1": {
+    "auto": true,
+    "celda": "2026-10-05-4-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 19.1,
+      "fruta-de-temporada-g": 624,
+      "jamon-cocido-g": 166.4,
+      "pan-de-molde-integral-g": 332.8,
+      "queso-en-lonchas-g": 124.8
+    },
+    "etiqueta": "Sándwich mixto",
+    "fecha": "2026-10-10T11:01:36.601Z",
+    "porHecho": true,
+    "raciones": 4.16,
+    "recetas": [
+      "sandwich-mixto"
+    ]
+  },
+  "2026-10-05-4-comida~p0": {
+    "auto": true,
+    "celda": "2026-10-05-4-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 7.5,
+      "alubias-blancas-cocidas-bote-g": 162,
+      "cebolla-g": 40.5,
+      "fruta-de-temporada-g": 121.5,
+      "pan-integral-g": 32.4,
+      "patata-g": 64.8,
+      "pimiento-verde-g": 32.4,
+      "tomate-triturado-g": 48.6
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-10T11:01:32.510Z",
+    "porHecho": true,
+    "raciones": 0.81,
+    "recetas": [
+      "alubias-estofadas"
+    ]
+  },
   "2026-10-05-4-desayuno~des": {
     "auto": true,
     "celda": "2026-10-05-4-desayuno",
@@ -776,6 +833,32 @@
     "raciones": 4.16,
     "recetas": [
       "yogur-fruta-frutos-secos"
+    ]
+  },
+  "2026-10-05-5-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-05-5-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "fruta-de-temporada-g": 150,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
+      "queso-fresco-g": 30,
+      "tomate-g": 50,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-10T11:01:42.526Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
     ]
   }
 }

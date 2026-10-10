@@ -453,5 +453,15 @@
     "fecha": "2026-10-09T14:11:00.000Z",
     "texto": "Despensa corregida: ya no quedan judías verdes ni brócoli sin cocinar.",
     "tipo": "despensa"
+  },
+  "1791630103478-j7xj1": {
+    "fecha": "2026-10-10T11:01:43.478Z",
+    "texto": "Se restan solas de la despensa 1 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1791630103875-mc2cb": {
+    "fecha": "2026-10-10T11:01:43.875Z",
+    "texto": "Se dan por hechas 3 comidas de días pasados que no se marcaron como cocinadas: se restan de la despensa o de las raciones en reserva.",
+    "tipo": "cocinado"
   }
 }

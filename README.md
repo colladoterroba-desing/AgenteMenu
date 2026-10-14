@@ -11,6 +11,8 @@
 - ♻️ **Reaprovecha las sobras** y da prioridad a lo que caduca antes.
 - 🧾 **Aprende de tus tickets de compra** (foto o PDF) para detectar hábitos y proponer mejoras.
 
+El menú funciona como un puzzle: la aplicación dice qué cocinar, qué comprar y qué hay en reserva, y cada uno usa la despensa y la nevera según sus gustos o necesidades. El botón **Descargar PDF** de la pantalla Menú saca las dos semanas, cada una en una página, para imprimir.
+
 Todas las cantidades van en **gramos**; las equivalencias de lo que se cuenta por unidades o por volumen están en [data/equivalencias.json](data/equivalencias.json). Los requisitos completos están en [docs/REQUISITOS.md](docs/REQUISITOS.md) y la propuesta de tuppers para la oficina en [docs/propuestas/tuppers-oficina.md](docs/propuestas/tuppers-oficina.md). Los temas pendientes de definir están en [open-issues.md](open-issues.md).
 
 ## Puesta en marcha

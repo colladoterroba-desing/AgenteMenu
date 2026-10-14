@@ -658,6 +658,33 @@
   };
   ocultarPasados();
 
+  // ================= Descargar el menú en PDF =================
+  // Prepara las dos semanas, cada una en una hoja A4 horizontal, a partir de lo que se ve en pantalla
+  // (con cambios y anotaciones) y abre la ventana de imprimir, donde se elige «Guardar como PDF».
+  const btnPdf = document.getElementById("btn-pdf");
+  if (btnPdf) btnPdf.addEventListener("click", () => {
+    const cont = document.querySelector(".semana-scroll");
+    const zona = document.getElementById("zona-impresion");
+    if (!cont || !zona) return;
+    const dias = [...cont.querySelectorAll(".col-dia")];
+    const claves = [...new Set(dias.map((d) => d.dataset.sem))];
+    const fmt = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
+    zona.replaceChildren(...claves.map((clave) => {
+      const fin = new Date(clave + "T12:00:00Z"); fin.setUTCDate(fin.getUTCDate() + 6);
+      const cols = dias.filter((d) => d.dataset.sem === clave).map((d) => {
+        const c = d.cloneNode(true);
+        c.hidden = false;
+        c.removeAttribute("data-sem");
+        c.querySelectorAll("button, .dia-etq").forEach((x) => x.remove());
+        return c;
+      });
+      const rejilla = el("div", { class: "imp-dias" }, ...cols);
+      rejilla.style.setProperty("--filas", cont.style.getPropertyValue("--filas") || "6");
+      return el("section", { class: "imp-semana" }, el("h2", { text: "Menú · semana del " + fmt(clave) + " al " + fmt(fin.toISOString().slice(0, 10)) }), rejilla);
+    }));
+    window.print();
+  });
+
   // ================= Intercambiar comidas arrastrando =================
   // Ratón: se arrastra la casilla. Móvil: pulsación larga y arrastrar. Se suelta sobre otro día y, tras confirmar,
   // las dos comidas del mismo tipo intercambian el plato. Se guarda como dos cambios (colección «cambios»),

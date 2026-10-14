@@ -1044,6 +1044,29 @@ body.arrastrando-comida{cursor:grabbing}
 .leyenda-semanas{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.8rem;color:var(--muted);margin:10px 0 0}
 .leyenda-semanas .muestra{display:inline-block;width:26px;height:14px;border-radius:4px;border:2px solid var(--accent);margin-left:6px}
 .leyenda-semanas .muestra.sem-proxima{border:2px dashed var(--muted)}
+#zona-impresion{display:none}
+@media print{
+@page{size:A4 landscape;margin:7mm}
+html,body{background:#fff!important}
+body>*:not(#zona-impresion){display:none!important}
+#zona-impresion{display:block!important;font-size:6.2pt;line-height:1.15;color:#000}
+.imp-semana{break-after:page}
+.imp-semana:last-child{break-after:auto}
+.imp-semana h2{font:700 11pt var(--f-display);margin:0 0 3pt}
+.imp-dias{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(var(--filas,6),auto);gap:3pt}
+#zona-impresion .col-dia{border:0.75pt solid #3d6a33;border-radius:2pt;background:#fff}
+#zona-impresion .dia-cab{font-size:8pt;padding:2pt 4pt;background:#eef2ec;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#zona-impresion .celda{padding:2pt 4pt;border-top:0.5pt solid #c9d2c6}
+#zona-impresion .celda-etq{font-size:5.2pt;margin-bottom:1pt}
+#zona-impresion a{color:inherit;text-decoration:none}
+#zona-impresion .plato-menu{font-weight:700;font-size:6.6pt}
+#zona-impresion .raciones,#zona-impresion .des-sub{display:none}
+#zona-impresion .tupper-linea,#zona-impresion .prepara{font-size:5.6pt;padding:1.5pt 3pt;margin-top:2pt}
+#zona-impresion .tupper-etq{font-size:5.2pt}
+#zona-impresion .acciones:empty{display:none}
+#zona-impresion .comensales{gap:2pt;margin:1pt 0}
+#zona-impresion .comensal{font-size:5.6pt;padding:0 3pt}
+}
 @media (max-width:640px){.semana-scroll{grid-auto-columns:100%;scroll-snap-type:x mandatory;gap:8px;padding:4px 0 12px}.col-dia{scroll-snap-stop:always}}
 .plato-menu.segundo{margin-top:3px;padding-top:3px;border-top:1px dotted var(--line)}
 .plato-menu{display:block;font-weight:600;color:var(--ink);text-decoration:none;line-height:1.3}
@@ -1644,7 +1667,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
         <p class="sub">Cada plato enlaza a su receta. Las etiquetas son quién lo come y «rac.» cuántas raciones preparar (1 ración = lo que come un adulto de 2.000 kcal al día; se suman las de cada comensal). En naranja, cuándo se prepara si no se cocina en el momento. Lo cocinado se marca en su receta, con «Cocinado». Si no se apunta nada, se da por hecho que cada uno comió lo previsto. Para cambiar una comida de día, arrástrala sobre otro día (en el móvil, mantén pulsada la casilla y arrastra): se intercambian las dos y antes de aplicarlo se avisa de lo que afecta. Con «Anotaciones» apuntas quién comió otra cosa o no come (sus raciones se descuentan de lo que se cocina y de la compra); puede haber varias en la misma comida. Se ven los días desde hoy hasta el domingo de la próxima semana; el marco de cada columna dice a qué semana pertenece. Los días que ya han pasado no se muestran. Los desayunos fijos y el batch del domingo están en Recetas; el detalle de los cambios de Claude, en Diario.</p>
       </details>
       <p class="nota aviso-borde" id="aviso-semanas" hidden></p>
-      <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
+      <div class="barra-acciones"><button type="button" class="btn-principal btn-actualizar">Actualizar menú</button><button type="button" class="secundario" id="btn-pdf">Descargar PDF</button><a href="#diario" class="enlace-diario">Ver el diario</a></div>
     </header>
     <p class="leyenda-semanas" id="leyenda-semanas"><span class="muestra sem-en-curso"></span> Semana en curso <span class="muestra sem-proxima"></span> Próxima semana</p>
     ${seccionMenu(familia, semanas.map(({ dias: d, clave }) => ({ dias: d, clave })))}
@@ -1705,6 +1728,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
   <p class="pie">Cálculos orientativos (Mifflin-St Jeor en adultos, Schofield en menores, deporte por MET). No sustituyen el consejo de un profesional sanitario. Los objetivos de peso solo se aplican cuando se acuerdan.</p>
 </main>
 ${DIALOGOS}
+<div id="zona-impresion" aria-hidden="true"></div>
 <script type="application/json" id="datos-pagina">${JSON.stringify(datosCliente).replace(/</g, "\\u003c")}</script>
 <script>${SCRIPT_CLIENTE}</script>
 `, familia);

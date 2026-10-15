@@ -860,5 +860,131 @@
       "cafe-solo",
       "desayuno-afc"
     ]
+  },
+  "2026-10-12-0-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-12-0-almuerzo",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 5.9,
+      "fruta-de-temporada-g": 193.5,
+      "pan-integral-g": 103.2,
+      "pechuga-de-pollo-g": 1.7,
+      "tomate-g": 51.6
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-15T14:39:13.192Z",
+    "raciones": 1.29,
+    "recetas": [
+      "almuerzo-bocadillo-pollo"
+    ]
+  },
+  "2026-10-12-0-cena~p0": {
+    "auto": true,
+    "celda": "2026-10-12-0-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 45.7,
+      "cebolla-g": 192.7,
+      "cuscus-integral-g": 260,
+      "fruta-de-temporada-g": 745.5,
+      "pan-rallado-g": 49.7,
+      "tomate-triturado-g": 421.4
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-15T14:39:22.125Z",
+    "porHecho": true,
+    "raciones": 4.97,
+    "recetas": [
+      "albondigas-pavo-cuscus"
+    ]
+  },
+  "2026-10-12-0-comida~p0": {
+    "auto": true,
+    "celda": "2026-10-12-0-comida",
+    "descontado": {},
+    "etiqueta": "",
+    "fecha": "2026-10-15T14:39:14.029Z",
+    "porHecho": true,
+    "raciones": 2.41,
+    "recetas": [
+      "espaguetis-bolonesa"
+    ],
+    "reservas": {
+      "espaguetis-bolonesa__1790764660435": 2.41
+    }
+  },
+  "2026-10-12-0-comida~tCCT": {
+    "auto": true,
+    "celda": "2026-10-12-0-comida",
+    "descontado": {},
+    "etiqueta": "Tupper CCT",
+    "fecha": "2026-10-15T14:39:17.200Z",
+    "porHecho": true,
+    "raciones": 0.81,
+    "recetas": [
+      "lentejas-estofadas"
+    ],
+    "reservas": {
+      "lentejas-estofadas__1790764636764": 0.81
+    }
+  },
+  "2026-10-12-0-comida~tRFA": {
+    "auto": true,
+    "celda": "2026-10-12-0-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 11.3,
+      "aceitunas-g": 1.8,
+      "maiz-dulce-lata-g": 1.8,
+      "pasta-integral-corta-g": 9.5,
+      "pimiento-asado-bote-g": 2.4
+    },
+    "etiqueta": "Tupper RFA",
+    "fecha": "2026-10-15T14:39:16.571Z",
+    "porHecho": true,
+    "raciones": 0.94,
+    "recetas": [
+      "ensalada-pasta-pollo"
+    ]
+  },
+  "2026-10-12-0-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-12-0-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "cacao-soluble-nesquik-g": 15,
+      "cafe-molido-g": 24,
+      "fruta-de-temporada-g": 150,
+      "galletas-tostadas-animadas-hacendado-g": 32,
+      "leche-semidesnatada-g": 339.9,
+      "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
+      "queso-fresco-g": 30,
+      "tomate-g": 50,
+      "tortitas-de-maiz-hacendado-g": 14
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-15T14:39:10.711Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-12-0-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-12-0-merienda",
+    "descontado": {
+      "almendras-g": 4.9,
+      "copos-de-avena-g": 3.6,
+      "fruta-de-temporada-g": 624,
+      "yogur-natural-g": 72.5
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-15T14:39:19.212Z",
+    "raciones": 4.16,
+    "recetas": [
+      "yogur-fruta-frutos-secos"
+    ]
   }
 }

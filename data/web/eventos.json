@@ -463,5 +463,10 @@
     "fecha": "2026-10-10T11:01:43.875Z",
     "texto": "Se dan por hechas 3 comidas de días pasados que no se marcaron como cocinadas: se restan de la despensa o de las raciones en reserva.",
     "tipo": "cocinado"
+  },
+  "1792075257806-rfc77": {
+    "fecha": "2026-10-15T14:40:57.808Z",
+    "texto": "Ricardo hijo: peso 77 kg",
+    "tipo": "perfil"
   }
 }

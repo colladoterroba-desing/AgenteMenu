@@ -82,7 +82,7 @@ Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Par
 | `src/pdf.ts` | PDF del menú y de la lista de la compra |
 | `src/sincronizar.ts` | Une lo apuntado en la web con `data/` (`npm run sincronizar`) |
 | `data/web/` | Copia de lo apuntado en la web (diario, anotaciones, cocinado, cambios, comentarios...) |
-| `data/propuesta-tuppers.json` | Rotación de tuppers de oficina |
+| `data/propuesta-tuppers.json` | Ideas de tuppers de oficina con cantidades (no es una rotación fija) |
 | `data/precios.json` | Precios reales por tienda (Mercadona, BM, Elías), cargados desde los tickets |
 | `src/precios.ts` | Coste de la cesta por tienda y combinación más barata |
 

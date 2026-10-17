@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { cp, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -337,6 +337,78 @@ test("no se repite el mismo producto en la comida y la cena del mismo día", asy
   // Con una variante para quien repetiría, ya no cuenta para esa persona.
   pavo.dias.X.cena.variantes = { CCT: "tortilla-patata" };
   assert.deepEqual(validarMenu(familia, pavo, recetas), ["Miércoles: RFC, AFC comen pavo en la comida y en la cena"]);
+});
+
+test("variedad: no repite el mismo día y comida, ni tres semanas seguidas, ni demasiado de la semana anterior; tuppers distintos", async () => {
+  const { comprobarVariedad, VARIEDAD } = await import("../src/menu.js");
+  type Semana = import("../src/menu.js").MenuSemana;
+  // Menús mínimos: solo lo que cuenta para la variedad (comidas, cenas y tuppers).
+  const semana = (inicio: string, dias: Record<string, Record<string, unknown>>, tuppers: Record<string, unknown> = {}) =>
+    ({ semana: "A", inicio, dias, tuppers }) as unknown as Semana;
+  const hace2 = semana("2026-10-05", {
+    L: { comida: { receta: "pure-zanahoria", segundo: "chuleta" }, cena: { receta: "crema-puerro" } },
+  }, { L: { RFA: { receta: "pasta-pollo" } }, M: { RFA: { receta: "quinoa" } } });
+  const anterior = semana("2026-10-12", {
+    M: { comida: { receta: "crema-puerro" } },
+    X: { cena: { receta: "lentejas", variantes: { RFA: "tortilla-francesa" } } },
+  }, { L: { RFA: { receta: "wraps" } } });
+  const recetas = [{ id: "pure-zanahoria", nombre: "Puré de zanahoria" }] as never[];
+
+  // Nada repetido: sin avisos. Las variantes de una persona no cuentan.
+  const nueva = semana("2026-10-19", {
+    X: { comida: { receta: "pure-zanahoria" }, cena: { receta: "pavo", variantes: { RFA: "tortilla-francesa" } } },
+  }, { L: { RFA: { receta: "quinoa" } }, M: { RFA: { receta: "pasta-pollo" } } });
+  assert.deepEqual(comprobarVariedad(nueva, [anterior, hace2], recetas), []);
+
+  // 1. El mismo día y comida que hace dos semanas (también el segundo plato).
+  const mismoHueco = structuredClone(nueva);
+  mismoHueco.dias.L = { comida: { receta: "pure-zanahoria", segundo: "chuleta" } };
+  assert.deepEqual(comprobarVariedad(mismoHueco, [anterior, hace2], recetas), [
+    "Lunes comida: «Puré de zanahoria» ya estaba ese mismo día y comida la semana del 05/10",
+    "Lunes comida: «chuleta» ya estaba ese mismo día y comida la semana del 05/10",
+  ]);
+
+  // 2. Tres semanas seguidas (en casillas distintas).
+  const tres = structuredClone(nueva);
+  tres.dias.D = { cena: { receta: "crema-puerro" } };
+  assert.deepEqual(comprobarVariedad(tres, [anterior, hace2], recetas), [
+    "«crema-puerro» sale tres semanas seguidas (también las semanas del 12/10 y del 05/10)",
+  ]);
+
+  // 3. Como mucho 4 recetas de la semana anterior.
+  const previa = semana("2026-10-12", Object.fromEntries(["L", "M", "X", "J", "V"].map((d, i) => [d, { comida: { receta: `plato-${i}` } }])));
+  const repite = (n: number) => semana("2026-10-19", Object.fromEntries(["S", "D", "L", "M", "X"].slice(0, n).map((d, i) => [d, { cena: { receta: `plato-${i}` } }])));
+  assert.equal(VARIEDAD.maxRepetidasSemanaAnterior, 4);
+  assert.deepEqual(comprobarVariedad(repite(4), [previa], recetas), []);
+  assert.match(comprobarVariedad(repite(5), [previa], recetas).join("\n"), /^Repite 5 recetas de comida y cena de la semana del 12\/10 \(como mucho 4\)/);
+
+  // 4. La misma receta, como mucho dos veces en la semana.
+  const tresVeces = semana("2026-10-19", { L: { cena: { receta: "pavo" } }, M: { cena: { receta: "pavo" } }, X: { comida: { receta: "pavo" } } });
+  assert.deepEqual(comprobarVariedad(tresVeces, [], recetas), ["«pavo» sale 3 veces en las comidas y cenas de la semana (como mucho 2)"]);
+
+  // 5. Tuppers: nada de la semana anterior (cualquier día) ni lo del mismo día de hace dos semanas.
+  const tuppers = structuredClone(nueva);
+  tuppers.tuppers = { J: { RFA: { receta: "wraps" } }, L: { RFA: { receta: "pasta-pollo" } }, M: { CCT: { receta: "quinoa" } } };
+  assert.deepEqual(comprobarVariedad(tuppers, [anterior, hace2], recetas), [
+    "Jueves tupper RFA: «wraps» ya fue tupper de RFA la semana del 12/10",
+    "Lunes tupper RFA: «pasta-pollo» ya fue su tupper ese mismo día la semana del 05/10",
+  ]);
+});
+
+test("variedad: la semana siguiente se compara con la semana en curso y la anterior del historial", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "variedad-"));
+  const escribir = async (f: string, inicio: string) => {
+    await mkdir(path.dirname(path.join(dir, f)), { recursive: true });
+    await writeFile(path.join(dir, f), JSON.stringify({ semana: "A", inicio, dias: {}, tuppers: {} }));
+  };
+  await escribir("menu-semana.json", "2026-10-12");
+  await escribir("historial/menu-2026-10-05.json", "2026-10-05");
+  await escribir("historial/menu-2026-09-28.json", "2026-09-28");
+  const almacen = new Almacen(dir);
+  assert.deepEqual((await almacen.semanasAnteriores("2026-10-19", 2)).map((m) => m.inicio), ["2026-10-12", "2026-10-05"]);
+  // La semana en curso se compara con las dos del historial; si falta alguna, con las que haya.
+  assert.deepEqual((await almacen.semanasAnteriores("2026-10-12", 2)).map((m) => m.inicio), ["2026-10-05", "2026-09-28"]);
+  assert.deepEqual((await almacen.semanasAnteriores("2026-10-05", 2)).map((m) => m.inicio), ["2026-09-28"]);
 });
 
 test("primero y segundo: el segundo lo comen los mismos y entra en la compra", async () => {

@@ -2,7 +2,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
-import { caducidadReserva, componerMenu, listaCompra, SECCIONES, validarMenu, type DiaDelMenu, type MenuSemana, type Receta } from "./menu.js";
+import { caducidadReserva, comprobarVariedad, componerMenu, listaCompra, SECCIONES, validarMenu, VARIEDAD, type DiaDelMenu, type MenuSemana, type Receta } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
 import { costeCesta } from "./precios.js";
 import { DIAS } from "./tipos.js";
@@ -315,6 +315,10 @@ export function crearHerramientas(almacen: Almacen) {
           almacen.familia(), almacen.recetas(), almacen.menu(siguiente).catch(() => undefined),
         ]);
         const errores = validarMenu(familia, datos as MenuSemana, recetas);
+        // La semana siguiente, además, no puede repetir demasiado lo de las dos semanas anteriores.
+        if (siguiente && datos.inicio) {
+          errores.push(...comprobarVariedad(datos as MenuSemana, await almacen.semanasAnteriores(datos.inicio, VARIEDAD.semanas), recetas));
+        }
         if (errores.length) throw new Error(`Menú incompleto:\n${errores.join("\n")}`);
         const cambios = [...(anterior?.cambios ?? []), { por: autor, fecha, descripcion: descripcionCambio }];
         await almacen.guardarMenu({ ...(datos as MenuSemana), cambios }, siguiente);

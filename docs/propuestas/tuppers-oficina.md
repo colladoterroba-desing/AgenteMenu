@@ -1,6 +1,8 @@
 # Tuppers para la oficina (RFA de lunes a jueves, CCT de lunes a miércoles)
 
-Propuesta en dos semanas que se van alternando (A y B).
+> **Desde el 17/10/2026 ya no hay rotación fija:** los tuppers cambian cada semana y están en el menú. Este documento queda como ideas con cantidades y calorías orientativas (ver `decisions.md`).
+
+Propuesta original en dos semanas que se iban alternando (A y B).
 
 - **RFA:** tupper **frío**, que se come sin calentar, de lunes a jueves (el jueves, desde el 30/09/2026). Pocos platos de pescado.
 - **CCT:** tupper **para recalentar** en el microondas.

@@ -1,5 +1,5 @@
 {
-  "descripcion": "Propuesta de tuppers de oficina (L-X; RFA también el jueves) en dos semanas alternas. Detalle en docs/propuestas/tuppers-oficina.md",
+  "descripcion": "Ideas de tuppers de oficina (L-X; RFA también el jueves) con cantidades y calorías orientativas. Hasta el 17/10/2026 eran una rotación fija en dos semanas (A y B); ahora los tuppers cambian cada semana y estas son solo ideas. Detalle en docs/propuestas/tuppers-oficina.md",
   "ajusteConObjetivo": {
     "RFA": "Sin pan, 70 g de pasta/arroz/quinoa y 9 g de aceite. En L y M (running) se mantiene la fruta.",
     "CCT": "Sin pan ni yogur, y el doble de verdura en el plato."
@@ -28,7 +28,7 @@
       "CCT": [
         { "dia": "L", "plato": "Lentejas estofadas con verduras", "detalle": "Lentejas 70 g · zanahoria, pimiento, cebolla · patata 100 g · AOVE 9 g · pan 40 g + yogur 125 g + fruta 150 g", "kcal": 705, "cocina": "Domingo (batch)" },
         { "dia": "M", "plato": "Merluza en salsa verde con arroz y guisantes", "detalle": "Merluza 150 g · arroz 70 g · guisantes 50 g · AOVE 9 g · pan 40 g + fruta 150 g", "kcal": 675, "cocina": "Cena del lunes, 1 ración extra" },
-        { "dia": "X", "plato": "Albóndigas de pavo con tomate y cuscús integral", "detalle": "Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 9 g + yogur 125 g + fruta 150 g", "kcal": 670, "cocina": "Domingo (batch, se congelan)" }
+        { "dia": "X", "plato": "Albóndigas de pavo en salsa de tomate con cuscús integral", "detalle": "Pavo picado 130 g · tomate triturado · cuscús 60 g · AOVE 9 g + yogur 125 g + fruta 150 g", "kcal": 670, "cocina": "Domingo (batch, se congelan)" }
       ]
     }
   }

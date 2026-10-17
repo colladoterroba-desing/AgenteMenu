@@ -15,10 +15,16 @@ Página: https://claude.ai/artifact/76bJD5hCEB8vM9pnYSkS91
    - Las normas: el texto `SISTEMA` de `src/agente.ts` (puntos 2 a 8) y `decisions.md` (Menú, Normas de la casa, Personas y salud).
    - `data/familia.json` (régimen de comidas, tuppers, almuerzos, desayunos, no deseados, supervisión, restricciones, platos habituales).
    - El recetario `data/recetas.json`: usa **solo recetas que ya existan** (por su `id`); no crees recetas nuevas.
-   - `data/menu-semana.json`, como modelo del formato (`semana`, `inicio`, `batch`, `dias`, `tuppers`, `sobrasDe`, `variantes`, `comensales`) y para no repetir los mismos platos.
-   - `data/propuesta-tuppers.json`: los tuppers de la letra que toca (A o B).
+   - `data/menu-semana.json` (la semana en curso) y, en `data/historial/`, el menú de la semana anterior a esa (`menu-<lunes>.json`): son el modelo del formato (`semana`, `inicio`, `batch`, `dias`, `tuppers`, `sobrasDe`, `variantes`, `comensales`) y lo que **no hay que repetir** (normas de variedad, decisión del 17/10/2026).
+   - `data/propuesta-tuppers.json`: solo ideas con cantidades y calorías orientativas por persona. Los tuppers ya no siguen la rotación A/B: cambian cada semana.
    - `data/despensa.json` (aprovecha lo que caduca antes y las reservas con receta) y `data/web/comentarios.json`, `data/web/no-deseados.json`, `data/web/comido.json` (qué se salta la familia).
 4. Escribe el borrador en `salidas/borrador-semana.json` con la semana y el `inicio` que ha indicado el paso 2, y un campo `descripcion` de una o dos frases (qué tiene de especial la semana). Tiene que cubrir cada comida del régimen, cada tupper y cada almuerzo; equilibrio de dieta mediterránea (legumbre 2-4, pescado 3-4, huevo 3-4, verdura en comida y cena, carne roja 1-2); batch del domingo; lo que se lleva fuera se prepara la noche anterior.
+   **Variedad** (las comprueba el programa del paso 5 contra las dos semanas anteriores; cuentan el plato y el segundo de comidas y cenas, y los tuppers; no cuentan las variantes de una persona ni desayunos, almuerzos y meriendas):
+   - Un plato no vuelve al mismo día y comida (p. ej. martes cena) que en ninguna de las dos semanas anteriores.
+   - Ningún plato sale tres semanas seguidas.
+   - Como mucho 4 platos de comida y cena repetidos de la semana anterior, y cada plato como mucho 2 veces en la semana.
+   - Los tuppers de cada persona no repiten ninguno de su semana anterior, ni el del mismo día de hace dos semanas.
+   - Los platos habituales siguen teniendo prioridad, pero dentro de estas normas: ve rotándolos y completa con recetas que hace tiempo que no salen.
 5. Ejecuta `npm run preparar-semana -- salidas/borrador-semana.json`. Si da errores, corrige el borrador y repite hasta que diga «Guardado». Si tras 5 intentos sigue fallando, no guardes nada y explica los errores.
 6. Ejecuta `npm run web` y publica `salidas/resultados.html` con la herramienta `Artifact` y `url` de la página de arriba, sin `capabilities`. Si se rechaza porque no has visto la versión publicada, lee las 5 primeras líneas del fichero que te indica y vuelve a publicar el tuyo.
 7. Haz commit solo de `data/` con el mensaje «Semana siguiente (AAAA-MM-DD)» y `git push origin main` (hasta 4 intentos; si main ha cambiado, `git pull --rebase origin main` y vuelve a subir). Comprueba con `git fetch origin main && git log origin/main -1 --format=%s` que tu commit está en main.

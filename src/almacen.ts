@@ -9,6 +9,12 @@ import type { Despensa, Familia, Objetivo, Producto, Sobra, Ticket } from "./tip
 export const hoyIso = (d = new Date()) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
+/** Lunes (AAAA-MM-DD) que va `semanas` antes del lunes `inicio`. */
+export function lunesAnterior(inicio: string, semanas = 1): string {
+  const [y, m, d] = inicio.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d - 7 * semanas)).toISOString().slice(0, 10);
+}
+
 /** Persistencia en ficheros JSON dentro de un directorio de datos. */
 export class Almacen {
   constructor(private readonly dir: string) {}
@@ -45,6 +51,24 @@ export class Almacen {
 
   /** Menú de esta semana o, con `siguiente`, la propuesta de la semana que viene. */
   menu = (siguiente = false) => this.leer<MenuSemana>(siguiente ? "menu-siguiente.json" : "menu-semana.json");
+
+  /** Menú de una semana ya pasada (data/historial/menu-<lunes>.json), si está guardado. */
+  menuHistorial = (inicio: string) => this.leer<MenuSemana>(`historial/menu-${inicio}.json`).catch(() => undefined);
+
+  /**
+   * Las semanas anteriores a la que empieza el lunes `inicio`, la más reciente primero (para
+   * comprobar la variedad): la semana en curso si es la anterior, y las del historial.
+   */
+  async semanasAnteriores(inicio: string, cuantas: number): Promise<MenuSemana[]> {
+    const actual = await this.menu().catch(() => undefined);
+    const semanas: MenuSemana[] = [];
+    for (let i = 1; i <= cuantas; i++) {
+      const lunes = lunesAnterior(inicio, i);
+      const menu = actual?.inicio === lunes ? actual : await this.menuHistorial(lunes);
+      if (menu) semanas.push(menu);
+    }
+    return semanas;
+  }
 
   async guardarMenu(menu: MenuSemana, siguiente = false): Promise<void> {
     await this.escribir(siguiente ? "menu-siguiente.json" : "menu-semana.json", menu);

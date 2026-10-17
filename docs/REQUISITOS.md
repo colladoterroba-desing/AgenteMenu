@@ -26,7 +26,7 @@ El menú familiar funciona como un puzzle: la aplicación indica las recetas que
   - V, S y D: comen en casa los 4.
   - Todas las cenas: los 4.
 - **Roles en la cocina:** CCT es la cocinera; RFA cocina poco y plancha; RFC y AFC solo hacen plancha.
-- **Tuppers de oficina:** RFA, frío, de lunes a jueves (el jueves desde el 30/09/2026); CCT, para recalentar, de lunes a miércoles. Propuesta en [propuestas/tuppers-oficina.md](propuestas/tuppers-oficina.md).
+- **Tuppers de oficina:** RFA, frío, de lunes a jueves (el jueves desde el 30/09/2026); CCT, para recalentar, de lunes a miércoles. Ideas con cantidades en [propuestas/tuppers-oficina.md](propuestas/tuppers-oficina.md). Desde el 17/10/2026 los tuppers cambian cada semana (ya no hay rotación fija A/B).
 - **Desayunos habituales (todos los días):** AFC, vaso de leche con 1 cucharada de Nesquik y 8 galletas tostadas Animadas Hacendado. RFC, café solo y almuerzo para el colegio (L-V). CCT, café cortado con tostada de pan, aceite y azúcar (propuesta pendiente, OI-07: pan integral con tomate y queso fresco, sin azúcar). RFA, café cortado con 2 tortitas de maíz Hacendado, jamón york o pavo, aceite, sal y pimienta.
 - **Preferencias:** leche siempre semidesnatada.
 - **Pescado azul:** salmón, atún, anchoas y sardinas solo los jueves a la hora de comer, las semanas que toque (no es obligatorio ponerlo todos los jueves).
@@ -43,6 +43,7 @@ El menú familiar funciona como un puzzle: la aplicación indica las recetas que
 - **Platos no deseados:** se puede marcar un plato como no deseado (una persona o toda la familia) con el motivo; no se vuelve a proponer en futuros menús a quien lo marcó.
 - **Semana siguiente:** aunque el menú es semanal, se muestra también la propuesta de la semana siguiente.
 - **Rotación de semanas (desde el 30/09/2026):** la semana A es la semana en curso y la B la próxima. Cuando empieza la próxima, pasa a ser la semana en curso y hay que preparar la nueva próxima semana.
+- **Variedad (desde el 17/10/2026):** el menú no puede ser el mismo todas las semanas. Un plato de comida o cena no vuelve al mismo día y comida que en las dos semanas anteriores ni sale tres semanas seguidas; de una semana a otra se repiten como mucho 4 platos, y cada plato sale 2 veces por semana como mucho. Los tuppers de cada persona también cambian. Desayunos, almuerzos y meriendas pueden seguir iguales.
 - **Coste de la cesta:** la familia compra sobre todo en Mercadona y a veces en BM y Casa Elías (Madrid). Hay que valorar el coste de la lista de la compra en cada tienda y proponer la combinación más barata.
 - **Sin validación del menú (desde el 30/09/2026):** el menú no hay que aprobarlo. Lo que se come de verdad se apunta en el diario.
 - **Medidas en gramos:** todas las cantidades (recetas, despensa, compra, precios, tuppers) van en gramos. Lo que se cuenta por unidades o se mide en ml se pasa a gramos con [`data/equivalencias.json`](../data/equivalencias.json) y se muestra la equivalencia entre paréntesis («1.320 g (≈22 ud)»). La página **Definiciones** explica los términos y las equivalencias.

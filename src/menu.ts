@@ -1,5 +1,5 @@
 import { planificarSemana, type ComidaPlanificada, type TipoComida } from "./planificacion.js";
-import type { Despensa, Dia, Familia } from "./tipos.js";
+import { NOMBRE_DIA, type Despensa, type Dia, type Familia } from "./tipos.js";
 import { aGramos, equivalencia, gramosPorUnidad } from "./unidades.js";
 
 export const SECCIONES = [
@@ -218,7 +218,117 @@ function productoRepetido(menu: MenuSemana, dia: Dia, nombre: string, comidas: C
   return [...porProducto].map(([p, quienes]) => `${nombre}: ${quienes.join(", ")} ${quienes.length > 1 ? "comen" : "come"} ${p} en la comida y en la cena`);
 }
 
-/** Une la rejilla de comensales con los platos del menú. */
+/**
+ * Normas de variedad (decisión del 17/10/2026): el menú de una semana se compara con el de las
+ * dos semanas anteriores. Cuentan las recetas de comidas y cenas (plato y segundo, no las
+ * variantes de una persona) y los tuppers; los desayunos, almuerzos y meriendas no.
+ */
+export const VARIEDAD = {
+  /** Semanas anteriores con las que se compara. */
+  semanas: 2,
+  /** Como mucho, recetas de comida y cena que repiten de la semana anterior. */
+  maxRepetidasSemanaAnterior: 4,
+  /** Como mucho, veces que sale la misma receta en las comidas y cenas de una semana. */
+  maxVecesEnLaSemana: 2,
+} as const;
+
+const COMIDAS_PRINCIPALES = ["comida", "cena"] as const;
+
+/** Recetas de comidas y cenas de un menú, por casilla («L-cena»): el plato y el segundo. */
+function recetasPorCasilla(menu: MenuSemana): Map<string, string[]> {
+  const casillas = new Map<string, string[]>();
+  for (const dia of Object.keys(menu.dias ?? {}) as Dia[]) {
+    for (const tipo of COMIDAS_PRINCIPALES) {
+      const p = menu.dias[dia]?.[tipo];
+      if (p?.receta) casillas.set(`${dia}-${tipo}`, [p.receta, ...(p.segundo ? [p.segundo] : [])]);
+    }
+  }
+  return casillas;
+}
+
+/** Recetas de los tuppers de cada persona: persona → día → receta (y segundo). */
+function tuppersPorPersona(menu: MenuSemana): Map<string, Map<Dia, string[]>> {
+  const porPersona = new Map<string, Map<Dia, string[]>>();
+  for (const [dia, tuppers] of Object.entries(menu.tuppers ?? {}) as [Dia, Record<string, PlatoMenu>][]) {
+    for (const [id, t] of Object.entries(tuppers ?? {})) {
+      if (!t?.receta) continue;
+      const dias = porPersona.get(id) ?? new Map<Dia, string[]>();
+      dias.set(dia, [t.receta, ...(t.segundo ? [t.segundo] : [])]);
+      porPersona.set(id, dias);
+    }
+  }
+  return porPersona;
+}
+
+const fechaCorta = (inicio?: string) => (inicio ? `${inicio.slice(8, 10)}/${inicio.slice(5, 7)}` : "anterior");
+
+/**
+ * Comprueba que el menú no repite demasiado lo de las semanas anteriores (`anteriores`, la más
+ * reciente primero). Devuelve un error por cada norma de variedad que no se cumple.
+ */
+export function comprobarVariedad(menu: MenuSemana, anteriores: MenuSemana[], recetas: Receta[]): string[] {
+  const nombre = new Map(recetas.map((r) => [r.id, r.nombre]));
+  const n = (id: string) => `«${nombre.get(id) ?? id}»`;
+  const previas = anteriores.filter(Boolean).slice(0, VARIEDAD.semanas);
+  const errores: string[] = [];
+  const casillas = recetasPorCasilla(menu);
+  const casillasPrevias = previas.map(recetasPorCasilla);
+  const deLaSemana = (c: Map<string, string[]>) => new Set([...c.values()].flat());
+  const huecoLegible = (casilla: string) => {
+    const [dia, tipo] = casilla.split("-") as [Dia, string];
+    return `${NOMBRE_DIA[dia]} ${tipo}`;
+  };
+
+  // 1. La misma receta no vuelve al mismo día y comida que en las semanas anteriores.
+  for (const [casilla, ids] of casillas) {
+    previas.forEach((previa, i) => {
+      for (const id of ids.filter((x) => casillasPrevias[i].get(casilla)?.includes(x))) {
+        errores.push(`${huecoLegible(casilla)}: ${n(id)} ya estaba ese mismo día y comida la semana del ${fechaCorta(previa.inicio)}`);
+      }
+    });
+  }
+
+  // 2. Ninguna receta de comida o cena tres semanas seguidas.
+  const esta = deLaSemana(casillas);
+  if (casillasPrevias.length >= 2) {
+    const [una, dos] = casillasPrevias.map(deLaSemana);
+    for (const id of esta) {
+      if (una.has(id) && dos.has(id)) errores.push(`${n(id)} sale tres semanas seguidas (también las semanas del ${fechaCorta(previas[0].inicio)} y del ${fechaCorta(previas[1].inicio)})`);
+    }
+  }
+
+  // 3. Pocas recetas repetidas de la semana anterior.
+  if (casillasPrevias.length) {
+    const repetidas = [...esta].filter((id) => deLaSemana(casillasPrevias[0]).has(id));
+    if (repetidas.length > VARIEDAD.maxRepetidasSemanaAnterior) {
+      errores.push(`Repite ${repetidas.length} recetas de comida y cena de la semana del ${fechaCorta(previas[0].inicio)} (como mucho ${VARIEDAD.maxRepetidasSemanaAnterior}): ${repetidas.map(n).join(", ")}`);
+    }
+  }
+
+  // 4. La misma receta, como mucho dos veces en las comidas y cenas de la semana.
+  const veces = new Map<string, number>();
+  for (const ids of casillas.values()) for (const id of new Set(ids)) veces.set(id, (veces.get(id) ?? 0) + 1);
+  for (const [id, v] of veces) {
+    if (v > VARIEDAD.maxVecesEnLaSemana) errores.push(`${n(id)} sale ${v} veces en las comidas y cenas de la semana (como mucho ${VARIEDAD.maxVecesEnLaSemana})`);
+  }
+
+  // 5. Tuppers: cada persona cambia de tupper respecto a la semana anterior y no repite el del mismo día de hace dos semanas.
+  const tuppersPrevios = previas.map(tuppersPorPersona);
+  for (const [id, dias] of tuppersPorPersona(menu)) {
+    const semanaAnterior = new Set([...(tuppersPrevios[0]?.get(id)?.values() ?? [])].flat());
+    for (const [dia, ids] of dias) {
+      for (const r of ids) {
+        if (semanaAnterior.has(r)) {
+          errores.push(`${NOMBRE_DIA[dia]} tupper ${id}: ${n(r)} ya fue tupper de ${id} la semana del ${fechaCorta(previas[0].inicio)}`);
+        } else if (tuppersPrevios.slice(1).some((t) => t.get(id)?.get(dia)?.includes(r))) {
+          errores.push(`${NOMBRE_DIA[dia]} tupper ${id}: ${n(r)} ya fue su tupper ese mismo día la semana del ${fechaCorta(previas[1].inicio)}`);
+        }
+      }
+    }
+  }
+  return errores;
+}
+
 /** El menú como estaba antes de los cambios de «Actualizar menú» (la web los muestra encima). */
 export function sinCambios(menu: MenuSemana): MenuSemana {
   const dias = Object.fromEntries(
@@ -230,6 +340,7 @@ export function sinCambios(menu: MenuSemana): MenuSemana {
   return { ...menu, dias };
 }
 
+/** Une la rejilla de comensales con los platos del menú. */
 export function componerMenu(familia: Familia, menu: MenuSemana, recetas: Receta[]): DiaDelMenu[] {
   const porId = new Map(recetas.map((r) => [r.id, r]));
   const receta = (id: string) => {

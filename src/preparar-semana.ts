@@ -6,7 +6,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Almacen, hoyIso } from "./almacen.js";
-import { validarMenu, type MenuSemana } from "./menu.js";
+import { comprobarVariedad, validarMenu, VARIEDAD, type MenuSemana } from "./menu.js";
 
 /** Lunes (AAAA-MM-DD) que va `semanas` después del lunes `inicio`. */
 export function lunesSiguiente(inicio: string, semanas = 1): string {
@@ -15,7 +15,10 @@ export function lunesSiguiente(inicio: string, semanas = 1): string {
   return f.toISOString().slice(0, 10);
 }
 
-/** Qué semana siguiente toca preparar: el lunes después de la semana en curso y la letra contraria (los tuppers rotan A/B). */
+/**
+ * Qué semana siguiente toca preparar: el lunes después de la semana en curso y la letra contraria.
+ * La letra solo es una etiqueta: desde el 17/10/2026 los tuppers no siguen una rotación A/B fija.
+ */
 export function semanaQueFalta(actual: MenuSemana, siguiente?: MenuSemana): { inicio: string; semana: string } | null {
   if (!actual.inicio) return null;
   const inicio = lunesSiguiente(actual.inicio);
@@ -43,7 +46,9 @@ async function main() {
 
   const borrador = JSON.parse(await readFile(path.resolve(fichero), "utf8")) as MenuSemana & { descripcion?: string };
   const [familia, recetas] = await Promise.all([almacen.familia(), almacen.recetas()]);
-  const errores = validarMenu(familia, borrador, recetas);
+  // Variedad: se compara con las dos semanas anteriores (la semana en curso y la del historial).
+  const anteriores = borrador.inicio ? await almacen.semanasAnteriores(borrador.inicio, VARIEDAD.semanas) : [];
+  const errores = [...validarMenu(familia, borrador, recetas), ...comprobarVariedad(borrador, anteriores, recetas)];
   if (falta && (borrador.inicio !== falta.inicio || borrador.semana !== falta.semana)) {
     errores.unshift(`El borrador tiene que ser la semana ${falta.semana} con inicio ${falta.inicio} (tiene ${borrador.semana}, ${borrador.inicio}).`);
   }

@@ -336,6 +336,7 @@ function seccionConfiguracion(familia: Familia, recetas: Receta[]): string {
         `<ul class="criterios">
           <li>Legumbres 2-4 veces por semana</li><li>Pescado 3-4 veces</li><li>Huevo 3-4 veces</li><li>Verdura en comida y cena</li>
           <li>Fruta a diario</li><li>Carne roja, 1-2 veces como máximo</li><li>Ultraprocesados, ocasionales</li>
+          <li>Variedad: comidas, cenas y tuppers cambian de una semana a otra (ver Normas)</li>
         </ul>`,
       )}
     </div>
@@ -877,50 +878,46 @@ const DIALOGOS = `
 <button type="button" id="btn-confirmar-compra" class="btn-flotante" hidden>Confirmar compra</button>
 <div id="aviso-flotante" class="aviso-flotante" role="status" hidden></div>`;
 
+/**
+ * Ideas de tuppers por persona, con cantidades y calorías orientativas. Desde el 17/10/2026 no
+ * hay rotación fija en dos semanas: los tuppers de cada día están en el menú y cambian cada semana.
+ */
 function seccionTuppers(propuesta: PropuestaTuppers, familia: Familia): string {
   const tipos = familia.regimen.tupper ?? {};
-  const columnas = (semana: string) =>
-    Object.entries(propuesta.semanas[semana])
-      .map(([id, platos]) => {
-        const frio = tipos[id]?.tipo === "frío";
-        return `<section class="col-tupper ${frio ? "frio" : "calor"}">
+  // Las ideas de las dos semanas de la antigua rotación, una vez cada plato.
+  const porPersona = new Map<string, PlatoTupper[]>();
+  for (const semana of Object.values(propuesta.semanas)) {
+    for (const [id, platos] of Object.entries(semana)) {
+      const ideas = porPersona.get(id) ?? [];
+      for (const p of platos) if (!ideas.some((x) => x.plato === p.plato)) ideas.push(p);
+      porPersona.set(id, ideas);
+    }
+  }
+  const columnas = [...porPersona]
+    .map(([id, platos]) => {
+      const frio = tipos[id]?.tipo === "frío";
+      return `<section class="col-tupper ${frio ? "frio" : "calor"}">
           <h4>${esc(id)} <span class="chip ${frio ? "frio" : "calor"}">${frio ? "Frío" : "Para recalentar"}</span></h4>
-          <ol class="platos">${platos
+          <ul class="platos ideas">${platos
             .map(
               (p) => `<li>
-              <span class="dia mono">${p.dia}</span>
               <div>
                 <p class="plato">${esc(p.plato)}</p>
                 <p class="detalle">${esc(p.detalle)}</p>
-                ${p.cocina ? `<p class="detalle"><span class="etq">Se cocina</span> ${esc(p.cocina)}</p>` : ""}
               </div>
               <span class="kcal mono">${num(p.kcal)}<small> kcal</small></span>
             </li>`,
             )
-            .join("")}</ol>
+            .join("")}</ul>
           ${
             familia.objetivos[id]
               ? `<p class="nota aviso-borde"><strong>Objetivo de peso aceptado, aplicar:</strong> ${esc(propuesta.ajusteConObjetivo[id] ?? "—")}</p>`
               : `<p class="nota"><strong>Si acepta el objetivo de peso:</strong> ${esc(propuesta.ajusteConObjetivo[id] ?? "—")}</p>`
           }
         </section>`;
-      })
-      .join("");
-  const semanas = Object.keys(propuesta.semanas);
-  return `<div class="pestanas" role="tablist" aria-label="Semana de la rotación">
-      ${semanas
-        .map(
-          (s, i) =>
-            `<button role="tab" id="tab-${s}" aria-controls="panel-${s}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">Semana ${s}</button>`,
-        )
-        .join("")}
-    </div>
-    ${semanas
-      .map(
-        (s, i) =>
-          `<div role="tabpanel" id="panel-${s}" aria-labelledby="tab-${s}" class="panel-tuppers"${i === 0 ? "" : " hidden"}>${columnas(s)}</div>`,
-      )
-      .join("")}`;
+    })
+    .join("");
+  return `<div class="panel-tuppers">${columnas}</div>`;
 }
 
 const ESTILOS = `
@@ -1296,6 +1293,7 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .col-tupper.calor{border-top-color:var(--calor)}
 .platos{list-style:none;margin:0;padding:0;display:grid;gap:14px}
 .platos li{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:start}
+.platos.ideas li{grid-template-columns:1fr auto}
 .dia{font-weight:600;font-size:.95rem;color:var(--muted);padding-top:1px}
 .plato{font-weight:600}
 .detalle{font-size:.86rem;color:var(--muted);margin-top:2px}
@@ -1368,7 +1366,7 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--info-soft);paddi
 .def-tabla td,.def-tabla th{padding:5px 8px}
 .def-tabla .num{text-align:right;white-space:nowrap}
 .pie{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;max-width:75ch}
-@media (max-width:520px){.cifras dd{font-size:1.05rem}.platos li{grid-template-columns:24px 1fr}.platos .kcal{grid-column:2}}
+@media (max-width:520px){.cifras dd{font-size:1.05rem}.platos li{grid-template-columns:24px 1fr}.platos .kcal{grid-column:2}.platos.ideas li{grid-template-columns:1fr}.platos.ideas .kcal{grid-column:1}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 `;
 
@@ -1707,7 +1705,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
 
   <section class="vista" id="tuppers" data-vista aria-labelledby="h-tuppers" hidden>
     <header class="cab"><h1 id="h-tuppers">Tuppers de oficina</h1>
-    <p class="sub">Rotación de dos semanas. La semana ${esc(menu.semana)} es la que está en el menú. Los tuppers de CCT salen del batch del domingo o de una ración extra de la cena anterior, y ese mismo plato sirve de comida a RFC y AFC.</p></header>
+    <p class="sub">Los tuppers de cada día están en el menú y cambian cada semana. Aquí hay ideas con cantidades y calorías orientativas para cada persona. Los de CCT suelen salir del batch del domingo o de una ración extra de la cena anterior, y ese mismo plato puede servir de comida a RFC y AFC.</p></header>
     ${seccionTuppers(propuesta, familia)}
   </section>
 

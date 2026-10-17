@@ -986,5 +986,412 @@
     "recetas": [
       "yogur-fruta-frutos-secos"
     ]
+  },
+  "2026-10-12-1-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-12-1-almuerzo",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 6,
+      "fruta-de-temporada-g": 195,
+      "jamon-serrano-en-lonchas-g": 52,
+      "pan-integral-g": 104,
+      "tomate-g": 52
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:26:57.217Z",
+    "raciones": 1.3,
+    "recetas": [
+      "almuerzo-bocadillo-serrano"
+    ]
+  },
+  "2026-10-12-1-cena~p0": {
+    "auto": true,
+    "celda": "2026-10-12-1-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 29.7,
+      "pan-integral-g": 129.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:02.891Z",
+    "porHecho": true,
+    "raciones": 3.23,
+    "recetas": [
+      "merluza-plancha-brocoli"
+    ]
+  },
+  "2026-10-12-1-cena~var": {
+    "auto": true,
+    "celda": "2026-10-12-1-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 8.6,
+      "pan-integral-g": 37.6
+    },
+    "etiqueta": "RFA",
+    "fecha": "2026-10-17T09:27:03.812Z",
+    "porHecho": true,
+    "raciones": 0.94,
+    "recetas": [
+      "tortilla-francesa-brocoli"
+    ]
+  },
+  "2026-10-12-1-comida~p0": {
+    "auto": true,
+    "celda": "2026-10-12-1-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 22.3,
+      "fruta-de-temporada-g": 250,
+      "pan-rallado-g": 24.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:26:58.586Z",
+    "porHecho": true,
+    "raciones": 2.42,
+    "recetas": [
+      "albondigas-pavo-cuscus"
+    ]
+  },
+  "2026-10-12-1-comida~tRFA": {
+    "auto": true,
+    "celda": "2026-10-12-1-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 11.3,
+      "lentejas-cocidas-bote-g": 202.1,
+      "pan-integral-g": 47,
+      "pimiento-rojo-g": 37.6,
+      "tomate-g": 75.2
+    },
+    "etiqueta": "Tupper RFA",
+    "fecha": "2026-10-17T09:27:00.666Z",
+    "porHecho": true,
+    "raciones": 0.94,
+    "recetas": [
+      "ensalada-lentejas-huevo"
+    ]
+  },
+  "2026-10-12-1-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-12-1-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "fruta-de-temporada-g": 150,
+      "leche-semidesnatada-g": 173.1,
+      "pan-integral-g": 50,
+      "pechuga-de-pavo-en-lonchas-g": 40,
+      "tomate-g": 50
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-17T09:26:55.277Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-12-1-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-12-1-merienda",
+    "descontado": {
+      "pan-integral-g": 291.9,
+      "pechuga-de-pavo-en-lonchas-g": 67.2,
+      "queso-en-lonchas-g": 83.4
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:01.990Z",
+    "raciones": 4.17,
+    "recetas": [
+      "bocadillo-pavo-queso"
+    ]
+  },
+  "2026-10-12-2-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-12-2-almuerzo",
+    "descontado": {
+      "yogur-liquido-natural-g": 127.8
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:05.943Z",
+    "raciones": 1.3,
+    "recetas": [
+      "almuerzo-yogur-frutos-secos"
+    ]
+  },
+  "2026-10-12-2-cena~p0": {
+    "auto": true,
+    "celda": "2026-10-12-2-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 57.5,
+      "patata-g": 625.5,
+      "tomate-g": 500.4
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:10.748Z",
+    "porHecho": true,
+    "raciones": 4.17,
+    "recetas": [
+      "tortilla-patata-calabacin"
+    ]
+  },
+  "2026-10-12-2-comida~p0": {
+    "auto": true,
+    "celda": "2026-10-12-2-comida",
+    "descontado": {},
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:06.663Z",
+    "porHecho": true,
+    "raciones": 2.42,
+    "recetas": [
+      "solomillo-naranja"
+    ],
+    "reservas": {
+      "solomillo-naranja__1790764756681": 2.42
+    }
+  },
+  "2026-10-12-2-comida~tCCT": {
+    "auto": true,
+    "celda": "2026-10-12-2-comida",
+    "descontado": {},
+    "etiqueta": "Tupper CCT",
+    "fecha": "2026-10-17T09:27:08.761Z",
+    "porHecho": true,
+    "raciones": 0.81,
+    "recetas": [
+      "pollo-guisado-arroz"
+    ],
+    "reservas": {
+      "pollo-guisado-arroz__1790764872272": 0.81
+    }
+  },
+  "2026-10-12-2-comida~tRFA": {
+    "auto": true,
+    "celda": "2026-10-12-2-comida",
+    "descontado": {
+      "hummus-g": 42.3,
+      "lechuga-g": 28.2,
+      "tomate-g": 56.4,
+      "tortillas-integrales-de-trigo-g": 75.2
+    },
+    "etiqueta": "Tupper RFA",
+    "fecha": "2026-10-17T09:27:08.161Z",
+    "porHecho": true,
+    "raciones": 0.94,
+    "recetas": [
+      "wraps-pavo-hummus"
+    ]
+  },
+  "2026-10-12-2-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-12-2-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "pan-integral-g": 32.9,
+      "tomate-g": 50
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-17T09:27:05.334Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-12-2-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-12-2-merienda",
+    "descontado": {
+      "crema-de-cacahuete-100-g": 6.8
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:09.357Z",
+    "raciones": 4.17,
+    "recetas": [
+      "tostada-cacahuete-platano"
+    ]
+  },
+  "2026-10-12-3-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-12-3-almuerzo",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 6,
+      "tomate-g": 52
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:13.287Z",
+    "raciones": 1.3,
+    "recetas": [
+      "almuerzo-bocadillo-queso-fresco"
+    ]
+  },
+  "2026-10-12-3-cena~p0": {
+    "auto": true,
+    "celda": "2026-10-12-3-cena",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 27.9,
+      "pimiento-rojo-g": 250.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:18.950Z",
+    "porHecho": true,
+    "raciones": 4.17,
+    "recetas": [
+      "pavo-plancha-verduras"
+    ]
+  },
+  "2026-10-12-3-comida~p0": {
+    "auto": true,
+    "celda": "2026-10-12-3-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 29.7,
+      "limon-g": 80.8,
+      "lomo-de-salmon-g": 419.9,
+      "patata-g": 226.5
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:15.028Z",
+    "porHecho": true,
+    "raciones": 3.23,
+    "recetas": [
+      "salmon-horno-patata"
+    ]
+  },
+  "2026-10-12-3-comida~tRFA": {
+    "auto": true,
+    "celda": "2026-10-12-3-comida",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 8.6,
+      "arroz-integral-g": 4.2,
+      "garbanzos-cocidos-bote-g": 7.8,
+      "pepino-g": 4.8,
+      "tomate-g": 75.2
+    },
+    "etiqueta": "Tupper RFA",
+    "fecha": "2026-10-17T09:27:17.281Z",
+    "porHecho": true,
+    "raciones": 0.94,
+    "recetas": [
+      "arroz-garbanzos-feta"
+    ]
+  },
+  "2026-10-12-3-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-12-3-desayuno",
+    "descontado": {
+      "aceite-de-oliva-virgen-extra-g": 9.2,
+      "tomate-g": 50
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-17T09:27:12.107Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-12-3-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-12-3-merienda",
+    "descontado": {
+      "queso-en-lonchas-g": 83.4
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:17.936Z",
+    "raciones": 4.17,
+    "recetas": [
+      "bocadillo-pavo-queso"
+    ]
+  },
+  "2026-10-12-4-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-12-4-almuerzo",
+    "descontado": {
+      "jamon-serrano-en-lonchas-g": 44.8,
+      "tomate-g": 52
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:20.748Z",
+    "raciones": 1.3,
+    "recetas": [
+      "almuerzo-bocadillo-serrano"
+    ]
+  },
+  "2026-10-12-4-cena~p0": {
+    "auto": true,
+    "celda": "2026-10-12-4-cena",
+    "descontado": {
+      "base-de-pizza-integral-g": 417,
+      "champinones-g": 4,
+      "jamon-cocido-g": 166.8,
+      "lechuga-g": 208.5,
+      "pimiento-rojo-g": 28.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:23.805Z",
+    "porHecho": true,
+    "raciones": 4.17,
+    "recetas": [
+      "pizza-casera-verduras"
+    ]
+  },
+  "2026-10-12-4-comida~p0": {
+    "auto": true,
+    "celda": "2026-10-12-4-comida",
+    "descontado": {
+      "espinacas-frescas-g": 3
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:21.511Z",
+    "porHecho": true,
+    "raciones": 4.17,
+    "recetas": [
+      "garbanzos-espinacas"
+    ]
+  },
+  "2026-10-12-4-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-12-4-desayuno",
+    "descontado": {
+      "tomate-g": 50
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-17T09:27:19.794Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-12-4-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-12-4-merienda",
+    "descontado": {},
+    "etiqueta": "",
+    "fecha": "2026-10-17T09:27:21.769Z",
+    "raciones": 4.17,
+    "recetas": [
+      "yogur-fruta-frutos-secos"
+    ]
+  },
+  "2026-10-12-5-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-12-5-desayuno",
+    "descontado": {
+      "tomate-g": 50
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-17T09:27:24.454Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
   }
 }

@@ -149,14 +149,14 @@
     "semana": "2026-09-28"
   },
   "pollo-guisado-arroz__1790764872272": {
-    "actualizado": "2026-09-30T11:00:00.000Z",
+    "actualizado": "2026-10-17T09:27:08.417Z",
     "caduca": "2026-12-30",
     "comer": 5,
     "donde": "congelador",
     "fecha": "2026-09-30",
     "hechas": 8,
     "receta": "pollo-guisado-arroz",
-    "reserva": 3,
+    "reserva": 2.19,
     "semana": "A"
   },
   "pure-calabacin__1791066429068": {
@@ -248,14 +248,14 @@
     "semana": "2026-10-05"
   },
   "solomillo-naranja__1790764756681": {
-    "actualizado": "2026-09-30T10:39:16.681Z",
+    "actualizado": "2026-10-17T09:27:06.295Z",
     "caduca": "2026-12-30",
     "comer": 4,
     "donde": "congelador",
     "fecha": "2026-09-30",
     "hechas": 12,
     "receta": "solomillo-naranja",
-    "reserva": 8,
+    "reserva": 5.58,
     "semana": "A"
   }
 }

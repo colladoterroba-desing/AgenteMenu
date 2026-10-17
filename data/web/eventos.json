@@ -468,5 +468,15 @@
     "fecha": "2026-10-15T14:40:57.808Z",
     "texto": "Ricardo hijo: peso 77 kg",
     "tipo": "perfil"
+  },
+  "1792229244758-pahrs": {
+    "fecha": "2026-10-17T09:27:24.758Z",
+    "texto": "Se restan solas de la despensa 13 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
+  },
+  "1792229245025-a516m": {
+    "fecha": "2026-10-17T09:27:25.025Z",
+    "texto": "Se dan por hechas 13 comidas de días pasados que no se marcaron como cocinadas: se restan de la despensa o de las raciones en reserva.",
+    "tipo": "cocinado"
   }
 }

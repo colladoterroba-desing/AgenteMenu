@@ -26,25 +26,19 @@
     },
     {
       "nombre": "Lentejas cocidas (bote)",
-      "cantidad": 400,
+      "cantidad": 197.9,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Hummus",
-      "cantidad": 240,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
-    },
-    {
-      "nombre": "Jamón serrano en lonchas",
-      "cantidad": 96.8,
+      "cantidad": 197.7,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Tortillas integrales de trigo",
-      "cantidad": 320,
+      "cantidad": 244.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · «T. 100% integrales», sin confirmar qué son · 8 ud"
     },
@@ -55,28 +49,16 @@
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
-      "nombre": "Champiñones",
-      "cantidad": 4,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
-    },
-    {
       "nombre": "Lechuga",
-      "cantidad": 628.5,
+      "cantidad": 391.8,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · 1 lechuga hoja de roble, peso supuesto"
     },
     {
       "nombre": "Base de pizza integral",
-      "cantidad": 600,
+      "cantidad": 183,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar · 2 ud"
-    },
-    {
-      "nombre": "Espinacas frescas",
-      "cantidad": 3,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Pan de barra",
@@ -85,35 +67,18 @@
       "nota": "Ticket Mercadona 28/09 · 2 baguettes, peso supuesto"
     },
     {
-      "nombre": "Pan integral",
-      "cantidad": 692.6,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · 5 panecillos, peso supuesto"
-    },
-    {
-      "nombre": "Pimiento rojo",
-      "cantidad": 316,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · peso del ticket"
-    },
-    {
-      "nombre": "Aceite de oliva virgen extra",
-      "cantidad": 235.2,
-      "unidad": "g"
-    },
-    {
       "nombre": "Azúcar",
       "cantidad": 25,
       "unidad": "g"
     },
     {
       "nombre": "Jamón cocido",
-      "cantidad": 204.8,
+      "cantidad": 38,
       "unidad": "g"
     },
     {
       "nombre": "Queso en lonchas",
-      "cantidad": 187,
+      "cantidad": 20.2,
       "unidad": "g"
     },
     {
@@ -127,18 +92,8 @@
       "unidad": "g"
     },
     {
-      "nombre": "Patata",
-      "cantidad": 852,
-      "unidad": "g"
-    },
-    {
       "nombre": "Alubias blancas cocidas (bote)",
       "cantidad": 688,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Arroz integral",
-      "cantidad": 4.2,
       "unidad": "g"
     },
     {
@@ -152,25 +107,9 @@
       "unidad": "g"
     },
     {
-      "nombre": "Crema de cacahuete 100 %",
-      "cantidad": 6.8,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Fruta de temporada",
-      "cantidad": 595,
-      "unidad": "g"
-    },
-    {
       "nombre": "Gambas peladas congeladas",
       "cantidad": 0.4,
       "unidad": "g"
-    },
-    {
-      "nombre": "Garbanzos cocidos (bote)",
-      "cantidad": 7.8,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
       "nombre": "Guisantes congelados",
@@ -184,7 +123,7 @@
     },
     {
       "nombre": "Limón",
-      "cantidad": 319.5,
+      "cantidad": 238.8,
       "unidad": "g"
     },
     {
@@ -204,22 +143,12 @@
     },
     {
       "nombre": "Pan rallado",
-      "cantidad": 50.3,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Pechuga de pavo en lonchas",
-      "cantidad": 107.2,
+      "cantidad": 26.1,
       "unidad": "g"
     },
     {
       "nombre": "Pechuga de pollo en filetes finos",
       "cantidad": 550,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Pepino",
-      "cantidad": 4.8,
       "unidad": "g"
     },
     {
@@ -234,7 +163,7 @@
     },
     {
       "nombre": "Tomate",
-      "cantidad": 1805.8,
+      "cantidad": 692.6,
       "unidad": "g"
     },
     {
@@ -243,13 +172,8 @@
       "unidad": "g"
     },
     {
-      "nombre": "Yogur líquido natural",
-      "cantidad": 127.8,
-      "unidad": "g"
-    },
-    {
       "nombre": "Lomo de salmón",
-      "cantidad": 780,
+      "cantidad": 360.1,
       "unidad": "g",
       "nota": "6 raciones en el congelador"
     }
@@ -278,7 +202,7 @@
     {
       "id": "pollo-guisado-arroz__1790764872272",
       "descripcion": "Pollo guisado con verduras y arroz integral",
-      "raciones": 3,
+      "raciones": 2.19,
       "fecha": "2026-09-30",
       "consumirAntesDe": "2026-12-30",
       "receta": "pollo-guisado-arroz",
@@ -288,7 +212,7 @@
     {
       "id": "solomillo-naranja__1790764756681",
       "descripcion": "Solomillo de cerdo a la naranja con patatas al horno",
-      "raciones": 8,
+      "raciones": 5.58,
       "fecha": "2026-09-30",
       "consumirAntesDe": "2026-12-30",
       "receta": "solomillo-naranja",

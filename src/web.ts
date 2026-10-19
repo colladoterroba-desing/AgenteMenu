@@ -20,6 +20,7 @@ import {
   REPARTO_LABORABLE,
   tasaMetabolicaBasal,
 } from "./nutricion.js";
+import { construirMeses, type MenuMensual, type MesMenu, type TarjetaMensual } from "./mensual.js";
 import { componerMenu, listaCompra, menuVisible, sinCambios, normalizarCantidad, SECCIONES, type DiaDelMenu, type LineaCompra, type MenuSemana, type Racion, type Receta, type Seccion } from "./menu.js";
 import { type TipoComida } from "./planificacion.js";
 import { costeCesta, MOSTRAR_COSTES, type TablaPrecios } from "./precios.js";
@@ -518,6 +519,47 @@ function seccionMenu(familia: Familia, semanas: { dias: DiaDelMenu[]; clave: str
   return `<div class="semana semana-scroll" style="--filas:${filas.length + 1}" tabindex="0" aria-label="Menú día a día (desliza para ver más días)">${visibles
     .flatMap((w) => w.dias.map((d) => columna(d, w.clave)))
     .join("")}</div>`;
+}
+
+const FRANJAS_MENSUAL = [["comida", "Comida"], ["cena", "Cena"]] as const;
+
+function tarjetaMensual(t: TarjetaMensual): string {
+  const clase = t.tipo === "frio" ? " frio" : t.tipo === "calor" ? " calor" : "";
+  const etq = t.tipo === "frio" ? "Tupper frío" : t.tipo === "calor" ? "Tupper para recalentar" : "";
+  return `<div class="tarjeta${clase}${t.tipo === "variante" ? " variante-mes" : ""}">
+    <a class="plato-menu" href="#r-${esc(t.receta)}">${esc(t.nombre)}</a>
+    <div class="comensales">${t.quien.map((q) => `<span class="comensal">${esc(q)}</span>`).join("")}${etq ? `<span class="tarjeta-etq">${etq}</span>` : ""}</div>
+    <span class="raciones mono" title="Raciones a preparar (1 ración = lo que come un adulto de 2.000 kcal al día) y gramos de ingredientes de una ración">${num(t.raciones, 2)} rac. · ${num(t.gramosRacion)} g/rac.</span>
+  </div>`;
+}
+
+/** Menú mensual: un selector de mes y, de cada mes, una tabla por semana (lunes a viernes) con la comida y la cena. */
+function seccionMensual(meses: MesMenu[]): string {
+  if (!meses.length) return `<p class="nota">Todavía no hay ningún menú mensual.</p>`;
+  const panel = (m: MesMenu) => {
+    const semanas = new Map<string, typeof m.dias>();
+    for (const d of m.dias) {
+      const lunes = sumarDias(d.fecha, -DIAS_SEMANA.indexOf(d.dia));
+      semanas.set(lunes, [...(semanas.get(lunes) ?? []), d]);
+    }
+    const largo = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
+    return `<div class="mes" data-mes-panel="${esc(m.mes)}" hidden>
+      ${m.descripcion ? `<p class="sub">${esc(m.descripcion)}</p>` : ""}
+      ${[...semanas].map(([lunes, dias]) => `<section class="mes-semana" aria-label="Semana del ${esc(largo(lunes))}">
+        <h3 class="mes-semana-cab">Semana del ${esc(largo(lunes))} al ${esc(largo(sumarDias(lunes, 4)))}</h3>
+        <div class="mes-rejilla">${dias.map((d) => `<div class="mes-dia" style="grid-column:${DIAS_SEMANA.indexOf(d.dia) + 1}">
+          <h4 class="mes-dia-cab"><span>${esc(d.nombre)}</span> <span class="dia-fecha">${esc(largo(d.fecha))}</span></h4>
+          ${FRANJAS_MENSUAL.map(([tipo, nombre]) => `<div class="mes-franja"><span class="celda-etq">${nombre}</span>${
+            d[tipo].length ? d[tipo].map(tarjetaMensual).join("") : `<span class="sub">—</span>`
+          }</div>`).join("")}
+        </div>`).join("")}</div>
+      </section>`).join("")}
+    </div>`;
+  };
+  return `<div class="selector-mes" role="group" aria-label="Mes">${meses
+    .map((m) => `<button type="button" class="secundario" data-mes-btn="${esc(m.mes)}" aria-pressed="false">${esc(m.etiqueta)}</button>`)
+    .join("")}</div>
+  ${meses.map(panel).join("")}`;
 }
 
 interface UsoReceta {
@@ -1021,6 +1063,24 @@ p{margin:0}
 table{border-collapse:collapse;width:100%;font-size:.9rem}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.selector-mes{display:flex;flex-wrap:wrap;gap:8px}
+.selector-mes button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.mes{display:grid;gap:28px}
+.mes-semana{display:grid;gap:10px}
+.mes-semana-cab{font-size:1rem;color:var(--muted);font-weight:600}
+.mes-rejilla{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:auto auto auto;gap:0 12px}
+.mes-dia{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:8px}
+.mes-dia-cab{display:flex;gap:8px;align-items:baseline;justify-content:space-between;background:var(--surface);border-radius:10px;padding:10px 12px;font-size:.95rem}
+.mes-dia-cab .dia-fecha{font-weight:400;color:var(--muted);font-size:.8rem}
+.mes-franja{display:flex;flex-direction:column;gap:8px;align-content:start}
+.tarjeta{background:var(--surface);border-radius:10px;padding:10px 12px;display:grid;gap:6px;align-content:start;border:1px solid var(--line)}
+.tarjeta.frio{background:var(--frio-soft);border-color:var(--frio)}
+.tarjeta.calor{background:var(--calor-soft);border-color:var(--calor)}
+.tarjeta .comensales{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.tarjeta-etq{font-size:.7rem;color:var(--muted);margin-left:2px}
+.tarjeta .raciones{font-size:.75rem;color:var(--muted)}
+.variante-mes{border-style:dashed}
+@media (max-width:760px){.mes-rejilla{grid-template-columns:1fr;grid-template-rows:none}.mes-dia{grid-row:auto;grid-column:1!important;grid-template-rows:none;margin-bottom:12px}}
 .semana-scroll{display:grid;grid-auto-flow:column;grid-auto-columns:220px;grid-template-rows:repeat(var(--filas,6),auto);gap:12px;overflow-x:auto;padding:4px 4px 12px;scroll-snap-type:x proximity;scroll-padding-left:4px}
 .col-dia{display:grid;grid-row:span var(--filas,6);grid-template-rows:subgrid;row-gap:0;background:var(--surface);border:2px solid var(--accent);border-radius:12px;scroll-snap-align:start;overflow:hidden}
 .col-dia.sem-proxima{border:2px dashed var(--muted)}
@@ -1478,6 +1538,10 @@ export interface DatosWeb {
   /** Precios por tienda para valorar la cesta. */
   precios?: TablaPrecios;
   fecha: string;
+  /** Menús mensuales preparados a mano (data/menus-mensuales/). */
+  mensuales?: MenuMensual[];
+  /** Todos los menús semanales que se conocen (historial, en curso y siguiente), para componer los meses sin fichero. */
+  semanasConocidas?: MenuSemana[];
 }
 
 const euros = (n: number) => n.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
@@ -1534,7 +1598,7 @@ function seccionCoste(compra: Record<Seccion, LineaCompra[]>, tabla: TablaPrecio
   </section>`;
 }
 
-export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, despensa, precios, fecha }: DatosWeb): string {
+export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, despensa, precios, fecha, mensuales, semanasConocidas }: DatosWeb): string {
   const dias = componerMenu(familia, menu, recetas);
   const diasSiguiente = menuSiguiente ? componerMenu(familia, menuSiguiente, recetas) : undefined;
   const hoy = new Date();
@@ -1631,6 +1695,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
   const recetasUsadas = new Set(comidas.flatMap((c) => [...c.platos, ...c.tuppers].map((p) => p.receta.id))).size;
   const paginas = [
     ["menu", "Menú"],
+    ["mensual", "Menú mensual"],
     ["diario", "Diario"],
     ["recetas", "Recetas"],
     ["compra", "Compra"],
@@ -1675,6 +1740,15 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
         <div><dt>Recetas</dt><dd>${recetasUsadas}</dd></div>
         <div><dt>Productos a comprar</dt><dd id="resumen-compra">—</dd></div>
       </dl>
+  </section>
+
+  <section class="vista" id="mensual" data-vista aria-labelledby="h-mensual" hidden>
+    <header class="cab">
+      <span class="etq">Comidas y cenas de lunes a viernes</span>
+      <h1 id="h-mensual">Menú mensual</h1>
+      <p class="sub">Elige el mes. Cada plato enlaza a su receta; las etiquetas son quién lo come y «rac.» cuántas raciones se preparan. En azul, el tupper frío; en naranja, el tupper para recalentar. Es una vista aparte: no cambia el menú de cada semana ni la lista de la compra, y no tiene anotaciones.</p>
+    </header>
+    ${seccionMensual(construirMeses(familia, recetas, { archivos: mensuales ?? [], semanas: [...(semanasConocidas ?? []), menu, ...(menuSiguiente ? [menuSiguiente] : [])], hoy: hoy.toISOString().slice(0, 10) }))}
   </section>
 
   <section class="vista" id="diario" data-vista aria-labelledby="h-diario" hidden>
@@ -1735,13 +1809,16 @@ ${DIALOGOS}
 async function main() {
   const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const leer = async <T>(f: string) => JSON.parse(await readFile(path.join(raiz, "data", f), "utf8")) as T;
-  const rotada = await new Almacen(path.join(raiz, "data")).rotarSemanas();
+  const almacen = new Almacen(path.join(raiz, "data"));
+  const rotada = await almacen.rotarSemanas();
   if (rotada) console.log(`Empieza la semana ${rotada.semana} (${rotada.inicio}): pasa a ser la semana en curso. Falta preparar la semana siguiente.`);
   const html = generarHtml({
     familia: await leer<Familia>("familia.json"),
     propuesta: await leer<PropuestaTuppers>("propuesta-tuppers.json"),
     menu: await leer<MenuSemana>("menu-semana.json"),
     menuSiguiente: await leer<MenuSemana>("menu-siguiente.json").catch(() => undefined),
+    mensuales: await almacen.menusMensuales(),
+    semanasConocidas: await almacen.semanasConocidas(),
     recetas: (await leer<{ recetas: Receta[] }>("recetas.json")).recetas,
     despensa: await leer<Despensa>("despensa.json"),
     precios: await leer<TablaPrecios>("precios.json").catch(() => undefined),

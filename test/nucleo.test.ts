@@ -222,7 +222,8 @@ test("desayunos habituales por persona, con ración fija, y almuerzo de RFC entr
 test("el menú se guarda sin validación y con las sobras enlazadas a la comida de la que salen", async () => {
   const almacen = await almacenTemporal();
   const { ejecutar } = crearHerramientas(almacen);
-  const { cambios: _c, ...datos } = await almacen.menu();
+  // El menú de ejemplo (no el de la semana real, que cambia cada lunes): su tupper de CCT del martes sale de la cena del lunes.
+  const { cambios: _c, ...datos } = JSON.parse(await readFile("test/fixtures/menu-semana.json", "utf8"));
   const r = await ejecutar("guardar_menu", { ...datos, autor: "CCT", fecha: "2026-09-29", descripcionCambio: "Cambio la cena del jueves" });
   assert.equal(r.error, false, r.contenido);
   const tras = await almacen.menu() as Record<string, unknown> & Awaited<ReturnType<typeof almacen.menu>>;

@@ -172,8 +172,8 @@
     "unidad": "g"
   },
   "guisantes-congelados-g": {
-    "actualizado": "2026-10-09T13:45:00.000Z",
-    "cantidad": 162,
+    "actualizado": "2026-10-19T07:59:02.726Z",
+    "cantidad": 0,
     "nombre": "Guisantes congelados",
     "unidad": "g"
   },
@@ -196,8 +196,8 @@
     "unidad": "g"
   },
   "hummus-g": {
-    "actualizado": "2026-10-17T09:27:07.285Z",
-    "cantidad": 197.7,
+    "actualizado": "2026-10-19T07:58:59.058Z",
+    "cantidad": 0,
     "nombre": "Hummus",
     "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar",
     "unidad": "g"
@@ -293,8 +293,8 @@
     "unidad": "g"
   },
   "pan-de-molde-integral-g": {
-    "actualizado": "2026-10-10T11:01:34.823Z",
-    "cantidad": 367.2,
+    "actualizado": "2026-10-19T07:59:18.304Z",
+    "cantidad": 0,
     "nombre": "Pan de molde integral",
     "unidad": "g"
   },
@@ -330,8 +330,8 @@
     "unidad": "g"
   },
   "pechuga-de-pollo-en-filetes-finos-g": {
-    "actualizado": "2026-10-03T18:30:59.119Z",
-    "cantidad": 550,
+    "actualizado": "2026-10-19T07:59:21.758Z",
+    "cantidad": 0,
     "nombre": "Pechuga de pollo en filetes finos",
     "unidad": "g"
   },
@@ -361,8 +361,8 @@
     "unidad": "g"
   },
   "pimiento-verde-g": {
-    "actualizado": "2026-10-10T11:01:29.806Z",
-    "cantidad": 137.6,
+    "actualizado": "2026-10-19T07:59:23.406Z",
+    "cantidad": 0,
     "nombre": "Pimiento verde",
     "unidad": "g"
   },
@@ -374,8 +374,8 @@
     "unidad": "g"
   },
   "queso-en-lonchas-g": {
-    "actualizado": "2026-10-17T09:27:17.630Z",
-    "cantidad": 20.2,
+    "actualizado": "2026-10-19T07:50:47.588Z",
+    "cantidad": 0,
     "nombre": "Queso en lonchas",
     "unidad": "g"
   },
@@ -393,21 +393,21 @@
     "unidad": "g"
   },
   "quinoa-g": {
-    "actualizado": "2026-10-09T13:45:00.000Z",
-    "cantidad": 3.6,
+    "actualizado": "2026-10-19T07:59:26.381Z",
+    "cantidad": 0,
     "nombre": "Quinoa",
     "unidad": "g"
   },
   "solomillo-de-cerdo-g": {
-    "actualizado": "2026-10-03T13:50:24.542Z",
-    "cantidad": 1817.6,
+    "actualizado": "2026-10-19T07:59:29.832Z",
+    "cantidad": 0,
     "nombre": "Solomillo de cerdo",
     "nota": "Ticket Mercadona 28/09 · 4 bandejas (19,30 €), peso estimado a unos 8 €/kg",
     "unidad": "g"
   },
   "tomate-g": {
-    "actualizado": "2026-10-17T09:27:24.139Z",
-    "cantidad": 692.6,
+    "actualizado": "2026-10-19T07:50:47.082Z",
+    "cantidad": 590.6,
     "nombre": "Tomate",
     "unidad": "g"
   },

@@ -19,20 +19,8 @@
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
     {
-      "nombre": "Solomillo de cerdo",
-      "cantidad": 1817.6,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · 4 bandejas (19,30 €), peso estimado a unos 8 €/kg"
-    },
-    {
       "nombre": "Lentejas cocidas (bote)",
       "cantidad": 197.9,
-      "unidad": "g",
-      "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
-    },
-    {
-      "nombre": "Hummus",
-      "cantidad": 197.7,
       "unidad": "g",
       "nota": "Ticket Mercadona 28/09 · tamaño de envase supuesto, sin confirmar"
     },
@@ -77,11 +65,6 @@
       "unidad": "g"
     },
     {
-      "nombre": "Queso en lonchas",
-      "cantidad": 20.2,
-      "unidad": "g"
-    },
-    {
       "nombre": "Carne estofada con verdura",
       "cantidad": 400,
       "unidad": "g"
@@ -112,11 +95,6 @@
       "unidad": "g"
     },
     {
-      "nombre": "Guisantes congelados",
-      "cantidad": 162,
-      "unidad": "g"
-    },
-    {
       "nombre": "Jamón serrano en taquitos",
       "cantidad": 57.9,
       "unidad": "g"
@@ -137,33 +115,13 @@
       "unidad": "g"
     },
     {
-      "nombre": "Pan de molde integral",
-      "cantidad": 367.2,
-      "unidad": "g"
-    },
-    {
       "nombre": "Pan rallado",
       "cantidad": 26.1,
       "unidad": "g"
     },
     {
-      "nombre": "Pechuga de pollo en filetes finos",
-      "cantidad": 550,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Pimiento verde",
-      "cantidad": 137.6,
-      "unidad": "g"
-    },
-    {
-      "nombre": "Quinoa",
-      "cantidad": 3.6,
-      "unidad": "g"
-    },
-    {
       "nombre": "Tomate",
-      "cantidad": 692.6,
+      "cantidad": 590.6,
       "unidad": "g"
     },
     {
@@ -240,16 +198,6 @@
       "hechas": 4
     },
     {
-      "id": "paella-pollo-verduras__1791035373571",
-      "descripcion": "Paella de pollo y verduras",
-      "raciones": 1,
-      "fecha": "2026-10-03",
-      "consumirAntesDe": "2027-01-03",
-      "receta": "paella-pollo-verduras",
-      "ubicacion": "congelador",
-      "hechas": 1
-    },
-    {
       "id": "pure-calabacin__1791066429068",
       "descripcion": "Puré de calabacín",
       "raciones": 1,
@@ -268,45 +216,6 @@
       "receta": "pure-zanahoria",
       "ubicacion": "nevera",
       "hechas": 10
-    },
-    {
-      "id": "brocoli__1791563400001",
-      "descripcion": "Brócoli cocinado",
-      "raciones": 2,
-      "fecha": "2026-10-09",
-      "consumirAntesDe": "2026-10-12",
-      "ubicacion": "nevera",
-      "hechas": 2
-    },
-    {
-      "id": "judias-verdes-rehogadas__1791563400000",
-      "descripcion": "Judías verdes rehogadas con patata",
-      "raciones": 3,
-      "fecha": "2026-10-09",
-      "consumirAntesDe": "2026-10-12",
-      "receta": "judias-verdes-rehogadas",
-      "ubicacion": "nevera",
-      "hechas": 3
-    },
-    {
-      "id": "pure-calabacin__1791562500001",
-      "descripcion": "Puré de calabacín",
-      "raciones": 3,
-      "fecha": "2026-10-09",
-      "consumirAntesDe": "2027-01-09",
-      "receta": "pure-calabacin",
-      "ubicacion": "congelador",
-      "hechas": 3
-    },
-    {
-      "id": "pure-zanahoria__1791562500000",
-      "descripcion": "Puré de zanahoria",
-      "raciones": 3,
-      "fecha": "2026-10-09",
-      "consumirAntesDe": "2027-01-09",
-      "receta": "pure-zanahoria",
-      "ubicacion": "congelador",
-      "hechas": 3
     }
   ]
 }

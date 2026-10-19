@@ -21,7 +21,7 @@
     "semana": "2026-09-28"
   },
   "brocoli__1791563400001": {
-    "actualizado": "2026-10-09T14:10:00.000Z",
+    "actualizado": "2026-10-19T07:59:35.855Z",
     "caduca": "2026-10-12",
     "comer": 0,
     "descontado": {},
@@ -29,7 +29,7 @@
     "donde": "nevera",
     "fecha": "2026-10-09",
     "hechas": 2,
-    "reserva": 2,
+    "reserva": 0,
     "semana": "2026-10-05"
   },
   "espaguetis-bolonesa__1790764660435": {
@@ -55,7 +55,7 @@
     "semana": "A"
   },
   "judias-verdes-rehogadas__1791563400000": {
-    "actualizado": "2026-10-09T14:10:00.000Z",
+    "actualizado": "2026-10-19T07:59:37.984Z",
     "caduca": "2026-10-12",
     "comer": 0,
     "descontado": {},
@@ -64,7 +64,7 @@
     "fecha": "2026-10-09",
     "hechas": 3,
     "receta": "judias-verdes-rehogadas",
-    "reserva": 3,
+    "reserva": 0,
     "semana": "2026-10-05"
   },
   "lentejas-estofadas__1790764636764": {
@@ -133,7 +133,7 @@
     "semana": "2026-09-28"
   },
   "paella-pollo-verduras__1791035373571": {
-    "actualizado": "2026-10-03T13:49:33.571Z",
+    "actualizado": "2026-10-19T07:59:48.350Z",
     "caduca": "2027-01-03",
     "comer": 0,
     "descontado": {
@@ -145,7 +145,7 @@
     "fecha": "2026-10-03",
     "hechas": 1,
     "receta": "paella-pollo-verduras",
-    "reserva": 1,
+    "reserva": 0,
     "semana": "2026-09-28"
   },
   "pollo-guisado-arroz__1790764872272": {
@@ -178,7 +178,7 @@
     "semana": "2026-09-28"
   },
   "pure-calabacin__1791562500001": {
-    "actualizado": "2026-10-09T13:55:00.000Z",
+    "actualizado": "2026-10-19T07:59:54.090Z",
     "caduca": "2027-01-09",
     "comer": 0,
     "descontado": {},
@@ -187,7 +187,7 @@
     "fecha": "2026-10-09",
     "hechas": 3,
     "receta": "pure-calabacin",
-    "reserva": 3,
+    "reserva": 0,
     "semana": "2026-10-05"
   },
   "pure-calabaza__1790764728521": {
@@ -235,7 +235,7 @@
     "semana": "2026-10-05"
   },
   "pure-zanahoria__1791562500000": {
-    "actualizado": "2026-10-09T13:55:00.000Z",
+    "actualizado": "2026-10-19T07:59:56.797Z",
     "caduca": "2027-01-09",
     "comer": 0,
     "descontado": {},
@@ -244,7 +244,7 @@
     "fecha": "2026-10-09",
     "hechas": 3,
     "receta": "pure-zanahoria",
-    "reserva": 3,
+    "reserva": 0,
     "semana": "2026-10-05"
   },
   "solomillo-naranja__1790764756681": {

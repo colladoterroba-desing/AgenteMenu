@@ -478,5 +478,10 @@
     "fecha": "2026-10-17T09:27:25.025Z",
     "texto": "Se dan por hechas 13 comidas de días pasados que no se marcaron como cocinadas: se restan de la despensa o de las raciones en reserva.",
     "tipo": "cocinado"
+  },
+  "1792396248191-axgzz": {
+    "fecha": "2026-10-19T07:50:48.191Z",
+    "texto": "Se restan solas de la despensa 3 comidas que no se cocinan (bocadillos, yogures, desayunos…).",
+    "tipo": "cocinado"
   }
 }

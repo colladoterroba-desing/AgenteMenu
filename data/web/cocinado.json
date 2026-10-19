@@ -1393,5 +1393,47 @@
       "cafe-solo",
       "desayuno-afc"
     ]
+  },
+  "2026-10-19-0-almuerzo~p0": {
+    "auto": true,
+    "celda": "2026-10-19-0-almuerzo",
+    "descontado": {
+      "tomate-g": 52
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-19T07:50:47.346Z",
+    "raciones": 1.3,
+    "recetas": [
+      "almuerzo-bocadillo-pollo"
+    ]
+  },
+  "2026-10-19-0-desayuno~des": {
+    "auto": true,
+    "celda": "2026-10-19-0-desayuno",
+    "descontado": {
+      "tomate-g": 50
+    },
+    "etiqueta": "Desayunos",
+    "fecha": "2026-10-19T07:50:46.827Z",
+    "raciones": 1,
+    "recetas": [
+      "desayuno-rfa",
+      "desayuno-cct",
+      "cafe-solo",
+      "desayuno-afc"
+    ]
+  },
+  "2026-10-19-0-merienda~p0": {
+    "auto": true,
+    "celda": "2026-10-19-0-merienda",
+    "descontado": {
+      "queso-en-lonchas-g": 20.2
+    },
+    "etiqueta": "",
+    "fecha": "2026-10-19T07:50:47.896Z",
+    "raciones": 4.17,
+    "recetas": [
+      "bocadillo-pavo-queso"
+    ]
   }
 }

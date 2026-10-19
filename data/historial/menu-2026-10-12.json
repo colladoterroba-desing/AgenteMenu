@@ -1,0 +1,176 @@
+{
+  "semana": "A",
+  "inicio": "2026-10-12",
+  "batch": [
+    {
+      "dia": "D",
+      "tareas": [
+        "Sábado por la noche: sacar del congelador 1 ración de lentejas (tupper de CCT del lunes) y 2 de espaguetis a la boloñesa (comida del lunes de RFC y AFC).",
+        "Asar pechuga de pollo para la ensalada de pasta del tupper de RFA y el bocadillo de RFC del lunes, 20 min.",
+        "Ensalada de pasta integral con pollo para el tupper frío de RFA del lunes, 20 min.",
+        "Puré de calabaza para la comida del martes (RFC y AFC), 30 min, en la Thermomix.",
+        "Cocer 2 huevos duros para la ensalada de lentejas del tupper de RFA del martes, 12 min."
+      ]
+    }
+  ],
+  "dias": {
+    "L": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-pollo",
+        "prepara": "Domingo por la noche, con el pollo asado del batch"
+      },
+      "comida": {
+        "receta": "espaguetis-bolonesa",
+        "prepara": "Reserva del congelador (sacada el sábado): recalentar"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Hacer 1 ración extra para el tupper de CCT del martes"
+      }
+    },
+    "M": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Lunes por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "albondigas-pavo-cuscus",
+        "cambio": {
+          "antes": {
+            "receta": "pure-calabaza",
+            "segundo": "lomo-adobado-plancha",
+            "prepara": "Puré del batch del domingo: recalentar; el lomo, a la plancha"
+          },
+          "motivo": "Intercambio con la comida del miércoles",
+          "fecha": "2026-10-06"
+        }
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "merluza-plancha-brocoli",
+        "variantes": {
+          "RFA": "tortilla-francesa-brocoli"
+        }
+      }
+    },
+    "X": {
+      "almuerzo": {
+        "receta": "almuerzo-yogur-frutos-secos",
+        "prepara": "Martes por la noche: dejarlo junto en la nevera"
+      },
+      "comida": {
+        "receta": "solomillo-naranja",
+        "prepara": "Reserva del congelador: sacar el martes por la noche y recalentar"
+      },
+      "merienda": {
+        "receta": "tostada-cacahuete-platano"
+      },
+      "cena": {
+        "receta": "tortilla-patata-calabacin"
+      }
+    },
+    "J": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-queso-fresco",
+        "prepara": "Miércoles por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "salmon-horno-patata"
+      },
+      "merienda": {
+        "receta": "bocadillo-pavo-queso"
+      },
+      "cena": {
+        "receta": "pavo-plancha-verduras"
+      }
+    },
+    "V": {
+      "almuerzo": {
+        "receta": "almuerzo-bocadillo-serrano",
+        "prepara": "Jueves por la noche, sin cocinar"
+      },
+      "comida": {
+        "receta": "garbanzos-espinacas"
+      },
+      "merienda": {
+        "receta": "yogur-fruta-frutos-secos"
+      },
+      "cena": {
+        "receta": "pizza-casera-verduras"
+      }
+    },
+    "S": {
+      "comida": {
+        "receta": "lubina-horno"
+      },
+      "cena": {
+        "receta": "crema-puerro",
+        "segundo": "huevos-revueltos-jamon-queso"
+      }
+    },
+    "D": {
+      "comida": {
+        "receta": "lentejas-estofadas",
+        "prepara": "Reserva del congelador: sacar el sábado por la noche y recalentar"
+      },
+      "cena": {
+        "receta": "pure-calabacin",
+        "segundo": "sandwich-mixto"
+      }
+    }
+  },
+  "tuppers": {
+    "L": {
+      "RFA": {
+        "receta": "ensalada-pasta-pollo",
+        "prepara": "Batch del domingo"
+      },
+      "CCT": {
+        "receta": "lentejas-estofadas",
+        "prepara": "Reserva del congelador (sacada el sábado)"
+      }
+    },
+    "M": {
+      "RFA": {
+        "receta": "ensalada-lentejas-huevo",
+        "prepara": "Lunes por la noche, con los huevos duros del batch"
+      },
+      "CCT": {
+        "receta": "albondigas-pavo-cuscus",
+        "prepara": "Ración extra de la cena del lunes",
+        "sobrasDe": {
+          "dia": "L",
+          "comida": "cena"
+        }
+      }
+    },
+    "X": {
+      "RFA": {
+        "receta": "wraps-pavo-hummus",
+        "prepara": "Martes por la noche"
+      },
+      "CCT": {
+        "receta": "pollo-guisado-arroz",
+        "prepara": "Reserva del congelador: sacar el lunes por la noche"
+      }
+    },
+    "J": {
+      "RFA": {
+        "receta": "arroz-garbanzos-feta",
+        "prepara": "Miércoles por la noche"
+      }
+    }
+  },
+  "cambios": [
+    {
+      "por": "Claude (automático)",
+      "fecha": "2026-10-05",
+      "descripcion": "Semana A con los tuppers de la rotación A. Aprovecha las reservas del congelador: espaguetis a la boloñesa, lentejas, solomillo a la naranja y pollo guisado."
+    }
+  ]
+}

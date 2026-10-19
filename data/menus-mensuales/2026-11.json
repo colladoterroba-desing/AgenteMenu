@@ -1,0 +1,437 @@
+{
+  "mes": "2026-11",
+  "descripcion": "Noviembre de 2026: comida y cena de lunes a viernes (21 días). Cada plato sale como mucho 3 veces en el mes, ninguno dos días seguidos, y cumple las normas de la casa. Los tuppers siguen el régimen de siempre: Ricardo frío de lunes a jueves y Cristina para recalentar de lunes a miércoles.",
+  "semanas": [
+    {
+      "semana": "B",
+      "inicio": "2026-11-02",
+      "dias": {
+        "L": {
+          "comida": {
+            "receta": "pure-zanahoria",
+            "segundo": "pollo-empanado"
+          },
+          "cena": {
+            "receta": "albondigas-pavo-cuscus"
+          }
+        },
+        "M": {
+          "comida": {
+            "receta": "hamburguesa-ternera-plancha"
+          },
+          "cena": {
+            "receta": "sopa-pollo-fideos"
+          }
+        },
+        "X": {
+          "comida": {
+            "receta": "pollo-plancha-pisto"
+          },
+          "cena": {
+            "receta": "crema-puerro",
+            "segundo": "revuelto-trigueros-jamon"
+          }
+        },
+        "J": {
+          "comida": {
+            "receta": "potaje-garbanzos-bacalao"
+          },
+          "cena": {
+            "receta": "revuelto-setas-gambas",
+            "variantes": {
+              "RFA": "tortilla-francesa-brocoli"
+            }
+          }
+        },
+        "V": {
+          "comida": {
+            "receta": "lentejas-estofadas"
+          },
+          "cena": {
+            "receta": "merluza-horno-verduras",
+            "variantes": {
+              "RFA": "tortilla-francesa-brocoli"
+            }
+          }
+        },
+        "S": {},
+        "D": {}
+      },
+      "tuppers": {
+        "L": {
+          "RFA": {
+            "receta": "quinoa-pollo-curry",
+            "prepara": "Batch del domingo"
+          },
+          "CCT": {
+            "receta": "ternera-estofada",
+            "prepara": "Del batch del domingo: pasarla a la nevera el domingo"
+          }
+        },
+        "M": {
+          "RFA": {
+            "receta": "ensalada-alubias-huevo",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "albondigas-pavo-cuscus",
+            "prepara": "Ración extra de la cena del lunes",
+            "sobrasDe": {
+              "dia": "L",
+              "comida": "cena"
+            }
+          }
+        },
+        "X": {
+          "RFA": {
+            "receta": "ensalada-campera",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "sopa-pollo-fideos",
+            "prepara": "Ración extra de la cena del martes",
+            "sobrasDe": {
+              "dia": "M",
+              "comida": "cena"
+            }
+          }
+        },
+        "J": {
+          "RFA": {
+            "receta": "tabule-cuscus-pollo",
+            "prepara": "La noche anterior"
+          }
+        }
+      }
+    },
+    {
+      "semana": "A",
+      "inicio": "2026-11-09",
+      "dias": {
+        "L": {
+          "comida": {
+            "receta": "ternera-estofada"
+          },
+          "cena": {
+            "receta": "pavo-champinones-arroz"
+          }
+        },
+        "M": {
+          "comida": {
+            "receta": "pure-calabaza",
+            "segundo": "lomo-adobado-plancha"
+          },
+          "cena": {
+            "receta": "crema-lentejas-rojas"
+          }
+        },
+        "X": {
+          "comida": {
+            "receta": "lubina-horno"
+          },
+          "cena": {
+            "receta": "crema-brocoli",
+            "segundo": "tortilla-patata"
+          }
+        },
+        "J": {
+          "comida": {
+            "receta": "pasta-atun-tomate"
+          },
+          "cena": {
+            "receta": "crema-champinones",
+            "segundo": "revuelto-trigueros-jamon"
+          }
+        },
+        "V": {
+          "comida": {
+            "receta": "potaje-garbanzos-bacalao"
+          },
+          "cena": {
+            "receta": "tortilla-patata-calabacin"
+          }
+        },
+        "S": {},
+        "D": {}
+      },
+      "tuppers": {
+        "L": {
+          "RFA": {
+            "receta": "ensalada-pasta-pollo",
+            "prepara": "Batch del domingo"
+          },
+          "CCT": {
+            "receta": "lentejas-estofadas",
+            "prepara": "Del batch del domingo: pasarla a la nevera el domingo"
+          }
+        },
+        "M": {
+          "RFA": {
+            "receta": "arroz-garbanzos-feta",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "pavo-champinones-arroz",
+            "prepara": "Ración extra de la cena del lunes",
+            "sobrasDe": {
+              "dia": "L",
+              "comida": "cena"
+            }
+          }
+        },
+        "X": {
+          "RFA": {
+            "receta": "ensalada-lentejas-huevo",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "crema-lentejas-rojas",
+            "prepara": "Ración extra de la cena del martes",
+            "sobrasDe": {
+              "dia": "M",
+              "comida": "cena"
+            }
+          }
+        },
+        "J": {
+          "RFA": {
+            "receta": "wraps-pavo-hummus",
+            "prepara": "La noche anterior"
+          }
+        }
+      }
+    },
+    {
+      "semana": "B",
+      "inicio": "2026-11-16",
+      "dias": {
+        "L": {
+          "comida": {
+            "receta": "fideua-merluza-gambas"
+          },
+          "cena": {
+            "receta": "pizza-casera-verduras"
+          }
+        },
+        "M": {
+          "comida": {
+            "receta": "pure-calabacin",
+            "segundo": "chuleta-sajonia-plancha"
+          },
+          "cena": {
+            "receta": "pollo-horno-patata"
+          }
+        },
+        "X": {
+          "comida": {
+            "receta": "lasana-pavo-verduras"
+          },
+          "cena": {
+            "receta": "revuelto-setas-gambas",
+            "variantes": {
+              "RFA": "tortilla-francesa-brocoli"
+            }
+          }
+        },
+        "J": {
+          "comida": {
+            "receta": "garbanzos-espinacas"
+          },
+          "cena": {
+            "receta": "huevos-revueltos-jamon-queso"
+          }
+        },
+        "V": {
+          "comida": {
+            "receta": "lubina-horno"
+          },
+          "cena": {
+            "receta": "crema-lentejas-rojas"
+          }
+        },
+        "S": {},
+        "D": {}
+      },
+      "tuppers": {
+        "L": {
+          "RFA": {
+            "receta": "ensalada-alubias-huevo",
+            "prepara": "Batch del domingo"
+          },
+          "CCT": {
+            "receta": "paella-pollo-verduras",
+            "prepara": "Del batch del domingo: pasarla a la nevera el domingo"
+          }
+        },
+        "M": {
+          "RFA": {
+            "receta": "ensalada-campera",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "pizza-casera-verduras",
+            "prepara": "Ración extra de la cena del lunes",
+            "sobrasDe": {
+              "dia": "L",
+              "comida": "cena"
+            }
+          }
+        },
+        "X": {
+          "RFA": {
+            "receta": "tabule-cuscus-pollo",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "pollo-horno-patata",
+            "prepara": "Ración extra de la cena del martes",
+            "sobrasDe": {
+              "dia": "M",
+              "comida": "cena"
+            }
+          }
+        },
+        "J": {
+          "RFA": {
+            "receta": "quinoa-pollo-curry",
+            "prepara": "La noche anterior"
+          }
+        }
+      }
+    },
+    {
+      "semana": "A",
+      "inicio": "2026-11-23",
+      "dias": {
+        "L": {
+          "comida": {
+            "receta": "menestra-verduras-jamon",
+            "segundo": "lomo-adobado-plancha"
+          },
+          "cena": {
+            "receta": "pollo-guisado-arroz"
+          }
+        },
+        "M": {
+          "comida": {
+            "receta": "lasana-pavo-verduras"
+          },
+          "cena": {
+            "receta": "merluza-salsa-verde-arroz",
+            "variantes": {
+              "RFA": "tortilla-francesa-brocoli"
+            }
+          }
+        },
+        "X": {
+          "comida": {
+            "receta": "pure-calabaza",
+            "segundo": "pollo-empanado"
+          },
+          "cena": {
+            "receta": "frittata-verduras"
+          }
+        },
+        "J": {
+          "comida": {
+            "receta": "potaje-garbanzos-bacalao"
+          },
+          "cena": {
+            "receta": "fajitas-pollo"
+          }
+        },
+        "V": {
+          "comida": {
+            "receta": "lentejas-estofadas"
+          },
+          "cena": {
+            "receta": "revuelto-setas-gambas",
+            "variantes": {
+              "RFA": "tortilla-francesa-brocoli"
+            }
+          }
+        },
+        "S": {},
+        "D": {}
+      },
+      "tuppers": {
+        "L": {
+          "RFA": {
+            "receta": "arroz-garbanzos-feta",
+            "prepara": "Batch del domingo"
+          },
+          "CCT": {
+            "receta": "albondigas-pavo-cuscus",
+            "prepara": "Del batch del domingo: pasarla a la nevera el domingo"
+          }
+        },
+        "M": {
+          "RFA": {
+            "receta": "wraps-pavo-hummus",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "pollo-guisado-arroz",
+            "prepara": "Ración extra de la cena del lunes",
+            "sobrasDe": {
+              "dia": "L",
+              "comida": "cena"
+            }
+          }
+        },
+        "X": {
+          "RFA": {
+            "receta": "ensalada-pasta-pollo",
+            "prepara": "La noche anterior"
+          },
+          "CCT": {
+            "receta": "merluza-salsa-verde-arroz",
+            "prepara": "Ración extra de la cena del martes",
+            "sobrasDe": {
+              "dia": "M",
+              "comida": "cena"
+            }
+          }
+        },
+        "J": {
+          "RFA": {
+            "receta": "ensalada-lentejas-huevo",
+            "prepara": "La noche anterior"
+          }
+        }
+      }
+    },
+    {
+      "semana": "B",
+      "inicio": "2026-11-30",
+      "dias": {
+        "L": {
+          "comida": {
+            "receta": "lubina-horno"
+          },
+          "cena": {
+            "receta": "sopa-pollo-fideos"
+          }
+        },
+        "M": {},
+        "X": {},
+        "J": {},
+        "V": {},
+        "S": {},
+        "D": {}
+      },
+      "tuppers": {
+        "L": {
+          "RFA": {
+            "receta": "ensalada-campera",
+            "prepara": "Batch del domingo"
+          },
+          "CCT": {
+            "receta": "alubias-estofadas",
+            "prepara": "Del batch del domingo: pasarla a la nevera el domingo"
+          }
+        }
+      }
+    }
+  ]
+}

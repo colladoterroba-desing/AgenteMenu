@@ -866,3 +866,61 @@ test("web: las comidas cocinadas sin marcar se dan por hechas al día siguiente,
   assert.deepEqual(p.pendientesDeRestar(), { comidas: [], anots: [] });
   assert.equal(JSON.stringify([...despensa]), antes);
 });
+
+test("menú mensual: un selector con los meses, solo comida y cena de lunes a viernes", async () => {
+  const { construirMeses, etiquetaMes } = await import("../src/mensual.js");
+  const almacen = new Almacen("data");
+  const recetas = await almacen.recetas();
+  const meses = construirMeses(familia, recetas, { archivos: await almacen.menusMensuales(), semanas: await almacen.semanasConocidas(), hoy: "2026-10-19" });
+  assert.equal(etiquetaMes("2026-10"), "Oct 26");
+  assert.deepEqual(meses.map((m) => m.etiqueta), ["Oct 26", "Nov 26"]);
+  const [oct, nov] = meses;
+  // Octubre se compone con los menús semanales; noviembre sale de su fichero.
+  assert.equal(oct.origen, "semanas");
+  assert.equal(nov.origen, "archivo");
+  assert.equal(oct.dias.length, 22); // 1, 2 y del 5 al 30 de octubre
+  assert.equal(nov.dias.length, 21);
+  for (const d of nov.dias) {
+    assert.ok(d.fecha.startsWith("2026-11") && ["L", "M", "X", "J", "V"].includes(d.dia));
+    assert.ok(d.comida.length && d.cena.length, `${d.fecha}: falta comida o cena`);
+  }
+  // Los tuppers salen en la comida con su color: Ricardo frío de lunes a jueves y Cristina para recalentar de lunes a miércoles.
+  const lunes = nov.dias[0];
+  assert.deepEqual(lunes.comida.filter((t) => t.tipo === "frio").map((t) => t.quien), [["RFA"]]);
+  assert.deepEqual(lunes.comida.filter((t) => t.tipo === "calor").map((t) => t.quien), [["CCT"]]);
+  assert.equal(nov.dias.find((d) => d.dia === "V")!.comida.filter((t) => t.tipo !== "casa").length, 0);
+  // Un mes que ya pasó no se ofrece si no tiene fichero.
+  const mesesNov = construirMeses(familia, recetas, { archivos: [], semanas: await almacen.semanasConocidas(), hoy: "2026-10-19" });
+  assert.deepEqual(mesesNov.map((m) => m.mes), ["2026-10"]);
+});
+
+test("menú mensual: las semanas de cada fichero cumplen las normas de la casa y la variedad entre ellas", async () => {
+  const { comprobarVariedad, validarMenu } = await import("../src/menu.js");
+  const almacen = new Almacen("data");
+  const [recetas, base] = await Promise.all([almacen.recetas(), almacen.menu()]);
+  // El menú mensual solo trae comida, cena y tuppers de lunes a viernes: lo demás se toma de la semana en curso para comprobar.
+  const completo = (m: typeof base) => ({
+    ...m,
+    dias: Object.fromEntries((["L", "M", "X", "J", "V", "S", "D"] as const).map((d) => [d, d === "S" || d === "D" ? base.dias[d] : { ...base.dias[d], ...m.dias[d] }])),
+  }) as typeof base;
+  for (const fichero of await almacen.menusMensuales()) {
+    const semanas = fichero.semanas.slice(0, -1); // la última semana puede ser parcial (días del mes siguiente sin rellenar)
+    semanas.forEach((s, i) => {
+      assert.deepEqual(validarMenu(familia, completo(s), recetas), [], `${fichero.mes} semana ${s.inicio}`);
+      if (i >= 2) assert.deepEqual(comprobarVariedad(s, [semanas[i - 1], semanas[i - 2]], recetas), [], `${fichero.mes} variedad ${s.inicio}`);
+    });
+  }
+});
+
+test("web: la página Menú mensual tiene selector de mes y una tabla por semana", async () => {
+  const { generarHtml } = await import("../src/web.js");
+  const almacen = new Almacen("data");
+  const html = generarHtml({
+    familia, propuesta: JSON.parse(await readFile("data/propuesta-tuppers.json", "utf8")), menu: await almacen.menu(), menuSiguiente: await almacen.menu(true),
+    recetas: await almacen.recetas(), despensa: await almacen.despensa(), fecha: "19 de octubre de 2026",
+    mensuales: await almacen.menusMensuales(), semanasConocidas: await almacen.semanasConocidas(),
+  });
+  assert.match(html, /data-pagina="mensual"/);
+  assert.match(html, /data-mes-btn="2026-11"/);
+  assert.match(html, /Semana del 2 nov al 6 nov/);
+});

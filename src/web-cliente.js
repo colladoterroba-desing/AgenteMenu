@@ -38,6 +38,18 @@
   addEventListener("hashchange", irA);
   irA();
 
+  // Menú mensual: un mes a la vez; al abrir, el mes de hoy si está y, si no, el primero.
+  const botonesMes = [...document.querySelectorAll("[data-mes-btn]")];
+  const verMes = (mes) => {
+    botonesMes.forEach((b) => b.setAttribute("aria-pressed", b.dataset.mesBtn === mes));
+    document.querySelectorAll("[data-mes-panel]").forEach((p) => (p.hidden = p.dataset.mesPanel !== mes));
+  };
+  if (botonesMes.length) {
+    const hoyMes = new Date().toISOString().slice(0, 7);
+    verMes((botonesMes.find((b) => b.dataset.mesBtn === hoyMes) ?? botonesMes[0]).dataset.mesBtn);
+    botonesMes.forEach((b) => b.addEventListener("click", () => verMes(b.dataset.mesBtn)));
+  }
+
   const tip = document.createElement("div");
   tip.className = "tip"; tip.hidden = true; document.body.append(tip);
   const mostrar = (el, x, y) => { tip.textContent = el.dataset.tip; tip.hidden = false;

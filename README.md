@@ -44,9 +44,10 @@ npm run web   # genera salidas/resultados.html
 npm run pdf   # menú (A4 horizontal) y lista de la compra (A4 vertical) de esta semana y la siguiente, en salidas/
 ```
 
-La web tiene las páginas Menú (esta semana y la siguiente), Diario, Recetas, Compra, Despensa, Tuppers, Normas, Definiciones y Configuración. Las personas aparecen con su nombre (alias) en lugar de las siglas:
+La web tiene las páginas Menú (esta semana y la siguiente), Menú mensual, Diario, Recetas, Compra, Despensa, Tuppers, Normas, Definiciones y Configuración. Las personas aparecen con su nombre (alias) en lugar de las siglas:
 
 - **Menú:** pestañas «Semana en curso» y «Próxima semana». Cuando empieza la próxima semana, pasa sola a ser la semana en curso (y `npm run web`, `npm run pdf` y el agente mueven su menú a `data/menu-semana.json` y guardan el anterior en `data/historial/`); después hay que pedir a Claude la nueva próxima semana. Los días que ya han pasado se ocultan. Lo cocinado se ve con «✓ Cocinado» (se marca en la receta). Si no se apunta nada, se da por comido lo previsto; con **Anotaciones** se apunta quién comió otra cosa o no come (una o varias personas, y varias anotaciones por comida) y lo que se gastó de la despensa. Quien no come lo previsto se descuenta de las raciones y de la compra. El botón **Actualizar menú** pide a Claude que revise los días que quedan con el diario, los comentarios y la despensa; tú eliges qué cambios se aplican. El menú no necesita validación.
+- **Menú mensual:** selector de mes (Oct 26, Nov 26…) y, por semanas, la comida y la cena de lunes a viernes, con los tuppers en azul (frío) y naranja (recalentar), quién lo come y las raciones. Es una vista aparte, de solo lectura: no cambia el menú semanal ni la lista de la compra. Noviembre está en `data/menus-mensuales/2026-11.json`; los meses sin fichero se componen con los menús semanales.
 - **Diario:** comentarios de la semana (por ejemplo, «RFC no come X, J y V»), cambios sobre el menú ideal, lo cocinado y la actividad.
 - **Compra:** lo que falta para lo que queda de semana, en gramos, sin lo que ya hay en casa. Al marcar productos aparece **Confirmar compra** (abajo a la derecha), que los suma a la despensa.
 - **Despensa:** añadir cualquier producto, lo que hay en casa, reservas de raciones cocinadas y lo que pide el menú.
@@ -69,8 +70,10 @@ Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Par
 | `data/recetas.json` | Recetas con ingredientes por ración de referencia y pasos |
 | `data/menu-semana.json` | Menú de la semana: plato de cada comida, variantes, tuppers, batch y sobras (`sobrasDe`) |
 | `data/menu-siguiente.json` | Propuesta de menú de la semana siguiente |
+| `data/menus-mensuales/` | Menús de un mes completo (`AAAA-MM.json`, varias semanas de lunes a viernes) para la página Menú mensual |
 | `src/nutricion.ts` | IMC, metabolismo basal, gasto diario, objetivos y factor de ración |
 | `src/planificacion.ts` | Rejilla semanal de comensales, kcal por comida y quién cocina |
+| `src/mensual.ts` | Menú mensual: tarjetas de comida y cena de cada día y meses disponibles |
 | `src/menu.ts` | Une menú y comensales, escala raciones y calcula la lista de la compra |
 | `src/almacen.ts` | Lectura y escritura de datos y resumen de hábitos de compra |
 | `src/herramientas.ts` | Herramientas que usa el agente |

@@ -1,5 +1,6 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { MenuMensual } from "./mensual.js";
 import { normalizarCantidad, type MenuSemana, type Receta } from "./menu.js";
 import { aGramosObligatorio } from "./unidades.js";
 import type { Precio, TablaPrecios } from "./precios.js";
@@ -68,6 +69,22 @@ export class Almacen {
       if (menu) semanas.push(menu);
     }
     return semanas;
+  }
+
+  /** Menús mensuales preparados a mano (data/menus-mensuales/AAAA-MM.json), del más antiguo al más reciente. */
+  async menusMensuales(): Promise<MenuMensual[]> {
+    const ficheros = await readdir(path.join(this.dir, "menus-mensuales")).catch(() => [] as string[]);
+    const menus = await Promise.all(ficheros.filter((f) => /^\d{4}-\d{2}\.json$/.test(f)).sort().map((f) => this.leer<MenuMensual>(path.join("menus-mensuales", f))));
+    return menus;
+  }
+
+  /** Los menús semanales guardados: historial, semana en curso y siguiente (para componer los meses del menú mensual). */
+  async semanasConocidas(): Promise<MenuSemana[]> {
+    const ficheros = await readdir(path.join(this.dir, "historial")).catch(() => [] as string[]);
+    const historial = await Promise.all(ficheros.filter((f) => /^menu-.*\.json$/.test(f)).sort().map((f) => this.leer<MenuSemana>(path.join("historial", f))));
+    const actual = await this.menu().catch(() => undefined);
+    const siguiente = await this.menu(true).catch(() => undefined);
+    return [...historial, ...(actual ? [actual] : []), ...(siguiente ? [siguiente] : [])];
   }
 
   async guardarMenu(menu: MenuSemana, siguiente = false): Promise<void> {

@@ -524,7 +524,7 @@ function seccionMenu(familia: Familia, semanas: { dias: DiaDelMenu[]; clave: str
 const FRANJAS_MENSUAL = [["comida", "Comida"], ["cena", "Cena"]] as const;
 
 function tarjetaMensual(t: TarjetaMensual): string {
-  const clase = t.tipo === "frio" ? " frio" : t.tipo === "calor" ? " calor" : "";
+  const clase = t.tipo === "frio" ? " frio" : t.tipo === "calor" ? " calor" : t.tipo === "casa" ? " casa" : "";
   const etq = t.tipo === "frio" ? "Tupper frío" : t.tipo === "calor" ? "Tupper para recalentar" : "";
   return `<div class="tarjeta${clase}${t.tipo === "variante" ? " variante-mes" : ""}">
     <a class="plato-menu" href="#r-${esc(t.receta)}">${esc(t.nombre)}</a>
@@ -549,7 +549,7 @@ function seccionMensual(meses: MesMenu[]): string {
         <h3 class="mes-semana-cab">Semana del ${esc(largo(lunes))} al ${esc(largo(sumarDias(lunes, 4)))}</h3>
         <div class="mes-rejilla">${dias.map((d) => `<div class="mes-dia" style="grid-column:${DIAS_SEMANA.indexOf(d.dia) + 1}">
           <h4 class="mes-dia-cab"><span>${esc(d.nombre)}</span> <span class="dia-fecha">${esc(largo(d.fecha))}</span></h4>
-          ${FRANJAS_MENSUAL.map(([tipo, nombre]) => `<div class="mes-franja"><span class="celda-etq">${nombre}</span>${
+          ${FRANJAS_MENSUAL.map(([tipo, nombre]) => `<div class="mes-franja" data-tipo="${tipo}" data-mcelda="${esc(idCelda(lunes, d.dia, tipo))}"><span class="celda-etq">${nombre}</span>${
             d[tipo].length ? d[tipo].map(tarjetaMensual).join("") : `<span class="sub">—</span>`
           }</div>`).join("")}
         </div>`).join("")}</div>
@@ -1093,6 +1093,9 @@ thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:va
 .celda{padding:8px 12px 10px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-content:start;min-width:0}
 .celda{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .celda.arrastrando{opacity:.4}
+.mes-franja.arrastrable{cursor:grab}.mes-franja.arrastrable .tarjeta.casa{touch-action:pan-y}
+.mes-franja.arrastrando{opacity:.4}
+.mes-franja.destino{outline:3px dashed var(--accent);outline-offset:2px;border-radius:10px;background:var(--accent-soft)}
 .celda.destino{outline:3px dashed var(--accent);outline-offset:-3px;background:var(--accent-soft)}
 .fantasma-mover{position:fixed;left:0;top:0;z-index:50;max-width:240px;background:var(--surface);border:2px solid var(--accent);border-radius:10px;padding:8px 10px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:.85rem;line-height:1.3;pointer-events:none}
 body.arrastrando-comida{cursor:grabbing}
@@ -1613,8 +1616,10 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
   // Las casillas muestran el plato previsto antes de «Actualizar menú»; los cambios ya pasados al proyecto
   // van aparte y la página los pone encima, como los que aún están solo en la web.
   const celdasDe = (m: MenuSemana, clave: string) => celdasCliente(clave, componerMenu(familia, sinCambios(m), recetas));
+  // Semanas de los menús mensuales preparados a mano: sus casillas también se pueden intercambiar.
+  const semanasMensuales = (mensuales ?? []).flatMap((a) => a.semanas).filter((m) => m.inicio);
   const cambiosBase = Object.fromEntries(
-    [{ m: menu, clave: inicio }, ...(menuSiguiente ? [{ m: menuSiguiente, clave: inicioSiguiente }] : [])].flatMap(({ m, clave }) =>
+    [{ m: menu, clave: inicio }, ...(menuSiguiente ? [{ m: menuSiguiente, clave: inicioSiguiente }] : []), ...semanasMensuales.map((m) => ({ m, clave: m.inicio! }))].flatMap(({ m, clave }) =>
       Object.entries(m.dias).flatMap(([dia, comidas]) =>
         Object.entries(comidas ?? {}).flatMap(([tipo, p]) => {
           if (!p?.cambio) return [];
@@ -1643,6 +1648,8 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
       ...(menuSiguiente ? [[inicioSiguiente, { letra: menuSiguiente.semana, inicio: inicioSiguiente, celdas: celdasDe(menuSiguiente, inicioSiguiente) }]] : []),
     ]),
     cambios: cambiosBase,
+    // Casillas de las semanas de los menús mensuales (solo para intercambiar comidas en el Menú mensual; no entran en la compra).
+    mes: { celdas: semanasMensuales.flatMap((m) => celdasDe(m, m.inicio!)) },
     // La página decide por la fecha cuál es la semana en curso (rotación de semanas).
     semanaActual: inicio,
     ordenPasillos: PASILLOS,
@@ -1746,7 +1753,7 @@ export function generarHtml({ familia, propuesta, menu, menuSiguiente, recetas, 
     <header class="cab">
       <span class="etq">Comidas y cenas de lunes a viernes</span>
       <h1 id="h-mensual">Menú mensual</h1>
-      <p class="sub">Elige el mes. Cada plato enlaza a su receta; las etiquetas son quién lo come y «rac.» cuántas raciones se preparan. En azul, el tupper frío; en naranja, el tupper para recalentar. Es una vista aparte: no cambia el menú de cada semana ni la lista de la compra, y no tiene anotaciones.</p>
+      <p class="sub">Elige el mes. Cada plato enlaza a su receta; las etiquetas son quién lo come y «rac.» cuántas raciones se preparan. En azul, el tupper frío; en naranja, el tupper para recalentar. Para cambiar una comida de día, arrástrala sobre otro día, también de otra semana (en el móvil, mantén pulsada la tarjeta y arrastra): se intercambian las dos comidas del mismo tipo (comida con comida, cena con cena) y antes de aplicarlo se avisa de lo que afecta. Si el intercambio es de esta semana o de la próxima, también cambia el menú semanal y la lista de la compra. No tiene anotaciones.</p>
     </header>
     ${seccionMensual(construirMeses(familia, recetas, { archivos: mensuales ?? [], semanas: [...(semanasConocidas ?? []), menu, ...(menuSiguiente ? [menuSiguiente] : [])], hoy: hoy.toISOString().slice(0, 10) }))}
   </section>

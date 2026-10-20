@@ -181,6 +181,19 @@ export function aplicarCambios(menu: MenuSemana, cambios: Record<string, Record<
   return { menu: { ...menu, dias }, aplicados, avisos };
 }
 
+/** Lo mismo para un menú mensual preparado a mano (data/menus-mensuales/AAAA-MM.json): sus semanas llevan los cambios de su lunes. */
+export function aplicarCambiosMensual<T extends { semanas: MenuSemana[] }>(mensual: T, cambios: Record<string, Record<string, unknown>>, recetas: Record<string, string>) {
+  const avisos: string[] = [];
+  let aplicados = 0;
+  const semanas = mensual.semanas.map((s) => {
+    const c = aplicarCambios(s, cambios, recetas);
+    aplicados += c.aplicados;
+    avisos.push(...c.avisos);
+    return c.menu;
+  });
+  return { mensual: { ...mensual, semanas }, aplicados, avisos };
+}
+
 async function main() {
   const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const datos = path.join(raiz, "data");
@@ -205,6 +218,15 @@ async function main() {
     if (c.aplicados) await escribir(f, c.menu);
     r.avisos.push(...c.avisos);
     if (c.aplicados) console.log(`${f}: ${c.aplicados} cambios de «Actualizar menú».`);
+  }
+  // Y a los menús mensuales (intercambios hechos en la página Menú mensual).
+  const carpetaMensual = path.join("menus-mensuales");
+  for (const f of (await readdir(path.join(datos, carpetaMensual)).catch(() => [] as string[])).filter((f) => /^\d{4}-\d{2}\.json$/.test(f)).sort()) {
+    const fichero = path.join(carpetaMensual, f);
+    const c = aplicarCambiosMensual(await leer<{ semanas: MenuSemana[] }>(fichero), web.cambios, recetas);
+    if (c.aplicados) await escribir(fichero, c.mensual);
+    r.avisos.push(...c.avisos);
+    if (c.aplicados) console.log(`${fichero}: ${c.aplicados} cambios de intercambios de comidas.`);
   }
   // Copia completa de lo apuntado (diario, anotaciones, cocinado, comentarios...): el agente la lee con ver_apuntes_web.
   await mkdir(path.join(datos, "web"), { recursive: true });

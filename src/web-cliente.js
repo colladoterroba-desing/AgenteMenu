@@ -82,6 +82,10 @@
   const COMIDA_TXT = { desayuno: "Desayuno", almuerzo: "Almuerzo", comida: "Comida", merienda: "Merienda", cena: "Cena" };
   const celdas = new Map();
   Object.values(MENU).forEach((s) => s.celdas.forEach((c) => celdas.set(c.id, c)));
+  // Casillas de las semanas de los menús mensuales: solo sirven para intercambiar comidas en el Menú mensual (no entran en la compra).
+  const celdasMes = new Map();
+  ((datos.mes && datos.mes.celdas) || []).forEach((c) => { if (!celdas.has(c.id)) celdasMes.set(c.id, c); });
+  const celdaPorId = (id) => celdas.get(id) || celdasMes.get(id);
   const nombreDe = new Map();
   Object.values(REC).forEach((r) => r.ing.forEach(([k, n]) => nombreDe.set(k, n)));
 
@@ -134,7 +138,7 @@
     const caducado = HOY > sumar(ACTUAL, 6) ? "El menú de esta semana ya ha terminado. " : "";
     if (avisoSem && (caducado || falta)) { avisoSem.textContent = caducado + falta; avisoSem.hidden = false; }
   })();
-  const fechaCelda = (c) => { const [y, m, d] = MENU[c.sem].inicio.split("-").map(Number); return isoLocal(new Date(y, m - 1, d + c.dia)); };
+  const fechaCelda = (c) => sumar(c.sem, c.dia);
   const fechaCorta = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }); };
   const nombreRec = (id) => (REC[id] ? REC[id].n : id);
   // Las siglas de cada miembro se muestran con su alias (Cristina, Ricardo...).
@@ -650,6 +654,35 @@
     const rc = document.getElementById("resumen-cocinados"); if (rc) rc.textContent = cocinados;
   };
 
+  // Menú mensual: las tarjetas de comida y cena de cada día enseñan lo mismo que el menú de la semana (con los intercambios
+  // hechos en la página); las que no se han tocado quedan como las generó el proyecto.
+  const renderMes = () => {
+    document.querySelectorAll("[data-mcelda]").forEach((f) => {
+      const c = celdaPorId(f.dataset.mcelda);
+      if (f._orig === undefined) f._orig = f.innerHTML;
+      f.classList.toggle("arrastrable", !!(c && editable && c.platos.length && fechaCelda(c) >= HOY));
+      if (!c) return;
+      const tocada = cambiosDb.has(c.id);
+      if (!tocada) { if (f._mod) { f.innerHTML = f._orig; f._mod = false; } return; }
+      const k = cambioDe(c.id);
+      const recetas = k && Array.isArray(k.recetas) && k.recetas.every((r) => REC[r]) ? k.recetas : c.platos;
+      const com = k && Array.isArray(k.comensales) && k.comensales.length ? k.comensales.filter((q) => datos.factores[q]) : null;
+      const quien = com || c.quien;
+      const rac = com ? Math.round(com.reduce((t, q) => t + datos.factores[q], 0) * 100) / 100 : c.rac;
+      f.innerHTML = f._orig; f._mod = true;
+      f.querySelectorAll(".tarjeta.casa").forEach((t) => t.remove());
+      const primera = f.querySelector(".tarjeta");
+      const tarjetas = recetas.map((r) => {
+        const enlace = el("a", { class: "plato-menu", href: "#r-" + r, text: nombreRec(r) });
+        enlace.addEventListener("click", () => { const todas = document.querySelector('[data-filtro="todas"]'); if (todas) todas.click(); });
+        return el("div", { class: "tarjeta casa" }, enlace,
+          el("div", { class: "comensales" }, quien.map((q) => el("span", { class: "comensal", text: q }))),
+          el("span", { class: "raciones mono", text: fmtRac(rac) + " rac. · " + fmtNum(Math.round(REC[r].ing.reduce((t, i) => t + i[2], 0))) + " g/rac." }));
+      });
+      if (primera) primera.before(...tarjetas); else f.append(...tarjetas);
+    });
+  };
+
   // Días que ya han pasado: ocultos, con un enlace para verlos.
   let verPasados = false;
   const ocultarPasados = () => {
@@ -714,7 +747,7 @@
   const avisosMover = (a, b) => {
     const out = new Set();
     [a, b].forEach((c) => {
-      celdas.forEach((o) => {
+      [...celdas.values(), ...celdasMes.values()].forEach((o) => {
         if (o.sobrasDe === c.id) out.add("La " + nombreCelda(o) + " se cocina junto con la " + nombreCelda(c) + " (sobras) y se queda con su plato.");
         o.tuppers.forEach((t) => { if (t.sobrasDe === c.id) out.add("El tupper de " + t.quien + " del " + DIAS[o.dia].toLowerCase() + " sale de la " + nombreCelda(c) + " y se queda como estaba."); });
       });
@@ -761,34 +794,29 @@
     dlgM.showModal();
   };
 
-  (() => {
-    const cont = document.querySelector(".semana-scroll");
+  // El mismo arrastre sirve al menú (columnas de día, con desplazamiento lateral) y al Menú mensual (semanas una bajo otra,
+  // con desplazamiento vertical de la página). `cfg`: cont (zona donde empieza el arrastre), selector de la casilla,
+  // celdaDe(elemento) → casilla del proyecto, destinoEn(x, y, tipo) → elemento de destino del mismo tipo, y
+  // desplazar(ses, mover) para acercarse a los bordes.
+  const activarArrastre = (cfg) => {
+    const cont = cfg.cont;
     if (!cont) return;
     let ses = null, raf = 0, suprimirClic = false;
     const interactivo = (t) => t.closest && t.closest("button, input, select, textarea, summary, label");
-    const celdaDe = (t) => (t.closest ? t.closest(".celda[data-celda]") : null);
-    // Solo importa la columna bajo el dedo: la casilla del mismo tipo de esa columna es el destino.
-    const destinoEn = (x, y, tipo) => {
-      const r = cont.getBoundingClientRect();
-      const yy = Math.min(Math.max(y, Math.max(r.top, 0) + 5), Math.min(r.bottom, innerHeight) - 5);
-      const col = document.elementsFromPoint(x, yy).find((n) => n.classList && n.classList.contains("col-dia"));
-      return col ? col.querySelector('.celda[data-celda$="-' + tipo + '"]') : null;
-    };
+    const celdaDe = (t) => (t.closest ? t.closest(cfg.selector) : null);
     const mover = (x, y) => {
       ses.x = x; ses.y = y;
       ses.fantasma.style.transform = "translate(" + (x + 12) + "px," + (y + 12) + "px)";
-      const d = destinoEn(x, y, ses.c.comida), dc = d && d !== ses.celda ? d : null;
+      const d = cfg.destinoEn(x, y, ses.c.comida), dc = d && d !== ses.celda ? d : null;
       if (dc !== ses.destino) { if (ses.destino) ses.destino.classList.remove("destino"); if (dc) dc.classList.add("destino"); ses.destino = dc; }
     };
     const autoscroll = () => {
       if (!ses) return;
-      const r = cont.getBoundingClientRect(), borde = 56;
-      const dx = ses.x < Math.max(r.left, 0) + borde ? -16 : ses.x > Math.min(r.right, innerWidth) - borde ? 16 : 0;
-      if (dx) { cont.scrollLeft += dx; mover(ses.x, ses.y); }
+      cfg.desplazar(ses, mover);
       raf = requestAnimationFrame(autoscroll);
     };
     const empezar = (celda, x, y) => {
-      const c = celdas.get(celda.dataset.celda);
+      const c = cfg.celdaDe(celda);
       if (!editable || ocupado || !c || c.comida === "desayuno" || !c.platos.length) return false;
       const fantasma = el("div", { class: "fantasma-mover" }, el("strong", { text: COMIDA_TXT[c.comida] + ": " }), efectivo(c).recetas.map(nombreRec).join(" + "));
       document.body.append(fantasma);
@@ -808,7 +836,7 @@
       cont.style.scrollSnapType = "";
       suprimirClic = true; setTimeout(() => (suprimirClic = false), 60);
       if (!aceptar || !s.destino) return;
-      const b = celdas.get(s.destino.dataset.celda);
+      const b = cfg.celdaDe(s.destino);
       const fallo = motivoNoMovible(s.c) || motivoNoMovible(b);
       if (fallo) { aviso(fallo); return; }
       confirmarIntercambio(s.c, b);
@@ -847,7 +875,39 @@
     document.addEventListener("touchend", () => finToque(true));
     document.addEventListener("touchcancel", () => finToque(false));
     cont.addEventListener("contextmenu", (e) => { if (toque || ses) e.preventDefault(); });
+  };
+
+  // Menú: la columna bajo el dedo decide el día; la casilla del mismo tipo de esa columna es el destino.
+  (() => {
+    const cont = document.querySelector(".semana-scroll");
+    activarArrastre({
+      cont, selector: ".celda[data-celda]", celdaDe: (n) => celdas.get(n.dataset.celda),
+      destinoEn: (x, y, tipo) => {
+        const r = cont.getBoundingClientRect();
+        const yy = Math.min(Math.max(y, Math.max(r.top, 0) + 5), Math.min(r.bottom, innerHeight) - 5);
+        const col = document.elementsFromPoint(x, yy).find((n) => n.classList && n.classList.contains("col-dia"));
+        return col ? col.querySelector('.celda[data-celda$="-' + tipo + '"]') : null;
+      },
+      desplazar: (ses, mover) => {
+        const r = cont.getBoundingClientRect(), borde = 56;
+        const dx = ses.x < Math.max(r.left, 0) + borde ? -16 : ses.x > Math.min(r.right, innerWidth) - borde ? 16 : 0;
+        if (dx) { cont.scrollLeft += dx; mover(ses.x, ses.y); }
+      },
+    });
   })();
+  // Menú mensual: el destino es la comida (o cena) del día que haya bajo el puntero; la página se desplaza arriba y abajo.
+  activarArrastre({
+    cont: document.getElementById("mensual"), selector: ".mes-franja.arrastrable[data-mcelda]", celdaDe: (n) => celdaPorId(n.dataset.mcelda),
+    destinoEn: (x, y, tipo) => {
+      const dia = document.elementsFromPoint(x, y).find((n) => n.classList && n.classList.contains("mes-dia"));
+      const f = dia ? dia.querySelector('.mes-franja[data-tipo="' + tipo + '"]') : null;
+      return f && f.dataset.mcelda && celdaPorId(f.dataset.mcelda) ? f : null;
+    },
+    desplazar: (ses, mover) => {
+      const dy = ses.y < 56 ? -16 : ses.y > innerHeight - 56 ? 16 : 0;
+      if (dy) { scrollBy(0, dy); mover(ses.x, ses.y); }
+    },
+  });
 
   // ================= Diálogo del diario =================
   const dlgD = document.getElementById("dlg-diario");
@@ -1780,7 +1840,7 @@
   };
 
   // ================= Arranque =================
-  const renderTodo = () => { setTimeout(restarSolas, 0); renderMenu(); renderCompra(); renderDespensa(); renderReservas(); renderCocinadoRecetas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
+  const renderTodo = () => { setTimeout(restarSolas, 0); renderMenu(); renderMes(); renderCompra(); renderDespensa(); renderReservas(); renderCocinadoRecetas(); renderNoDeseados(); renderDiario(); renderComentarios(); renderPerfiles(); };
   const avisoDb = document.getElementById("despensa-aviso");
   const soloLectura = (motivo) => {
     editable = false;

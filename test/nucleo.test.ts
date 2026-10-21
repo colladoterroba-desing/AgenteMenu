@@ -923,4 +923,26 @@ test("web: la página Menú mensual tiene selector de mes y una tabla por semana
   assert.match(html, /data-pagina="mensual"/);
   assert.match(html, /data-mes-btn="2026-11"/);
   assert.match(html, /Semana del 2 nov al 6 nov/);
+  // Se pueden intercambiar comidas y cenas: cada franja lleva su casilla y la página lleva las de las semanas de los ficheros.
+  assert.match(html, /data-mcelda="2026-11-02-0-cena"/);
+  assert.match(html, /data-mcelda="2026-11-09-1-comida"/);
+  assert.match(html, /"mes":\{"celdas":\[\{"id":"2026-11-02-/);
+});
+
+test("menú mensual: los intercambios de comidas se pasan al fichero del mes al sincronizar", async () => {
+  const { aplicarCambiosMensual } = await import("../src/sincronizar.js");
+  const almacen = new Almacen("data");
+  const [mes] = await almacen.menusMensuales();
+  const [lunes, martes] = [mes.semanas[0].dias.L!.cena!, mes.semanas[1].dias.M!.cena!];
+  const cambios = {
+    "2026-11-02-0-cena": { celda: "2026-11-02-0-cena", recetas: [martes.receta], motivo: "Intercambio", fecha: "2026-10-20T10:00:00Z" },
+    "2026-11-09-1-cena": { celda: "2026-11-09-1-cena", recetas: [lunes.receta], motivo: "Intercambio", fecha: "2026-10-20T10:00:00Z" },
+  };
+  const nombres = Object.fromEntries((await almacen.recetas()).map((r) => [r.id, r.nombre]));
+  const r = aplicarCambiosMensual(mes, cambios, nombres);
+  assert.equal(r.aplicados, 2);
+  assert.equal(r.mensual.semanas[0].dias.L!.cena!.receta, martes.receta);
+  assert.equal(r.mensual.semanas[0].dias.L!.cena!.cambio!.antes.receta, lunes.receta);
+  assert.equal(r.mensual.semanas[1].dias.M!.cena!.receta, lunes.receta);
+  assert.deepEqual(r.avisos, []);
 });

@@ -92,5 +92,7 @@ Tareas y decisiones pendientes de definir. Cuando se resuelva una, se marca con 
 
 ## Agente y proyecto
 
+- [ ] **OI-46 · Abaratar la sincronización de cada noche.** Añadido el 21/10/2026. Corre en una sesión fija cuya conversación crece cada noche (unos 5 $ al día en precio de lista, sin cobro real mientras los créditos de uso estén en 0). Una sesión nueva con un modelo más barato cuesta unos 0,5 $, pero no puede guardar en `main` (error 403, sin `add_repo`). Opciones por probar: dar permiso de escritura al repositorio en la configuración de la tarea desde claude.ai (rutinas), o reiniciar de vez en cuando la sesión fija.
+
 - [ ] **OI-21 · Probar el agente con Claude.** No se ha ejecutado contra la API. Hace falta una `ANTHROPIC_API_KEY` en `.env` y probar el flujo completo: necesidades, menú, recetas, lista de la compra y tickets.
 - [x] **OI-22 · Llevar el trabajo a `main`.** Hecho el 28/09/2026: PR colladoterroba-desing/AgenteMenu#2 fusionada en `main`.

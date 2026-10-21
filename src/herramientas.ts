@@ -1,6 +1,6 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import { resumirHabitos, type Almacen } from "./almacen.js";
+import { apuntesDeTresSemanas, hoyIso, resumirHabitos, type Almacen } from "./almacen.js";
 import { calcularNecesidades, esAdulto } from "./nutricion.js";
 import { caducidadReserva, comprobarVariedad, componerMenu, listaCompra, SECCIONES, validarMenu, VARIEDAD, type DiaDelMenu, type MenuSemana, type Receta } from "./menu.js";
 import { planificarSemana } from "./planificacion.js";
@@ -242,20 +242,21 @@ export function crearHerramientas(almacen: Almacen) {
     herramienta({
       nombre: "ver_apuntes_web",
       descripcion:
-        "Lo que la familia ha apuntado en la web, según la última sincronización: comentarios, anotaciones de quién comió otra cosa o no comió (por casilla, «<lunes>-<día 0-6>-<comida>»), diario, cambios de «Actualizar menú», lo cocinado y los desayunos nuevos en texto libre. Tenlo en cuenta al preparar el menú.",
+        "Lo que la familia ha apuntado en la web, según la última sincronización, de las tres semanas que importan (la pasada, la actual y la próxima): comentarios, anotaciones de quién comió otra cosa o no comió (por casilla, «<lunes>-<día 0-6>-<comida>»), diario, cambios de «Actualizar menú», lo cocinado y los desayunos nuevos en texto libre. Tenlo en cuenta al preparar el menú.",
       esquema: z.object({}),
       ejecutar: async () => {
         const [comentarios, comido, diario, cambios, cocinado, perfil] = await Promise.all(
           ["comentarios", "comido", "diario", "cambios", "cocinado", "perfil"].map((c) => almacen.apuntesWeb(c)),
         );
+        const hoy = hoyIso();
         const sin = (d: Record<string, unknown>, ...claves: string[]) =>
           Object.fromEntries(Object.entries(d).filter(([k]) => !claves.includes(k)));
         return {
-          comentarios: Object.values(comentarios).map((c) => ({ fecha: String(c.fecha ?? "").slice(0, 10), texto: c.texto })),
-          anotaciones: Object.values(comido).map((c) => sin(c, "grupo", "descontado", "reserva")),
-          diario: Object.values(diario),
-          cambios: Object.values(cambios),
-          cocinado: Object.values(cocinado).map((c) => sin(c, "descontado")),
+          comentarios: apuntesDeTresSemanas(comentarios, hoy).map((c) => ({ fecha: String(c.fecha ?? "").slice(0, 10), texto: c.texto })),
+          anotaciones: apuntesDeTresSemanas(comido, hoy).map((c) => sin(c, "grupo", "descontado", "reserva")),
+          diario: apuntesDeTresSemanas(diario, hoy),
+          cambios: apuntesDeTresSemanas(cambios, hoy),
+          cocinado: apuntesDeTresSemanas(cocinado, hoy).map((c) => sin(c, "descontado")),
           desayunosNuevos: Object.fromEntries(
             Object.entries(perfil).filter(([, p]) => p.desayuno).map(([id, p]) => [id, p.desayuno]),
           ),

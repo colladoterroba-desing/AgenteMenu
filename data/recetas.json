@@ -1,62 +1,6 @@
 {
   "recetas": [
     {
-      "id": "tostadas-tomate",
-      "nombre": "Tostadas integrales con tomate y aceite, yogur y fruta",
-      "tipo": "desayuno",
-      "tiempoMin": 10,
-      "tecnica": "sin cocinar",
-      "ingredientes": [
-        { "nombre": "Pan integral", "cantidad": 80, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Tomate", "cantidad": 80, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Yogur natural", "cantidad": 125, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
-      ],
-      "pasos": [
-        "Tostar el pan.",
-        "Rallar el tomate y extenderlo sobre las tostadas con un chorrito de aceite y una pizca de sal.",
-        "Acompañar con el yogur y la fruta."
-      ]
-    },
-    {
-      "id": "porridge-avena",
-      "nombre": "Porridge de avena con plátano y nueces",
-      "tipo": "desayuno",
-      "tiempoMin": 10,
-      "tecnica": "guiso",
-      "ingredientes": [
-        { "nombre": "Copos de avena", "cantidad": 50, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Leche semidesnatada", "cantidad": 257.5, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Plátano", "cantidad": 150, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Nueces peladas", "cantidad": 15, "unidad": "g", "seccion": "Despensa" }
-      ],
-      "pasos": [
-        "Calentar la leche con la avena a fuego medio, removiendo, 5 minutos hasta que espese.",
-        "Servir con el plátano en rodajas, las nueces troceadas y canela al gusto."
-      ],
-      "conservacion": "Se puede dejar hecho la noche anterior en la nevera (overnight oats) y tomarlo frío."
-    },
-    {
-      "id": "huevos-revueltos-tostada",
-      "nombre": "Huevos revueltos con tostada, leche y naranja",
-      "tipo": "desayuno",
-      "tiempoMin": 10,
-      "tecnica": "plancha",
-      "ingredientes": [
-        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Pan integral", "cantidad": 60, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Leche semidesnatada", "cantidad": 206, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Naranjas", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 4.6, "unidad": "g", "seccion": "Despensa" }
-      ],
-      "pasos": [
-        "Batir los huevos con una pizca de sal.",
-        "Cuajarlos en la sartén con unas gotas de aceite a fuego bajo, removiendo, hasta que queden cremosos.",
-        "Servir con el pan tostado, un vaso de leche y la naranja."
-      ]
-    },
-    {
       "id": "bocadillo-pavo-queso",
       "nombre": "Bocadillo integral de pavo y queso con fruta",
       "tipo": "merienda",
@@ -137,26 +81,6 @@
         "Añadir las espinacas: 3 min/100 °C/giro a la izquierda/vel cuchara. Los huevos se pueden cocer a la vez en el Varoma (12 min/Varoma) en el primer paso."
       ],
       "conservacion": "3 días en la nevera o 3 meses congelado (sin el huevo). Recalentar en microondas 2-3 minutos."
-    },
-    {
-      "id": "lomo-plancha-arroz",
-      "nombre": "Lomo a la plancha con arroz integral y ensalada",
-      "tipo": "comida",
-      "tiempoMin": 15,
-      "tecnica": "plancha",
-      "ingredientes": [
-        { "nombre": "Lomo de cerdo en filetes", "cantidad": 120, "unidad": "g", "seccion": "Carnicería" },
-        { "nombre": "Arroz integral", "cantidad": 70, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Lechuga", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Tomate", "cantidad": 100, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
-      ],
-      "pasos": [
-        "El arroz se deja cocido del domingo: calentarlo en el microondas con una cucharada de agua.",
-        "Calentar bien la plancha, salar los filetes y hacerlos 2 minutos por cada lado.",
-        "Aliñar la lechuga y el tomate con aceite y sal."
-      ]
     },
     {
       "id": "pollo-guisado-arroz",
@@ -326,37 +250,6 @@
         "Va en la misma bandeja que el salmón, pero entra antes.",
         "Hornear el pollo salpimentado con la patata 15 minutos a 200 °C, y luego 15 minutos más junto al salmón y el calabacín."
       ]
-    },
-    {
-      "id": "crema-calabacin-tortilla",
-      "nombre": "Crema de calabacín y tortilla francesa",
-      "tipo": "cena",
-      "tiempoMin": 30,
-      "tecnica": "guiso",
-      "ingredientes": [
-        { "nombre": "Calabacín", "cantidad": 200, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Puerro", "cantidad": 50, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Patata", "cantidad": 60, "unidad": "g", "seccion": "Frutería" },
-        { "nombre": "Queso fresco batido", "cantidad": 30, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Huevos", "cantidad": 120, "unidad": "g", "seccion": "Lácteos y huevos" },
-        { "nombre": "Pan integral", "cantidad": 40, "unidad": "g", "seccion": "Panadería" },
-        { "nombre": "Aceite de oliva virgen extra", "cantidad": 9.2, "unidad": "g", "seccion": "Despensa" },
-        { "nombre": "Fruta de temporada", "cantidad": 150, "unidad": "g", "seccion": "Frutería" }
-      ],
-      "pasos": [
-        "Rehogar el puerro en la mitad del aceite 5 minutos.",
-        "Añadir el calabacín y la patata troceados, cubrir de agua y cocer 15 minutos.",
-        "Triturar con el queso fresco y ajustar de sal.",
-        "Hacer las tortillas francesas en la sartén con el resto del aceite."
-      ],
-      "thermomix": [
-        "La crema en la Thermomix; la tortilla, al momento en la sartén.",
-        "Poner en el vaso el puerro troceado y la mitad del aceite: 5 s/vel 5. Sofreír 5 min/120 °C/vel 1.",
-        "Añadir el calabacín y la patata troceados, la sal y agua justa para casi cubrir: 20 min/100 °C/vel 1.",
-        "Añadir el queso fresco batido y triturar 1 min/vel 5-10 subiendo poco a poco."
-      ],
-      "conservacion": "La crema aguanta 3 días en nevera y se congela bien.",
-      "alMomento": true
     },
     {
       "id": "merluza-plancha-brocoli",

@@ -3,7 +3,7 @@ import { cp, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { Almacen, resumirHabitos } from "../src/almacen.js";
+import { Almacen, apuntesDeTresSemanas, lunesDeLaSemana, resumirHabitos } from "../src/almacen.js";
 import { crearHerramientas } from "../src/herramientas.js";
 import { calcularNecesidades, clasificarImc, imc, proponerObjetivo } from "../src/nutricion.js";
 import { planificarSemana } from "../src/planificacion.js";
@@ -945,4 +945,21 @@ test("menú mensual: los intercambios de comidas se pasan al fichero del mes al 
   assert.equal(r.mensual.semanas[0].dias.L!.cena!.cambio!.antes.receta, lunes.receta);
   assert.equal(r.mensual.semanas[1].dias.M!.cena!.receta, lunes.receta);
   assert.deepEqual(r.avisos, []);
+});
+
+test("ver_apuntes_web: solo cuenta la semana pasada, la actual y la próxima", () => {
+  assert.equal(lunesDeLaSemana("2026-10-21"), "2026-10-19");
+  assert.equal(lunesDeLaSemana("2026-10-25"), "2026-10-19");
+  assert.equal(lunesDeLaSemana("2026-10-26"), "2026-10-26");
+  const apuntes = {
+    "2026-10-05-4-comida__RFC": { celda: "2026-10-05-4-comida" },
+    "2026-10-12-0-cena": { celda: "2026-10-12-0-cena" },
+    "2026-10-19-2-comida": { celda: "2026-10-19-2-comida" },
+    "2026-10-26-1-comida": { celda: "2026-10-26-1-comida" },
+    "2026-11-02-0-cena": { celda: "2026-11-02-0-cena" },
+    "abc": { fecha: "2026-10-20T10:00:00.000Z" },
+    "def": { fecha: "2026-09-30T10:00:00.000Z" },
+  };
+  const celdas = apuntesDeTresSemanas(apuntes, "2026-10-21").map((a) => (a as { celda?: string; fecha?: string }).celda ?? (a as { fecha?: string }).fecha);
+  assert.deepEqual(celdas, ["2026-10-12-0-cena", "2026-10-19-2-comida", "2026-10-26-1-comida", "2026-10-20T10:00:00.000Z"]);
 });

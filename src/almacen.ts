@@ -16,6 +16,29 @@ export function lunesAnterior(inicio: string, semanas = 1): string {
   return new Date(Date.UTC(y, m - 1, d - 7 * semanas)).toISOString().slice(0, 10);
 }
 
+/** Lunes (AAAA-MM-DD) de la semana que contiene la fecha `hoy`. */
+export function lunesDeLaSemana(hoy: string): string {
+  const [y, m, d] = hoy.split("-").map(Number);
+  const dia = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return new Date(Date.UTC(y, m - 1, d - ((dia + 6) % 7))).toISOString().slice(0, 10);
+}
+
+/**
+ * Lo apuntado en la web de las tres semanas que importan: la pasada, la actual y la próxima. Cada apunte se
+ * ubica por el lunes de su casilla («<lunes>-<día>-<comida>») o, si no tiene casilla, por su fecha.
+ */
+export function apuntesDeTresSemanas<T extends Record<string, unknown>>(apuntes: Record<string, T>, hoy: string): T[] {
+  const desde = lunesAnterior(lunesDeLaSemana(hoy));
+  const hasta = lunesAnterior(lunesDeLaSemana(hoy), -2);
+  return Object.entries(apuntes)
+    .filter(([clave, a]) => {
+      const lunes = String(a.celda ?? clave).slice(0, 10);
+      const fecha = /^\d{4}-\d{2}-\d{2}$/.test(lunes) ? lunes : String(a.fecha ?? "").slice(0, 10);
+      return fecha >= desde && fecha < hasta;
+    })
+    .map(([, a]) => a);
+}
+
 /** Persistencia en ficheros JSON dentro de un directorio de datos. */
 export class Almacen {
   constructor(private readonly dir: string) {}

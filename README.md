@@ -56,7 +56,7 @@ La web tiene las páginas Menú, Menú mensual, Diario, Recetas, Compra, Despens
 - **Configuración:** régimen de comidas (en color: en casa, tupper frío, tupper para recalentar y almuerzo), reparto de la energía y una ficha por persona. En la ficha se cambian el peso, el objetivo de peso (con «¿Aceptar?» Sí/No), los gustos y el desayuno; la ficha se recalcula al momento, y el menú y la compra cuando se sincronizan los datos con el proyecto.
 - **Definiciones:** términos de la página, equivalencias a gramos, medidas caseras, tamaño de una ración y Thermomix.
 
-Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios`, `eventos`, `perfil` y `comido`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), se sincroniza sola cada noche hacia las 23:30 (tarea programada de Claude); también se puede pedir en cualquier momento a Claude Code con «sincroniza». Claude solo copia las colecciones de la página y ejecuta `npm run sincronizar`, que une sin IA la despensa, las reservas, los no deseados, los perfiles y los cambios de «Actualizar menú» con `data/`, guarda una copia de todo lo apuntado en `data/web/` (el agente la lee con `ver_apuntes_web`) y vuelve a generar la página; después Claude la publica. Los pasos están en `.claude/skills/sincronizar/SKILL.md`. Si hay diferencias, manda lo apuntado en la web.
+Todo lo que se apunta se guarda en la propia página publicada en claude.ai. Para publicarla, la página necesita las capacidades `db` (datos guardados) y `sample` (el botón «Actualizar menú»). Colecciones que usa: `despensa`, `no-deseados`, `hechas`, `diario`, `cambios`, `cocinado`, `comentarios`, `eventos`, `perfil` y `comido`. Para llevar esos datos al repositorio (y que el agente los use al hacer los siguientes menús), se sincroniza sola cada noche hacia las 23:30 (tarea programada de Claude); también se puede pedir en cualquier momento a Claude Code con «sincroniza». Claude solo copia las colecciones de la página y ejecuta `npm run sincronizar`, que une sin IA la despensa, las reservas, los no deseados, los perfiles y los cambios de «Actualizar menú» con `data/`, guarda una copia de todo lo apuntado en `data/web/` (el agente la lee con `ver_apuntes_web`, solo de la semana pasada, la actual y la próxima) y vuelve a generar la página; después Claude la publica. Los pasos están en `.claude/skills/sincronizar/SKILL.md`. Si hay diferencias, manda lo apuntado en la web.
 
 `npm run pdf` usa Chromium mediante Playwright: el de Playwright si está instalado, si no Google Chrome, o el que indique la variable `CHROMIUM_PATH`.
 
@@ -104,13 +104,3 @@ npm run typecheck # comprobación de tipos
 En GitHub, cada cambio que se sube pasa solo estas dos comprobaciones (`.github/workflows/comprobar.yml`).
 
 > ⚠️ Los cálculos nutricionales son orientativos y no sustituyen el consejo de un profesional sanitario.
-
-## Página estática `index.html` (GitHub Pages)
-
-`index.html` es un generador de menús sencillo que funciona sin servidor (independiente del agente y de la web de `npm run web`).
-
-La web está en `index.html` y funciona sin servidor. Para publicarla gratis:
-
-1. En GitHub: **Settings → Pages**.
-2. En *Source* elige **Deploy from a branch**, rama `main` y carpeta `/ (root)`.
-3. En unos minutos estará en `https://colladoterroba-desing.github.io/AgenteMenu/`.
